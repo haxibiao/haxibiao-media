@@ -1,0 +1,32 @@
+{
+  "name": "haxibiao/media",
+  "description": "哈希表media",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ivan",
+      "email": "ivan@haxibiao.com"
+    }
+  ],
+  "require": {},
+  "repositories": {},
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-0": {
+      "haxibiao\\media\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "haxibiao\\media\\MediaServiceProvider"
+      ]
+    }
+  }
+}
