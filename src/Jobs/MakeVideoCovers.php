@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Jobs;
+namespace haxibiao\media;
 
-use App\Video;
+use haxibiao\media\Video;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

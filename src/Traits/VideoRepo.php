@@ -2,8 +2,8 @@
 
 namespace haxibiao\media\Traits;
 
-use App\Jobs\MakeVideoCovers;
 use haxibiao\helpers\QcloudUtils;
+use haxibiao\media\MakeVideoCovers;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -79,17 +79,6 @@ trait VideoRepo
         $this->setJsonData('width', $width);
         $this->setJsonData('height', $height);
         $this->save();
-    }
-
-    public function recordAction()
-    {
-        if ($this->status > 0) {
-            $action = \App\Action::updateOrCreate([
-                'user_id'         => $this->user_id,
-                'actionable_type' => 'videos',
-                'actionable_id'   => $this->id,
-            ]);
-        }
     }
 
     public function pushUrlCacheRequest($url)

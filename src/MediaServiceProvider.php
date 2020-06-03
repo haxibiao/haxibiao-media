@@ -11,7 +11,7 @@ class MediaServiceProvider extends ServiceProvider
         //TODO: migrations
 
         //TODO: events
-        // \App\Video::observe(\App\Observers\VideoObserver::class);
+        Video::observe(Observers\VideoObserver::class);
 
     }
 

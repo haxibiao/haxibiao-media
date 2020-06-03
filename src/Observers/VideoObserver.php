@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Observers;
+namespace haxibiao\media\Observers;
 
-use App\Jobs\MakeVideoCovers;
-use App\Video;
+use haxibiao\media\MakeVideoCovers;
+use haxibiao\media\Video;
 
 class VideoObserver
 {

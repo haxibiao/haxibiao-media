@@ -103,9 +103,6 @@ trait VideoRepoVod
                 //视频发布
                 $this->status = 1;
                 $this->save();
-
-                //action
-                $this->recordAction();
             }
         }
     }
