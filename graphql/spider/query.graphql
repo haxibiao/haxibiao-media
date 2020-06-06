@@ -78,6 +78,6 @@ extend type Query {
   """
   采集抖音视频的爬虫...
   """
-  spiders(type: SpiderTypeEnum, limit: Int = 10, offset: Int = 0): [Spider]
-    @field(resolver: "App\\Spider@resolveGetSpiders")
+  spiders(type: SpiderTypeEnum): [Spider!]
+    @paginate(defaultCount: 10, builde: "App\\Spider@resolverSpiders")
 }

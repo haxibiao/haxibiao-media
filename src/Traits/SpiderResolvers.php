@@ -7,10 +7,10 @@ use Illuminate\Support\Arr;
 
 trait SpiderResolvers
 {
-    public function resolveGetSpiders($root, $args, $context, $info)
+    public function resolveSpiders($root, $args, $context, $info)
     {
         $type = Arr::get($args, 'type', null);
-        return Spider::getSpiders(getUser(), $type, $args['limit'], $args['offset']);
+        return Spider::querySpiders(getUser(), $type);
     }
 
     public function resolveShareLink($root, $args, $context, $info)

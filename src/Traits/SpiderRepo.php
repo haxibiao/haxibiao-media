@@ -3,7 +3,7 @@
 namespace haxibiao\media\Traits;
 
 use App\Exceptions\UserException;
-use App\Gold;
+use App\Post;
 use GuzzleHttp\Client;
 use haxibiao\media\Jobs\MediaProcess;
 use haxibiao\media\Spider;
@@ -70,17 +70,19 @@ trait SpiderRepo
         }
     }
 
-    public static function getSpiders($user, $type, $limit = 0, $offset = 0)
+    /**
+     * 用户的爬虫的查询
+     */
+    public static function querySpiders($user, $type)
     {
         $query = Spider::with('video')->where('user_id', $user->id)
-            ->take($limit)
-            ->skip($offset)
+        // ->take($limit)
+        // ->skip($offset)
             ->latest('id');
         if (!is_null($type)) {
             $query = $query->where('spider_type', $type);
         }
-
-        return $query->get();
+        return $query;
     }
 
     public function replaceTitleBadWord()
@@ -94,6 +96,9 @@ trait SpiderRepo
         $this->data    = $data;
     }
 
+    /**
+     * media hook回调要走这里保存视频信息，发布动态，处理快速排查推荐..
+     */
     public function saveVideo($data)
     {
         $hash     = Arr::get($data, 'hash');
@@ -124,33 +129,51 @@ trait SpiderRepo
         $this->status      = Spider::PROCESSED_STATUS;
         $this->save();
 
-        //发布成动态
-        // $spider = $event->spider;
-        // $data   = $spider->data;
-        // $post   = Post::firstOrNew(['video_id' => $spider->spider_id]);
+        //发布成动态 处理快速排查推荐
+        $this->savePost();
 
-        // //数据不存在
-        // if (!isset($post->id)) {
-        //     $post->user_id    = $spider->user_id;
-        //     $post->content    = Arr::get($data, 'title', '');
-        //     $post->status     = Post::PUBLISH_STATUS;
-        //     $post->created_at = now();
-        //     $post->updated_at = $spider->updated_at;
-        //     $post->save();
+        //FIXME: content系统部分，发布成功动态的observer里奖励，这里只负责处理media相关业务
 
-        //     //FIXME: 同步肖新明新年写的优化的视频动态推荐算法，随机，按天指针...
+        // $user = $this->user;
+        // if (!is_null($user)) {
+        //     //触发奖励
+        //     Gold::makeIncome($user, $reward, '分享视频奖励');
+        //     //扣除精力
+        //     if ($user->ticket > 0) {
+        //         $user->decrement('ticket');
+        //     }
         // }
 
-        $user = $this->user;
-        if (!is_null($user)) {
-            //触发奖励
-            Gold::makeIncome($user, $reward, '分享视频奖励');
-            //扣除精力
-            if ($user->ticket > 0) {
-                $user->decrement('ticket');
-            }
+        return $video;
+    }
+
+    public function savePost()
+    {
+        $spider = $this;
+        $data   = $spider->data;
+        $post   = Post::firstOrNew(['video_id' => $spider->spider_id]);
+
+        //创建动态..
+        if (!isset($post->id)) {
+            $post->user_id    = $spider->user_id;
+            $post->content    = Arr::get($data, 'title', '');
+            $post->status     = Post::PUBLISH_STATUS; //发布动态
+            $post->created_at = now();
+            $post->updated_at = $spider->updated_at;
+            // $post->review_id  = Post::makeNewReviewId(); //定时发布时决定
+            // $post->review_day = Post::makeNewReviewDay();
+            $post->save();
+
+            //FIXME: 这个逻辑要放到 content 系统里，PostObserver updated ...
+            //超过100个动态或者1个小时前,自动发布.
+            // $canPublished = Post::where('review_day', 0)
+            //     ->where('created_at', '<=', now()->subHour())->exists()
+            // || Post::where('review_day', 0)->count() >= 100;
+
+            // if ($canPublished) {
+            //     dispatch_now(new PublishNewPosts);
+            // }
         }
 
-        return $video;
     }
 }
