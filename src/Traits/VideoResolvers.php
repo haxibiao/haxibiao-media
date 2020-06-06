@@ -11,15 +11,12 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 trait VideoResolvers
 {
     /**
-     * @deprecated 需要尽快迁移为posts来走答赚的fastRecommend,暂时兼容旧的视频刷接口
+     * @deprecated 需要尽快迁移为posts来走答赚的fastRecommend, 暂时兼容旧的视频刷接口
      */
     public static function resolveRecommendVideos($root, $args, $context, $info)
     {
-
-        throw new UserException("请用新版本的posts, 答赚的fastRecommend算法");
-
-        // $user = checkUser();
-        // return Video::getVideos($user, $args['limit'], $args['offset']);
+        $user = checkUser();
+        return Video::getVideos($user, $args['limit'], $args['offset']);
     }
 
     public static function videoPlayReward($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)

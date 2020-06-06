@@ -3,7 +3,9 @@
 namespace haxibiao\media\Traits;
 
 use App\Exceptions\UserException;
+use App\Question;
 use App\User;
+use App\Visit;
 use haxibiao\helpers\QcloudUtils;
 use haxibiao\helpers\VodUtils;
 use haxibiao\media\Video;
@@ -119,15 +121,62 @@ trait VideoRepo
     }
 
     /**
-     * @deprecated 答题废弃的视频刷接口，需要用新的FastRecommand
+     * @deprecated 答题废弃的视频刷接口，新版本gql需要用新的FastRecommand
      */
-    public function getVideos($user, $type, $limit = 10, $offset = 0)
+    public static function getVideos($user, $type, $limit = 10, $offset = 0)
     {
-        return [];
+        $hasUser = !is_null($user);
+        //10个中会有2个广告视频 5个有1个广告
+        $limit = $limit >= 10 ? 8 : 4;
+
+        $qb = Question::select('video_id')->has('video')->publish()->orderByDesc('rank');
+
+        if ($hasUser) {
+            $qb = $qb->where('user_id', '!=', $user->id);
+
+            //排除浏览过的视频
+            $visitVideoIds = Visit::ofType('videos')->ofUserId($user->id)->get()->pluck('visited_id');
+            if (!is_null($visitVideoIds)) {
+                $qb = $qb->whereNotIn('video_id', $visitVideoIds);
+            }
+        }
+        $qb = $qb->take($limit);
+        //游客浏览翻页
+        if (!$hasUser) {
+            //访客第一页随机略过几个视频
+            $offset = $offset == 0 ? mt_rand(0, 50) : $offset;
+            $qb     = $qb->skip($offset);
+        }
+        $videoIds = $qb->get();
+
+        $mixVideos = [];
+        $videos    = Video::with('question')->whereIn('id', $videoIds->pluck('video_id'))->get();
+        $index     = 0;
+        foreach ($videos as $video) {
+            $index++;
+            $mixVideos[] = $video;
+            if ($index % 4 == 0) {
+                //每隔4个插入一个广告视频
+                $adVideo              = clone $video;
+                $adVideo->id          = random_str(7);
+                $adVideo->is_ad_video = true;
+                $mixVideos[]          = $adVideo;
+            }
+
+        }
+
+        //暂时保存假的视频浏览记录
+        if ($hasUser) {
+            Visit::saveVisits($user, $videos, 'videos', Visit::FAKE_VISITED);
+        }
+
+        return $mixVideos;
     }
 
-    //答妹保存视频
-    public function saveVideoFile(UploadedFile $videoFile, array $inputs, $user)
+    /**
+     * @deprecated 原答赚答妹保存UploadFile视频
+     */
+    public static function saveVideoFile(UploadedFile $videoFile, array $inputs, $user)
     {
         throw new UserException("请升级版本用vod上传视频");
 
