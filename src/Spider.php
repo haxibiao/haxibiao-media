@@ -2,12 +2,12 @@
 
 namespace haxibiao\media;
 
+use App\Model;
 use App\Question;
 use App\User;
 use App\Video;
 use haxibiao\media\Traits\SpiderRepo;
 use haxibiao\media\Traits\SpiderResolvers;
-use Illuminate\Database\Eloquent\Model;
 
 class Spider extends Model
 {
