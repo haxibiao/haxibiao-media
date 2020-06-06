@@ -34,6 +34,10 @@ class InstallCommand extends Command
 
         copy($this->resolveStubPath('/stubs/Video.stub'), app_path('Video.php'));
         copy($this->resolveStubPath('/stubs/Image.stub'), app_path('Image.php'));
+        copy($this->resolveStubPath('/stubs/Spider.stub'), app_path('Spider.php'));
+
+        //TODO: 数据库表结构问题还需要各项目自己比较修复字段差异先
+        $this->info("数据库表结构问题还需要各项目自己比较修复字段差异先...");
 
     }
 

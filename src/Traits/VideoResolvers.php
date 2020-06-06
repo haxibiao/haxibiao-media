@@ -1,16 +1,28 @@
 <?php
 namespace haxibiao\media\Traits;
 
-use App\Exceptions\GQLException;
+use App\Exceptions\UserException;
 use App\Gold;
-use App\Video;
 use App\Visit;
 use GraphQL\Type\Definition\ResolveInfo;
+use haxibiao\media\Video;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 trait VideoResolvers
 {
-    public function videoPlayReward($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    /**
+     * @deprecated 需要尽快迁移为posts来走答赚的fastRecommend,暂时兼容旧的视频刷接口
+     */
+    public static function resolveRecommendVideos($root, $args, $context, $info)
+    {
+
+        throw new UserException("请用新版本的posts, 答赚的fastRecommend算法");
+
+        // $user = checkUser();
+        // return Video::getVideos($user, $args['limit'], $args['offset']);
+    }
+
+    public static function videoPlayReward($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
         $user   = getUser();
         $inputs = $args['input'];
@@ -25,7 +37,7 @@ trait VideoResolvers
             $video = Video::find($inputs['video_id']);
 
             if (is_null($video)) {
-                throw new GQLException('视频不存在,请刷新后再试！');
+                throw new UserException('视频不存在,请刷新后再试！');
             }
 
             $visited = $user->visitedArticles()->where('visited_id', $video->article->id)->first();
@@ -90,7 +102,7 @@ trait VideoResolvers
         return $gold;
     }
 
-    public function queryDetail($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
+    public static function queryDetail($rootValue, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
         return '增加贡献的场景:
 1.奖励任务看视频赚钱,获得(+2*N贡献)

@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Jobs;
+namespace haxibiao\media\Jobs;
 
 use App\Article;
 use App\Exceptions\GQLException;
 use App\Gold;
 use App\Notifications\ReceiveAward;
 use App\Tag;
-use App\Video;
 use Exception;
 use haxibiao\content\Category;
+use haxibiao\media\Video;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Vod\Model\VodUploadRequest;
@@ -144,10 +145,10 @@ class ProcessSpider implements ShouldQueue
             $video->save(['timestamps' => false]);
         } catch (\Exception $e) {
             // 处理上传异常
-            \Log::error($e);
+            Log::error($e);
         }
 
-        MakeVideoCovers::dispatchNow($video);
+        // MakeVideoCovers::dispatchNow($video);
 
         $category = Category::firstOrNew([
             'name' => '我要上热门',

@@ -1,6 +1,6 @@
 <?php
 
-namespace haxibiao\media;
+namespace haxibiao\media\Jobs;
 
 use haxibiao\media\Video;
 use Illuminate\Bus\Queueable;
@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
@@ -15,6 +16,9 @@ use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 use TencentCloud\Vod\V20180717\VodClient;
 
+/**
+ * @deprecated 现在已统一调用media的hook了，不需要自己截图了
+ */
 class MakeVideoCovers implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -47,7 +51,7 @@ class MakeVideoCovers implements ShouldQueue
             $videoPath = $video->path;
             $video->makeCovers($videoPath);
         } else {
-            $videoPath = \Storage::cloud()->url($video->path);
+            $videoPath = Storage::cloud()->url($video->path);
             $video->makeCovers($videoPath, 'cos');
         }
 

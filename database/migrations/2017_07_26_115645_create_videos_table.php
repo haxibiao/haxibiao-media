@@ -32,6 +32,21 @@ class CreateVideosTable extends Migration
             $table->softDeletes();
 
             $table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
+
+            //FIXME: 答妹里的字段多的
+
+            // $table->string('fileid')->nullable()->comment('外部文件系统标识=vod fileid');
+            // $table->string('filename')->nullable()->comment('外部文件系统文件名');
+            // $table->string('app')->nullable()->comment("某个APP的？");
+            // $table->string('type', 30)->nullable()->comment('类型');
+            // $table->unsignedInteger('count_likes')->default(0)->comment('点赞数');
+            // $table->unsignedInteger('duration')->nullable()->comment('视频时长');
+            // $table->unsignedInteger('width')->nullable()->comment('宽');
+            // $table->unsignedInteger('height')->nullable()->comment('高');
+
+            //FIXME: 答妹里少的..
+            $table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
+
         });
     }
 

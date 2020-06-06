@@ -5,6 +5,9 @@ namespace haxibiao\media\Traits;
 //过期的一些VOD 函数
 use haxibiao\helpers\QcloudUtils;
 
+/**
+ * 从工厂APP里过来的trait 处理vod相关
+ */
 trait VideoRepoVod
 {
 

@@ -2,7 +2,6 @@
 
 namespace haxibiao\media\Observers;
 
-use haxibiao\media\MakeVideoCovers;
 use haxibiao\media\Video;
 
 class VideoObserver
@@ -16,7 +15,7 @@ class VideoObserver
     public function created(Video $video)
     {
         //启动截取图片job
-        MakeVideoCovers::dispatch($video);
+        // MakeVideoCovers::dispatch($video);
 
     }
 

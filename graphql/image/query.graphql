@@ -1,0 +1,12 @@
+type Image{
+    id:ID
+    width:Float
+    height:Float
+    extension:String
+    path:String @rename(attribute: "url")
+}
+
+extend type Query {
+    image(id:Int! @eq): Image @find
+}
+

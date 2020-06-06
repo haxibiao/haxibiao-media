@@ -2,12 +2,13 @@
 
 namespace haxibiao\media\Traits;
 
+use App\Exceptions\UserException;
+use App\User;
 use haxibiao\helpers\QcloudUtils;
-use haxibiao\media\MakeVideoCovers;
+use haxibiao\helpers\VodUtils;
+use haxibiao\media\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
 use TencentCloud\Common\Profile\HttpProfile;
@@ -38,36 +39,38 @@ trait VideoRepo
 
     public function saveFile(UploadedFile $file)
     {
-        $this->user_id = getUserId();
-        $this->save(); //拿到video->id
+        throw new UserException("请升级版本用vod上传视频");
 
-        $cosPath     = 'video/' . $this->id . '.mp4';
-        $this->path  = $cosPath;
-        $this->hash  = md5_file($file->path());
-        $this->title = $file->getClientOriginalName();
-        $this->save();
+        // $this->user_id = getUserId();
+        // $this->save(); //拿到video->id
 
-        try {
-            //本地存一份用于截图
-            $file->storeAs(
-                'video', $this->id . '.mp4'
-            );
-            $this->disk = 'local'; //先标记为成功保存到本地
-            $this->save();
+        // $cosPath     = 'video/' . $this->id . '.mp4';
+        // $this->path  = $cosPath;
+        // $this->hash  = md5_file($file->path());
+        // $this->title = $file->getClientOriginalName();
+        // $this->save();
 
-            //同步上传到cos
-            $cosDisk = \Storage::cloud();
-            $cosDisk->put($cosPath, \Storage::disk('public')->get('video/' . $this->id . '.mp4'));
-            $this->disk = 'cos';
-            $this->save();
+        // try {
+        //     //本地存一份用于截图
+        //     $file->storeAs(
+        //         'video', $this->id . '.mp4'
+        //     );
+        //     $this->disk = 'local'; //先标记为成功保存到本地
+        //     $this->save();
 
-            dispatch((new MakeVideoCovers($this)))->delay(now()->addMinute(1));
-            return true;
+        //     //同步上传到cos
+        //     $cosDisk = Storage::cloud();
+        //     $cosDisk->put($cosPath, Storage::disk('public')->get('video/' . $this->id . '.mp4'));
+        //     $this->disk = 'cos';
+        //     $this->save();
 
-        } catch (\Exception $ex) {
-            \Log::error("video save exception" . $ex->getMessage());
-        }
-        return false;
+        //     // dispatch((new MakeVideoCovers($this)))->delay(now()->addMinute(1));
+        //     return true;
+
+        // } catch (\Exception $ex) {
+        //     Log::error("video save exception" . $ex->getMessage());
+        // }
+        // return false;
     }
 
     public function saveWidthHeight($path)
@@ -110,7 +113,102 @@ trait VideoRepo
         $this->disk     = 'vod';
         $this->hash     = hash_file('md5', $sourceVideoUrl);
         $this->save();
+
         //触发截图操作
-        MakeVideoCovers::dispatchNow($this);
+        // MakeVideoCovers::dispatchNow($this);
+    }
+
+    /**
+     * @deprecated 答题废弃的视频刷接口，需要用新的FastRecommand
+     */
+    public function getVideos($user, $type, $limit = 10, $offset = 0)
+    {
+        return [];
+    }
+
+    //答妹保存视频
+    public function saveVideoFile(UploadedFile $videoFile, array $inputs, $user)
+    {
+        throw new UserException("请升级版本用vod上传视频");
+
+        // $publicStorage = Storage::disk('public');
+
+        // if (!$publicStorage->exists('videos')) {
+        //     $publicStorage->makeDirectory('videos');
+        // }
+
+        // $videoName = $videoFile->getFilename();
+        // //example video/SDV_QSVV.mp4
+        // $videoPath = 'videos/' . $videoName . '.' . $videoFile->getClientOriginalExtension();
+        // $hash      = hash_file('md5', $videoFile->getRealPath());
+
+        // $video = Video::firstOrNew(['hash' => $hash]);
+        // if (!isset($video->id)) {
+        //     $isMoveSuccess = $publicStorage->put($videoPath, $videoFile->get());
+        //     if ($isMoveSuccess) {
+        //         $video->fill([
+        //             'user_id'  => $user->id ?? null,
+        //             'path'     => $videoPath,
+        //             'disk'     => 'damei',
+        //             'filename' => $inputs['videoName'] ?? null,
+        //             'app'      => $inputs['app'] ?? null,
+        //             'type'     => $inputs['type'] ?? null,
+        //         ])->save();
+        //         //队列去处理视频上传
+        //         dispatch(new UploadVideo($video->id))->onQueue('videos');
+        //     } else {
+        //         return null;
+        //     }
+        // }
+
+        //答题以前视图维护VideoKit系统，目前已有media系统
+        // if (isset($inputs['uuid'])) {
+        //     $videokitUser = VideokitUser::firstOrNew([
+        //         'uuid'     => $inputs['uuid'],
+        //         'video_id' => $video->id,
+        //     ]);
+        //     if (!isset($videokitUser->id)) {
+        //         $videokitUser->save();
+        //     }
+        // }
+
+        // return $video;
+    }
+
+    // 从答题兼容过来的repo, 带vod方法
+
+    // 通过 VOD file_id 保存信息至 videos table
+    public static function saveByVodFileId($fileId, User $user)
+    {
+        VodUtils::makeCoverAndSnapshots($fileId);
+        $vodVideoInfo = VodUtils::getVideoInfo($fileId);
+        return self::saveVodFile($user, $fileId, $vodVideoInfo);
+    }
+
+    // 根据 VODUtils 返回的信息创建 Video
+    public static function saveVodFile(User $user, $fileId, array $videoFileInfo)
+    {
+        $url      = data_get($videoFileInfo, 'basicInfo.sourceVideoUrl');
+        $cover    = data_get($videoFileInfo, 'basicInfo.coverUrl');
+        $duration = data_get($videoFileInfo, 'basicInfo.duration');
+        $height   = data_get($videoFileInfo, 'metaData.height');
+        $width    = data_get($videoFileInfo, 'metaData.width');
+        $hash     = md5_file($url);
+
+        $video = new Video();
+
+        $video->user_id  = $user->id;
+        $video->disk     = 'vod';
+        $video->hash     = $hash;
+        $video->fileid   = $fileId;
+        $video->path     = $url;
+        $video->width    = $width;
+        $video->height   = $height;
+        $video->duration = $duration;
+        $video->cover    = $cover;
+        $video->json     = json_encode($videoFileInfo);
+        $video->save();
+
+        return $video;
     }
 }

@@ -56,7 +56,7 @@ trait MakeCovers
      * @param string $path
      * @return array
      */
-    public function getVideoInfo(string $filePath): array
+    protected function getVideoInfo(string $filePath): array
     {
         $videoInfo = FFMpegUtils::getStreamInfo($filePath);
         return $videoInfo;
@@ -66,7 +66,7 @@ trait MakeCovers
      * @param array $videoInfo
      * @return int
      */
-    public function getVideoDuration(array $videoInfo): int
+    protected function getVideoDuration(array $videoInfo): int
     {
         $duration = array_get($videoInfo, 'duration');
         $duration = $duration > 0 ? ceil($duration) : $duration;
@@ -79,7 +79,7 @@ trait MakeCovers
      * @param string $path
      * @return string
      */
-    public function saveCovers(Video $video, string $path): string
+    protected function saveCovers(Video $video, string $path): string
     {
         $localCoverPathTemp = 'app/public/video/%s';
         $coverName          = $video->id . '.jpg';

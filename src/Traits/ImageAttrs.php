@@ -13,17 +13,25 @@ trait ImageAttrs
     private static $small = 1; //小图
     private static $top   = 2; //小图
 
+    //答题里版本
     public function getUrlAttribute()
     {
-        //TODO 修复数据
-        if ($this->disk == 'public') {
-            return Storage::disk('public')->url($this->path);
-        }
-        if (\str_contains($this->path, 'cos')) {
+        //FIXME: fixdata期间有用
+        if (strpos($this->path, 'http') !== false) {
             return $this->path;
         }
 
-        return cdnurl($this->path);
+        if (empty($this->path)) {
+            return url("images/notfound.png");
+        }
+
+        //默认没问题的图片都应该在cos
+        return Storage::cloud()->url($this->path);
+    }
+
+    public function getIsCosAttribute()
+    {
+        return $this->disk == "cos" || starts_with($this->path, 'http');
     }
 
     public function getThumbnailAttribute()

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace haxibiao\media\Jobs;
 
 use App\Video;
 use Illuminate\Bus\Queueable;
