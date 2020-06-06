@@ -1,6 +1,6 @@
 <?php
 
-namespace haxibiao\media;
+namespace haxibiao\media\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -29,6 +29,10 @@ class InstallCommand extends Command
      */
     public function handle()
     {
+        $this->call('vendor:publish', [
+            '--tag'   => 'media-config',
+            '--force' => true,
+        ]);
 
         $this->comment("复制 stubs ...");
 
@@ -39,6 +43,11 @@ class InstallCommand extends Command
         //TODO: 数据库表结构问题还需要各项目自己比较修复字段差异先
         $this->info("数据库表结构问题还需要各项目自己比较修复字段差异先...");
 
+    }
+
+    protected function resolveStubPath($stub)
+    {
+        return __DIR__ . $stub;
     }
 
 }

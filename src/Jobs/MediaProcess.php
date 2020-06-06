@@ -41,7 +41,8 @@ class MediaProcess implements ShouldQueue
         $spider = $this->spider;
         if (!is_null($spider)) {
             //https有问题,会出现收不到post数据
-            $hookUrl  = 'http://hotfix.xiaodamei.com/api/media/hook';
+            // $hookUrl  = 'http://hotfix.xiaodamei.com/api/media/hook';
+            $hookUrl  = config('media.hook');
             $data     = [];
             $client   = new Client();
             $response = $client->request('GET', self::API, [
