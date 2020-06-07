@@ -1,12 +1,14 @@
-type Image{
-    id:ID
-    width:Float
-    height:Float
-    extension:String
-    path:String @rename(attribute: "url")
+type Image {
+  id: ID
+  width: Float
+  height: Float
+  extension: String
+  path: String @rename(attribute: "url")
+  url: String!
+  thumbnail: String!
+  user: User! @belongsTo
 }
 
 extend type Query {
-    image(id:Int! @eq): Image @find
+  image(id: Int! @eq): Image @find
 }
-

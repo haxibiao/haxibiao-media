@@ -3,7 +3,6 @@
 namespace haxibiao\media\Traits;
 
 use App\Exceptions\UserException;
-use App\Post;
 use GuzzleHttp\Client;
 use haxibiao\media\Jobs\MediaProcess;
 use haxibiao\media\Spider;
@@ -41,8 +40,10 @@ trait SpiderRepo
         $spider->save();
 
         if ($spiderExisted) {
-            throw_if($spider->user_id == $user->id, UserException::class, '正在重新采集中,请稍后再看!');
-            throw new UserException('该视频链接已被他人分享过了哦!');
+            if (!is_testing_env()) {
+                throw_if($spider->user_id == $user->id, UserException::class, '正在重新采集中,请稍后再看!');
+                throw new UserException('该视频链接已被他人分享过了哦!');
+            }
         }
 
         //放入队列，交给media服务
@@ -122,15 +123,15 @@ trait SpiderRepo
             $video->save();
         }
 
-        //更新视频关系
+        //FIXME: 更新爬虫和视频关系（crawlable?）
         $reward            = Spider::SPIDER_GOLD_REWARD;
         $this->spider_type = 'videos';
         $this->spider_id   = $video->id;
         $this->status      = Spider::PROCESSED_STATUS;
         $this->save();
 
-        //发布成动态 处理快速排查推荐
-        $this->savePost();
+        //FIXME: 发布成动态这个需要 haxibiao-content的 post部分逻辑observer spider...
+        // $this->savePost();
 
         //FIXME: content系统部分，发布成功动态的observer里奖励，这里只负责处理media相关业务
 
@@ -147,33 +148,33 @@ trait SpiderRepo
         return $video;
     }
 
-    public function savePost()
-    {
-        $spider = $this;
-        $data   = $spider->data;
-        $post   = Post::firstOrNew(['video_id' => $spider->spider_id]);
+    // public function savePost()
+    // {
+    //     $spider = $this;
+    //     $data   = $spider->data;
+    //     $post   = Post::firstOrNew(['video_id' => $spider->spider_id]);
 
-        //创建动态..
-        if (!isset($post->id)) {
-            $post->user_id    = $spider->user_id;
-            $post->content    = Arr::get($data, 'title', '');
-            $post->status     = Post::PUBLISH_STATUS; //发布动态
-            $post->created_at = now();
-            $post->updated_at = $spider->updated_at;
-            // $post->review_id  = Post::makeNewReviewId(); //定时发布时决定
-            // $post->review_day = Post::makeNewReviewDay();
-            $post->save();
+    //     //创建动态..
+    //     if (!isset($post->id)) {
+    //         $post->user_id    = $spider->user_id;
+    //         $post->content    = Arr::get($data, 'title', '');
+    //         $post->status     = Post::PUBLISH_STATUS; //发布动态
+    //         $post->created_at = now();
+    //         $post->updated_at = $spider->updated_at;
+    //         // $post->review_id  = Post::makeNewReviewId(); //定时发布时决定
+    //         // $post->review_day = Post::makeNewReviewDay();
+    //         $post->save();
 
-            //FIXME: 这个逻辑要放到 content 系统里，PostObserver updated ...
-            //超过100个动态或者1个小时前,自动发布.
-            // $canPublished = Post::where('review_day', 0)
-            //     ->where('created_at', '<=', now()->subHour())->exists()
-            // || Post::where('review_day', 0)->count() >= 100;
+    //         //FIXME: 这个逻辑要放到 content 系统里，PostObserver updated ...
+    //         //超过100个动态或者1个小时前,自动发布.
+    //         // $canPublished = Post::where('review_day', 0)
+    //         //     ->where('created_at', '<=', now()->subHour())->exists()
+    //         // || Post::where('review_day', 0)->count() >= 100;
 
-            // if ($canPublished) {
-            //     dispatch_now(new PublishNewPosts);
-            // }
-        }
+    //         // if ($canPublished) {
+    //         //     dispatch_now(new PublishNewPosts);
+    //         // }
+    //     }
 
-    }
+    // }
 }

@@ -132,7 +132,7 @@ class ProcessSpider implements ShouldQueue
         $article->save();
 
         //将视频上传到VOD
-        $client = new VodUploadClient(config('tencentvod.' . config('app.name') . '.secret_id'), config('tencentvod.' . config('app.name') . '.secret_key'));
+        $client = new VodUploadClient(config('vod.' . config('app.name') . '.secret_id'), config('vod.' . config('app.name') . '.secret_key'));
         $client->setLogPath(storage_path('/logs/vod_upload.log'));
         $req                = new VodUploadRequest();
         $req->MediaFilePath = storage_path('app/public/' . $cosPath);

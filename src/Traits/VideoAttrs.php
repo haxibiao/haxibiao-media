@@ -103,7 +103,7 @@ trait VideoAttrs
     /**
      * 获取视频封面
      */
-    public function getCoverAttribute(): string
+    public function getCoverAttribute()
     {
         $cover = null;
         if (isset($this->json) && isset($this->json->cover)) {
@@ -115,7 +115,7 @@ trait VideoAttrs
     /**
      * 获取视频信息
      */
-    public function getVideoInfoAttribute(): string
+    public function getVideoInfoAttribute()
     {
         return $this->json;
     }

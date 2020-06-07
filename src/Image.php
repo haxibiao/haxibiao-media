@@ -6,6 +6,7 @@ use App\Model;
 use haxibiao\media\Traits\ImageAttrs;
 use haxibiao\media\Traits\ImageRepo;
 use haxibiao\media\Traits\ImageResolvers;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Image extends Model
 {
@@ -33,7 +34,7 @@ class Image extends Model
         return $this->belongsToMany('App\Article');
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(\App\User::class);
     }

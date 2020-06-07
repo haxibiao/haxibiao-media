@@ -72,6 +72,7 @@ class VideoController extends Controller
         abort(500, "没上传视频文件过来");
     }
 
+    //这个XXM视图用cos处理视频时测试用
     public function cosHookVideo(Request $request)
     {
         $inputs = $request->input();

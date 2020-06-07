@@ -1,6 +1,7 @@
 # haxibiao/media
 
 > haxibiao/media 是哈希表内部媒体资源库(Image,Video)
+> 
 
 ## 导语
 
@@ -17,7 +18,8 @@
 2. 执行`php artisan media:install && composer dump`
 3. 给app/User.php 添加 use WithMedia
 4. 执行`php artisan migrate`
-5. 完成
+5. routes/api.php 需要 require_once 'api/media.php'来提供rest api
+6. 完成
 
 ### 如何完成更新？
 > 远程仓库的composer package发生更新时如何进行更新操作呢？

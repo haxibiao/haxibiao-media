@@ -10,25 +10,57 @@ class MediaServiceProvider extends ServiceProvider
     {
         $this->commands([
             Console\InstallCommand::class,
-            Console\PublishCommand::class,
         ]);
+        $this->bindPathsInContainer();
     }
 
     public function boot()
     {
+        //注册 events - 运行时需要
+        Video::observe(Observers\VideoObserver::class);
+
+        //安装时需要
         if ($this->app->runningInConsole()) {
 
             $this->publishes([
                 __DIR__ . '/../config/media.php' => config_path('media.php'),
+                __DIR__ . '/../config/vod.php'   => config_path('vod.php'),
             ], 'media-config');
+
+            // 发布 graphql文件
+            $this->publishes([
+                __DIR__ . '/../graphql' => base_path('graphql'),
+            ], 'media-graphql');
+
+            // 发布 Nova
+            // $this->publishes([
+            //     __DIR__ . '/Nova' => base_path('app/Nova'),
+            // ], 'media-nova');
+
+            //注册 migrations paths
+            $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));
 
         }
 
-        //TODO: migrations
+    }
 
-        //TODO: events
-        Video::observe(Observers\VideoObserver::class);
-
+    /**
+     * Bind paths in container.
+     *
+     * @return void
+     */
+    protected function bindPathsInContainer()
+    {
+        foreach ([
+            'path.haxibiao-media'            => $root = dirname(__DIR__),
+            'path.haxibiao-media.config'     => $root . '/config',
+            'path.haxibiao-media.graphql'    => $root . '/graphql',
+            'path.haxibiao-media.database'   => $database = $root . '/database',
+            'path.haxibiao-media.migrations' => $database . '/migrations',
+            'path.haxibiao-media.seeds'      => $database . '/seeds',
+        ] as $abstract => $instance) {
+            $this->app->instance($abstract, $instance);
+        }
     }
 
 }
