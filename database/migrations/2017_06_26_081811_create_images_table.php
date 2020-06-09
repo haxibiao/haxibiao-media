@@ -13,6 +13,10 @@ class CreateImagesTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('images')) {
+            return;
+        }
+
         Schema::create('images', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->nullable();

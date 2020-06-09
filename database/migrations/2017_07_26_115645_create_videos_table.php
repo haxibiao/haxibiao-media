@@ -13,6 +13,10 @@ class CreateVideosTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('videos')) {
+            return;
+        }
+
         Schema::create('videos', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->default(0)->index();

@@ -14,6 +14,10 @@ class CreateSpidersTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('spiders')) {
+            return;
+        }
+
         Schema::create('spiders', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id')->index()->comment('用户ID');
