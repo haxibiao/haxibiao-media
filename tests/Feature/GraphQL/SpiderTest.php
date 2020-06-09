@@ -24,7 +24,7 @@ class SpiderTest extends GraphQLTestCase
     {
         //确保后面UT不重复
         $rows      = Spider::where('source_url', 'https://v.douyin.com/vruTta/')->delete();
-        $query     = file_get_contents(__DIR__ . '/spider/resolveDouyinVideo.gql');
+        $query     = file_get_contents(__DIR__ . '/spider/ResolveDouyinVideo.gql');
         $variables = [
             'share_link' => "#在抖音，记录美好生活#美元如何全球褥羊毛？经济危机下，2万亿救市的深层动力，你怎么看？#经济 #教育#云上大课堂 #抖音小助手 https://v.douyin.com/vruTta/ 复制此链接，打开【抖音短视频】，直接观看视频！",
         ];

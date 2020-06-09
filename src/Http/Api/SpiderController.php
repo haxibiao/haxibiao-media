@@ -13,12 +13,16 @@ class SpiderController extends Controller
     {
         $sourceUrl = $request->get('source_url');
         $data      = $request->get('data');
+
+        $data = is_array($data) ? $data : json_decode($data, true);
+
         if (!empty($sourceUrl)) {
             $spider = Spider::where('source_url', $sourceUrl)
                 ->wating()
                 ->first();
             $status = Arr::get($data, 'status');
             $video  = Arr::get($data, 'video');
+
             if (!is_null($spider)) {
                 //重试n次仍然失败
                 if ($status == 'INVALID_STATUS') {

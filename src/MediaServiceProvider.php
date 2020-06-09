@@ -27,10 +27,15 @@ class MediaServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/vod.php'   => config_path('vod.php'),
             ], 'media-config');
 
-            // 发布 graphql文件
+            // 发布 graphql
             $this->publishes([
                 __DIR__ . '/../graphql' => base_path('graphql'),
             ], 'media-graphql');
+
+            // 发布 tests
+            $this->publishes([
+                __DIR__ . '/../tests/Feature/GraphQL' => base_path('tests/Feature/GraphQL'),
+            ], 'media-tests');
 
             // 发布 Nova
             // $this->publishes([
