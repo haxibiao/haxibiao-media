@@ -1,4 +1,5 @@
 <?php
+
 namespace haxibiao\media;
 
 use Illuminate\Support\ServiceProvider;
@@ -16,6 +17,11 @@ class MediaServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        //注册路由
+        $this->loadRoutesFrom(
+            __DIR__ . '/../router.php'
+        );
+
         //注册 events - 运行时需要
         Video::observe(Observers\VideoObserver::class);
 
@@ -44,9 +50,7 @@ class MediaServiceProvider extends ServiceProvider
 
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));
-
         }
-
     }
 
     /**
@@ -67,5 +71,4 @@ class MediaServiceProvider extends ServiceProvider
             $this->app->instance($abstract, $instance);
         }
     }
-
 }
