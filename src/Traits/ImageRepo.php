@@ -45,8 +45,11 @@ trait ImageRepo
         }
 
         //保存原始图片
-        // $imageMaker = ImageMaker::make($source);
-        $imageMaker = Image::autoCut($source); //兼容答妹，图片都自动裁剪最宽640...
+        if (env("APP_NAME") == ("datizhuanqian" || "damei")) {
+            $imageMaker = Image::autoCut($source); //兼容答妹，图片都自动裁剪最宽640...
+        } else {
+            $imageMaker = ImageMaker::make($source);
+        }
 
         if ($extension != 'gif') {
             $big_width = $imageMaker->width() > 900 ? 900 : $imageMaker->width();
