@@ -27,7 +27,9 @@ trait ImageRepo
     {
         ini_set('memory_limit', -1); //上传时允许最大内存
 
-        $source = matchBase64($source);
+        if ($base64 = matchBase64($source)) {
+            $source = $base64;
+        }
 
         $imageMaker = ImageMaker::make($source);
         $mime       = explode('/', $imageMaker->mime());
@@ -54,7 +56,7 @@ trait ImageRepo
         }
         $imageMaker->encode($extension, 100);
         \info($extension);
-        Storage::cloud()->put('images/' . $imageName . '.' . $extension, $imageMaker->__toString());
+        Storage::disk("cosv5")->put('images/' . $imageName . '.' . $extension, $imageMaker->__toString());
         \info('cos');
 
         //保存缩略图
@@ -70,10 +72,10 @@ trait ImageRepo
         }
         $thumbnail->crop(300, 240);
         $thumbnail->encode($extension, 100);
-        Storage::cloud()->put('images/' . $imageName . '.small.' . $extension, $thumbnail->__toString());
+        Storage::disk("cosv5")->put('images/' . $imageName . '.small.' . $extension, $thumbnail->__toString());
 
         //使用原图hash
-        $hash = hash_file('md5', Storage::cloud()->url('images/' . $imageName . '.' . $extension));
+        $hash = hash_file('md5', Storage::disk("cosv5")->url('images/' . $imageName . '.' . $extension));
 
         //hash值匹配直接返回当前image对象
         $image = self::firstOrNew([
