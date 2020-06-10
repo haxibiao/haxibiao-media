@@ -43,9 +43,8 @@ trait ImageRepo
         if (!is_prod_env()) {
             $imageName = $imageName . "." . env('APP_ENV');
         }
-
         //保存原始图片
-        if (env("APP_NAME") == ("datizhuanqian" || "damei")) {
+        if (in_array(env("APP_NAME"), ["datizhuanqian", "damei"])) {
             $imageMaker = Image::autoCut($source); //兼容答妹，图片都自动裁剪最宽640...
         } else {
             $imageMaker = ImageMaker::make($source);
