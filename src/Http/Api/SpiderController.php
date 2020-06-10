@@ -27,7 +27,7 @@ class SpiderController extends Controller
                 //重试n次仍然失败
                 if ($status == 'INVALID_STATUS') {
                     $spider->status = Spider::INVALID_STATUS;
-                    return $spider->delete();
+                    return $spider->save(); //不删除这个爬虫信息，保留！
                 }
 
                 //处理好的视频
