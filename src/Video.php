@@ -3,10 +3,13 @@
 namespace haxibiao\media;
 
 use App\Model;
+use App\Question;
+use App\Scopes\QuestionFormScope;
 use haxibiao\media\Traits\MakeCovers;
 use haxibiao\media\Traits\VideoAttrs;
 use haxibiao\media\Traits\VideoRepo;
 use haxibiao\media\Traits\VideoResolvers;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Video extends Model
@@ -72,5 +75,13 @@ class Video extends Model
     {
         return $this->hasOne(\App\Article::class);
     }
+
+    //兼容答妹
+    public function question(): HasOne
+    {
+        return $this->hasOne(Question::class)
+            ->withoutGlobalScope(QuestionFormScope::class);
+    }
+
 
 }

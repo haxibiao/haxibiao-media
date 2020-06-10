@@ -167,7 +167,7 @@ trait VideoRepo
 
         //暂时保存假的视频浏览记录
         if ($hasUser) {
-            Visit::saveVisits($user, $videos, 'videos', Visit::FAKE_VISITED);
+            Visit::saveVisits($user, $videos,  Visit::FAKE_VISITED);
         }
 
         return $mixVideos;
