@@ -73,8 +73,10 @@ trait SpiderRepo
 
     /**
      * 用户的爬虫的查询
+     *
+     * @oldGraphql 标识是否为老版本的GraphQL
      */
-    public static function querySpiders($user, $type)
+    public static function querySpiders($user, $type, $oldGraphql = false)
     {
         $query = Spider::with('video')->where('user_id', $user->id)
         // ->take($limit)
@@ -82,6 +84,11 @@ trait SpiderRepo
             ->latest('id');
         if (!is_null($type)) {
             $query = $query->where('spider_type', $type);
+        }
+
+        //旧版本 GraphQL 直接返回 build 将会抛出 Error:expected iterable, but did not find one for field Query.spiders.
+        if ($oldGraphql) {
+            return $query->get();
         }
         return $query;
     }
