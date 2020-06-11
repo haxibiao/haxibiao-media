@@ -3,12 +3,11 @@
 namespace haxibiao\media\Traits;
 
 use App\User;
+use App\Video;
 use App\Visit;
 use App\Question;
-use haxibiao\media\Video;
 use Illuminate\Support\Arr;
 use haxibiao\helpers\VodUtils;
-use App\Exceptions\UserException;
 use haxibiao\helpers\QcloudUtils;
 use Illuminate\Http\UploadedFile;
 use TencentCloud\Common\Credential;
