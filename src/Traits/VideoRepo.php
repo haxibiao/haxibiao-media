@@ -2,20 +2,21 @@
 
 namespace haxibiao\media\Traits;
 
-use App\Exceptions\UserException;
-use App\Question;
 use App\User;
 use App\Visit;
-use haxibiao\helpers\QcloudUtils;
-use haxibiao\helpers\VodUtils;
+use App\Question;
 use haxibiao\media\Video;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use haxibiao\helpers\VodUtils;
+use App\Exceptions\UserException;
+use haxibiao\helpers\QcloudUtils;
+use Illuminate\Http\UploadedFile;
 use TencentCloud\Common\Credential;
-use TencentCloud\Common\Profile\ClientProfile;
-use TencentCloud\Common\Profile\HttpProfile;
-use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
+use haxibiao\media\Jobs\MakeVideoCovers;
 use TencentCloud\Vod\V20180717\VodClient;
+use TencentCloud\Common\Profile\HttpProfile;
+use TencentCloud\Common\Profile\ClientProfile;
+use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 
 trait VideoRepo
 {
@@ -117,7 +118,7 @@ trait VideoRepo
         $this->save();
 
         //触发截图操作
-        // MakeVideoCovers::dispatchNow($this);
+        MakeVideoCovers::dispatchNow($this);
     }
 
     /**
@@ -162,7 +163,6 @@ trait VideoRepo
                 $adVideo->is_ad_video = true;
                 $mixVideos[]          = $adVideo;
             }
-
         }
 
         //暂时保存假的视频浏览记录
