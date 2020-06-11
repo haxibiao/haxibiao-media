@@ -58,21 +58,22 @@ class MakeVideoCovers implements ShouldQueue
         $video = $this->video;
 
         //  FIXME: 更新对应动态 这部分media不做
-        // $article = \App\Article::firstOrNew([
-        //     'video_id' => $video->id,
-        // ]);
+        //  TODO:MakeVideoCovers答赚和答妹都没用，工厂app发布动态会依赖这个job
+        $article = \App\Article::firstOrNew([
+            'video_id' => $video->id,
+        ]);
 
-        // $article->cover_path = $video->cover;
-        // $article->user_id = $video->user_id;
+        $article->cover_path = $video->cover;
+        $article->user_id = $video->user_id;
 
-        // if (!$article->type) {
-        //     $article->type = 'video';
-        // }
+        if (!$article->type) {
+            $article->type = 'video';
+        }
 
-        // $article->status = Article::STATUS_ONLINE;
-        // $article->submit = Article::SUBMITTED_SUBMIT;
+        $article->status = Article::STATUS_ONLINE;
+        $article->submit = Article::SUBMITTED_SUBMIT;
 
-        // $article->save();
+        $article->save();
 
         if (Str::contains($video->path, 'vod')) {
             //CDN预热
