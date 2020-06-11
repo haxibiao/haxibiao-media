@@ -8,7 +8,7 @@ use App\User;
 use App\Visit;
 use haxibiao\helpers\QcloudUtils;
 use haxibiao\helpers\VodUtils;
-use haxibiao\media\Video;
+use App\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use TencentCloud\Common\Credential;
