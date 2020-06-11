@@ -6,11 +6,13 @@ use App\Model;
 use App\Question;
 use App\User;
 use App\Video;
+use haxibiao\media\Traits\SpiderAttrs;
 use haxibiao\media\Traits\SpiderRepo;
 use haxibiao\media\Traits\SpiderResolvers;
 
 class Spider extends Model
 {
+    use SpiderAttrs;
     use SpiderRepo;
     use SpiderResolvers;
 
