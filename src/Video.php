@@ -3,8 +3,6 @@
 namespace haxibiao\media;
 
 use App\Model;
-use App\Question;
-use App\Scopes\QuestionFormScope;
 use haxibiao\media\Traits\MakeCovers;
 use haxibiao\media\Traits\VideoAttrs;
 use haxibiao\media\Traits\VideoRepo;
@@ -71,17 +69,10 @@ class Video extends Model
         return $this->belongsTo(\App\User::class);
     }
 
+    //FIXME: 这里兼容哈希表video对象过复杂的情况 重构好后，也应该去掉
     public function article()
     {
         return $this->hasOne(\App\Article::class);
     }
-
-    //兼容答妹
-    public function question(): HasOne
-    {
-        return $this->hasOne(Question::class)
-            ->withoutGlobalScope(QuestionFormScope::class);
-    }
-
 
 }
