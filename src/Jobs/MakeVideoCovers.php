@@ -2,19 +2,20 @@
 
 namespace haxibiao\media\Jobs;
 
+use App\Article;
 use haxibiao\media\Video;
+use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
+use TencentCloud\Common\Credential;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use TencentCloud\Common\Credential;
-use TencentCloud\Common\Profile\ClientProfile;
-use TencentCloud\Common\Profile\HttpProfile;
-use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
+use Illuminate\Queue\InteractsWithQueue;
 use TencentCloud\Vod\V20180717\VodClient;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use TencentCloud\Common\Profile\HttpProfile;
+use TencentCloud\Common\Profile\ClientProfile;
+use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 
 /**
  * @deprecated 现在已统一调用media的hook了，不需要自己截图了
