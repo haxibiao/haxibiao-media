@@ -42,9 +42,11 @@ class MediaProcess implements ShouldQueue
         if (!is_null($spider)) {
             //https有问题,会出现收不到post数据
             // $hookUrl  = 'http://hotfix.xiaodamei.com/api/media/hook';
-            $hookUrl  = config('media.hook');
-            $data     = [];
-            $client   = new Client();
+            $hookUrl = config('media.hook');
+            $data    = [];
+            $client  = new Client();
+
+            //提交或者重试爬虫
             $response = $client->request('GET', self::API, [
                 'http_errors' => false,
                 'query'       => [
@@ -58,7 +60,7 @@ class MediaProcess implements ShouldQueue
                 $data     = Arr::get($contents, 'data');
             }
 
-            //已经被处理过
+            //已经被处理过的，重试的话秒返回...
             $video = Arr::get($data, 'video');
             if (is_array($video)) {
                 $spider->saveVideo($video);
