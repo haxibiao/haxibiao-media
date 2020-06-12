@@ -2,20 +2,19 @@
 
 namespace haxibiao\media\Traits;
 
+use App\Question;
 use App\User;
 use App\Video;
 use App\Visit;
-use App\Question;
-use Illuminate\Support\Arr;
-use haxibiao\helpers\VodUtils;
 use haxibiao\helpers\QcloudUtils;
+use haxibiao\helpers\VodUtils;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use TencentCloud\Common\Credential;
-use haxibiao\media\Jobs\MakeVideoCovers;
-use TencentCloud\Vod\V20180717\VodClient;
-use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Common\Profile\ClientProfile;
+use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
+use TencentCloud\Vod\V20180717\VodClient;
 
 trait VideoRepo
 {
@@ -104,20 +103,30 @@ trait VideoRepo
         $client->PushUrlCache($req);
     }
 
+    /**
+     * 从vod拿到视频的截图
+     */
     public function processVod()
     {
+        //呼叫vod截图任务流
+        $videoInfo = QcloudUtils::processVodFile($this->qcvod_fileid);
 
+        //获取截图结果
+        sleep(5);
         $videoInfo      = QcloudUtils::getVideoInfo($this->qcvod_fileid);
         $duration       = Arr::get($videoInfo, 'basicInfo.duration');
-        $sourceVideoUrl = Arr::get($videoInfo, 'basicInfo.sourceVideoUrl');
-        $this->path     = $sourceVideoUrl;
         $this->duration = $duration;
-        $this->disk     = 'vod';
-        $this->hash     = hash_file('md5', $sourceVideoUrl);
-        $this->save();
-
+        $coverUrl       = Arr::get($videoInfo, 'basicInfo.coverUrl');
+        if (is_null($coverUrl)) {
+            sleep(15);
+            $videoInfo = QcloudUtils::getVideoInfo($this->qcvod_fileid);
+            $coverUrl  = Arr::get($videoInfo, 'basicInfo.coverUrl');
+            //再给一次15s的机会，不行就cover null
+            $this->cover = $coverUrl;
+            $this->save();
+        }
         //触发截图操作
-        MakeVideoCovers::dispatchNow($this);
+        // MakeVideoCovers::dispatchNow($this);
     }
 
     /**
@@ -166,7 +175,7 @@ trait VideoRepo
 
         //暂时保存假的视频浏览记录
         if ($hasUser) {
-            Visit::saveVisits($user, $videos,  Visit::FAKE_VISITED);
+            Visit::saveVisits($user, $videos, Visit::FAKE_VISITED);
         }
 
         return $mixVideos;
