@@ -50,7 +50,7 @@ class MediaProcess implements ShouldQueue
             $response = $client->request('GET', self::API, [
                 'http_errors' => false,
                 'query'       => [
-                    'source_url' => trim($spider->source_url),
+                    'source_url' => urlencode(trim($spider->source_url)),
                     'hook_url'   => $hookUrl,
                 ],
             ]);
