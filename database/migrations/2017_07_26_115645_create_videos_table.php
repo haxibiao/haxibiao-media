@@ -49,7 +49,7 @@ class CreateVideosTable extends Migration
             // $table->unsignedInteger('height')->nullable()->comment('高');
 
             //FIXME: 答妹里少的..
-            $table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
+            //$table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
 
         });
     }
