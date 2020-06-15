@@ -17,7 +17,10 @@ trait SpiderRepo
         //提取URL
         $dyUrl = Spider::extractURL($shareLink);
 
-        $isDyUrl = Arr::get(parse_url($dyUrl), 'host') == Spider::DOUYIN_VIDEO_DOMAIN;
+        $isDyUrl = in_array(
+            Arr::get(parse_url($dyUrl), 'host'),
+            Spider::DOUYIN_VIDEO_DOMAINS
+        );
         throw_if(!$isDyUrl, UserException::class, '解析失败,请提供有效的抖音URL!');
         throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
 
@@ -28,8 +31,14 @@ trait SpiderRepo
         //写入DB
         $spider        = Spider::firstOrNew(['source_url' => $dyUrl]);
         $spiderExisted = isset($spider->id);
+        $isSelf        = $spider->user_id == $user->id;
+        if ($spiderExisted && !$isSelf) {
+            throw_if(!is_testing_env(), UserException::class, '该视频链接已被他人分享过了哦!');
+        }
+
         if ($spiderExisted) {
-            $spider->count++;
+            $spider->count++; //粘贴次数
+            $spider->status = Spider::WATING_STATUS; //重试进入队列
         } else {
             $spider->user_id     = $user->id;
             $spider->spider_type = 'videos';
@@ -39,18 +48,12 @@ trait SpiderRepo
         }
         $spider->save();
 
-        if ($spiderExisted) {
-            if (!is_testing_env()) {
-                throw_if($spider->user_id == $user->id, UserException::class, '正在重新采集中,请稍后再看!');
-                throw new UserException('该视频链接已被他人分享过了哦!');
-            }
-        }
-
         //放入队列，交给media服务
         dispatch(new MediaProcess($spider->id));
 
-        //旧版本自己下载上传cos
-        // dispatch(new SpiderProcess($spider->id))->onQueue('spiders');
+        if ($spiderExisted && $isSelf) {
+            throw_if(!is_testing_env(), UserException::class, '正在重新采集中,请稍后再看!');
+        }
 
         return $spider;
     }

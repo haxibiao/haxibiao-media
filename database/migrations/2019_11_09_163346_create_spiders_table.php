@@ -27,7 +27,7 @@ class CreateSpidersTable extends Migration
             $table->tinyInteger('status')->default(Spider::WATING_STATUS);
             $table->string('spider_type')->nullable();
             $table->unsignedBigInteger('spider_id')->index()->nullable();
-            $table->unsignedInteger('count')->default(1);
+            $table->unsignedInteger('count')->default(1)->comment('爬虫粘贴次数');
             $table->timestamps();
         });
     }
