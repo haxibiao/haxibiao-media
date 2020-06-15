@@ -2,19 +2,20 @@
 
 namespace haxibiao\media\Traits;
 
-use App\Question;
 use App\User;
 use App\Video;
 use App\Visit;
-use haxibiao\helpers\QcloudUtils;
-use haxibiao\helpers\VodUtils;
-use Illuminate\Http\UploadedFile;
+use App\Question;
 use Illuminate\Support\Arr;
+use haxibiao\helpers\VodUtils;
+use App\Exceptions\UserException;
+use haxibiao\helpers\QcloudUtils;
+use Illuminate\Http\UploadedFile;
 use TencentCloud\Common\Credential;
-use TencentCloud\Common\Profile\ClientProfile;
-use TencentCloud\Common\Profile\HttpProfile;
-use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 use TencentCloud\Vod\V20180717\VodClient;
+use TencentCloud\Common\Profile\HttpProfile;
+use TencentCloud\Common\Profile\ClientProfile;
+use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 
 trait VideoRepo
 {
