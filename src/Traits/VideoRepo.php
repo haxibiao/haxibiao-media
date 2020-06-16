@@ -6,12 +6,17 @@ use App\User;
 use App\Video;
 use App\Visit;
 use App\Question;
+use Vod\VodUploadClient;
 use Illuminate\Support\Arr;
 use haxibiao\helpers\VodUtils;
+use Vod\Model\VodUploadRequest;
 use App\Exceptions\UserException;
 use haxibiao\helpers\QcloudUtils;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use TencentCloud\Common\Credential;
+use Illuminate\Support\Facades\Storage;
+use haxibiao\media\Jobs\MakeVideoCovers;
 use TencentCloud\Vod\V20180717\VodClient;
 use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Common\Profile\ClientProfile;
@@ -280,5 +285,64 @@ trait VideoRepo
         $video->save();
 
         return $video;
+    }
+
+    /**
+     * nova上传视频
+     */
+    public static function uploadNovaVod($file)
+    {
+        $hash  = md5_file($file->getRealPath());
+        $video = \App\Video::firstOrNew([
+            'hash' => $hash,
+        ]);
+        // 秒传
+        if (isset($video->id) && isset($video->qcvod_fileid)) {
+            return $video->id;
+        }
+
+        $video->save();
+        $cosPath     = 'video/' . $video->id . '.mp4';
+        $video->path  = $cosPath;
+        $video->user_id  = getUserId();
+        $video->hash  = md5_file($file->path());
+        $video->title = $file->getClientOriginalName();
+
+        $video->disk = 'local'; //先标记为成功保存到本地
+        $video->save();
+
+        //  本地存一份用于上传
+        $file->storeAs(
+            'video',
+            $video->id . '.mp4'
+        );
+        //vod上传配置
+        $client = new VodUploadClient(
+            config("vod." . env('APP_NAME') . ".secret_id"),
+            config("vod." . env('APP_NAME') . ".secret_key")
+        );
+        $client->setLogPath(storage_path('/logs/vod_upload.log'));
+
+        try {
+            $req = new VodUploadRequest();
+            $req->MediaFilePath = storage_path('app/public/' . $video->path);
+            $req->ClassId       = config("vod." . env('APP_NAME') . ".class_id");
+            $rsp                = $client->upload("ap-guangzhou", $req);
+
+            //获取截图
+            //上传成功
+            echo "MediaUrl -> " . $rsp->MediaUrl . "\n";
+            $video->disk         = 'vod';
+            $video->qcvod_fileid = $rsp->FileId;
+            $video->path         = $rsp->MediaUrl;
+            $video->save(['timestamps' => false]);
+
+            $video->processVod();
+            return $video->id;
+        } catch (\Exception $e) {
+            // 处理上传异常
+            Log::error($e);
+            return;
+        }
     }
 }
