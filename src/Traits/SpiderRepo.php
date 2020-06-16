@@ -47,7 +47,7 @@ trait SpiderRepo
             $spider->data        = $data;
         }
         $spider->save();
-
+        \info("aaa");
         //放入队列，交给media服务
         dispatch(new MediaProcess($spider->id));
 
@@ -82,8 +82,8 @@ trait SpiderRepo
     public static function querySpiders($user, $type, $oldGraphql = false)
     {
         $query = Spider::with('video')->where('user_id', $user->id)
-        // ->take($limit)
-        // ->skip($offset)
+            // ->take($limit)
+            // ->skip($offset)
             ->latest('id');
         if (!is_null($type)) {
             $query = $query->where('spider_type', $type);
@@ -121,7 +121,9 @@ trait SpiderRepo
             $video->user_id = $this->user_id;
             //更改VOD地址
             $video->disk   = 'vod';
-            $video->fileid = Arr::get($json, 'vod.FileId');
+            if (in_array(env("APP_NAME"), ["datizhuanqian", "damei"])) {
+                $video->fileid = Arr::get($json, 'vod.FileId');
+            }
             $video->path   = $mediaUrl;
             //保存视频截图 && 同步填充信息
             $video->status = empty($coverUrl) ? Video::CDN_VIDEO_STATUS : Video::COVER_VIDEO_STATUS;
