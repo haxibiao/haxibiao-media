@@ -47,7 +47,7 @@ trait SpiderRepo
             $spider->data        = $data;
         }
         $spider->save();
-        \info("aaa");
+
         //放入队列，交给media服务
         dispatch(new MediaProcess($spider->id));
 
@@ -137,6 +137,7 @@ trait SpiderRepo
 
         //FIXME: 更新爬虫和视频关系（crawlable?）
         $reward            = Spider::SPIDER_GOLD_REWARD;
+
         $this->spider_type = 'videos';
         $this->spider_id   = $video->id;
         $this->status      = Spider::PROCESSED_STATUS;
