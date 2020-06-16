@@ -2,19 +2,20 @@
 
 namespace haxibiao\media\Traits;
 
-use App\Question;
 use App\User;
 use App\Video;
 use App\Visit;
-use haxibiao\helpers\QcloudUtils;
-use haxibiao\helpers\VodUtils;
-use Illuminate\Http\UploadedFile;
+use App\Question;
 use Illuminate\Support\Arr;
+use haxibiao\helpers\VodUtils;
+use App\Exceptions\UserException;
+use haxibiao\helpers\QcloudUtils;
+use Illuminate\Http\UploadedFile;
 use TencentCloud\Common\Credential;
-use TencentCloud\Common\Profile\ClientProfile;
-use TencentCloud\Common\Profile\HttpProfile;
-use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 use TencentCloud\Vod\V20180717\VodClient;
+use TencentCloud\Common\Profile\HttpProfile;
+use TencentCloud\Common\Profile\ClientProfile;
+use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 
 trait VideoRepo
 {
@@ -130,7 +131,7 @@ trait VideoRepo
     }
 
     /**
-     * @deprecated 答题废弃的视频刷接口，新版本gql需要用新的FastRecommand
+     * @deprecated 答题废弃的视频刷接口，新版本gql需要用新的FastRecommend
      */
     public static function getVideos($user, $type, $limit = 10, $offset = 0)
     {
@@ -187,6 +188,7 @@ trait VideoRepo
     public static function saveVideoFile(UploadedFile $videoFile, array $inputs, $user)
     {
         throw new UserException("请升级版本用vod上传视频");
+    
 
         // $publicStorage = Storage::disk('public');
 
