@@ -204,7 +204,7 @@ trait VideoRepo
     public static function saveVideoFile(UploadedFile $videoFile, array $inputs, $user)
     {
         throw new UserException("请升级版本用vod上传视频");
-    
+
 
         // $publicStorage = Storage::disk('public');
 
@@ -289,6 +289,8 @@ trait VideoRepo
 
     /**
      * nova上传视频
+     * 需要引入依赖：    
+     * "qcloud/vod-sdk-v5": "^2.4"
      */
     public static function uploadNovaVod($file)
     {
