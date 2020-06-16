@@ -8,13 +8,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 
 //交给media服务处理视频
 class MediaProcess implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable;
 
     protected $spider;
 
@@ -50,7 +49,7 @@ class MediaProcess implements ShouldQueue
             $response = $client->request('GET', self::API, [
                 'http_errors' => false,
                 'query'       => [
-                    'source_url' => trim($spider->source_url),
+                    'source_url' => urlencode(trim($spider->source_url)),
                     'hook_url'   => $hookUrl,
                 ],
             ]);

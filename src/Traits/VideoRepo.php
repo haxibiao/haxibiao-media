@@ -116,16 +116,27 @@ trait VideoRepo
         sleep(5);
         $videoInfo      = QcloudUtils::getVideoInfo($this->qcvod_fileid);
         $duration       = Arr::get($videoInfo, 'basicInfo.duration');
-        $this->duration = $duration;
         $coverUrl       = Arr::get($videoInfo, 'basicInfo.coverUrl');
+        $width       = Arr::get($videoInfo, 'basicInfo.width');
+        $height       = Arr::get($videoInfo, 'basicInfo.height');
+        $sourceVideoUrl       = Arr::get($videoInfo, 'basicInfo.sourceVideoUrl');
         if (is_null($coverUrl)) {
             sleep(15);
             $videoInfo = QcloudUtils::getVideoInfo($this->qcvod_fileid);
             $coverUrl  = Arr::get($videoInfo, 'basicInfo.coverUrl');
             //再给一次15s的机会，不行就cover null
-            $this->cover = $coverUrl;
-            $this->save();
         }
+        $this->duration = $duration;
+        $this->cover = $coverUrl;
+        $this->path = $sourceVideoUrl;
+        //TODO::这里重复给值，可能需要重构
+        $this->setJsonData('cover', $coverUrl);
+        $this->setJsonData('duration', $duration ?? 0);
+        $this->setJsonData('width', $width);
+        $this->setJsonData('height', $height);
+        $this->disk = "vod";
+        $this->status = Video::TRANSCODE_STATUS;
+        $this->save();
         //触发截图操作
         // MakeVideoCovers::dispatchNow($this);
     }
