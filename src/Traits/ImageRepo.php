@@ -57,9 +57,8 @@ trait ImageRepo
             });
         }
         $imageMaker->encode($extension, 100);
-        \info($extension);
+
         Storage::cloud()->put('images/' . $imageName . '.' . $extension, $imageMaker->__toString());
-        \info('cos');
 
         //保存缩略图
         $thumbnail = ImageMaker::make($source);
