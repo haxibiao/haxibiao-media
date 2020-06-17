@@ -14,8 +14,14 @@ trait VideoAttrs
 
     public function getCoverUrlAttribute()
     {
+        //前端需要null,不要空字符串
+        if (empty($this->cover)) {
+            return null;
+        }
         $cover = $this->cover;
-        if (Str::contains($cover, 'hashvod') && Str::contains($cover, 'http')) {
+
+        //标准的vod cover url...
+        if (Str::contains($cover, 'vod.') && Str::contains($cover, 'http')) {
             return $cover;
         }
 
