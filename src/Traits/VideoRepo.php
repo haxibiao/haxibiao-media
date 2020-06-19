@@ -307,7 +307,7 @@ trait VideoRepo
         $cosPath     = 'video/' . $video->id . '.mp4';
         $video->path  = $cosPath;
         $video->user_id  = getUserId();
-        $video->hash  = md5_file($file->path());
+        $video->hash  = $hash;
         $video->title = $file->getClientOriginalName();
 
         $video->disk = 'local'; //先标记为成功保存到本地
@@ -331,7 +331,7 @@ trait VideoRepo
             $req->ClassId       = config("vod." . env('APP_NAME') . ".class_id");
             $rsp                = $client->upload("ap-guangzhou", $req);
 
-            //获取截图
+            $localPath = $video->path;
             //上传成功
             echo "MediaUrl -> " . $rsp->MediaUrl . "\n";
             $video->disk         = 'vod';
@@ -339,7 +339,11 @@ trait VideoRepo
             $video->path         = $rsp->MediaUrl;
             $video->save(['timestamps' => false]);
 
+            //获取截图
             $video->processVod();
+
+            // 删除本地视频
+            Storage::delete($localPath);
             return $video->id;
         } catch (\Exception $e) {
             // 处理上传异常
