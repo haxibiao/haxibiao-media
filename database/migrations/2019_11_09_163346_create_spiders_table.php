@@ -1,6 +1,6 @@
 <?php
 
-use App\Spider;
+use haxibiao\media\Spider;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
