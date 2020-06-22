@@ -295,15 +295,16 @@ trait VideoRepo
     public static function uploadNovaVod($file)
     {
         $hash  = md5_file($file->getRealPath());
-        $video = \App\Video::firstOrNew([
+        $video = Video::firstOrNew([
             'hash' => $hash,
         ]);
+
         // 秒传
         if (isset($video->id) && isset($video->qcvod_fileid)) {
             return $video->id;
         }
-
         $video->save();
+
         $cosPath     = 'video/' . $video->id . '.mp4';
         $video->path  = $cosPath;
         $video->user_id  = getUserId();
@@ -312,24 +313,30 @@ trait VideoRepo
 
         $video->disk = 'local'; //先标记为成功保存到本地
         $video->save();
-
         //  本地存一份用于上传
         $file->storeAs(
             'video',
             $video->id . '.mp4'
         );
+
         //vod上传配置
-        $client = new VodUploadClient(
+        $client = new \Vod\VodUploadClient(
             config("vod." . env('APP_NAME') . ".secret_id"),
             config("vod." . env('APP_NAME') . ".secret_key")
         );
-        $client->setLogPath(storage_path('/logs/vod_upload.log'));
 
+        $client->setLogPath(storage_path('/logs/vod_upload.log'));
         try {
             $req = new VodUploadRequest();
+
             $req->MediaFilePath = storage_path('app/public/' . $video->path);
-            $req->ClassId       = config("vod." . env('APP_NAME') . ".class_id");
-            $rsp                = $client->upload("ap-guangzhou", $req);
+
+            //FIXME: 如果当前项目为 安保联盟App，那么它的腾讯云是不需要传递 class_id 的，不过这样的判断是很奇怪的，后面或许应该为它神奇一个 class_id
+            if(!env('APP_NAME') == 'ablm') {
+                $req->ClassId       = config("vod." . env('APP_NAME') . ".class_id");
+            }
+
+            $rsp = $client->upload("ap-guangzhou", $req);
 
             $localPath = $video->path;
             //上传成功
