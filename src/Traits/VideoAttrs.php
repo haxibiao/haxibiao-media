@@ -32,7 +32,7 @@ trait VideoAttrs
 
     public function getInfoAttribute()
     {
-        $json = json_decode($this->json, true);
+        $json = json_encode($this->json, true);
 
         // 相对路径 转 绝对路径
         $data = [
