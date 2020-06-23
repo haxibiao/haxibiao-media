@@ -291,6 +291,8 @@ trait VideoRepo
      * nova上传视频
      * 需要引入依赖：    
      * "qcloud/vod-sdk-v5": "^2.4"
+     * "qcloud/cos-sdk-v5": "*",
+     * 删除"tencentcloud/tencentcloud-sdk-php": "3.0.94",
      */
     public static function uploadNovaVod($file)
     {
