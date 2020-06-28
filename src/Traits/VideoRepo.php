@@ -2,28 +2,37 @@
 
 namespace haxibiao\media\Traits;
 
+use App\Exceptions\UserException;
+use App\Question;
 use App\User;
 use App\Video;
 use App\Visit;
-use App\Question;
-use Vod\VodUploadClient;
-use Illuminate\Support\Arr;
-use haxibiao\helpers\VodUtils;
-use Vod\Model\VodUploadRequest;
-use App\Exceptions\UserException;
 use haxibiao\helpers\QcloudUtils;
+use haxibiao\helpers\VodUtils;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-use TencentCloud\Common\Credential;
 use Illuminate\Support\Facades\Storage;
-use haxibiao\media\Jobs\MakeVideoCovers;
-use TencentCloud\Vod\V20180717\VodClient;
-use TencentCloud\Common\Profile\HttpProfile;
+use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
+use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
+use TencentCloud\Vod\V20180717\VodClient;
+use Vod\Model\VodUploadRequest;
+use Vod\VodUploadClient;
 
 trait VideoRepo
 {
+
+    public function setJsonData($key, $value)
+    {
+        $data       = (array) $this->json;
+        $data[$key] = $value;
+        $this->json = $data;
+
+        return $this;
+    }
+
     public function fillForJs()
     {
         $video        = $this;
@@ -122,9 +131,9 @@ trait VideoRepo
         $videoInfo      = QcloudUtils::getVideoInfo($this->qcvod_fileid);
         $duration       = Arr::get($videoInfo, 'basicInfo.duration');
         $coverUrl       = Arr::get($videoInfo, 'basicInfo.coverUrl');
-        $width       = Arr::get($videoInfo, 'basicInfo.width');
-        $height       = Arr::get($videoInfo, 'basicInfo.height');
-        $sourceVideoUrl       = Arr::get($videoInfo, 'basicInfo.sourceVideoUrl');
+        $width          = Arr::get($videoInfo, 'basicInfo.width');
+        $height         = Arr::get($videoInfo, 'basicInfo.height');
+        $sourceVideoUrl = Arr::get($videoInfo, 'basicInfo.sourceVideoUrl');
         if (is_null($coverUrl)) {
             sleep(15);
             $videoInfo = QcloudUtils::getVideoInfo($this->qcvod_fileid);
@@ -132,14 +141,14 @@ trait VideoRepo
             //再给一次15s的机会，不行就cover null
         }
         $this->duration = $duration;
-        $this->cover = $coverUrl;
-        $this->path = $sourceVideoUrl;
+        $this->cover    = $coverUrl;
+        $this->path     = $sourceVideoUrl;
         //TODO::这里重复给值，可能需要重构
         $this->setJsonData('cover', $coverUrl);
         $this->setJsonData('duration', $duration ?? 0);
         $this->setJsonData('width', $width);
         $this->setJsonData('height', $height);
-        $this->disk = "vod";
+        $this->disk   = "vod";
         $this->status = Video::TRANSCODE_STATUS;
         $this->save();
         //触发截图操作
@@ -204,7 +213,6 @@ trait VideoRepo
     public static function saveVideoFile(UploadedFile $videoFile, array $inputs, $user)
     {
         throw new UserException("请升级版本用vod上传视频");
-
 
         // $publicStorage = Storage::disk('public');
 
@@ -289,7 +297,7 @@ trait VideoRepo
 
     /**
      * nova上传视频
-     * 需要引入依赖：    
+     * 需要引入依赖：
      * "qcloud/vod-sdk-v5": "^2.4"
      * "qcloud/cos-sdk-v5": "*",
      * 删除"tencentcloud/tencentcloud-sdk-php": "3.0.94",
@@ -307,11 +315,11 @@ trait VideoRepo
         }
         $video->save();
 
-        $cosPath     = 'video/' . $video->id . '.mp4';
-        $video->path  = $cosPath;
-        $video->user_id  = getUserId();
-        $video->hash  = $hash;
-        $video->title = $file->getClientOriginalName();
+        $cosPath        = 'video/' . $video->id . '.mp4';
+        $video->path    = $cosPath;
+        $video->user_id = getUserId();
+        $video->hash    = $hash;
+        $video->title   = $file->getClientOriginalName();
 
         $video->disk = 'local'; //先标记为成功保存到本地
         $video->save();
@@ -334,8 +342,8 @@ trait VideoRepo
             $req->MediaFilePath = storage_path('app/public/' . $video->path);
 
             //FIXME: 如果当前项目为 安保联盟App，那么它的腾讯云是不需要传递 class_id 的，不过这样的判断是很奇怪的，后面或许应该为它神奇一个 class_id
-            if(!env('APP_NAME') == 'ablm') {
-                $req->ClassId       = config("vod." . env('APP_NAME') . ".class_id");
+            if (!env('APP_NAME') == 'ablm') {
+                $req->ClassId = config("vod." . env('APP_NAME') . ".class_id");
             }
 
             $rsp = $client->upload("ap-guangzhou", $req);
