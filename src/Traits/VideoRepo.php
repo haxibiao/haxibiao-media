@@ -24,15 +24,6 @@ use Vod\VodUploadClient;
 trait VideoRepo
 {
 
-    public function setJsonData($key, $value)
-    {
-        $data       = (array) $this->json;
-        $data[$key] = $value;
-        $this->json = $data;
-
-        return $this;
-    }
-
     public function fillForJs()
     {
         $video        = $this;
