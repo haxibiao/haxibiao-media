@@ -333,10 +333,7 @@ trait VideoRepo
 
             $req->MediaFilePath = storage_path('app/public/' . $video->path);
 
-            //FIXME: 如果当前项目为 安保联盟App，那么它的腾讯云是不需要传递 class_id 的，不过这样的判断是很奇怪的，后面或许应该为它神奇一个 class_id
-            if(!env('APP_NAME') == 'ablm') {
-                $req->ClassId       = config("vod." . env('APP_NAME') . ".class_id");
-            }
+            $req->ClassId       = config("vod." . env('APP_NAME') . ".class_id");
 
             $rsp = $client->upload("ap-guangzhou", $req);
 
