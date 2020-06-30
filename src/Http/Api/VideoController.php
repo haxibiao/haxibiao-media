@@ -27,8 +27,7 @@ class VideoController extends Controller
             $video->save();
 
             //调用vod处理视频封面的任务
-            $result =  VodUtils::makeCover($request->fileId);
-            info($result);
+            VodUtils::makeCover($request->fileId);
             return $video;
         }
 
