@@ -17,7 +17,7 @@ class VodController extends Controller
     public $secret_id;
     public $secret_key;
 
-    const VALID_TIME = 60 * 1000 * 10; //签名有效时间(10*60S=10分钟)
+    const VALID_TIME = 7775999; //FIXME:安保联盟的问题，直接让这串上传签证给我来个 3个月 有效的！前端先写死
 
     private $vodKeys = [];
 
