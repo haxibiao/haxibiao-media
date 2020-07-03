@@ -3,7 +3,7 @@
 namespace Haxibiao\Media\Http\Api;
 
 use App\User;
-use haxibiao\helpers\VodUtils;
+use Haxibiao\Helpers\VodUtils;
 use Haxibiao\Media\Http\Controllers\Controller;
 use Haxibiao\Media\Video;
 use Illuminate\Http\Request;

@@ -3,7 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 //过期的一些VOD 函数
-use haxibiao\helpers\QcloudUtils;
+use Haxibiao\Helpers\QcloudUtils;
 
 /**
  * 从工厂APP里过来的trait 处理vod相关
@@ -166,5 +166,4 @@ trait VideoRepoVod
             sleep(10);
         }
     }
-
 }
