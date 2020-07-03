@@ -1,8 +1,8 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
-use haxibiao\media\Spider;
+use Haxibiao\Media\Spider;
 use Illuminate\Support\Arr;
 
 trait SpiderAttrs

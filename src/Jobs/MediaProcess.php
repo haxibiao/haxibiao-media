@@ -1,9 +1,9 @@
 <?php
 
-namespace haxibiao\media\Jobs;
+namespace Haxibiao\Media\Jobs;
 
 use GuzzleHttp\Client;
-use haxibiao\media\Spider;
+use Haxibiao\Media\Spider;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

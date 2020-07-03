@@ -1,10 +1,10 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
 use haxibiao\helpers\QcloudUtils;
-use haxibiao\media\Image;
+use Haxibiao\Media\Image;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image as ImageMaker;
 use Throwable;

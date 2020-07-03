@@ -1,9 +1,9 @@
 <?php
 
-namespace haxibiao\media\Http\Api;
+namespace Haxibiao\Media\Http\Api;
 
-use haxibiao\media\Http\Controllers\Controller;
-use haxibiao\media\Spider;
+use Haxibiao\Media\Http\Controllers\Controller;
+use Haxibiao\Media\Spider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 

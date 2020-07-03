@@ -1,12 +1,12 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
 use GuzzleHttp\Client;
-use haxibiao\media\Jobs\MediaProcess;
-use haxibiao\media\Spider;
-use haxibiao\media\Video;
+use Haxibiao\Media\Jobs\MediaProcess;
+use Haxibiao\Media\Spider;
+use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
 
 trait SpiderRepo
@@ -82,8 +82,8 @@ trait SpiderRepo
     public static function querySpiders($user, $type, $oldGraphql = false)
     {
         $query = Spider::with('video')->where('user_id', $user->id)
-            // ->take($limit)
-            // ->skip($offset)
+        // ->take($limit)
+        // ->skip($offset)
             ->latest('id');
         if (!is_null($type)) {
             $query = $query->where('spider_type', $type);
@@ -120,11 +120,11 @@ trait SpiderRepo
         if (!isset($video->id)) {
             $video->user_id = $this->user_id;
             //更改VOD地址
-            $video->disk   = 'vod';
+            $video->disk = 'vod';
             if (in_array(env("APP_NAME"), ["datizhuanqian", "damei"])) {
                 $video->fileid = Arr::get($json, 'vod.FileId');
             }
-            $video->path   = $mediaUrl;
+            $video->path = $mediaUrl;
             //保存视频截图 && 同步填充信息
             $video->status = empty($coverUrl) ? Video::CDN_VIDEO_STATUS : Video::COVER_VIDEO_STATUS;
             $video->setJsonData('cover', $coverUrl);
@@ -136,7 +136,7 @@ trait SpiderRepo
         }
 
         //FIXME: 更新爬虫和视频关系（crawlable?）
-        $reward            = Spider::SPIDER_GOLD_REWARD;
+        $reward = Spider::SPIDER_GOLD_REWARD;
 
         $this->spider_type = 'videos';
         $this->spider_id   = $video->id;

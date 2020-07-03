@@ -1,6 +1,6 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

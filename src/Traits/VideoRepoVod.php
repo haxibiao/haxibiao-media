@@ -1,6 +1,6 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
 //过期的一些VOD 函数
 use haxibiao\helpers\QcloudUtils;

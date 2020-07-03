@@ -1,11 +1,11 @@
 <?php
 
-namespace haxibiao\media;
+namespace Haxibiao\Media;
 
-use haxibiao\media\Traits\MakeCovers;
-use haxibiao\media\Traits\VideoAttrs;
-use haxibiao\media\Traits\VideoRepo;
-use haxibiao\media\Traits\VideoResolvers;
+use Haxibiao\Media\Traits\MakeCovers;
+use Haxibiao\Media\Traits\VideoAttrs;
+use Haxibiao\Media\Traits\VideoRepo;
+use Haxibiao\Media\Traits\VideoResolvers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;

@@ -1,11 +1,11 @@
 <?php
 
-namespace haxibiao\media;
+namespace Haxibiao\Media;
 
 use App\Model;
-use haxibiao\media\Traits\ImageAttrs;
-use haxibiao\media\Traits\ImageRepo;
-use haxibiao\media\Traits\ImageResolvers;
+use Haxibiao\Media\Traits\ImageAttrs;
+use Haxibiao\Media\Traits\ImageRepo;
+use Haxibiao\Media\Traits\ImageResolvers;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Image extends Model

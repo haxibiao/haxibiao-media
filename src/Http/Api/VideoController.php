@@ -1,13 +1,13 @@
 <?php
 
-namespace haxibiao\media\Http\Api;
+namespace Haxibiao\Media\Http\Api;
 
 use App\User;
-use haxibiao\media\Video;
-use Illuminate\Http\Request;
 use haxibiao\helpers\VodUtils;
+use Haxibiao\Media\Http\Controllers\Controller;
+use Haxibiao\Media\Video;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use haxibiao\media\Http\Controllers\Controller;
 
 class VideoController extends Controller
 {
@@ -21,11 +21,11 @@ class VideoController extends Controller
             $video = Video::firstOrNew([
                 'fileid' => $request->fileId,
             ]);
-            
-            $video->user_id  = getUser()->id;
-            $video->path     = $request->videoUrl;
+
+            $video->user_id = getUser()->id;
+            $video->path    = $request->videoUrl;
             //$video->filename = $request->videoName;
-            $video->disk     = 'vod';
+            $video->disk = 'vod';
             $video->save();
 
             //处理视频封面
