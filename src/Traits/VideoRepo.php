@@ -332,7 +332,7 @@ trait VideoRepo
 
             $req->MediaFilePath = storage_path('app/public/' . $video->path);
 
-            $req->ClassId       = config("vod." . env('APP_NAME') . ".class_id");
+            $req->ClassId = config("vod." . env('APP_NAME') . ".class_id");
 
             $rsp = $client->upload("ap-guangzhou", $req);
 

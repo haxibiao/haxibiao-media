@@ -29,6 +29,14 @@ trait ImageAttrs
         return Storage::cloud()->url($this->path);
     }
 
+    //兼容Web端
+
+    public function getPathAttribute()
+    {
+        //默认没问题的图片都应该在cos
+        return Storage::cloud()->url($this->attributes['path']);
+    }
+
     public function getIsCosAttribute()
     {
         return $this->disk == "cos" || starts_with($this->path, 'http');

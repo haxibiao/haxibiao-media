@@ -277,7 +277,6 @@ class UploadVideo implements ShouldQueue
                 $this->publicDisk->deleteDirectory($directory);
             }
         }
-
     }
 
     /**
