@@ -1,10 +1,10 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
-use haxibiao\media\Image;
-use haxibiao\media\Spider;
-use haxibiao\media\Video;
+use Haxibiao\Media\Image;
+use Haxibiao\Media\Spider;
+use Haxibiao\Media\Video;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait WithMedia

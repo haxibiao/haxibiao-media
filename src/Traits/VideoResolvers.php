@@ -1,11 +1,11 @@
 <?php
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
 use App\Gold;
 use App\Visit;
 use GraphQL\Type\Definition\ResolveInfo;
-use haxibiao\media\Video;
+use Haxibiao\Media\Video;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 trait VideoResolvers

@@ -1,6 +1,6 @@
 <?php
 
-namespace haxibiao\media\Console;
+namespace Haxibiao\Media\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -30,7 +30,7 @@ class InstallCommand extends Command
     public function handle()
     {
         $this->info('发布 media');
-        $this->call('vendor:publish', ['--provider' => 'haxibiao\media\MediaServiceProvider', '--force']);
+        $this->call('vendor:publish', ['--provider' => 'Haxibiao\Media\MediaServiceProvider', '--force']);
 
         $this->comment("复制 stubs ...");
         copy(__DIR__ . '/../../routes/api/media.php', base_path('routes/api/media.php'));

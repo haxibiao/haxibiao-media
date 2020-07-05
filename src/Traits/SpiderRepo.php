@@ -1,12 +1,12 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
 use GuzzleHttp\Client;
-use haxibiao\media\Jobs\MediaProcess;
-use haxibiao\media\Spider;
-use haxibiao\media\Video;
+use Haxibiao\Media\Jobs\MediaProcess;
+use Haxibiao\Media\Spider;
+use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
 
 trait SpiderRepo

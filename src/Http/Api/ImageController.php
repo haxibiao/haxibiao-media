@@ -1,9 +1,9 @@
 <?php
 
-namespace haxibiao\media\Http\Api;
+namespace Haxibiao\Media\Http\Api;
 
-use haxibiao\media\Http\Controllers\Controller;
-use haxibiao\media\Image;
+use Haxibiao\Media\Http\Controllers\Controller;
+use Haxibiao\Media\Image;
 use Illuminate\Http\Request;
 
 class ImageController extends Controller

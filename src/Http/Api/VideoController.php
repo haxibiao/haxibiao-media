@@ -1,13 +1,13 @@
 <?php
 
-namespace haxibiao\media\Http\Api;
+namespace Haxibiao\Media\Http\Api;
 
 use App\User;
-use haxibiao\media\Video;
+use Haxibiao\Media\Video;
 use Illuminate\Http\Request;
-use haxibiao\helpers\VodUtils;
+use Haxibiao\Helpers\VodUtils;
 use Illuminate\Support\Facades\Log;
-use haxibiao\media\Http\Controllers\Controller;
+use Haxibiao\Media\Http\Controllers\Controller;
 
 class VideoController extends Controller
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace haxibiao\media\Jobs;
+namespace Haxibiao\Media\Jobs;
 
 use App\Article;
 use App\Exceptions\GQLException;
@@ -8,8 +8,8 @@ use App\Gold;
 use App\Notifications\ReceiveAward;
 use App\Tag;
 use Exception;
-use haxibiao\content\Category;
-use haxibiao\media\Video;
+use Haxibiao\Content\Category;
+use Haxibiao\Media\Video;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

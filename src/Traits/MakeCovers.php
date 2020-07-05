@@ -1,9 +1,9 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
-use haxibiao\helpers\FFMpegUtils;
-use haxibiao\media\Video;
+use Haxibiao\Helpers\FFMpegUtils;
+use Haxibiao\Media\Video;
 use Illuminate\Support\Facades\Storage;
 
 trait MakeCovers
