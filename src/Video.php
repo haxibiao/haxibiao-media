@@ -32,7 +32,7 @@ class Video extends Model
         'cover',
         'hash',
         'disk',
-        'fileid', //FIXME: 答题记得qcvod_fileid 改名
+        'qcvod_fileid', //FIXME: 答题记得qcvod_fileid 改名
 
         //答题补充的
         'filename',
