@@ -1,12 +1,13 @@
 <?php
 
-namespace haxibiao\media\Http\Api;
+namespace Haxibiao\Media\Http\Api;
 
-use haxibiao\helpers\VodUtils;
-use haxibiao\media\Http\Controllers\Controller;
-use haxibiao\media\Video;
+use App\User;
+use Haxibiao\Media\Video;
 use Illuminate\Http\Request;
+use Haxibiao\Helpers\VodUtils;
 use Illuminate\Support\Facades\Log;
+use Haxibiao\Media\Http\Controllers\Controller;
 
 class VideoController extends Controller
 {
@@ -16,19 +17,19 @@ class VideoController extends Controller
     public function store(Request $request)
     {
         //前端vod上传成功后保存视频信息
-        if (!empty($request->fileId)) {
+        if ($request->from == 'qcvod') {
             $video = Video::firstOrNew([
                 'fileid' => $request->fileId,
             ]);
-            $video->user_id  = getUserId();
-            $video->path     = $request->videoUrl;
-            $video->filename = $request->videoName;
-            $video->disk     = 'vod';
+
+            $video->user_id = getUser()->id;
+            $video->path    = $request->videoUrl;
+            //$video->filename = $request->videoName;
+            $video->disk = 'vod';
             $video->save();
 
-            //调用vod处理视频封面的任务
+            //处理视频封面
             VodUtils::makeCover($request->fileId);
-
             return $video;
         }
 

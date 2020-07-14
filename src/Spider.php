@@ -1,14 +1,14 @@
 <?php
 
-namespace haxibiao\media;
+namespace Haxibiao\Media;
 
 use App\Model;
 use App\Question;
 use App\User;
 use App\Video;
-use haxibiao\media\Traits\SpiderAttrs;
-use haxibiao\media\Traits\SpiderRepo;
-use haxibiao\media\Traits\SpiderResolvers;
+use Haxibiao\Media\Traits\SpiderAttrs;
+use Haxibiao\Media\Traits\SpiderRepo;
+use Haxibiao\Media\Traits\SpiderResolvers;
 
 class Spider extends Model
 {

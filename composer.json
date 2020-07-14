@@ -14,7 +14,7 @@
   "minimum-stability": "dev",
   "autoload": {
     "psr-0": {
-      "haxibiao\\media\\": "src/"
+      "Haxibiao\\Media\\": "src/"
     }
   },
   "autoload-dev": {
@@ -25,7 +25,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "haxibiao\\media\\MediaServiceProvider"
+        "Haxibiao\\Media\\MediaServiceProvider"
       ]
     }
   }

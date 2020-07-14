@@ -1,8 +1,8 @@
 <?php
 
-namespace haxibiao\media\Http\Api;
+namespace Haxibiao\Media\Http\Api;
 
-use haxibiao\media\Http\Controllers\Controller;
+use Haxibiao\Media\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use TencentCloud\Common\Credential;

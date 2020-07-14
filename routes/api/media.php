@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 //所有media相关的api...
-Route::group(['namespace' => '\haxibiao\media\Http\Api'], function () {
+Route::group(['namespace' => '\Haxibiao\Media\Http\Api'], function () {
 
     // Route::post('video/import-video', 'VideoController@importVideo');
 

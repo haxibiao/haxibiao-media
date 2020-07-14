@@ -1,9 +1,9 @@
 <?php
 
-namespace haxibiao\media\Jobs;
+namespace Haxibiao\Media\Jobs;
 
-use haxibiao\helpers\FFMpegUtils;
-use haxibiao\media\Video;
+use Haxibiao\Helpers\FFMpegUtils;
+use Haxibiao\Media\Video;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -277,7 +277,6 @@ class UploadVideo implements ShouldQueue
                 $this->publicDisk->deleteDirectory($directory);
             }
         }
-
     }
 
     /**

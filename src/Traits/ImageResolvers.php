@@ -1,8 +1,8 @@
 <?php
 
-namespace haxibiao\media\Traits;
+namespace Haxibiao\Media\Traits;
 
-use haxibiao\media\Image;
+use Haxibiao\Media\Image;
 
 trait ImageResolvers
 {

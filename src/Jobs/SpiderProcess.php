@@ -1,11 +1,11 @@
 <?php
 
-namespace haxibiao\media\Jobs;
+namespace Haxibiao\Media\Jobs;
 
 use App\Gold;
-use haxibiao\media\Spider;
-use haxibiao\media\UploadVideo;
-use haxibiao\media\Video;
+use Haxibiao\Media\Spider;
+use Haxibiao\Media\UploadVideo;
+use Haxibiao\Media\Video;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
