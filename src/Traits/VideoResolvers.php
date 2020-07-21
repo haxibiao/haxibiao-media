@@ -44,7 +44,6 @@ trait VideoResolvers
 
             // 判断用户最近15秒内有没有看视频，防止重刷
             if ($gold = $user->golds()->latest()->first()) {
-                // dd($gold);
                 if ($gold->created_at->diffInRealSeconds(now()) < 15) {
                     return null;
                 }
