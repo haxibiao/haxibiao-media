@@ -112,7 +112,6 @@ trait SpiderRepo
      */
     public function saveVideo($data)
     {
-        dd($data);
         $hash     = Arr::get($data, 'hash');
         $json     = Arr::get($data, 'json');
         $mediaUrl = Arr::get($data, 'url');
