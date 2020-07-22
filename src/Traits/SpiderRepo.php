@@ -82,8 +82,8 @@ trait SpiderRepo
     public static function querySpiders($user, $type, $oldGraphql = false)
     {
         $query = Spider::with('video')->where('user_id', $user->id)
-        // ->take($limit)
-        // ->skip($offset)
+            // ->take($limit)
+            // ->skip($offset)
             ->latest('id');
         if (!is_null($type)) {
             $query = $query->where('spider_type', $type);
@@ -112,6 +112,7 @@ trait SpiderRepo
      */
     public function saveVideo($data)
     {
+        dd($data);
         $hash     = Arr::get($data, 'hash');
         $json     = Arr::get($data, 'json');
         $mediaUrl = Arr::get($data, 'url');
@@ -121,7 +122,7 @@ trait SpiderRepo
             $video->user_id = $this->user_id;
             //更改VOD地址
             $video->disk = 'vod';
-            if (in_array(env("APP_NAME"), ["datizhuanqian", "damei"])) {
+            if (in_array(env("APP_NAME"), ["datizhuanqian", "damei", "yyjieyou"])) {
                 $video->fileid = Arr::get($json, 'vod.FileId');
             }
             $video->path = $mediaUrl;
