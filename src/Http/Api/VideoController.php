@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Http\Api;
 
+use App\Category;
 use App\User;
 use Haxibiao\Media\Video;
 use Illuminate\Http\Request;
@@ -103,5 +104,50 @@ class VideoController extends Controller
                 return [$json];
             }
         }
+    }
+
+    public function index(Request $request)
+    {
+        //热门专题，简单规则就按视频数多少来判断专题是否热门视频专题
+        $categories = Category::orderBy('count_videos', 'desc')->take(3)
+            ->get();
+        $data = [];
+        foreach ($categories as $category) {
+            $articles = $category->containedVideoPosts()
+                ->where('status', '>', 0)
+                ->orderByDesc('hits')
+                ->take(3)
+                ->get();
+            if (!$articles->isEmpty()) {
+                $data[$category->name] = $articles;
+            }
+        }
+        return view('video.index')->with('data', $data);
+    }
+
+    public function show($id)
+    {
+        $video = Video::with('article')
+            ->with('user')
+            ->findOrFail($id);
+
+        //check article exist and status
+        $article = $video->article;
+        if (empty($article)) {
+            abort(404);
+        }
+        if ($article->status < 1) {
+            if (!canEdit($article)) {
+                abort(404);
+            }
+        }
+
+        $data['related_page'] = request()->get('related_page');
+        //记录用户浏览记录
+        $article->recordBrowserHistory();
+
+        return view('video.show')
+            ->withVideo($video)
+            ->withData($data);
     }
 }
