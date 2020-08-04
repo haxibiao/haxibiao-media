@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Haxibiao\Helpers\VodUtils;
 use Illuminate\Support\Facades\Log;
 use Haxibiao\Media\Http\Controllers\Controller;
+use App\Article;
 
 class VideoController extends Controller
 {
@@ -149,5 +150,28 @@ class VideoController extends Controller
         return view('video.show')
             ->withVideo($video)
             ->withData($data);
+    }
+
+    public function getLatestVideo(Request $request)
+    {
+        $videos   = get_stick_videos('', true);
+        $videoIds = [];
+        foreach ($videos as $video) {
+            $videoIds[] = $video->article->id;
+        }
+        if ($request->get('stick')) {
+            $data = Article::whereIn('id', $videoIds);
+        } else {
+            $data = Article::where('type', 'video')->whereStatus(1)->orderByDesc('updated_at');
+            if (!empty($videoIds)) {
+                $data = Article::where('type', 'video')->whereStatus(1)->whereNotIn('id', $videoIds)
+                    ->orderByDesc('updated_at');
+            }
+        }
+        $data = $data->paginate(9);
+        foreach ($data as $article) {
+            $article->fillForJs();
+        }
+        return $data;
     }
 }
