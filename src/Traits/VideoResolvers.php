@@ -24,7 +24,7 @@ trait VideoResolvers
         $user   = getUser();
         $inputs = $args['input'];
 
-        $countReward = Gold::whereUserId($user->id)->whereDate('created_at', today())->count('id');
+        $countReward = Gold::whereUserId($user->id)->whereBetWeen('created_at', [today(), today()->addDay()])->count('id');
         if ($countReward > 500) {
             return null;
         }
