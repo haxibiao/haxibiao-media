@@ -29,9 +29,10 @@ class ImageController extends Controller
         //向前兼容，有些页面还是使用单图上传逻辑
         if (!is_array($image_files)) {
             if ($request->photo) {
-                $extension = $request->photo->getClientOriginalExtension();
-                if (!in_array($extension, ['jpg', 'png', 'gif', 'jpeg'])) {
-                    return "图片格式只支持jpg, png, gif";
+                $mimeType = $request->photo->getClientMimeType();
+                $original_filename = $request->original_filename;
+                if (!str_contains($mimeType,'image')&&!str_contains($original_filename,'image')){
+                    return "只支持添加图片文件";
                 }
                 $image          = new Image();
                 $image->user_id = $user->id;
