@@ -56,14 +56,24 @@ class MediaProcess implements ShouldQueue
             ]);
             $contents = $response->getBody()->getContents();
             if (!empty($contents)) {
-                $contents = json_decode($contents, true);
-                $data     = Arr::get($contents, 'data');
+                $contents   = json_decode($contents, true);
+                $data       = Arr::get($contents, 'data');
+                $shareTitle = data_get($data, 'raw.raw.item_list.0.share_info.share_title');
+                if (!empty($shareTitle)) {
+                    $spider->setTitle($shareTitle);
+                }
+
             }
 
             //已经被处理过的，重试的话秒返回...
             $video = Arr::get($data, 'video');
             if (is_array($video)) {
                 $spider->saveVideo($video);
+            }
+
+            // 修复乱码标题
+            if ($spider->isDirty()) {
+                $spider->save();
             }
         }
     }

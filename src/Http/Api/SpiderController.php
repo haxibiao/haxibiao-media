@@ -11,19 +11,22 @@ class SpiderController extends Controller
 {
     public function hook(Request $request)
     {
-        $sourceUrl = $request->get('source_url');
-        $data      = $request->get('data');
-
-        $data = is_array($data) ? $data : json_decode($data, true);
+        $sourceUrl  = $request->get('source_url');
+        $data       = $request->get('data');
+        $data       = is_array($data) ? $data : json_decode($data, true);
+        $shareTitle = data_get($data, 'raw.raw.item_list.0.share_info.share_title');
 
         if (!empty($sourceUrl)) {
-            $spider = Spider::where('source_url', $sourceUrl)
-                ->wating()
-                ->first();
+            $spider = Spider::where('source_url', $sourceUrl)->first();
             $status = Arr::get($data, 'status');
             $video  = Arr::get($data, 'video');
 
-            if (!is_null($spider)) {
+            //重新获取json中的标题
+            if (!empty($shareTitle)) {
+                $spider->setTitle($shareTitle);
+            }
+
+            if (!is_null($spider) && $spider->isWating()) {
                 //重试n次仍然失败
                 if ($status == 'INVALID_STATUS') {
                     $spider->status = Spider::INVALID_STATUS;
@@ -34,6 +37,11 @@ class SpiderController extends Controller
                 if (is_array($video)) {
                     return $spider->saveVideo($video);
                 }
+            }
+
+            // 修复乱码标题
+            if ($spider->isDirty()) {
+                $spider->save();
             }
 
         }

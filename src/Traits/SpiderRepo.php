@@ -42,9 +42,7 @@ trait SpiderRepo
         } else {
             $spider->user_id     = $user->id;
             $spider->spider_type = 'videos';
-            $data                = $spider->data;
-            $data['title']       = $title;
-            $spider->data        = $data;
+            $spider->setTitle($title);
         }
         $spider->save();
 
@@ -82,8 +80,8 @@ trait SpiderRepo
     public static function querySpiders($user, $type, $oldGraphql = false)
     {
         $query = Spider::with('video')->where('user_id', $user->id)
-            // ->take($limit)
-            // ->skip($offset)
+        // ->take($limit)
+        // ->skip($offset)
             ->latest('id');
         if (!is_null($type)) {
             $query = $query->where('spider_type', $type);
@@ -136,8 +134,7 @@ trait SpiderRepo
         }
 
         //FIXME: 更新爬虫和视频关系（crawlable?）
-        $reward = Spider::SPIDER_GOLD_REWARD;
-
+        $reward            = Spider::SPIDER_GOLD_REWARD;
         $this->spider_type = 'videos';
         $this->spider_id   = $video->id;
         $this->status      = Spider::PROCESSED_STATUS;
@@ -190,4 +187,13 @@ trait SpiderRepo
     //     }
 
     // }
+
+    public function setTitle($title)
+    {
+        $data          = Arr::get($this, 'data', []);
+        $data['title'] = $title;
+        $this->data    = $data;
+
+        return $this;
+    }
 }
