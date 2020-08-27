@@ -27,7 +27,7 @@ class MediaProcess implements ShouldQueue
      */
     public function __construct($spiderId)
     {
-        $this->spider = Spider::wating()->find($spiderId);
+        $this->spider = Spider::find($spiderId);
         $this->onQueue('spiders');
     }
 
@@ -67,7 +67,7 @@ class MediaProcess implements ShouldQueue
 
             //已经被处理过的，重试的话秒返回...
             $video = Arr::get($data, 'video');
-            if (is_array($video)) {
+            if (is_array($video) && $spider->isWating()) {
                 $spider->saveVideo($video);
             }
 
