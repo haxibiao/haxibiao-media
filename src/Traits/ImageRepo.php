@@ -415,6 +415,17 @@ trait ImageRepo
     //     return $image;
     // }
 
+    public function saveDownloadImage($file)
+    {
+        if ($file) {
+            $task_logo = 'images/images' . $this->id . '_' . time() . '.png';
+            $cosDisk   = \Storage::cloud();
+            $cosDisk->put($task_logo, \file_get_contents($file->path()));
+
+            return $task_logo;
+        }
+    }
+
     //自动裁剪为最宽640
     public static function autoCut($source, $maxWidth = 640)
     {
