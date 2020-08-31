@@ -14,6 +14,7 @@ Route::group(['namespace' => '\Haxibiao\Media\Http\Api'], function () {
     Route::get('videos', 'VideoController@index'); //旧的api
     Route::get('/video/{id}', 'VideoController@show');
     Route::get('/video/{id}/fix', 'VideoController@fix'); //修复封面
+    Route::get('/video/hash/{hash}', 'VideoController@showByVideoHash');
 
     Route::middleware('auth:api')->post('/video', 'VideoController@store'); //新短视频视频文件上传视频接口
     Route::middleware('auth:api')->post('/video/save', 'VideoController@store'); //兼容1.0上传vod视频后回调接口

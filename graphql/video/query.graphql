@@ -22,6 +22,10 @@ type Video {
   cover: String
 
   """
+  动图
+  """
+  dynamic_cover: String
+  """
   视频广告
   """
   is_ad_video: Boolean

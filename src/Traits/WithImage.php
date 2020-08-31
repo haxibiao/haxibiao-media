@@ -8,17 +8,11 @@ use Haxibiao\Media\Video;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
-trait WithMedia
+trait WithImage
 {
-    use WithImage;
-
-    public function spiders(): HasMany
+    public function images(): MorphToMany
     {
-        return $this->hasMany(Spider::class);
-    }
-
-    public function videos(): HasMany
-    {
-        return $this->hasMany(Video::class);
+        return $this->morphToMany(Image::class, 'imageable','imageable')
+            ->withTimestamps();
     }
 }

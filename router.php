@@ -10,3 +10,11 @@ Route::group(
     ],
     __DIR__ . '/routes/api/media.php'
 );
+
+// Web routes.
+Route::group(
+    [
+        'middleware' => ['web'],
+    ],
+    __DIR__.'/routes/web/media.php'
+);

@@ -11,6 +11,7 @@ class MediaServiceProvider extends ServiceProvider
     {
         $this->commands([
             Console\InstallCommand::class,
+            Console\ImageReFactoringCommand::class,
         ]);
         $this->bindPathsInContainer();
     }
@@ -21,9 +22,6 @@ class MediaServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(
             __DIR__ . '/../router.php'
         );
-
-        //注册 events - 运行时需要
-        Video::observe(Observers\VideoObserver::class);
 
         //安装时需要
         if ($this->app->runningInConsole()) {
@@ -42,11 +40,6 @@ class MediaServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../tests/Feature/GraphQL' => base_path('tests/Feature/GraphQL'),
             ], 'media-tests');
-
-            // 发布 Nova
-            // $this->publishes([
-            //     __DIR__ . '/Nova' => base_path('app/Nova'),
-            // ], 'media-nova');
 
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));

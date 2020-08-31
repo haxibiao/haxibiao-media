@@ -1,6 +1,6 @@
 <?php
 
-namespace Haxibiao\Media;
+namespace Haxibiao\Media\Traits;
 
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;

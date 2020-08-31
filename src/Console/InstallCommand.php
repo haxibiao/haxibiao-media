@@ -33,7 +33,6 @@ class InstallCommand extends Command
         $this->call('vendor:publish', ['--provider' => 'Haxibiao\Media\MediaServiceProvider', '--force']);
 
         $this->comment("复制 stubs ...");
-        copy(__DIR__ . '/../../routes/api/media.php', base_path('routes/api/media.php'));
         copy(__DIR__ . '/stubs/Video.stub', app_path('Video.php'));
         copy(__DIR__ . '/stubs/Image.stub', app_path('Image.php'));
         copy(__DIR__ . '/stubs/Spider.stub', app_path('Spider.php'));

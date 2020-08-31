@@ -14,20 +14,7 @@ class Image extends Model
     use ImageRepo;
     use ImageResolvers;
 
-    protected $fillable = [
-        'path',
-        'path_origin',
-        'path_small',
-
-        //答题
-        'user_id',
-        'hash',
-        // 'path',
-        'width',
-        'height',
-        'extension',
-        'count',
-    ];
+    protected $guarded = [];
 
     public function articles()
     {

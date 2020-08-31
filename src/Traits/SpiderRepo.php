@@ -4,18 +4,20 @@ namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
 use GuzzleHttp\Client;
+use Haxibiao\Helpers\QcloudUtils;
 use Haxibiao\Media\Jobs\MediaProcess;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
 trait SpiderRepo
 {
     public static function resolveDouyinVideo($user, $shareLink)
     {
-        $title = Spider::extractTitle($shareLink);
+        $title = static::extractTitle($shareLink);
         //提取URL
-        $dyUrl = Spider::extractURL($shareLink);
+        $dyUrl = static::extractURL($shareLink);
 
         $isDyUrl = in_array(
             Arr::get(parse_url($dyUrl), 'host'),
@@ -29,7 +31,7 @@ trait SpiderRepo
         $client = $client->request('GET', $dyUrl, ['http_errors' => false]);
         throw_if($client->getStatusCode() == 404, UserException::class, '解析失败,URL无法访问！');
         //写入DB
-        $spider        = Spider::firstOrNew(['source_url' => $dyUrl]);
+        $spider        = static::firstOrNew(['source_url' => $dyUrl]);
         $spiderExisted = isset($spider->id);
         $isSelf        = $spider->user_id == $user->id;
         if ($spiderExisted && !$isSelf) {
@@ -121,6 +123,8 @@ trait SpiderRepo
             $video->disk = 'vod';
             if (in_array(env("APP_NAME"), ["datizhuanqian", "damei", "yyjieyou"])) {
                 $video->fileid = Arr::get($json, 'vod.FileId');
+            } else {
+                $video->qcvod_fileid = Arr::get($json, 'vod.FileId');
             }
             $video->path = $mediaUrl;
             //保存视频截图 && 同步填充信息
@@ -128,8 +132,23 @@ trait SpiderRepo
             $video->setJsonData('cover', $coverUrl);
             $video->setJsonData('sourceVideoUrl', $mediaUrl);
             $video->setJsonData('duration', Arr::get($data, 'duration', 0));
-            $video->setJsonData('width', Arr::get($data, 'width'));
-            $video->setJsonData('height', Arr::get($data, 'height'));
+            $videoInfo      = QcloudUtils::getVideoInfo(intval(Arr::get($json, 'vod.FileId')));
+            $video->setJsonData('width', data_get($videoInfo, 'metaData.width'));
+            $video->setJsonData('height', data_get($videoInfo, 'metaData.height'));
+
+            // TODO 抽离到media保存动图
+            $douyinDynamicCover  = data_get($this,'data.raw.item_list.0.video.dynamic_cover.url_list.0');
+            if($douyinDynamicCover){
+                $stream = @file_get_contents($douyinDynamicCover);
+                if($stream){
+                    $dynamicCoverPath = 'images/' . genrate_uuid('webp');
+                    $result = Storage::cloud()->put($dynamicCoverPath, $stream);
+                    if($result){
+                        $video->setJsonData('dynamic_cover', Storage::cloud()->url($dynamicCoverPath));
+                    }
+                }
+            }
+
             $video->save();
         }
 

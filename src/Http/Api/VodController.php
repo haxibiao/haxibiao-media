@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Http\Api;
 
 use Haxibiao\Media\Http\Controllers\Controller;
+use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use TencentCloud\Common\Credential;
@@ -26,37 +27,9 @@ class VodController extends Controller
         //FIXME: 这个vod config可以合并进入 config media
         $this->secret_id  = config('vod.' . config('app.name') . '.secret_id');
         $this->secret_key = config('vod.' . config('app.name') . '.secret_key');
-
-        $fromCache = Cache::get('tencent_vod_class_ids', []);
-        //加入缓存
-        if (count($fromCache) > 0) {
-            $this->vodKeys = $fromCache;
-        } else {
-            try {
-                $cred        = new Credential($this->secret_id, $this->secret_key);
-                $httpProfile = new HttpProfile();
-                $httpProfile->setEndpoint("vod.tencentcloudapi.com");
-
-                $clientProfile = new ClientProfile();
-                $clientProfile->setHttpProfile($httpProfile);
-                $client = new VodClient($cred, "ap-guangzhou", $clientProfile);
-
-                $req = new DescribeAllClassRequest();
-
-                $params = '{}';
-                $req->fromJsonString($params);
-                $resp   = $client->DescribeAllClass($req);
-                $result = json_decode($resp->toJsonString(), true);
-
-                $vodKeys = Arr::pluck($result['ClassInfoSet'], 'ClassId', 'ClassName');
-
-                Cache::put('tencent_vod_class_ids', $vodKeys, now()->addMinutes(10));
-                $this->vodKeys = $vodKeys;
-
-            } catch (TencentCloudSDKException $e) {
-                abort(500, '服务器内部错误');
-            }
-        }
+        $this->vodKeys    = [
+            config('app.name') => config('vod.' . config('app.name') . '.class_id')
+        ];
     }
 
     const PROCEDURE = ''; //视频处理任务流
@@ -101,4 +74,12 @@ class VodController extends Controller
         return $this->signature(config('app.name'));
     }
 
+    public function showByVideoHash($hash){
+        $video = Video::where('hash',$hash)->first();
+        $qcvodFileid = data_get($video,'qcvod_fileid');
+        if($qcvodFileid){
+            return $qcvodFileid;
+        }
+        return null;
+    }
 }

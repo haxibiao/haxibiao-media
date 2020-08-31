@@ -6,7 +6,7 @@ use Haxibiao\Media\Traits\MakeCovers;
 use Haxibiao\Media\Traits\VideoAttrs;
 use Haxibiao\Media\Traits\VideoRepo;
 use Haxibiao\Media\Traits\VideoResolvers;
-use Illuminate\Database\Eloquent\Model;
+use App\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -23,32 +23,13 @@ class Video extends Model
         'json' => 'object',
     ];
 
-    protected $fillable = [
-        'title',
-        'user_id',
-        'path',
-        'duration',
-        'json',
-        'cover',
-        'hash',
-        'disk',
-        'fileid', //FIXME: 答题记得qcvod_fileid 改名
+    protected $guarded = [];
 
-        //答题补充的
-        'filename',
-        'created_at',
-        'deleted_at',
-        'updated_at',
-
-        'app',
-        'type',
-        'status',
-
-        'width',
-        'height',
-
-    ];
-
+    protected static function boot()
+    {
+        parent::boot();
+        static::observe(Observers\VideoObserver::class);
+    }
     /**
      * 状态:
      * -1:视频已损坏

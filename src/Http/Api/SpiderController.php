@@ -33,6 +33,11 @@ class SpiderController extends Controller
                     return $spider->save(); //不删除这个爬虫信息，保留！
                 }
 
+                $dataFromModel = $spider->data;
+                $dataFromModel['raw'] = data_get($data,'raw.raw',[]);
+                $spider->data = $dataFromModel;
+                $spider->save();
+
                 //处理好的视频
                 if (is_array($video)) {
                     return $spider->saveVideo($video);

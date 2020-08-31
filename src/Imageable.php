@@ -1,11 +1,13 @@
 <?php
 
-namespace App;
+namespace Haxibiao\Media;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Imageable extends Pivot
 {
+    protected $table='imageable';
+
     protected $fillable = [
         'imageable_id',
         'imageable_type',
