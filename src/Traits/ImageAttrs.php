@@ -69,6 +69,28 @@ trait ImageAttrs
         }
     }
 
+    public function path($size = 0)
+    {
+        $path = $this->path;
+        if (empty($path)) {
+            return null;
+        }
+        $extension    = pathinfo($path, PATHINFO_EXTENSION);
+        $folder       = pathinfo($path, PATHINFO_DIRNAME);
+        $url_formater = $folder . '/' . basename($path, '.' . $extension) . '%s' . $extension;
+        switch ($size) {
+            case 1:
+                return sprintf($url_formater, '.small.');
+                break;
+            case 2:
+                return sprintf($url_formater, '.top.');
+                break;
+            default:
+                return $path;
+                break;
+        }
+    }
+
     public function url()
     {
         return $this->path();
