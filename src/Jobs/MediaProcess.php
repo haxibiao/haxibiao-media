@@ -27,7 +27,7 @@ class MediaProcess implements ShouldQueue
      */
     public function __construct($spiderId)
     {
-        $this->spider = Spider::find($spiderId);
+        $this->spider = Spider::wating()->find($spiderId);
         $this->onQueue('spiders');
     }
 
