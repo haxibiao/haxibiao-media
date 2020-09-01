@@ -73,13 +73,4 @@ class VodController extends Controller
     {
         return $this->signature(config('app.name'));
     }
-
-    public function showByVideoHash($hash){
-        $video = Video::where('hash',$hash)->first();
-        $qcvodFileid = data_get($video,'qcvod_fileid');
-        if($qcvodFileid){
-            return $qcvodFileid;
-        }
-        return null;
-    }
 }
