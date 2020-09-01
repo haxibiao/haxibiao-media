@@ -10,9 +10,14 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait WithImage
 {
-    public function images(): MorphToMany
+    public function images()
     {
-        return $this->morphToMany(Image::class, 'imageable','imageable')
-            ->withTimestamps();
+        if(in_array(config('app.name'),[
+            'yinxiangshipin','dongmiaomu','caohan','dongmeiwei','dongdianyi','quanminwenti'
+        ])){
+            return $this->morphToMany(Image::class, 'imageable','imageable')
+                ->withTimestamps();
+        }
+        return $this->hasMany(Image::class);
     }
 }
