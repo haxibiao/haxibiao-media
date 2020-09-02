@@ -69,9 +69,10 @@ trait ImageAttrs
         }
     }
 
-    public function path($size = 0)
+    public function getUrl($size = 0)
     {
         $path = $this->path;
+
         if (empty($path)) {
             return null;
         }
@@ -93,17 +94,17 @@ trait ImageAttrs
 
     public function url()
     {
-        return $this->path();
+        return $this->getUrl();
     }
 
     public function path_small()
     {
-        return $this->path(self::$small);
+        return $this->getUrl(self::$small);
     }
 
     public function path_top()
     {
-        return $this->path(self::$top);
+        return $this->getUrl(self::$top);
     }
 
 }
