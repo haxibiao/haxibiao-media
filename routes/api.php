@@ -52,7 +52,7 @@ Route::group(['prefix' => 'api'], function (RouteRegisterContract $api) {
  */
 Route::group(['prefix' => 'api'], function (RouteRegisterContract $api) {
     //获取VOD上传签名
-    Route::get('/signature/vod-{site}', VodController::class.'VodController@signature');
+    Route::get('/signature/vod-{site}', VodController::class.'@signature');
     Route::get('/signature/vod', VodController::class.'@mySignature');
 });
 
