@@ -13,7 +13,7 @@ trait WithImage
     public function images()
     {
         if(in_array(config('app.name'),[
-            'yinxiangshipin','dongmiaomu','caohan','dongmeiwei','dongdianyi','quanminwenti'
+            'yinxiangshipin','dongmiaomu','caohan','dongmeiwei','dongdianyi','quanminwenti','dongdaima'
         ])){
             return $this->morphToMany(Image::class, 'imageable','imageable')
                 ->withTimestamps();
