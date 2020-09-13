@@ -20,6 +20,14 @@
 6. 完成
 
 ### 更新日志
+**1.2**
+
+_Released on 2020-09-11_
+
+- 修复VOD签名路由 ([#bc8b5ae6](http://code.haxibiao.cn/packages/haxibiao-media/commit/bc8b5ae69ff17885ed1236f8dd53316fc2545c47))
+- 修复image path 与 model 重名导致 nova报错 ([#ea9fc9eb](http://code.haxibiao.cn/packages/haxibiao-media/commit/ea9fc9eb6aac8fc419b88322496b9da29c8f56a5))
+
+
 **1.1**
 
 _Released on 2020-09-01_
