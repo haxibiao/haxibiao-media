@@ -7,22 +7,23 @@ use Illuminate\Support\Str;
 
 trait VideoAttrs
 {
-    public function getDynamicCoverAttribute(){
-        $dynamicCover = data_get($this,'json.dynamic_cover');
-        if(!$dynamicCover){
-            return data_get($this,'json.cover');
+    public function getDynamicCoverAttribute()
+    {
+        $dynamicCover = data_get($this, 'json.dynamic_cover');
+        if (!$dynamicCover) {
+            return data_get($this, 'json.cover');
         }
         return $dynamicCover;
     }
 
     public function getWidthAttribute()
     {
-        return data_get($this,'json.width',576);
+        return data_get($this, 'json.width', 576);
     }
 
     public function getHeightAttribute()
     {
-        return data_get($this,'json.height',1024);
+        return data_get($this, 'json.height', 1024);
     }
 
     public function getCoversAttribute()
@@ -39,7 +40,7 @@ trait VideoAttrs
         $cover = $this->cover;
 
         //标准的vod cover url...
-        if (Str::contains($cover, 'vod.') && Str::contains($cover, 'http')) {
+        if (Str::contains($cover, 'vod') && Str::contains($cover, 'http')) {
             return $cover;
         }
 
