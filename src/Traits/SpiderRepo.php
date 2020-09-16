@@ -24,7 +24,9 @@ trait SpiderRepo
             Spider::DOUYIN_VIDEO_DOMAINS
         );
         throw_if(!$isDyUrl, UserException::class, '解析失败,请提供有效的抖音URL!');
-        throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
+        if(!in_array(config('app.name'),['yinxiangshipin','ainicheng'])){
+            throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
+        }
 
         //判断是否404
         $client = new Client();
