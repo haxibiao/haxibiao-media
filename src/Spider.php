@@ -79,6 +79,11 @@ class Spider extends Model
         return $query->where('status', self::PROCESSED_STATUS);
     }
 
+    public function scopeToday($query, $column = 'created_at')
+    {
+        return $query->where($column, '>=', today());
+    }
+
     public static function getStatuses()
     {
         return [

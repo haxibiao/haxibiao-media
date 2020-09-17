@@ -15,6 +15,12 @@ trait SpiderRepo
 {
     public static function resolveDouyinVideo($user, $shareLink)
     {
+        // 通过config来控制接口开关 && 动态配置控制每用户日最大解析数
+        throw_if(config('media.spider.enable') === false, UserException::class, '解析失败,功能维护中,请稍后再试!');
+        $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
+        $isLimited  = $limitCount >= 0 && $user->spiders()->today()->count() >= $limitCount;
+        throw_if($isLimited, UserException::class, '解析失败,今日分享已达上限,请明日再试哦!');
+
         $title = static::extractTitle($shareLink);
         //提取URL
         $dyUrl = static::extractURL($shareLink);
@@ -24,7 +30,7 @@ trait SpiderRepo
             Spider::DOUYIN_VIDEO_DOMAINS
         );
         throw_if(!$isDyUrl, UserException::class, '解析失败,请提供有效的抖音URL!');
-        if(!in_array(config('app.name'),['yinxiangshipin','ainicheng'])){
+        if (!in_array(config('app.name'), ['yinxiangshipin', 'ainicheng'])) {
             throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
         }
 
@@ -134,18 +140,18 @@ trait SpiderRepo
             $video->setJsonData('cover', $coverUrl);
             $video->setJsonData('sourceVideoUrl', $mediaUrl);
             $video->setJsonData('duration', Arr::get($data, 'duration', 0));
-            $videoInfo      = QcloudUtils::getVideoInfo(intval(Arr::get($json, 'vod.FileId')));
+            $videoInfo = QcloudUtils::getVideoInfo(intval(Arr::get($json, 'vod.FileId')));
             $video->setJsonData('width', data_get($videoInfo, 'metaData.width'));
             $video->setJsonData('height', data_get($videoInfo, 'metaData.height'));
 
             // TODO 抽离到media保存动图
-            $douyinDynamicCover  = data_get($this,'data.raw.item_list.0.video.dynamic_cover.url_list.0');
-            if($douyinDynamicCover){
+            $douyinDynamicCover = data_get($this, 'data.raw.item_list.0.video.dynamic_cover.url_list.0');
+            if ($douyinDynamicCover) {
                 $stream = @file_get_contents($douyinDynamicCover);
-                if($stream){
+                if ($stream) {
                     $dynamicCoverPath = 'images/' . genrate_uuid('webp');
-                    $result = Storage::cloud()->put($dynamicCoverPath, $stream);
-                    if($result){
+                    $result           = Storage::cloud()->put($dynamicCoverPath, $stream);
+                    if ($result) {
                         $video->setJsonData('dynamic_cover', Storage::cloud()->url($dynamicCoverPath));
                     }
                 }
