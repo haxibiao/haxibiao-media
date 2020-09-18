@@ -17,9 +17,11 @@ trait SpiderRepo
     {
         // 通过config来控制接口开关 && 动态配置控制每用户日最大解析数
         throw_if(config('media.spider.enable') === false, UserException::class, '解析失败,功能维护中,请稍后再试!');
-        $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
-        $isLimited  = $limitCount >= 0 && $user->spiders()->today()->count() >= $limitCount;
-        throw_if($isLimited, UserException::class, '解析失败,今日分享已达上限,请明日再试哦!');
+        if (!in_array(env('APP_NAME'), ['yinxiangshipin', 'ainicheng'])) {
+            $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
+            $isLimited  = $limitCount >= 0 && $user->spiders()->today()->count() >= $limitCount;
+            throw_if($isLimited, UserException::class, '解析失败,今日分享已达上限,请明日再试哦!');
+        }
 
         $title = static::extractTitle($shareLink);
         //提取URL
@@ -90,8 +92,8 @@ trait SpiderRepo
     public static function querySpiders($user, $type, $oldGraphql = false)
     {
         $query = Spider::with('video')->where('user_id', $user->id)
-        // ->take($limit)
-        // ->skip($offset)
+            // ->take($limit)
+            // ->skip($offset)
             ->latest('id');
         if (!is_null($type)) {
             $query = $query->where('spider_type', $type);
