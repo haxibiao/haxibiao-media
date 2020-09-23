@@ -10,6 +10,8 @@ use Haxibiao\Helpers\VodUtils;
 use Illuminate\Support\Facades\Log;
 use Haxibiao\Media\Http\Controllers\Controller;
 use App\Article;
+use Haxibiao\Helpers\FFMpegUtils;
+use Illuminate\Support\Facades\Storage;
 
 class VideoController extends Controller
 {
@@ -18,13 +20,14 @@ class VideoController extends Controller
 
     public function store(Request $request)
     {
+        $user = getUser();
         //前端vod上传成功后保存视频信息
         if ($request->from == 'qcvod') {
             $video = Video::firstOrNew([
                 'fileid' => $request->fileId,
             ]);
 
-            $video->user_id = getUser()->id;
+            $video->user_id = $user->id;
             $video->path    = $request->videoUrl;
             //$video->filename = $request->videoName;
             $video->disk = 'vod';
@@ -32,6 +35,14 @@ class VideoController extends Controller
 
             //处理视频封面
             VodUtils::makeCover($request->fileId);
+
+
+            if (env('APP_NAME_CN') == "答妹") {
+                $metadata = ['"userId"' => $user->id, '"app' => '"答妹"'];
+                dispatch_now(new \App\Jobs\AddMetadata($video->path, $video->fileid, $metadata));
+                $video  = Video::find($video->id);
+                return $video;
+            }
             return $video;
         }
 
@@ -175,12 +186,31 @@ class VideoController extends Controller
         return $data;
     }
 
-    public function showByVideoHash($hash){
-        $video = Video::where('hash',$hash)->first();
-        $qcvodFileid = data_get($video,'qcvod_fileid');
-        if($qcvodFileid){
+    public function showByVideoHash($hash)
+    {
+        $video = Video::where('hash', $hash)->first();
+        $qcvodFileid = data_get($video, 'qcvod_fileid');
+        if ($qcvodFileid) {
             return $qcvodFileid;
         }
         return null;
+    }
+
+    public function resolveMetadata(Request $request)
+    {
+        /**
+         * FIXME::其实可以前端上传 给我url也可以直接解析 服务器可以不做io操作了
+         *  问题就是可能会有3份视频文件 
+         * 1. 视频原作者（抖音粘贴or自己上传的时候就会有一份原文件和添加了metadata的文件)
+         * 2. 被邀请用户上传的文件
+         */
+        $uploadFile = $request->file('video');
+        $result = Storage::disk('public')->put('video', $uploadFile->get());
+        if ($result) {
+            $path = storage_path('app/public/video');
+            $data = FFMpegUtils::getMediaMetadata($path);
+            $json = $data['format']['tags']['comment'];
+            return json_decode($json, true);
+        }
     }
 }
