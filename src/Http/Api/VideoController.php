@@ -37,12 +37,12 @@ class VideoController extends Controller
             VodUtils::makeCover($request->fileId);
 
 
-            if (env('APP_NAME_CN') == "答妹") {
-                $metadata = ['"userId"' => $user->id, '"app' => '"答妹"'];
-                dispatch_now(new \App\Jobs\AddMetadata($video->path, $video->fileid, $metadata));
-                $video  = Video::find($video->id);
-                return $video;
-            }
+            // if (env('APP_NAME_CN') == "答妹") {
+            //     $metadata = ['"userId"' => $user->id, '"app' => '"答妹"'];
+            //     dispatch_now(new \App\Jobs\AddMetadata($video->path, $video->fileid, $metadata));
+            //     $video  = Video::find($video->id);
+            //     return $video;
+            // }
             return $video;
         }
 
