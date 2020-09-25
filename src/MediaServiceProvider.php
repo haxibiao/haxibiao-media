@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
 class MediaServiceProvider extends ServiceProvider
@@ -12,12 +13,22 @@ class MediaServiceProvider extends ServiceProvider
         $this->commands([
             Console\InstallCommand::class,
             Console\ImageReFactoringCommand::class,
+            Console\CountVideoViewsCommand::class,
         ]);
         $this->bindPathsInContainer();
     }
 
     public function boot()
     {
+        // 更新视频的每日播放量
+        $enabled = config('media.enabled_statistics_video_views',false);
+        if($enabled){
+            $this->app->booted(function () {
+                $schedule = $this->app->make(Schedule::class);
+                $schedule->command('haxibiao:video:CountVideoViewers')->dailyAt('1:30');;
+            });
+        }
+
         //注册路由
         $this->loadRoutesFrom(
             __DIR__ . '/../router.php'
