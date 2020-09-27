@@ -8,7 +8,8 @@ use Illuminate\Support\Str;
 trait VideoAttrs
 {
     public function getCountViewsAttribute(){
-        return data_get($this,'json.count_views',0);
+        $countViews = data_get($this,'json.count_views',0);
+        return numberToReadable($countViews);
     }
 
     public function getDynamicCoverAttribute()
