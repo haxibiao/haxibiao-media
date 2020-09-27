@@ -131,7 +131,7 @@ trait SpiderRepo
             $video->user_id = $this->user_id;
             //更改VOD地址
             $video->disk = 'vod';
-            if (in_array(env("APP_NAME"), ["datizhuanqian", "damei", "yyjieyou"])) {
+            if (in_array(env("APP_NAME"), ["datizhuanqian", "damei", "yyjieyou", "ablm"])) {
                 $video->fileid = Arr::get($json, 'vod.FileId');
             } else {
                 $video->qcvod_fileid = Arr::get($json, 'vod.FileId');
