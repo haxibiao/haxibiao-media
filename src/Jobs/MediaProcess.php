@@ -62,7 +62,6 @@ class MediaProcess implements ShouldQueue
                 if (!empty($shareTitle)) {
                     $spider->setTitle($shareTitle);
                 }
-
             }
 
             //已经被处理过的，重试的话秒返回...
