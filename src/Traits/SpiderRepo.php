@@ -17,7 +17,7 @@ trait SpiderRepo
     {
         // 通过config来控制接口开关 && 动态配置控制每用户日最大解析数
         throw_if(config('media.spider.enable') === false, UserException::class, '解析失败,功能维护中,请稍后再试!');
-        if (!in_array(env('APP_NAME'), ['yinxiangshipin', 'ainicheng', 'ablm'])) {
+        if (!in_array(env('APP_NAME'), ['yinxiangshipin', 'ainicheng', 'ablm', 'youjianqi'])) {
             $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
             $isLimited  = $limitCount >= 0 && $user->spiders()->today()->count() >= $limitCount;
             throw_if($isLimited, UserException::class, '解析失败,今日分享已达上限,请明日再试哦!');
