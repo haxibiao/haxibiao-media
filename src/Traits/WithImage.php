@@ -16,7 +16,8 @@ trait WithImage
             'yinxiangshipin', 'dongmiaomu', 'caohan', 'dongmeiwei',
             'dongdianyi', 'quanminwenti', 'dongdaima', 'ainicheng',
             'dongshouji', 'dongyundong', 'dongwaiyu', 'dongwaimao',
-            'buyueta', 'dongdianhai', 'jinlinle'
+            'buyueta', 'dongdianhai', 'jinlinle', 'youjianqi', 'nashipin',
+            'yanjiao', 'hengyang'
         ])) {
             return $this->morphToMany(Image::class, 'imageable', 'imageable')
                 ->withTimestamps();
