@@ -28,7 +28,6 @@ class Video extends Model
     protected static function boot()
     {
         parent::boot();
-        static::observe(Observers\VideoObserver::class);
     }
     /**
      * 状态:
