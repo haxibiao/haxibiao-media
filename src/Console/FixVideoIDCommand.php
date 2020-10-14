@@ -14,8 +14,12 @@ class FixVideoIDCommand extends Command
 
     public function handle()
     {
-        Video::chunk(100,function($videos){
+        Video::orderBy('id','desc')->chunk(100,function($videos){
             foreach ($videos as $video){
+                if(data_get($video,'vid')){
+                    continue;
+                }
+
                 $path = $video->path;
                 $isValidUrl = filter_var($path, FILTER_VALIDATE_URL);
                 if(!$isValidUrl){
@@ -29,13 +33,15 @@ class FixVideoIDCommand extends Command
                 $result =  mb_convert_encoding($content, 'UTF-8',
                     mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
                 preg_match_all('/vid:(.+?)\x00/', $result, $matches);
-                $vid = $matches[1];
+                $vid = $matches[1][0];
 
                 if(!$vid){
                     continue;
                 }
                 $video->vid = $vid;
                 $video->saveDataOnly();
+
+                $this->info($video->id);
             }
         });
 
