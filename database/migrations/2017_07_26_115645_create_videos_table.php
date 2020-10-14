@@ -34,8 +34,8 @@ class CreateVideosTable extends Migration
 
             $table->timestamps();
             $table->softDeletes();
-
             $table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
+            $table->string('vid')->nullable()->index()->comment('视频的VID');
 
             //FIXME: 答妹里的字段多的
 
