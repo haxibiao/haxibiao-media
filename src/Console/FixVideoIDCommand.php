@@ -26,7 +26,6 @@ class FixVideoIDCommand extends Command
                 if($spider){
                    $vid = data_get($spider,'data.raw.item_list.0.video.vid');
                    if($vid){
-                       dd($vid);
                        $video->vid = $vid;
                        $video->saveDataOnly();
                        $this->info($video->id);
@@ -47,6 +46,10 @@ class FixVideoIDCommand extends Command
                 $result =  mb_convert_encoding($content, 'UTF-8',
                     mb_detect_encoding($content, 'UTF-8, ISO-8859-1', true));
                 preg_match_all('/vid:(.+?)\x00/', $result, $matches);
+                if(!$matches[1]){
+                    continue;
+                }
+
                 $vid = $matches[1][0];
 
                 if(!$vid){
