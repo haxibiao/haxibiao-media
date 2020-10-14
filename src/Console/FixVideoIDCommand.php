@@ -3,6 +3,7 @@
 
 namespace Haxibiao\Media\Console;
 
+use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Console\Command;
 
@@ -18,6 +19,19 @@ class FixVideoIDCommand extends Command
             foreach ($videos as $video){
                 if(data_get($video,'vid')){
                     continue;
+                }
+
+                $spider = Spider::where('spider_id',$video->id)
+                    ->first();
+                if($spider){
+                   $vid = data_get($spider,'data.raw.item_list.0.video.vid');
+                   if($vid){
+                       dd($vid);
+                       $video->vid = $vid;
+                       $video->saveDataOnly();
+                       $this->info($video->id);
+                       continue;
+                   }
                 }
 
                 $path = $video->path;
