@@ -3,13 +3,13 @@
 namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
-use GraphQL\Type\Schema;
 use GuzzleHttp\Client;
 use Haxibiao\Helpers\QcloudUtils;
 use Haxibiao\Media\Jobs\MediaProcess;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 trait SpiderRepo
