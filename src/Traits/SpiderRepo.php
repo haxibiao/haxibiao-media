@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
+use GraphQL\Type\Schema;
 use GuzzleHttp\Client;
 use Haxibiao\Helpers\QcloudUtils;
 use Haxibiao\Media\Jobs\MediaProcess;
@@ -161,6 +162,11 @@ trait SpiderRepo
                         $video->setJsonData('dynamic_cover', Storage::cloud()->url($dynamicCoverPath));
                     }
                 }
+            }
+            $vid = data_get($this, 'data.raw.item_list.0.video.vid');
+            if ($vid && Schema::hasColumn('videos', 'vid'))
+            {
+                $video->vid = $vid;
             }
 
             $video->save();
