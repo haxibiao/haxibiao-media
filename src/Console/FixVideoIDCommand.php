@@ -23,14 +23,12 @@ class FixVideoIDCommand extends Command
 
                 $spider = Spider::where('spider_id',$video->id)
                     ->first();
-                if($spider){
-                   $vid = data_get($spider,'data.raw.item_list.0.video.vid');
-                   if($vid){
-                       $video->vid = $vid;
-                       $video->saveDataOnly();
-                       $this->info($video->id);
-                       continue;
-                   }
+                $vid = data_get($spider,'data.raw.item_list.0.video.vid');
+                if($vid){
+                   $video->vid = $vid;
+                   $video->saveDataOnly();
+                   $this->info($video->id);
+                   continue;
                 }
 
                 $path = $video->path;
