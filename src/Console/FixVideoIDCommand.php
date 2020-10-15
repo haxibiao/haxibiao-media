@@ -39,7 +39,7 @@ class FixVideoIDCommand extends Command
                     continue;
                 }
 
-                $content = @file_get_contents($path);
+                $content = @file_get_contents($path,false,null,0,204800);
                 if(!$content){
                     continue;
                 }
