@@ -33,7 +33,6 @@ class VideoAddMetadata implements ShouldQueue
         $video  = $this->video;
 
         $path   = $video->path;
-        $cover  = $this->downloadImage2Local($video->cover);
         $vid    = $this->getVidFromBinaryStream($path);
 
         // 文件流中没有vid
@@ -42,6 +41,7 @@ class VideoAddMetadata implements ShouldQueue
             $metadata = 'vid:'. $vid;
 
             $localPath = FFMpegUtils::addMediaMetadata($path, $metadata);
+            $cover  = $this->downloadImage2Local($video->cover);
             $result = $this->uploadVideo2Vod($localPath,$cover);
             if(!$result){
                 return false;
