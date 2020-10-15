@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Jobs;
 
-use App\Video;
 use Haxibiao\Helpers\FFMpegUtils;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,7 +22,7 @@ class VideoAddMetadata implements ShouldQueue
 
     private $video;
 
-    public function __construct(Video $video)
+    public function __construct($video)
     {
         $this->video = $video;
     }
