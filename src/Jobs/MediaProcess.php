@@ -58,9 +58,13 @@ class MediaProcess implements ShouldQueue
             if (!empty($contents)) {
                 $contents   = json_decode($contents, true);
                 $data       = Arr::get($contents, 'data');
+                $status     = Arr::get($data, 'status');
                 $shareTitle = data_get($data, 'raw.raw.item_list.0.share_info.share_title');
-                if (!empty($shareTitle)) {
-                    $spider->setTitle($shareTitle);
+
+                // 404 not found video
+                $isFailed = (isset($data['raw']['raw']['item_list']) && blank($data['raw']['raw']['item_list'])) || $status == 'INVALID_STATUS';
+                if ($isFailed) {
+                    return $spider->delete();
                 }
             }
 
