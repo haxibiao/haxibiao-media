@@ -15,8 +15,12 @@ class AddVidToVideosTable extends Migration
     {
         Schema::table('videos', function (Blueprint $table) {
             // 无水印分享用
-            if (!Schema::hasColumn('videos','vid')){
-                $table->string('vid',50)->nullable()->index()->comment('视频的VID')->after('qcvod_fileid');
+            if (!Schema::hasColumn('videos', 'vid')) {
+                if (Schema::hasColumn('videos', 'qcvod_fileid')) {
+                    $table->string('vid', 50)->nullable()->index()->comment('视频的VID')->after('qcvod_fileid');
+                } else {
+                    $table->string('vid', 50)->nullable()->index()->comment('视频的VID');
+                }
             }
         });
     }

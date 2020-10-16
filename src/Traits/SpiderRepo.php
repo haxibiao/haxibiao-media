@@ -21,7 +21,7 @@ trait SpiderRepo
         if (!in_array(env('APP_NAME'), [
             'yinxiangshipin', 'ainicheng', 'ablm',
             'youjianqi', 'nashipin', 'dongdianhai',
-            'jinlinle'
+            'jinlinle', 'damei'
         ])) {
             $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
             $isLimited  = $limitCount >= 0 && $user->spiders()->today()->count() >= $limitCount;
@@ -164,8 +164,7 @@ trait SpiderRepo
                 }
             }
             $vid = data_get($this, 'data.raw.item_list.0.video.vid');
-            if ($vid && Schema::hasColumn('videos', 'vid'))
-            {
+            if ($vid && Schema::hasColumn('videos', 'vid')) {
                 $video->vid = $vid;
             }
 
