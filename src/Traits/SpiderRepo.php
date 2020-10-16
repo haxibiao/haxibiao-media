@@ -21,11 +21,14 @@ trait SpiderRepo
         if (!in_array(env('APP_NAME'), [
             'yinxiangshipin', 'ainicheng', 'ablm',
             'youjianqi', 'nashipin', 'dongdianhai',
-            'jinlinle', 'damei'
+            'jinlinle', 'damei', 'haxibiao'
         ])) {
             $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
-            $isLimited  = $limitCount >= 0 && $user->spiders()->today()->count() >= $limitCount;
-            throw_if($isLimited, UserException::class, '解析失败,今日分享已达上限,请明日再试哦!');
+            //-1不限制次数
+            if ($limitCount >= 0) {
+                $isLimited  = $user->spiders()->today()->count() >= $limitCount;
+                throw_if($isLimited, UserException::class, '解析失败,今日分享已达上限,请明日再试哦!');
+            }
         }
 
         $title = static::extractTitle($shareLink);
