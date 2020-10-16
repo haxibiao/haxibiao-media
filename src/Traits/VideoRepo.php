@@ -130,6 +130,7 @@ trait VideoRepo
         $this->duration = data_get($videoInfo, 'basicInfo.duration',0);
         $this->cover    = $coverUrl;
         $this->path     = $sourceVideoUrl;
+        $this->hash         = hash_file('md5',$sourceVideoUrl);
         //TODO::这里重复给值，可能需要重构
         $this->setJsonData('cover', $coverUrl);
         $this->setJsonData('duration', data_get($videoInfo, 'basicInfo.duration',0));
