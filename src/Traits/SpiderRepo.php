@@ -166,10 +166,10 @@ trait SpiderRepo
                     }
                 }
             }
-            $vid = data_get($this, 'data.raw.item_list.0.video.vid');
-            if ($vid && Schema::hasColumn('videos', 'vid')) {
-                $video->vid = $vid;
-            }
+//            $vid = data_get($this, 'data.raw.item_list.0.video.vid');
+//            if ($vid && Schema::hasColumn('videos', 'vid')) {
+//                $video->vid = $vid;
+//            }
 
             $video->save();
         }
