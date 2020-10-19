@@ -41,7 +41,7 @@ class VodController extends Controller
      */
     public function signature($site = '')
     {
-        $vodKeys = $this->vodKeys;
+        $vodKeys = [$site => config('vod.' . $site . '.class_id')];
         if (!array_key_exists($site, $vodKeys)) {
             abort(500, '输入参数有误');
         }
