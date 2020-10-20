@@ -61,7 +61,7 @@ class VideoAddMetadata implements ShouldQueue
     private function downloadImage2Local($url){
         $coverFileName = Str::random(12) . '.jpg';
         // 输出文件放系统临时文件夹，随系统自动清理
-        $outputCoverFilePath  = sys_get_temp_dir() . $coverFileName;
+        $outputCoverFilePath  = sys_get_temp_dir() .'/'. $coverFileName;
         file_put_contents($outputCoverFilePath,file_get_contents($url));
         return $outputCoverFilePath;
     }
