@@ -134,7 +134,7 @@ trait VideoRepo
         $hash         = hash_file('md5',$sourceVideoUrl);
         $sameHashVideo=Video::where('hash',$hash)->first();
         if($sameHashVideo){
-            $hash= hash_file('md5',$sourceVideoUrl.time());
+            $hash= $hash.time();
         }
         $this->hash =$hash; 
         
