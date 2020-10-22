@@ -28,7 +28,12 @@ class MediaProcess implements ShouldQueue
     public function __construct($spiderId)
     {
         $this->spider = Spider::wating()->find($spiderId);
-        $this->onQueue('spiders');
+        $url = $this->spider->source_url;
+        if(strpos($url, 'tiktok.com')){
+            $this->onQueue('tiktoks');
+        } else {
+            $this->onQueue('spiders');
+        }
     }
 
     /**

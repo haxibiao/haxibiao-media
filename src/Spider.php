@@ -43,7 +43,12 @@ class Spider extends Model
     const VIDEO_TYPE    = 'videos';
     const QUESTION_TYPE = 'questions';
 
-    const DOUYIN_VIDEO_DOMAINS = ['v.douyin.com', 'www.iesdouyin.com'];
+    const DOUYIN_VIDEO_DOMAINS = [
+        'v.douyin.com',
+        'www.iesdouyin.com',
+        'vm.tiktok.com',
+        'vt.tiktok.com'
+    ];
 
     public static function boot()
     {
