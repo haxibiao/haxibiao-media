@@ -67,7 +67,7 @@ class MediaProcess implements ShouldQueue
                 $shareTitle = data_get($data, 'raw.raw.item_list.0.share_info.share_title');
 
                 // 404 not found video
-                $isFailed = (isset($data['raw']['raw']['item_list']) && blank($data['raw']['raw']['item_list'])) || $status == 'INVALID_STATUS';
+                $isFailed = $status == 'INVALID_STATUS';
                 if ($isFailed) {
                     return $spider->delete();
                 }
