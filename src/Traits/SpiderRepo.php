@@ -44,10 +44,13 @@ trait SpiderRepo
             throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
         }
 
-        //判断是否404
-        $client = new Client();
-        $client = $client->request('GET', $dyUrl, ['http_errors' => false]);
-        throw_if($client->getStatusCode() == 404, UserException::class, '解析失败,URL无法访问！');
+        //判断是否404(跳过tiktok)
+        if(!strpos($dyUrl, 'tiktok.com')){
+            $client = new Client();
+            $client = $client->request('GET', $dyUrl, ['http_errors' => false]);
+            throw_if($client->getStatusCode() == 404, UserException::class, '解析失败,URL无法访问！');
+        }
+
         //写入DB
         $spider        = static::firstOrNew(['source_url' => $dyUrl]);
         $spiderExisted = isset($spider->id);
