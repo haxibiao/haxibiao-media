@@ -21,21 +21,22 @@ class SpiderController extends Controller
             $status = Arr::get($data, 'status');
             $video  = Arr::get($data, 'video');
 
-            //重新获取json中的标题
-            if (!empty($shareTitle)) {
-                $spider->setTitle($shareTitle);
-            }
+            if (!is_null($spider) && !$spider->isProcessed()) {
 
-            if (!is_null($spider) && $spider->isWating()) {
+                //重新获取json中的标题
+                if (!empty($shareTitle)) {
+                    $spider->setTitle($shareTitle);
+                }
+
                 //重试n次仍然失败
                 if ($status == 'INVALID_STATUS') {
                     $spider->status = Spider::INVALID_STATUS;
                     return $spider->save(); //不删除这个爬虫信息，保留！
                 }
 
-                $dataFromModel = $spider->data;
-                $dataFromModel['raw'] = data_get($data,'raw.raw',[]);
-                $spider->data = $dataFromModel;
+                $dataFromModel        = $spider->data;
+                $dataFromModel['raw'] = data_get($data, 'raw.raw', []);
+                $spider->data         = $dataFromModel;
                 $spider->save();
 
                 //处理好的视频
