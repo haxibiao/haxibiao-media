@@ -145,7 +145,16 @@ trait SpiderRepo
             if (in_array(env("APP_NAME"), ["datizhuanqian", "damei", "yyjieyou", "ablm"])) {
                 $video->fileid = Arr::get($json, 'vod.FileId');
             } else {
-                $video->qcvod_fileid = Arr::get($json, 'vod.FileId');
+                $fileId = Arr::get($json, 'vod.FileId');
+                if($fileId){
+                    $video->qcvod_fileid = $fileId;
+                }else{
+                    $mediaUrl = Arr::get($json, 'vod.MediaUrl');
+                    if($mediaUrl){
+                        $video->qcvod_fileid = substr(preg_split("~/~",$mediaUrl)[4],-19);
+                    }
+                }
+                
             }
             $video->path = $mediaUrl;
             //保存视频截图 && 同步填充信息
