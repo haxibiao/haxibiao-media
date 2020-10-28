@@ -166,7 +166,6 @@ trait SpiderRepo
             $video->setJsonData('width', data_get($videoInfo, 'metaData.width'));
             $video->setJsonData('height', data_get($videoInfo, 'metaData.height'));
 
-            // TODO 抽离到media保存动图
             $douyinDynamicCover = data_get($this, 'data.raw.item_list.0.video.dynamic_cover.url_list.0');
             if ($douyinDynamicCover) {
                 $stream = @file_get_contents($douyinDynamicCover);
@@ -178,10 +177,11 @@ trait SpiderRepo
                     }
                 }
             }
-            //            $vid = data_get($this, 'data.raw.item_list.0.video.vid');
-            //            if ($vid && Schema::hasColumn('videos', 'vid')) {
-            //                $video->vid = $vid;
-            //            }
+            // 保存vid信息
+            $vid = data_get($this, 'data.raw.item_list.0.video.vid');
+            if ($vid && Schema::hasColumn('videos', 'vid')) {
+                $video->vid = $vid;
+            }
 
             $video->save();
         }
