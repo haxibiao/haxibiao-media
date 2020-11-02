@@ -47,7 +47,8 @@ class Spider extends Model
         'v.douyin.com',
         'www.iesdouyin.com',
         'vm.tiktok.com',
-        'vt.tiktok.com'
+        'vt.tiktok.com',
+        'v.kuaishou.com',
     ];
 
     public static function boot()
