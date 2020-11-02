@@ -20,6 +20,7 @@ class SpiderController extends Controller
             $spider = Spider::where('source_url', $sourceUrl)->first();
             $status = Arr::get($data, 'status');
             $video  = Arr::get($data, 'video');
+            $comment  = data_get($data, 'comment');
 
             if (!is_null($spider) && !$spider->isProcessed()) {
 
@@ -36,6 +37,7 @@ class SpiderController extends Controller
 
                 $dataFromModel        = $spider->data;
                 $dataFromModel['raw'] = data_get($data, 'raw.raw', []);
+                $dataFromModel['comment'] = $comment;
                 $spider->data         = $dataFromModel;
                 $spider->save();
 
