@@ -20,8 +20,7 @@ class SpiderController extends Controller
             $spider = Spider::where('source_url', $sourceUrl)->first();
             $status = Arr::get($data, 'status');
             $video  = Arr::get($data, 'video');
-            $comment  = data_get($data, 'comment');
-
+            $comment  = data_get($data, 'raw.comment');
             if (!is_null($spider) && !$spider->isProcessed()) {
 
                 //重新获取json中的标题
