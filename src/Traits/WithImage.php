@@ -18,9 +18,9 @@ trait WithImage
             'dongshouji', 'dongyundong', 'dongwaiyu', 'dongwaimao',
             'buyueta', 'dongdianhai', 'jinlinle', 'youjianqi', 'nashipin',
             'yanjiao', 'hengyang', 'dongwanche', 'jucheshe', 'ruqunba',
-            'haxibiao', 'dongdiancai'
+            'haxibiao', 'dongdiancai','dianyintujie'
         ])) {
-            if (config('app.name') == 'dongmeiwei') {
+            if (config('app.name') == 'dongmeiwei' || config('app.name') == 'dianyintujie') {
                 return $this->morphToMany(Image::class, 'imageable', 'imageables')
                     ->withTimestamps();
             }
