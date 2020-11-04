@@ -21,7 +21,7 @@ trait SpiderRepo
         if (!in_array(env('APP_NAME'), [
             'yinxiangshipin', 'ainicheng', 'ablm',
             'youjianqi', 'nashipin', 'dongdianhai',
-            'jinlinle', 'damei', 'haxibiao'
+            'jinlinle', 'damei', 'haxibiao','dongwaimao'
         ])) {
             $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
             //-1不限制次数
@@ -40,7 +40,7 @@ trait SpiderRepo
             Spider::DOUYIN_VIDEO_DOMAINS
         );
         throw_if(!$isDyUrl, UserException::class, '解析失败,请提供有效的抖音URL!');
-        if (!in_array(config('app.name'), ['yinxiangshipin', 'ainicheng', 'dongwaimao', 'ablm', 'nashipin', 'caohan'])) {
+        if (!in_array(config('app.name'), ['yinxiangshipin', 'ainicheng', 'dongwaimao', 'ablm', 'nashipin', 'caohan','dongwaimao'])) {
             throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
         }
 
