@@ -91,7 +91,7 @@ trait SpiderRepo
     {
         preg_match_all('#(.*?)http.*?#', $str, $match);
         if (isset($match[1][0])) {
-            return str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', '@DOU+小助手'], '', $match[1][0]);
+            return str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', '@DOU+小助手','快手','#快手创作者服务中心',' @快手小助手','#快看'], '', $match[1][0]);
         }
     }
 
