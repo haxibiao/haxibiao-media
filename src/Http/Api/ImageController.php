@@ -23,7 +23,7 @@ class ImageController extends Controller
 
     public function store(Request $request)
     {
-        $user        = $request->user();
+        $user = $request->user();
         $image_files = $request->photo;
 
         //向前兼容，有些页面还是使用单图上传逻辑
@@ -31,10 +31,10 @@ class ImageController extends Controller
             if ($request->photo) {
                 $mimeType = $request->photo->getClientMimeType();
                 $original_filename = $request->original_filename;
-                if (!str_contains($mimeType,'image')&&!str_contains($original_filename,'image')){
+                if (!str_contains($mimeType, 'image') && !str_contains($original_filename, 'image')) {
                     return "只支持添加图片文件";
                 }
-                $image          = new Image();
+                $image = new Image();
                 $image->user_id = $user->id;
                 $image->save();
                 $image = $image->saveImage($request->photo);
@@ -42,9 +42,9 @@ class ImageController extends Controller
                 //给simditor编辑器返回上传图片结果...
                 if ($request->get('from') == 'simditor') {
                     // $json = "{ success: true, msg:'图片上传成功', file_path: '" . $path_big . "' }";
-                    $json            = (object) [];
-                    $json->success   = true;
-                    $json->msg       = '图片上传成功';
+                    $json = (object) [];
+                    $json->success = true;
+                    $json->msg = '图片上传成功';
                     $json->file_path = $image->url;
                     return json_encode($json);
                 }
@@ -72,7 +72,7 @@ class ImageController extends Controller
                 $image->user_id = $user->id;
             }
             $image->save();
-            $image    = $image->saveImage($request->photo);
+            $image = $image->saveImage($request->photo);
             $result[] = request('feedback') ? $image : $image->url;
         }
         return $result;
@@ -82,15 +82,41 @@ class ImageController extends Controller
     public function upload(Request $request)
     {
         $image = new Image();
-        $image = $image->saveImage($request->picfile);
-        //给simditor编辑器返回上传图片结果...
-        if ($request->get('from') == 'simditor') {
-            $json            = (object) [];
-            $json->success   = true;
-            $json->msg       = '图片上传成功';
-            $json->file_path = $image->url;
-            return json_encode($json);
+        $image_files = $request->picfile;
+
+        // 兼容单图上传模式
+        if (!is_array($image_files)) {
+            $image = $image->saveImage($image_files);
+
+            // 给simditor编辑器返回上传图片结果...
+            if ($request->get('from') == 'simditor') {
+                $json = (object) [];
+                $json->success = true;
+                $json->msg = '图片上传成功';
+                $json->file_path = $image->url;
+                return json_encode($json);
+            }
+
+            return $image->url;
         }
-        return $image->url;
+
+        // 判断多图上传
+        if (count($image_files) > 0) {
+            // dd($image_files);
+
+            $result = [];
+            foreach ($image_files as $image_file) {
+                $extension = $image_file->getClientOriginalExtension();
+                if (!in_array($extension, ['jpg', 'png', 'gif'])) {
+                    $result[] = "图片格式只支持jpg, png, gif";
+                }
+                $image = new Image();
+                $image = $image->saveImage($image_file);
+                $result[] = $image->url;
+            }
+            return $result;
+        }
+
+        return "未发现图片文件！";
     }
 }
