@@ -18,7 +18,7 @@ trait SpiderRepo
     {
         // 通过config来控制接口开关 && 动态配置控制每用户日最大解析数
         throw_if(config('media.spider.enable') === false, UserException::class, '解析失败,功能维护中,请稍后再试!');
-        if (!in_array(env('APP_NAME'), [
+        if (!in_array(config('app.name'), [
             'yinxiangshipin', 'ainicheng', 'ablm',
             'youjianqi', 'nashipin', 'dongdianhai',
             'jinlinle', 'damei', 'haxibiao','dongwaimao'
@@ -91,7 +91,7 @@ trait SpiderRepo
     {
         preg_match_all('#(.*?)http.*?#', $str, $match);
         if (isset($match[1][0])) {
-            return str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', '@DOU+小助手'], '', $match[1][0]);
+            return str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', '@DOU+小助手','快手','#快手创作者服务中心',' @快手小助手','#快看'], '', $match[1][0]);
         }
     }
 
