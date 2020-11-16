@@ -28,9 +28,6 @@ trait SpiderAttrs
     public function getRewardAttribute()
     {
         $reward = Spider::SPIDER_GOLD_REWARD;
-        if (in_array(env('APP_NAME'), ["datizhuanqian"])) {
-            $reward = \App\Post::SHARE_DOIYIN_VIDEO_REWARD;
-        }
         return Arr::get($this->data, 'reward', $reward);
     }
 
