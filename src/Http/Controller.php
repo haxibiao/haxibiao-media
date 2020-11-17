@@ -1,6 +1,6 @@
 <?php
 
-fnamespace Haxibiao\Media\Http;
+namespace Haxibiao\Media\Http;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
