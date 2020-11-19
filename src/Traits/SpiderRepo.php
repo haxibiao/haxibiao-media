@@ -2,14 +2,14 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Exceptions\UserException;
 use GuzzleHttp\Client;
-use Haxibiao\Helpers\QcloudUtils;
-use Haxibiao\Media\Jobs\MediaProcess;
-use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
+use Haxibiao\Media\Spider;
 use Illuminate\Support\Arr;
+use App\Exceptions\UserException;
+use Haxibiao\Media\Jobs\MediaProcess;
 use Illuminate\Support\Facades\Schema;
+use Haxibiao\Helpers\utils\QcloudUtils;
 use Illuminate\Support\Facades\Storage;
 
 trait SpiderRepo
