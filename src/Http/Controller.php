@@ -9,5 +9,6 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
+    // FIXME: PSR-4 配合 composer autoload 自动加载, 类的位置需要变更 
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }

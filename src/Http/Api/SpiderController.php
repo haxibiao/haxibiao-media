@@ -2,10 +2,11 @@
 
 namespace Haxibiao\Media\Http\Api;
 
-use Haxibiao\Media\Http\Controllers\Controller;
+
 use Haxibiao\Media\Spider;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
+use Haxibiao\Media\Http\Controller;
 
 class SpiderController extends Controller
 {
