@@ -2,14 +2,14 @@
 
 namespace Haxibiao\Media\Traits;
 
-use GuzzleHttp\Client;
-use Haxibiao\Media\Video;
-use Haxibiao\Media\Spider;
-use Illuminate\Support\Arr;
 use App\Exceptions\UserException;
+use GuzzleHttp\Client;
+use Haxibiao\Helpers\QcloudUtils;
 use Haxibiao\Media\Jobs\MediaProcess;
+use Haxibiao\Media\Spider;
+use Haxibiao\Media\Video;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
-use Haxibiao\Helpers\utils\QcloudUtils;
 use Illuminate\Support\Facades\Storage;
 
 trait SpiderRepo
@@ -21,12 +21,12 @@ trait SpiderRepo
         if (!in_array(config('app.name'), [
             'yinxiangshipin', 'ainicheng', 'ablm',
             'youjianqi', 'nashipin', 'dongdianhai',
-            'jinlinle', 'damei', 'haxibiao','dongwaimao'
+            'jinlinle', 'damei', 'haxibiao', 'dongwaimao',
         ])) {
             $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
             //-1不限制次数
             if ($limitCount >= 0) {
-                $isLimited  = $user->spiders()->today()->count() >= $limitCount;
+                $isLimited = $user->spiders()->today()->count() >= $limitCount;
                 throw_if($isLimited, UserException::class, '解析失败,今日分享已达上限,请明日再试哦!');
             }
         }
@@ -40,12 +40,12 @@ trait SpiderRepo
             Spider::DOUYIN_VIDEO_DOMAINS
         );
         throw_if(!$isDyUrl, UserException::class, '解析失败,请提供有效的抖音URL!');
-        if (!in_array(config('app.name'), ['yinxiangshipin', 'ainicheng', 'dongwaimao', 'ablm', 'nashipin', 'caohan','dongwaimao'])) {
+        if (!in_array(config('app.name'), ['yinxiangshipin', 'ainicheng', 'dongwaimao', 'ablm', 'nashipin', 'caohan', 'dongwaimao'])) {
             throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
         }
 
         //判断是否404(跳过tiktok)
-        if(!strpos($dyUrl, 'tiktok.com')){
+        if (!strpos($dyUrl, 'tiktok.com')) {
             $client = new Client();
             $client = $client->request('GET', $dyUrl, ['http_errors' => false]);
             throw_if($client->getStatusCode() == 404, UserException::class, '解析失败,URL无法访问！');
@@ -91,7 +91,7 @@ trait SpiderRepo
     {
         preg_match_all('#(.*?)http.*?#', $str, $match);
         if (isset($match[1][0])) {
-            return str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', '@DOU+小助手','快手','#快手创作者服务中心',' @快手小助手','#快看'], '', $match[1][0]);
+            return str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', '@DOU+小助手', '快手', '#快手创作者服务中心', ' @快手小助手', '#快看'], '', $match[1][0]);
         }
     }
 
@@ -103,8 +103,8 @@ trait SpiderRepo
     public static function querySpiders($user, $type, $oldGraphql = false)
     {
         $query = Spider::with('video')->where('user_id', $user->id)
-            // ->take($limit)
-            // ->skip($offset)
+        // ->take($limit)
+        // ->skip($offset)
             ->latest('id');
         if (!is_null($type)) {
             $query = $query->where('spider_type', $type);
@@ -146,15 +146,15 @@ trait SpiderRepo
                 $video->fileid = Arr::get($json, 'vod.FileId');
             } else {
                 $fileId = Arr::get($json, 'vod.FileId');
-                if($fileId){
+                if ($fileId) {
                     $video->qcvod_fileid = $fileId;
-                }else{
+                } else {
                     $mediaUrl = Arr::get($json, 'vod.MediaUrl');
-                    if($mediaUrl){
-                        $video->qcvod_fileid = substr(preg_split("~/~",$mediaUrl)[4],-19);
+                    if ($mediaUrl) {
+                        $video->qcvod_fileid = substr(preg_split("~/~", $mediaUrl)[4], -19);
                     }
                 }
-                
+
             }
             $video->path = $mediaUrl;
             //保存视频截图 && 同步填充信息
@@ -162,7 +162,7 @@ trait SpiderRepo
             $video->setJsonData('cover', $coverUrl);
             $video->setJsonData('sourceVideoUrl', $mediaUrl);
             $video->setJsonData('duration', Arr::get($data, 'duration', 0));
-            $videoInfo = QcloudUtils::getVideoInfo($video->qcvod_fileid);
+            $videoInfo = QcloudUtils::getVideoInfo($video->fileid ?? $video->qcvod_fileid);
             $video->setJsonData('width', data_get($videoInfo, 'metaData.width'));
             $video->setJsonData('height', data_get($videoInfo, 'metaData.height'));
 
