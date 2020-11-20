@@ -142,20 +142,23 @@ trait SpiderRepo
             $video->user_id = $this->user_id;
             //更改VOD地址
             $video->disk = 'vod';
-            if (in_array(env("APP_NAME"), ["datizhuanqian", "damei", "yyjieyou", "ablm"])) {
-                $video->fileid = Arr::get($json, 'vod.FileId');
-            } else {
-                $fileId = Arr::get($json, 'vod.FileId');
-                if ($fileId) {
-                    $video->qcvod_fileid = $fileId;
-                } else {
-                    $mediaUrl = Arr::get($json, 'vod.MediaUrl');
-                    if ($mediaUrl) {
-                        $video->qcvod_fileid = substr(preg_split("~/~", $mediaUrl)[4], -19);
-                    }
-                }
 
+            //获取fileId
+            $fileId = Arr::get($json, 'vod.FileId');
+            if (empty($fileId)) {
+                $mediaUrl = Arr::get($json, 'vod.MediaUrl');
+                if ($mediaUrl) {
+                    $fileId = substr(preg_split("~/~", $mediaUrl)[4], -19);
+                }
             }
+
+            //兼容答赚、工厂等项目
+            if (in_array(env("APP_NAME"), ["datizhuanqian", "damei", "yyjieyou", "ablm"])) {
+                $video->fileid = $fileId;
+            } else {
+                $video->qcvod_fileid = $fileId;
+            }
+
             $video->path = $mediaUrl;
             //保存视频截图 && 同步填充信息
             $video->status = empty($coverUrl) ? Video::CDN_VIDEO_STATUS : Video::COVER_VIDEO_STATUS;
