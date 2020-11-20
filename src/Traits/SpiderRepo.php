@@ -162,7 +162,7 @@ trait SpiderRepo
             $video->setJsonData('cover', $coverUrl);
             $video->setJsonData('sourceVideoUrl', $mediaUrl);
             $video->setJsonData('duration', Arr::get($data, 'duration', 0));
-            $videoInfo = QcloudUtils::getVideoInfo(intval(Arr::get($json, 'vod.FileId')));
+            $videoInfo = QcloudUtils::getVideoInfo($video->qcvod_fileid);
             $video->setJsonData('width', data_get($videoInfo, 'metaData.width'));
             $video->setJsonData('height', data_get($videoInfo, 'metaData.height'));
 
