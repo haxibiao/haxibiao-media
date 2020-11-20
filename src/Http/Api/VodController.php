@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media\Http\Api;
 
-use Haxibiao\Media\Http\Controllers\Controller;
+use Haxibiao\Media\Http\Controller;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
