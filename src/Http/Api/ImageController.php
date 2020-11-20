@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media\Http\Api;
 
-use Haxibiao\Media\Http\Controllers\Controller;
+use Haxibiao\Media\Http\Controller;
 use Haxibiao\Media\Image;
 use Illuminate\Http\Request;
 
