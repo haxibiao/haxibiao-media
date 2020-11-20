@@ -4,7 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
 use GuzzleHttp\Client;
-use Haxibiao\Helpers\QcloudUtils;
+use Haxibiao\Helpers\utils\QcloudUtils;
 use Haxibiao\Media\Jobs\MediaProcess;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
