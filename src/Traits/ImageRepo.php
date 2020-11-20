@@ -3,7 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
-use Haxibiao\Helpers\QcloudUtils;
+use Haxibiao\Helpers\utils\QcloudUtils;
 use Haxibiao\Media\Image;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image as ImageMaker;

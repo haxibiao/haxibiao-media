@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media\Jobs;
 
-use Haxibiao\Helpers\FFMpegUtils;
+use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Video;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

@@ -6,11 +6,11 @@ use App\Category;
 use App\User;
 use Haxibiao\Media\Video;
 use Illuminate\Http\Request;
-use Haxibiao\Helpers\VodUtils;
+use Haxibiao\Helpers\utils\VodUtils;
 use Illuminate\Support\Facades\Log;
-use Haxibiao\Media\Http\Controllers\Controller;
+use Haxibiao\Media\Http\Controller;
 use App\Article;
-use Haxibiao\Helpers\FFMpegUtils;
+use Haxibiao\Helpers\utils\FFMpegUtils;
 use Illuminate\Support\Facades\Storage;
 
 class VideoController extends Controller
