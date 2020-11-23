@@ -3,15 +3,6 @@
 namespace Haxibiao\Media\Http\Api;
 
 use Haxibiao\Media\Http\Controller;
-use Haxibiao\Media\Video;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
-use TencentCloud\Common\Credential;
-use TencentCloud\Common\Exception\TencentCloudSDKException;
-use TencentCloud\Common\Profile\ClientProfile;
-use TencentCloud\Common\Profile\HttpProfile;
-use TencentCloud\Vod\V20180717\Models\DescribeAllClassRequest;
-use TencentCloud\Vod\V20180717\VodClient;
 
 class VodController extends Controller
 {
@@ -28,7 +19,7 @@ class VodController extends Controller
         $this->secret_id  = config('vod.' . config('app.name') . '.secret_id');
         $this->secret_key = config('vod.' . config('app.name') . '.secret_key');
         $this->vodKeys    = [
-            config('app.name') => config('vod.' . config('app.name') . '.class_id')
+            config('app.name') => config('vod.' . config('app.name') . '.class_id'),
         ];
     }
 

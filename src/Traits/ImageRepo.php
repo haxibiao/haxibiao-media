@@ -16,7 +16,8 @@ trait ImageRepo
     //TODO: 待重构这里
     public function fillForJs()
     {
-        $this->url       = $this->url;
+        $this->url       = $this->getUrlAttribute();
+        $this->path      = $this->getUrlAttribute();
         $this->url_small = $this->thumbnail;
     }
 
