@@ -2,15 +2,15 @@
 
 namespace Haxibiao\Media\Http\Api;
 
+use App\Article;
 use App\Category;
 use App\User;
+use Haxibiao\Helpers\utils\FFMpegUtils;
+use Haxibiao\Helpers\utils\VodUtils;
+use Haxibiao\Media\Http\Controller;
 use Haxibiao\Media\Video;
 use Illuminate\Http\Request;
-use Haxibiao\Helpers\utils\VodUtils;
 use Illuminate\Support\Facades\Log;
-use Haxibiao\Media\Http\Controller;
-use App\Article;
-use Haxibiao\Helpers\utils\FFMpegUtils;
 use Illuminate\Support\Facades\Storage;
 
 class VideoController extends Controller
@@ -35,7 +35,6 @@ class VideoController extends Controller
 
             //处理视频封面
             VodUtils::makeCover($request->fileId);
-
 
             // if (env('APP_NAME_CN') == "答妹") {
             //     $metadata = ['"userId"' => $user->id, '"app' => '"答妹"'];
@@ -168,27 +167,27 @@ class VideoController extends Controller
         $videos   = get_stick_videos('', true);
         $videoIds = [];
         foreach ($videos as $video) {
-            $videoIds[] = $video->article->id;
+            $videoIds[] = $video->post->id;
         }
         if ($request->get('stick')) {
-            $data = Article::whereIn('id', $videoIds);
+            $data = \App\Post::whereIn('id', $videoIds);
         } else {
-            $data = Article::where('type', 'video')->whereStatus(1)->orderByDesc('updated_at');
+            $data = \App\Post::whereStatus(1)->orderByDesc('updated_at')->with(['video', 'user']);
             if (!empty($videoIds)) {
-                $data = Article::where('type', 'video')->whereStatus(1)->whereNotIn('id', $videoIds)
-                    ->orderByDesc('updated_at');
+                $data = \App\Post::whereStatus(1)->whereNotIn('id', $videoIds)
+                    ->orderByDesc('updated_at')->with(['video', 'user']);
             }
         }
         $data = $data->paginate(9);
-        foreach ($data as $article) {
-            $article->fillForJs();
-        }
+        // foreach ($data as $post) {
+        //     $post->fillForJs();
+        // }
         return $data;
     }
 
     public function showByVideoHash($hash)
     {
-        $video = Video::where('hash', $hash)->first();
+        $video       = Video::where('hash', $hash)->first();
         $qcvodFileid = data_get($video, 'qcvod_fileid');
         if ($qcvodFileid) {
             return $qcvodFileid;
@@ -200,12 +199,12 @@ class VideoController extends Controller
     {
         /**
          * FIXME::其实可以前端上传 给我url也可以直接解析 服务器可以不做io操作了
-         *  问题就是可能会有3份视频文件 
+         *  问题就是可能会有3份视频文件
          * 1. 视频原作者（抖音粘贴or自己上传的时候就会有一份原文件和添加了metadata的文件)
          * 2. 被邀请用户上传的文件
          */
         $uploadFile = $request->file('video');
-        $result = Storage::disk('public')->put('video', $uploadFile->get());
+        $result     = Storage::disk('public')->put('video', $uploadFile->get());
         if ($result) {
             $path = storage_path('app/public/video');
             $data = FFMpegUtils::getMediaMetadata($path);
