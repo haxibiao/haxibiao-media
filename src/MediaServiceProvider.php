@@ -15,7 +15,7 @@ class MediaServiceProvider extends ServiceProvider
             Console\ImageReFactoringCommand::class,
             Console\CountVideoViewsCommand::class,
             Console\FixVideoIDCommand::class,
-            Console\ImportMovie::class,
+            Console\MovieSync::class,
         ]);
         $this->bindPathsInContainer();
     }
