@@ -37,8 +37,8 @@ class InstallCommand extends Command
         copy(__DIR__ . '/stubs/Image.stub', app_path('Image.php'));
         copy(__DIR__ . '/stubs/Spider.stub', app_path('Spider.php'));
 
-        // $this->comment('迁移数据库变化...');
-        // $this->callSilent('migrate');
+        $this->comment('迁移数据库变化...');
+        $this->callSilent('migrate');
 
     }
 

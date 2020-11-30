@@ -15,6 +15,7 @@ class MediaServiceProvider extends ServiceProvider
             Console\ImageReFactoringCommand::class,
             Console\CountVideoViewsCommand::class,
             Console\FixVideoIDCommand::class,
+            Console\ImportMovie::class,
         ]);
         $this->bindPathsInContainer();
     }
@@ -22,8 +23,8 @@ class MediaServiceProvider extends ServiceProvider
     public function boot()
     {
         // 更新视频的每日播放量
-        $enabled = config('media.enabled_statistics_video_views',false);
-        if($enabled){
+        $enabled = config('media.enabled_statistics_video_views', false);
+        if ($enabled) {
             $this->app->booted(function () {
                 $schedule = $this->app->make(Schedule::class);
                 $schedule->command('haxibiao:video:CountVideoViewers')->dailyAt('1:30');;

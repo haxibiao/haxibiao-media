@@ -1,11 +1,12 @@
 <?php
 
 use Haxibiao\Media\Http\Api\ImageController;
+use Haxibiao\Media\Http\Api\MovieController;
 use Haxibiao\Media\Http\Api\SpiderController;
 use Haxibiao\Media\Http\Api\VideoController;
 use Haxibiao\Media\Http\Api\VodController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Routing\Registrar as RouteRegisterContract;
+use Illuminate\Support\Facades\Route;
 
 /**
  * Video
@@ -67,4 +68,13 @@ Route::group(['prefix' => 'api'], function (RouteRegisterContract $api) {
     // Route::post('/media/import', 'SpiderController@importDouyinSpider');
     //media服务抖音采集成功回调
     Route::any('/media/hook', SpiderController::class . '@hook');
+});
+
+/**
+ * Movie
+ */
+
+Route::group(['prefix' => 'api'], function (RouteRegisterContract $api) {
+    //电影剧集播放器
+    Route::any('/movie/{movie}/series', MovieController::class . '@getSeries');
 });
