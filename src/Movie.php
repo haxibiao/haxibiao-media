@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Movie extends Model
 {
+    protected $guarded = [];
 
     const MOVIE_RI_JU   = 1;
     const MOVIE_MEI_JU  = 2;
@@ -39,5 +40,12 @@ class Movie extends Model
     {
         $fallback_url = "http://cdn-iqiyi-com.diudie.com/series/70177/index.m3u8";
         return $this->data[0]["url"] ?? $fallback_url;
+    }
+
+    public function setDataAttribute($value){
+        if(is_string($value)){
+            $this->attributes['data'] = @json_decode($value);
+        }
+        $this->attributes['data'] = $value;
     }
 }
