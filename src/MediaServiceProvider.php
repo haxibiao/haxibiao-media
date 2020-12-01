@@ -36,6 +36,10 @@ class MediaServiceProvider extends ServiceProvider
             __DIR__ . '/../router.php'
         );
 
+        if (! $this->app->configurationIsCached()) {
+            $this->mergeConfigFrom(__DIR__.'/../config/database.php', 'database.connections');
+        }
+
         //安装时需要
         if ($this->app->runningInConsole()) {
 
