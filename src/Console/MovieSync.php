@@ -54,7 +54,8 @@ class MovieSync extends Command
         $success = 0;
         $fail    = 0;
         $total   = 0;
-        DB::connection('mediachaine')->table('movies')
+
+        DB::connection('package_media_chain')->table('movies')
             ->when( $region , function ($q) use ($region){
                 $q->where('region',$region);
             })->when( $type , function ($q) use ($type){
