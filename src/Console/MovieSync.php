@@ -83,7 +83,9 @@ class MovieSync extends Command
                 DB::beginTransaction();
                 try {
                     $model = Movie::firstOrNew([
-                        'name' => data_get($movie, 'name'),
+                        'name'       => data_get($movie, 'name'),
+                        'source'     => app('app.name'),
+                        'source_key' => data_get($movie, 'id'),
                     ]);
                     // 不同名的movie，直接导入
                     $model->forceFill(array_only($movie, [

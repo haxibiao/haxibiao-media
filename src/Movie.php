@@ -2,11 +2,13 @@
 
 namespace Haxibiao\Media;
 
+use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Movie extends Model
 {
+    use MovieRepo;
     protected $guarded = [];
 
     const MOVIE_RI_JU   = 1;
@@ -42,10 +44,12 @@ class Movie extends Model
         return $this->data[0]["url"] ?? $fallback_url;
     }
 
-    public function setDataAttribute($value){
-        if(is_string($value)){
+    public function setDataAttribute($value)
+    {
+        if (is_string($value)) {
             $this->attributes['data'] = @json_decode($value);
         }
         $this->attributes['data'] = $value;
     }
+
 }
