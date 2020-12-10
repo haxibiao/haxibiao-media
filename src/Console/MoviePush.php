@@ -1,6 +1,6 @@
 <?php
 
-namespace Haxibiao\Content\Console;
+namespace Haxibiao\Media\Console;
 
 use Haxibiao\Media\Movie;
 use Illuminate\Console\Command;
