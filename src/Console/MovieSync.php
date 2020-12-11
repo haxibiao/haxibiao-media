@@ -14,7 +14,7 @@ class MovieSync extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:sync {--region=} {--type=} {--style=} {--year=} {--producer=} {--actors=}';
+    protected $signature = 'movie:sync {--source=内涵电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员}';
 
     /**
      * The console command description.
@@ -55,7 +55,9 @@ class MovieSync extends Command
         $fail    = 0;
         $total   = 0;
 
-        DB::connection('package_media_chain')->table('movies')
+        // dd(config('database.connections'));
+
+        DB::connection('mediachain')->table('movies')
             ->when($region, function ($q) use ($region) {
                 $q->where('region', $region);
             })->when($type, function ($q) use ($type) {
@@ -84,7 +86,7 @@ class MovieSync extends Command
                 try {
                     $model = Movie::firstOrNew([
                         'name'       => data_get($movie, 'name'),
-                        'source'     => app('app.name'),
+                        'source'     => $this->option('source'),
                         'source_key' => data_get($movie, 'id'),
                     ]);
                     // 不同名的movie，直接导入
@@ -109,11 +111,12 @@ class MovieSync extends Command
                     ]))->save();
                     DB::commit();
                     $success++;
-                    $this->info('已成功导入：' . $success . '部,当前导入:' . data_get($movie, 'name'), '成功');
+                    $this->info('已成功导入：' . $success . '部, 当前导入:' . data_get($movie, 'name'), '成功');
                 } catch (\Exception $ex) {
+                    dd($ex);
                     DB::rollback();
                     $fail++;
-                    $this->info('已成功导入：' . $success . '部,当前导入:' . data_get($movie, 'name'), '失败');
+                    $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'), '失败');
                 }
             }
         });

@@ -1,9 +1,9 @@
 <?php
 return [
-    'package_media_chain'         => [
+    'mediachain'         => [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),
-        'host'           => '101.32.203.3',
+        'host'           => 'hk008.haxibiao.com',
         'port'           => '3306',
         'database'       => 'mediachain',
         'username'       => 'root',
