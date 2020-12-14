@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media;
 
+use App\Series;
 use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

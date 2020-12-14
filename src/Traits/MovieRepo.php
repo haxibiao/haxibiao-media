@@ -18,4 +18,14 @@ trait MovieRepo
             'movieimage' => 'https://cdn-douyin-com.diudie.com/',
         ], $bucket);
     }
+
+    public function toResource()
+    {
+        $data = $this->toArray();
+        unset($data['cover']);
+        return array_merge($data, [
+            'cover'  => $this->cover_url,
+            'region' => $this->type_name_attr,
+        ]);
+    }
 }

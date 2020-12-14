@@ -12,8 +12,8 @@ class MoviePush extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:push';
-
+    protected $signature   = 'movie:push';
+    public const CACHE_KEY = "movie_sync_max_id";
     /**
      * The console command description.
      *
@@ -38,11 +38,18 @@ class MoviePush extends Command
      */
     public function handle()
     {
-        Movie::query()->where('status', 1)->chunk(1000, function ($movies) {
+        // 从小到大push数据
+        $qb    = Movie::query()->oldest('id')->where('status', 1);
+        $maxid = \Cache::get(self::CACHE_KEY);
+        // 跳过已push的数据，从上次结束的地方开始push
+        if ($maxid) {
+            $qb->where('id', '>', $maxid);
+        }
+        $qb->chunk(1000, function ($movies) {
             foreach ($movies as $movie) {
-                $series     = $movie->series()->get(['path', 'name', 'bucket']);
-                $movie      = $movie->toResource();
-                $seriesJson = [];
+                $series        = $movie->series()->get(['path', 'name', 'bucket']);
+                $movieResource = $movie->toResource();
+                $seriesJson    = [];
                 foreach ($series as $item) {
                     $seriesJson[] = [
                         'name' => $item->name,
@@ -50,33 +57,34 @@ class MoviePush extends Command
                     ];
                 }
                 $exists = \DB::connection('mediachain')->table('movies')->where([
-                    'name'       => $movie['name'],
-                    'source'     => app('app.name'),
-                    'source_key' => $movie['id'],
+                    'name'       => $movieResource['name'],
+                    'source'     => config('app.name'),
+                    'source_key' => $movieResource['id'],
                 ])->exists();
 
                 if (!$exists) {
                     \DB::connection('mediachain')->table('movies')->insert([
-                        'name'         => $movie['name'],
-                        'introduction' => $movie['introduction'],
-                        'year'         => $movie['year'],
-                        'count_series' => $movie['count_series'],
-                        'producer'     => $movie['producer'],
-                        'region'       => $movie['region'],
-                        'cover'        => $movie['cover'],
-                        'rank'         => $movie['rank'],
-                        'country'      => $movie['country'],
-                        'subname'      => $movie['subname'],
-                        'score'        => $movie['score'],
-                        'tags'         => $movie['tags'],
-                        'hits'         => $movie['hits'],
-                        'lang'         => $movie['lang'],
-                        'type_name'    => $movie['type_name'],
+                        'name'         => $movieResource['name'],
+                        'introduction' => $movieResource['introduction'],
+                        'year'         => $movieResource['year'],
+                        'count_series' => $movieResource['count_series'],
+                        'producer'     => $movieResource['producer'],
+                        'region'       => $movieResource['region'],
+                        'cover'        => $movieResource['cover'],
+                        'rank'         => $movieResource['rank'],
+                        'country'      => $movieResource['country'],
+                        'subname'      => $movieResource['subname'],
+                        'score'        => $movieResource['score'],
+                        'tags'         => $movieResource['tags'],
+                        'hits'         => $movieResource['hits'],
+                        'lang'         => $movieResource['lang'],
+                        'type_name'    => $movieResource['type_name'],
                         'source'       => config('app.name'),
-                        'source_key'   => $movie['id'],
+                        'source_key'   => $movieResource['id'],
                         'data'         => json_encode($seriesJson),
                     ]);
                     $this->info("同步{$movie['name']}数据到 media chain 成功");
+                    \Cache::put(self::CACHE_KEY, $movie->id);
                 }
             }
         });
