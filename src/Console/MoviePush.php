@@ -51,10 +51,15 @@ class MoviePush extends Command
                 $series        = $movie->series()->get(['path', 'name', 'bucket']);
                 $movieResource = $movie->toResource();
                 $seriesJson    = [];
+                $sourceJson    = [];
                 foreach ($series as $item) {
                     $seriesJson[] = [
                         'name' => $item->name,
                         'url'  => MovieRepo::getCDNDomain($item->bucket) . $item->path,
+                    ];
+                    $sourceJson[] = [
+                        'name' => $item->name,
+                        'url'  => $item->source,
                     ];
                 }
                 $exists = \DB::connection('mediachain')->table('movies')->where([
@@ -83,6 +88,7 @@ class MoviePush extends Command
                         'source'       => config('app.name'),
                         'source_key'   => $movieResource['id'],
                         'data'         => json_encode($seriesJson),
+                        'source'       => json_encode($sourceJson),
                     ]);
                     $this->info("同步{$movie['name']}数据到 media chain 成功");
                     \Cache::put(self::CACHE_KEY, $movie->id);
