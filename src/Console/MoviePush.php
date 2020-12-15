@@ -88,7 +88,7 @@ class MoviePush extends Command
                         'source'       => config('app.name'),
                         'source_key'   => $movieResource['id'],
                         'data'         => json_encode($seriesJson),
-                        'source'       => json_encode($sourceJson),
+                        'data_source'  => json_encode($sourceJson),
                     ]);
                     $this->info("同步{$movie['name']}数据到 media chain 成功");
                     \Cache::put(self::CACHE_KEY, $movie->id);
