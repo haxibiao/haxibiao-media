@@ -84,7 +84,7 @@ class MakeVideoCovers implements ShouldQueue
     public function pushUrlCacheRequest($url)
     {
         //VOD预热
-        $cred        = new Credential(config('vod.' . config('app.name') . '.secret_id'), config('vod.' . config('app.name') . '.secret_key'));
+        $cred        = new Credential(env("VOD_SECRET_ID"), env("VOD_SECRET_KEY"));
         $httpProfile = new HttpProfile();
         $httpProfile->setEndpoint("vod.tencentcloudapi.com");
 
