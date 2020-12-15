@@ -2,7 +2,8 @@
 
 namespace Haxibiao\Media\Console;
 
-use Haxibiao\Media\Movie;
+use App\Movie;
+use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Console\Command;
 
 class MoviePush extends Command
@@ -53,7 +54,7 @@ class MoviePush extends Command
                 foreach ($series as $item) {
                     $seriesJson[] = [
                         'name' => $item->name,
-                        'url'  => Movie::getCDNDomain($item->bucket) . $item->path,
+                        'url'  => MovieRepo::getCDNDomain($item->bucket) . $item->path,
                     ];
                 }
                 $exists = \DB::connection('mediachain')->table('movies')->where([
