@@ -45,6 +45,8 @@ trait MovieResolvers
     public function resolversMovie($root, $args, $content, $info)
     {
         $movie = Movie::find(data_get($args,'movie_id'));
+        $movie->hits = $movie->hits+1;
+        $movie->save();
         app_track_event('看视频', '电影详情',data_get($args,'movie_id'));
         return $movie;
     }
@@ -72,7 +74,7 @@ trait MovieResolvers
                 'id'            => 'year',
                 'filterName'    => '年份',
                 'filterOptions' =>
-                ['2020', '2019', '2018', '2017', '2016', '2015'],
+                ['全部','2020', '2019', '2018', '2017', '2016', '2015'],
             ],
             [
                 'id'            => 'type',
