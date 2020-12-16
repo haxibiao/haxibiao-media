@@ -10,4 +10,11 @@ trait MovieResolvers
     {
         return Movie::where('region', $args['category']);
     }
+
+    public function resolversMovie($root, $args, $content, $info)
+    {
+        $movie = Movie::find(data_get($args,'movie_id'));
+        app_track_event('看视频', '电影详情',data_get($args,'movie_id'));
+        return $movie;
+    }
 }
