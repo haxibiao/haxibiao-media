@@ -39,7 +39,7 @@ extend type Query{
     """
     电影分类
     """
-   categoryMovie(category:MovieCategory!): [Movie] 
+   categoryMovie(region:MovieCategory,type:String,style:String,country:String,lang:String): [Movie] 
     @paginate(defaultCount: 10, builder: "App\\Movie@resolversCategoryMovie")
 }
 
