@@ -83,7 +83,8 @@ extend type Query{
     """
     电影推荐
     """
-    recommendMovie: [Movie] @field(resolver:"App\\Movie@resolversRecommendMovie")
+     recommendMovie(count:Int=7): [Movie] 
+    @field(resolver:"App\\Movie@resolversRecommendMovie")
 }
 
 enum MovieCategory {

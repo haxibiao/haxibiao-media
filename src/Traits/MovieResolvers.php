@@ -53,7 +53,18 @@ trait MovieResolvers
 
     public function resolversRecommendMovie($root, $args, $content, $info)
     {
-        return Movie::inRandomOrder()->take(7)->get(); 
+        $count=data_get($args,'count',7);
+        if(checkUser()){
+            $user=getUser();
+            //收藏过的电影类型
+            $movies_ids=$user->favoritedMovie()->pluck('faved_id')->toArray();
+            $regions=Movie::whereIn('id',$movies_ids)->pluck('region')->toArray();
+            return Movie::inRandomOrder()
+            ->whereIn('region',$regions)
+            ->take($count)->get(); 
+        }else{
+            return Movie::inRandomOrder()->take($count)->get(); 
+        }
     }
 
     public function getFilters(){
