@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Haxibiao\Media\Traits\MovieResolvers;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Haxibiao\Media\MovieHistory;
+use App\Comment;
 
 class Movie extends Model
 {
@@ -39,6 +40,11 @@ class Movie extends Model
     public function favorites()
     {
         return $this->morphMany(\App\Favorite::class, 'faved');
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(\App\Comment::class, 'commentable');
     }
 
     public function getRegionNameAttribute()
@@ -96,6 +102,16 @@ class Movie extends Model
             ])->first();
             return $history->progress;
         }
+    }
+
+    public function getCountFavoritesAttribute()
+    {
+        return $this->favorites()->count(); 
+    }
+
+    public function getCountCommentsAttribute()
+    {
+        return $this->comments()->count(); 
     }
 
 }
