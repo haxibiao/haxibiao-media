@@ -1,24 +1,45 @@
 type Movie {
     id: ID
     name:String
+    """
+    简介
+    """
     introduction:String
+    """
+    封面
+    """
     cover:String
+    """
+    导演
+    """
     producer:String
+    """
+    年份
+    """
     year:String
     """
     分类:动作科幻等
     """
     type:String
     """
-    风格:武侠玄幻等
+    风格:武侠、玄幻
     """
-    type:String
+    style:String
     """
     地区:美剧韩剧
     """
     region:String
+    """
+    演员
+    """
     actors: String
+    """
+    总集数
+    """
     count_series:Int
+    """
+    国家
+    """
     country:String
     """
     语言
@@ -28,19 +49,41 @@ type Movie {
     点击次数
     """
     hits:Int
+    """
+    评分
+    """
     score:String
+    """
+    语言
+    """
+    lang:String
     """
     剧集
     """
-    date:JsonType
+    data:JsonType
 }
 
 extend type Query{
     """
     电影分类
     """
-   categoryMovie(region:MovieCategory,type:String,style:String,country:String,lang:String): [Movie] 
+    categoryMovie(region:MovieCategory,type:String,style:String,country:String,lang:String,year:String): [Movie] 
     @paginate(defaultCount: 10, builder: "App\\Movie@resolversCategoryMovie")
+
+    """
+    获取过滤条件
+    """
+    getFilters: [MovieFilterData] @field(resolver: "App\\Movie@getFilters")
+
+    """
+    电影详情
+    """
+    movie(movie_id: ID!):Movie @field(resolver:"App\\Movie@resolversMovie")
+
+    """
+    电影推荐
+    """
+    recommendMovie: [Movie] @field(resolver:"App\\Movie@resolversRecommendMovie")
 }
 
 enum MovieCategory {
@@ -48,4 +91,21 @@ enum MovieCategory {
     MEI @enum(value: "美剧")
     RI @enum(value: "日剧")
     GANG @enum(value: "港剧")
+}
+
+type MovieFilterData {
+    """
+    搜索条件传递给搜索接口时，请务必使用对应的ID
+    """
+    id: String
+
+    """
+    筛选名称
+    """
+    filterName: String
+
+    """
+    筛选选项
+    """
+    filterOptions: [String]
 }
