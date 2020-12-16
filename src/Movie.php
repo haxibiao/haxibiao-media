@@ -6,10 +6,13 @@ use App\Series;
 use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Haxibiao\Media\Traits\MovieResolvers;
 
 class Movie extends Model
 {
     use MovieRepo;
+    use MovieResolvers;
+    
     protected $guarded = [];
 
     const MOVIE_RI_JU   = 1;

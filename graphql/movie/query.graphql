@@ -1,0 +1,51 @@
+type Movie {
+    id: ID
+    name:String
+    introduction:String
+    cover:String
+    producer:String
+    year:String
+    """
+    分类:动作科幻等
+    """
+    type:String
+    """
+    风格:武侠玄幻等
+    """
+    type:String
+    """
+    地区:美剧韩剧
+    """
+    region:String
+    actors: String
+    count_series:Int
+    country:String
+    """
+    语言
+    """
+    lang:String
+    """
+    点击次数
+    """
+    hits:Int
+    score:String
+    """
+    剧集
+    """
+    date:JsonType
+}
+
+extend type Query{
+    """
+    电影分类
+    """
+   categoryMovie(category:MovieCategory!): [Movie] 
+    @paginate(defaultCount: 10, builder: "App\\Movie@resolversCategoryMovie")
+}
+
+enum MovieCategory {
+    HAN @enum(value: "韩剧")
+    MEI @enum(value: "美剧")
+    RI @enum(value: "日剧")
+    GANG @enum(value: "港剧")
+}
