@@ -7,6 +7,7 @@ use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Haxibiao\Media\Traits\MovieResolvers;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Movie extends Model
 {
@@ -56,4 +57,8 @@ class Movie extends Model
         $this->attributes['data'] = $value;
     }
 
+    public function activity(): HasOne
+    {
+        return $this->hasOne(Activity::class);
+    }
 }
