@@ -13,6 +13,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Activity extends Model
 {
+    protected $fillable=[
+        'movie_id',
+        'title',
+        'subtitle',
+        'image_url',
+        'type',
+        'sort',
+    ];
     protected $table = 'activities';
 
     use ActivityRepo, ActivityAttrs, ActivityResolver;
@@ -29,5 +37,8 @@ class Activity extends Model
     {
         return $this->belongsTo(Movie :: class);
     }
-
+    public function scopeEnable($query)
+    {
+        return $query->where('status',1);
+    }
 }

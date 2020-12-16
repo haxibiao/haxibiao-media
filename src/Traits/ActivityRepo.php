@@ -16,6 +16,7 @@ trait ActivityRepo
     {
         return Activity::query()
         ->whereType($type)
+        ->enable()
         ->orderByDesc('sort');
     }
     public function saveDownloadImage($file)
