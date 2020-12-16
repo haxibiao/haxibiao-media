@@ -13,6 +13,9 @@ class CreateMovieHistoriesTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('movie_histories')) {
+            return;
+        }
         Schema::create('movie_histories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('progress')->comment('观看进度')->nullable();
