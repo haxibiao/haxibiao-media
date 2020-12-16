@@ -67,7 +67,15 @@ extend type Query{
     """
     电影分类
     """
-    categoryMovie(region:MovieCategory,type:String,style:String,country:String,lang:String,year:String): [Movie] 
+    categoryMovie(
+        region:MovieCategory,
+        type:String,
+        style:String,
+        country:String,
+        lang:String,
+        year:String,
+        scopes:ScopesType
+    ): [Movie] 
     @paginate(defaultCount: 10, builder: "App\\Movie@resolversCategoryMovie")
 
     """
@@ -92,6 +100,21 @@ enum MovieCategory {
     MEI @enum(value: "美剧")
     RI @enum(value: "日剧")
     GANG @enum(value: "港剧")
+}
+
+enum ScopesType{
+    """
+    最新
+    """
+    NEW @enum(value: "created_at")
+    """
+    最热
+    """
+    HOT @enum(value: "hits")
+    """
+    评分
+    """
+    SCORE @enum(value: "score")
 }
 
 type MovieFilterData {

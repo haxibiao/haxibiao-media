@@ -8,38 +8,33 @@ trait MovieResolvers
 {
     public function resolversCategoryMovie($root, $args, $content, $info)
     {
-        $region = data_get($args, 'region');
-        $type = data_get($args, 'type');
-        $style = data_get($args, 'style');
-        $country = data_get($args, 'country');
-        $lang = data_get($args, 'lang');
-        $year = data_get($args, 'year');
+        $region = data_get($args,'region');
+        //类型
+        $type   = data_get($args,'type');
+        //风格
+        $style  = data_get($args,'style');
+        $country= data_get($args,'country');
+        //语言
+        $lang   = data_get($args,'lang');
+        $year   = data_get($args,'year');
+        //排序规则
+        $scopes   = data_get($args,'scopes');
 
-        $qb = Movie::orderByDesc("created_at");
-        if ($region) {
-            $qb = $qb->where('region', $region);
-        }
-        //按电影类型分类
-        if ($type) {
-            $qb = $qb->where('type', $type);
-        }
-        //按电影风格分类
-        if ($style) {
-            $qb = $qb->where('style', $style);
-        }
-        //按国家分类
-        if ($country) {
-            $qb = $qb->where('country', $country);
-        }
-        //按语言分类
-        if ($lang) {
-            $qb = $qb->where('lang', $lang);
-        }
-        //按语言分类
-        if ($year) {
-            $qb = $qb->where('year', $year);
-        }
-        return $qb;
+        return Movie::when($region, function ($qb) use ($region){
+            return $qb->where('region', $region);
+        })->when($type, function ($qb) use ($type){
+            return $qb->where('type', $type);
+        })->when($style, function ($qb) use ($style){
+            return $qb->where('style', $style);
+        })->when($country, function ($qb) use ($country){
+            return $qb->where('country', $country);
+        })->when($lang, function ($qb) use ($lang){
+            return $qb->where('lang', $lang);
+        })->when($year, function ($qb) use ($year){
+            return $qb->where('year', $year);
+        })->when($scopes, function ($qb) use ($scopes){
+            return $qb->orderbyDesc($scopes);
+        });
     }
 
     public function resolversMovie($root, $args, $content, $info)
@@ -77,10 +72,16 @@ trait MovieResolvers
     {
         return [
             [
+                'id' => 'scopes',
+                'filterName' => '排序选项',
+                'filterOptions' =>
+                ['全部','最新','最热','评分'],
+            ],
+            [
                 'id' => 'region',
                 'filterName' => '剧种',
                 'filterOptions' =>
-                ['韩剧', '日剧', '美剧', '港剧', '泰剧'],
+                ['全部','韩剧', '日剧', '美剧', '港剧', '泰剧'],
             ],
             [
                 'id' => 'country',
