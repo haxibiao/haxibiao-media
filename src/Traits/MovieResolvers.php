@@ -43,4 +43,9 @@ trait MovieResolvers
         app_track_event('看视频', '电影详情',data_get($args,'movie_id'));
         return $movie;
     }
+
+    public function resolversRecommendMovie($root, $args, $content, $info)
+    {
+        return Movie::inRandomOrder()->take(7)->get(); 
+    }
 }
