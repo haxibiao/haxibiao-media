@@ -35,6 +35,11 @@ class Movie extends Model
         return $this->cover;
     }
 
+    public function favorites()
+    {
+        return $this->morphMany(\App\Favorite::class, 'faved');
+    }
+
     public function getRegionNameAttribute()
     {
         return $this->region;
@@ -60,5 +65,13 @@ class Movie extends Model
     public function activity(): HasOne
     {
         return $this->hasOne(Activity::class);
+    }
+
+    public function getFavoritedAttribute()
+    {
+        if ($user = getUser(false)) {
+            return $favorite = $user->favoritedMovie()->where('faved_id', $this->id)->count() > 0;
+        }
+        return false;
     }
 }
