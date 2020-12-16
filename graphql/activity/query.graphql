@@ -1,0 +1,24 @@
+extend type Query  {
+    """
+    获取指定类型的轮播图
+    """
+    activities(type: ActivityType=INDEX!): [Activity]
+        @paginate(builder: "Activity@getActivities")
+}
+
+enum ActivityType {
+    """
+    首页
+    """
+    INDEX  @enum(value: 1)
+    
+    """
+    电视剧
+    """
+    SERIES @enum(value: 2)
+    
+    """
+    电影专题
+    """
+    THEME  @enum(value: 3)
+}
