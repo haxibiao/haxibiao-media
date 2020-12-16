@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Haxibiao\Media\Traits\MovieResolvers;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Haxibiao\Media\MovieHistory;
 
 class Movie extends Model
 {
@@ -74,4 +75,27 @@ class Movie extends Model
         }
         return false;
     }
+
+    public function getLastWatchSeriesCache()
+    {
+        if ($user = getUser()) {
+            $history = MovieHistory::where([
+                'user_id'  => $user->id,
+                'movie_id' => $this->id,
+            ])->first();
+            return $history->series_id;
+        }
+    }
+
+    public function getLastWatchProgressCache()
+    {
+        if ($user = getUser()) {
+            $history = MovieHistory::where([
+                'user_id'  => $user->id,
+                'movie_id' => $this->id,
+            ])->first();
+            return $history->progress;
+        }
+    }
+
 }
