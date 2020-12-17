@@ -41,17 +41,7 @@ trait MovieResolvers
     public function resolversMovie($root, $args, $content, $info)
     {
         $movie = Movie::find(data_get($args, 'movie_id'));
-        if(checkUser())
-        {
-            $user = getUser();
-            // 保存观看历史
-            MovieHistory::updateOrCreate([
-                'user_id'  => $user->id,
-                'movie_id' => $movie->id,
-            ], [
-                'last_watch_time' => now(),
-            ]);
-        }
+
         $movie->hits = $movie->hits + 1;
         $movie->save();
         app_track_event('看视频', '电影详情', data_get($args, 'movie_id'));
