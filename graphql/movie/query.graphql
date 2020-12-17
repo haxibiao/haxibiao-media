@@ -61,6 +61,28 @@ type Movie {
     剧集
     """
     data:JsonType
+    favorited:Boolean
+    created_at: DateTime
+    """
+    最近观看的集
+    """
+    last_watch_series: Int
+    """
+    最近观看的进度
+    """
+    last_watch_progress: String
+    """
+    评论
+    """
+    comments:[Comment] @MorphMany
+    """
+    评论数
+    """
+    count_comments:Int
+    """
+    收藏数
+    """
+    count_favorites:Int
 }
 
 extend type Query{
@@ -91,11 +113,12 @@ extend type Query{
     """
     电影推荐
     """
-     recommendMovie(count:Int=7): [Movie] 
+    recommendMovie(count:Int=7): [Movie] 
     @field(resolver:"App\\Movie@resolversRecommendMovie")
 }
 
 enum MovieCategory {
+    ALL @enum(value: "ALL")
     HAN @enum(value: "韩剧")
     MEI @enum(value: "美剧")
     RI @enum(value: "日剧")
@@ -103,6 +126,7 @@ enum MovieCategory {
 }
 
 enum ScopesType{
+    ALL @enum(value: "ALL")
     """
     最新
     """
@@ -132,4 +156,5 @@ type MovieFilterData {
     筛选选项
     """
     filterOptions: [String]
+    filterValue: [String]
 }

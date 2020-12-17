@@ -21,19 +21,19 @@ trait MovieResolvers
         //排序规则
         $scopes   = data_get($args,'scopes');
 
-        return Movie::when($region, function ($qb) use ($region){
+        return Movie::when($region && $region != 'ALL', function ($qb) use ($region){
             return $qb->where('region', $region);
-        })->when($type, function ($qb) use ($type){
+        })->when($type && $type != 'ALL', function ($qb) use ($type){
             return $qb->where('type', $type);
-        })->when($style, function ($qb) use ($style){
+        })->when($style && $style != 'ALL', function ($qb) use ($style){
             return $qb->where('style', $style);
-        })->when($country, function ($qb) use ($country){
+        })->when($country && $country != 'ALL', function ($qb) use ($country){
             return $qb->where('country', $country);
-        })->when($lang, function ($qb) use ($lang){
+        })->when($lang && $lang != 'ALL', function ($qb) use ($lang){
             return $qb->where('lang', $lang);
-        })->when($year, function ($qb) use ($year){
+        })->when($year && $year != 'ALL', function ($qb) use ($year){
             return $qb->where('year', $year);
-        })->when($scopes, function ($qb) use ($scopes){
+        })->when($scopes && $scopes != 'ALL', function ($qb) use ($scopes){
             return $qb->orderbyDesc($scopes);
         });
     }
@@ -89,7 +89,7 @@ trait MovieResolvers
                 'filterOptions' =>
                 ['全部','最新','最热','评分'],
                 'filterValue' =>
-                ['','NEW','HOT','SCORE']
+                ['ALL','NEW','HOT','SCORE']
             ],
             [
                 'id' => 'region',
@@ -97,7 +97,7 @@ trait MovieResolvers
                 'filterOptions' =>
                 ['全部','韩剧','日剧', '美剧', '港剧'],
                 'filterValue' =>
-                ['全部','HAN', 'RI', 'MEI','GANG'],
+                ['ALL','HAN', 'RI', 'MEI','GANG'],
             ],
             //此字段中数据为空,暂时不展示此过滤条件
             // [
@@ -106,7 +106,7 @@ trait MovieResolvers
             //     'filterOptions' =>
             //     ['全部', '美国', '香港', '韩国', '日本','印度', '欧美', '泰国'],
             //     'filterValue' =>
-            //     ['全部', '美国', '香港', '韩国', '日本','印度', '欧美', '泰国'],
+            //     ['ALL', '美国', '香港', '韩国', '日本','印度', '欧美', '泰国'],
             // ],
             [
                 'id' => 'year',
@@ -114,7 +114,7 @@ trait MovieResolvers
                 'filterOptions' =>
                 ['全部', '2020', '2019', '2018', '2017', '2016'],
                 'filterValue' =>
-                ['全部', '2020', '2019', '2018', '2017', '2016'],
+                ['ALL', '2020', '2019', '2018', '2017', '2016'],
             ],
             // [
             //     'id' => 'type',
@@ -122,7 +122,7 @@ trait MovieResolvers
             //     'filterOptions' =>
             //     ['全部', '古装', '武侠', '都市', '悬疑', '言情', '喜剧'],
             //     'filterValue' =>
-            //     ['全部', '古装', '武侠', '都市', '悬疑', '言情', '喜剧'],
+            //     ['ALL', '古装', '武侠', '都市', '悬疑', '言情', '喜剧'],
             // ],
         ];
     }
