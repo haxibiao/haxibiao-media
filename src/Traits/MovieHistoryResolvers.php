@@ -32,9 +32,7 @@ trait MovieHistoryResolvers
 
     public static function showMovieHistoryResolver($root, $args, $content, $info)
     {
-        //todo:
         //取每个电影的最新一条剧集记录 
-        DB::enableQueryLog();
         if (checkUser()) {
             $user = getUser();
             return MovieHistory::whereIn(DB::raw('(movie_id,updated_at)'),function ($query)use($user) {

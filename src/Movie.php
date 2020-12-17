@@ -82,24 +82,26 @@ class Movie extends Model
         return false;
     }
 
-    public function getLastWatchSeriesCache()
+    public function getLastWatchSeriesAttribute()
     {
-        if ($user = getUser()) {
+        if (checkUser()) {
+            $user=getUser();
             $history = MovieHistory::where([
                 'user_id'  => $user->id,
                 'movie_id' => $this->id,
-            ])->first();
+            ])->latest()->first();
             return $history->series_id;
         }
     }
 
-    public function getLastWatchProgressCache()
+    public function getLastWatchProgressAttribute()
     {
-        if ($user = getUser()) {
+        if (checkUser()) {
+            $user=getUser();
             $history = MovieHistory::where([
                 'user_id'  => $user->id,
                 'movie_id' => $this->id,
-            ])->first();
+            ])->latest()->first();
             return $history->progress;
         }
     }
