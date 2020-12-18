@@ -2,20 +2,19 @@
 
 namespace Haxibiao\Media;
 
+use App\Comment;
 use App\Series;
 use Haxibiao\Media\Traits\MovieRepo;
+use Haxibiao\Media\Traits\MovieResolvers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Haxibiao\Media\Traits\MovieResolvers;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Haxibiao\Media\MovieHistory;
-use App\Comment;
 
 class Movie extends Model
 {
     use MovieRepo;
     use MovieResolvers;
-    
+
     protected $guarded = [];
 
     const MOVIE_RI_JU   = 1;
@@ -77,7 +76,11 @@ class Movie extends Model
     public function getFavoritedAttribute()
     {
         if ($user = getUser(false)) {
-            return $favorite = $user->favoritedMovie()->where('faved_id', $this->id)->count() > 0;
+            if (in_array(config('app.name'), ['datizhuanqian'])) {
+                return $favorite = $user->favoritedMovie()->where('favorable_id', $this->id)->count() > 0;
+            } else {
+                return $favorite = $user->favoritedMovie()->where('faved_id', $this->id)->count() > 0;
+            }
         }
         return false;
     }
@@ -108,12 +111,12 @@ class Movie extends Model
 
     public function getCountFavoritesAttribute()
     {
-        return $this->favorites()->count(); 
+        return $this->favorites()->count();
     }
 
     public function getCountCommentsAttribute()
     {
-        return $this->comments()->count(); 
+        return $this->comments()->count();
     }
 
 }
