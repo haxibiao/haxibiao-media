@@ -57,6 +57,8 @@ trait MovieHistoryResolvers
         }
         $returnMovie=[];
         $returnMovie['id']=$movie->id;
+        $returnMovie['cover']=$movie->cover;
+        $returnMovie['introduction']=$movie->introduction;
         $returnMovie['name']=$movie->name;;
         $returnMovie['series_history']=$series;
 
