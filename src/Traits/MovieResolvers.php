@@ -22,7 +22,7 @@ trait MovieResolvers
         $scopes   = data_get($args,'scopes');
 
         return Movie::when($region && $region != 'ALL', function ($qb) use ($region){
-            return $qb->where('region', $region);
+            return $qb->where('region', $region)->inRandomOrder();
         })->when($type && $type != 'ALL', function ($qb) use ($type){
             return $qb->where('type', $type);
         })->when($style && $style != 'ALL', function ($qb) use ($style){
