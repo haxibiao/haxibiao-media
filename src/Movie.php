@@ -79,7 +79,7 @@ class Movie extends Model
             if (in_array(config('app.name'), ['datizhuanqian'])) {
                 return $favorite = $user->favoritedMovie()->where('favorable_id', $this->id)->count() > 0;
             } else {
-                return $favorite = $user->favoritedMovie()->where('faved_id', $this->id)->count() > 0;
+                return $favorite = $user->favorites()->where('faved_type','movies')->where('faved_id', $this->id)->count() > 0;
             }
         }
         return false;
