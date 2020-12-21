@@ -21,7 +21,10 @@ trait MovieResolvers
         //排序规则
         $scopes   = data_get($args,'scopes');
 
-        return Movie::when($region && $region != 'ALL', function ($qb) use ($region){
+        return Movie::when($region && $region != 'ALL', function ($qb) use ($region,$scopes){
+            if($scopes && $scopes != 'ALL'){
+                return $qb->where('region', $region);
+            }
             return $qb->where('region', $region)->inRandomOrder();
         })->when($type && $type != 'ALL', function ($qb) use ($type){
             return $qb->where('type', $type);
