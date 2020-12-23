@@ -76,6 +76,14 @@ class Movie extends Model
         }
         $this->attributes['data'] = $value;
     }
+    public function getDataAttribute()
+    {
+        $series=@json_decode($this->attributes['data']);
+        return array_values(array_sort($series, function ($value) {
+            return $value->name;
+        }));
+
+    }
 
     public function activity(): HasOne
     {
