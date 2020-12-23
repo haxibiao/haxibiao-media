@@ -56,7 +56,12 @@ trait MovieHistoryResolvers
         $seriesHistories=MovieHistory::where('user_id',$movieHistory->user_id)
         ->where('movie_id',$movieHistory->movie_id)->get();
         foreach($seriesHistories as $seriesHistory){
-            $series[$seriesHistory->series_id]->progress=$seriesHistory->progress;
+            $sery=new \stdClass();
+            $index=$seriesHistory->series_id;
+            $sery->url=$series[$index]->url;
+            $sery->name=$series[$index]->name;
+            $sery->progress=$seriesHistory->progress;
+            $series[$index]=$sery;
         }
         $returnMovie=[];
         $returnMovie['id']=$movie->id;
