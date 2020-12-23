@@ -35,13 +35,15 @@ trait MovieHistoryResolvers
         //取每个电影的最新一条剧集记录 
         if (checkUser()) {
             $user = getUser();
-            return MovieHistory::whereIn(DB::raw('(movie_id,updated_at)'),function ($query)use($user) {
+
+            $var= MovieHistory::whereIn(DB::raw('(movie_id,updated_at)'),function ($query)use($user) {
                     $query->select('movie_id',DB::raw('max(updated_at)'))
                         ->from('movie_histories')
                         ->where('user_id', $user->id)
                         ->groupBy('movie_id');
                 }
             );
+            return ( $var);
         }
         return [];
     }
@@ -50,10 +52,11 @@ trait MovieHistoryResolvers
         $movieHistory =$root;
         $movie   = $root->movie;
         $series=$movie->data;
+
         $seriesHistories=MovieHistory::where('user_id',$movieHistory->user_id)
         ->where('movie_id',$movieHistory->movie_id)->get();
         foreach($seriesHistories as $seriesHistory){
-            $series[$seriesHistory->series_id]['progress']=$seriesHistory->progress;
+            $series[$seriesHistory->series_id]->progress=$seriesHistory->progress;
         }
         $returnMovie=[];
         $returnMovie['id']=$movie->id;
