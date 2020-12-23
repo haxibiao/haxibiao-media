@@ -4,6 +4,7 @@ namespace Haxibiao\Media;
 
 use App\Comment;
 use App\Series;
+use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Movie extends Model
 {
     use MovieRepo;
+    use Searchable;
     use MovieResolvers;
 
     protected $guarded = [];
@@ -24,6 +26,13 @@ class Movie extends Model
 
     public $casts = [
         'data' => 'array',
+    ];
+    protected $searchable = [
+        'columns' => [
+            'movies.name' => 3,
+            'movies.introduction' => 2,
+            'movies.actors' => 1,
+        ],
     ];
 
     public function series(): HasMany

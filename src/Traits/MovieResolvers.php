@@ -72,6 +72,15 @@ trait MovieResolvers
             return Movie::inRandomOrder()->take($count)->get();
         }
     }
+    public function resolversSearchMovie($root, $args, $content, $info)
+    {
+        $keyword = data_get($args, 'keyword');
+        app_track_event('电影','搜索电影',$keyword );
+       return static::search($keyword);
+        
+    }
+ 
+
 
     public function getFilters()
     {
