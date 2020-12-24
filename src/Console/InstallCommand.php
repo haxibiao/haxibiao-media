@@ -33,13 +33,28 @@ class InstallCommand extends Command
         $this->call('vendor:publish', ['--provider' => 'Haxibiao\Media\MediaServiceProvider', '--force']);
 
         $this->comment("复制 stubs ...");
-        copy(__DIR__ . '/stubs/Video.stub', app_path('Video.php'));
-        copy(__DIR__ . '/stubs/Image.stub', app_path('Image.php'));
-        copy(__DIR__ . '/stubs/Spider.stub', app_path('Spider.php'));
+        $this->copyStubs();
 
         $this->comment('迁移数据库变化...');
         $this->callSilent('migrate');
 
+    }
+
+    public function copyStubs()
+    {
+        //复制所有app stubs
+        foreach (glob(__DIR__ . '/stubs/*.stub') as $filepath) {
+            $filename = basename($filepath);
+            copy($filepath, app_path(str_replace(".stub", ".php", $filename)));
+        }
+        //复制所有nova stubs
+        if (!is_dir(app_path('Nova'))) {
+            mkdir(app_path('Nova'));
+        }
+        foreach (glob(__DIR__ . '/stubs/Nova/*.stub') as $filepath) {
+            $filename = basename($filepath);
+            copy($filepath, app_path('Nova/' . str_replace(".stub", ".php", $filename)));
+        }
     }
 
 }
