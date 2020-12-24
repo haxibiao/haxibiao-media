@@ -32,6 +32,8 @@ class Activity extends Model
     // 电影专题
     public const TYPE_PROJECT = 3;
 
+    public const TYPE_SEARCH = 4;
+
 
     public function movie(): BelongsTo
     {
