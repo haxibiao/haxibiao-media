@@ -1,6 +1,7 @@
 <?php
 
 namespace Haxibiao\Media\Traits;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 trait MovieAttrs
 {
@@ -43,7 +44,7 @@ trait MovieAttrs
 
     public function activity(): HasOne
     {
-        return $this->hasOne(Activity::class);
+        return $this->hasOne(\App\Activity::class);
     }
 
     public function getFavoritedAttribute()
