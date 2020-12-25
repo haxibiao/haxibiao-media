@@ -2,11 +2,14 @@
 
 namespace Haxibiao\Media;
 
+use App\Article;
+use App\Model;
+use App\Post;
+use App\User;
 use Haxibiao\Media\Traits\MakeCovers;
 use Haxibiao\Media\Traits\VideoAttrs;
 use Haxibiao\Media\Traits\VideoRepo;
 use Haxibiao\Media\Traits\VideoResolvers;
-use App\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -47,13 +50,18 @@ class Video extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\User::class);
+        return $this->belongsTo(User::class);
     }
 
     //FIXME: 这里兼容哈希表video对象过复杂的情况 重构好后，也应该去掉
     public function article(): HasOne
     {
-        return $this->hasOne(\App\Article::class);
+        return $this->hasOne(Article::class);
+    }
+
+    public function post(): HasOne
+    {
+        return $this->hasOne(Post::class);
     }
 
     public function setJsonData($key, $value)
