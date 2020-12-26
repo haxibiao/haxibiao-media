@@ -2,9 +2,9 @@
 
 namespace Haxibiao\Media;
 
-use Haxibiao\Base\Model;
-use Haxibiao\Media\Traits\ActivityRepo;
+use App\Model;
 use Haxibiao\Media\Traits\ActivityAttrs;
+use Haxibiao\Media\Traits\ActivityRepo;
 use Haxibiao\Media\Traits\ActivityResolver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Activity extends Model
 {
-    protected $fillable=[
+    protected $fillable = [
         'movie_id',
         'title',
         'subtitle',
@@ -24,7 +24,7 @@ class Activity extends Model
     protected $table = 'activities';
 
     use ActivityRepo, ActivityAttrs, ActivityResolver;
-    
+
     // 首页
     public const TYPE_INDEX = 1;
     // 电视剧
@@ -34,13 +34,12 @@ class Activity extends Model
 
     public const TYPE_SEARCH = 4;
 
-
     public function movie(): BelongsTo
     {
-        return $this->belongsTo(Movie :: class);
+        return $this->belongsTo(Movie::class);
     }
     public function scopeEnable($query)
     {
-        return $query->where('status',1);
+        return $query->where('status', 1);
     }
 }
