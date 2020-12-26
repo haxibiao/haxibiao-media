@@ -14,7 +14,7 @@ class MovieSync extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:sync {--source=内涵电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员}';
+    protected $signature = 'movie:sync {--source=内涵电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id}';
 
     /**
      * The console command description.
@@ -50,46 +50,52 @@ class MovieSync extends Command
         $year     = $this->option('year');
         $producer = $this->option('producer');
         $actors   = $this->option('actors');
+        $start_id = $this->option('id');
 
         $success = 0;
         $fail    = 0;
         $total   = 0;
 
-        // dd(config('database.connections'));
-
-        DB::connection('mediachain')->table('movies')
+        $qb = DB::connection('mediachain')->table('movies')
+            ->when($start_id, function ($q) use ($start_id) {
+                $q->where('id', '>', $start_id);})
             ->when($region, function ($q) use ($region) {
-                $q->where('region', $region);
-            })->when($type, function ($q) use ($type) {
-            $q->where('type', $type);
-        })->when($style, function ($q) use ($style) {
-            $q->where('style', $style);
-        })->when($year, function ($q) use ($year) {
-            $q->where('year', $year);
-        })->when($producer, function ($q) use ($producer) {
-            $q->where('producer', $producer);
-        })->when($actors, function ($q) use ($actors) {
-            $actors = explode(',', $actors);
-            $q->where(function ($q) use ($actors) {
-                foreach ($actors as $actor) {
-                    if (!trim($actor)) {
-                        continue;
+                $q->where('region', $region);})
+            ->when($type, function ($q) use ($type) {
+                $q->where('type', $type);})
+            ->when($style, function ($q) use ($style) {
+                $q->where('style', $style);})
+            ->when($year, function ($q) use ($year) {
+                $q->where('year', $year);})
+            ->when($producer, function ($q) use ($producer) {
+                $q->where('producer', $producer);})
+            ->when($actors, function ($q) use ($actors) {
+                $actors = explode(',', $actors);
+                $q->where(function ($q) use ($actors) {
+                    foreach ($actors as $actor) {
+                        if (!trim($actor)) {
+                            continue;
+                        }
+                        $q = $q->orWhere('actors', 'like', '%' . $actor . '%');
                     }
-                    $q = $q->orWhere('actors', 'like', '%' . $actor . '%');
-                }
-            });
-        })->orderBy('id')->chunk(100, function ($movies) use (&$fail, &$success, &$total) {
+                });})
+            ->orderBy('id');
+
+        $qb->chunk(100, function ($movies) use (&$fail, &$success, &$total) {
             foreach ($movies as $movie) {
                 $total++;
                 $movie = @json_decode(json_encode($movie), true);
                 DB::beginTransaction();
                 try {
+                    //按source 和 key 排重导入
                     $model = Movie::firstOrNew([
                         'name'       => data_get($movie, 'name'),
                         'source'     => $this->option('source'),
                         'source_key' => data_get($movie, 'id'),
                     ]);
-                    // 不同名的movie，直接导入
+                    //修复链上导演数据过长的问题
+                    $movie['producer'] = str_limit($movie['producer'], 90, null);
+
                     $model->forceFill(array_only($movie, [
                         'introduction',
                         'cover',
@@ -111,12 +117,12 @@ class MovieSync extends Command
                     ]))->save();
                     DB::commit();
                     $success++;
-                    $this->info('已成功导入：' . $success . '部, 当前导入:' . data_get($movie, 'name'), '成功');
+                    $this->info('已成功导入：' . $success . '部, 当前导入:' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
                 } catch (\Exception $ex) {
                     dd($ex);
                     DB::rollback();
                     $fail++;
-                    $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'), '失败');
+                    $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
                 }
             }
         });

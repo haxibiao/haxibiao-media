@@ -3,6 +3,7 @@
 namespace Haxibiao\Media;
 
 use App\Comment;
+use App\Favorite;
 use App\Series;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieAttrs;
@@ -28,6 +29,7 @@ class Movie extends Model
     public $casts = [
         'data' => 'array',
     ];
+
     protected $searchable = [
         'columns' => [
             'movies.name'         => 3,
@@ -48,12 +50,12 @@ class Movie extends Model
 
     public function favorites()
     {
-        return $this->morphMany(\App\Favorite::class, 'faved');
+        return $this->morphMany(Favorite::class, 'faved');
     }
 
     public function comments()
     {
-        return $this->morphMany(\App\Comment::class, 'commentable');
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
 }
