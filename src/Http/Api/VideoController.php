@@ -179,9 +179,10 @@ class VideoController extends Controller
             }
         }
         $data = $data->paginate(9);
-        // foreach ($data as $post) {
-        //     $post->fillForJs();
-        // }
+        //兼容vue读取 article.cover 的
+        foreach ($data as $post) {
+            $post->cover = $post->cover;
+        }
         return $data;
     }
 
