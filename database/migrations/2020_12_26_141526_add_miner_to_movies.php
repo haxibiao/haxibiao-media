@@ -14,7 +14,7 @@ class AddMinerToMovies extends Migration
     public function up()
     {
         Schema::table('movies', function (Blueprint $table) {
-            if (Schema::hasColumn('movies', 'miner')) {
+            if (!Schema::hasColumn('movies', 'miner')) {
                 $table->string('miner', 20)->index()->nullable()->comment("资源矿工");
             }
         });
