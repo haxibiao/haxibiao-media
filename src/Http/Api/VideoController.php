@@ -181,7 +181,8 @@ class VideoController extends Controller
         $data = $data->paginate(9);
         //兼容vue读取 article.cover 的
         foreach ($data as $post) {
-            $post->cover = $post->cover;
+            $post->cover        = $post->cover;
+            $post->user->avatar = $post->user->avatar_url;
         }
         return $data;
     }
