@@ -45,8 +45,8 @@ class MediaServiceProvider extends ServiceProvider
             __DIR__ . '/../router.php'
         );
 
-        if (! $this->app->configurationIsCached()) {
-            $this->mergeConfigFrom(__DIR__.'/../config/database.php', 'database.connections');
+        if (!$this->app->configurationIsCached()) {
+            $this->mergeConfigFrom(__DIR__ . '/../config/database.php', 'database.connections');
         }
 
         //安装时需要
@@ -61,11 +61,6 @@ class MediaServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../graphql' => base_path('graphql'),
             ], 'media-graphql');
-
-            // 发布 tests
-            $this->publishes([
-                __DIR__ . '/../tests/Feature/GraphQL' => base_path('tests/Feature/GraphQL'),
-            ], 'media-tests');
 
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));
