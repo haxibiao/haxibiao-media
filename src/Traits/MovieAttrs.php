@@ -41,6 +41,12 @@ trait MovieAttrs
         }));
 
     }
+    public function getCreatedAtAttribute()
+    {
+        $createdAt=$this->attributes['created_at'];
+        return $createdAt;
+
+    }
 
     public function activity(): HasOne
     {
