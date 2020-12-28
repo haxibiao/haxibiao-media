@@ -115,6 +115,12 @@ extend type Query{
     """
     recommendMovie(count:Int=7): [Movie] 
     @field(resolver:"App\\Movie@resolversRecommendMovie")
+
+    """
+    搜索电影
+    """
+    searchMovie(keyword:String!): [Movie] 
+     @paginate(defaultCount: 10, builder: "App\\Movie@resolversSearchMovie")
 }
 
 enum MovieCategory {
