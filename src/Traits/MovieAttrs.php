@@ -1,6 +1,7 @@
 <?php
 
 namespace Haxibiao\Media\Traits;
+use Haxibiao\Media\MovieHistory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 trait MovieAttrs
@@ -65,29 +66,29 @@ trait MovieAttrs
         return false;
     }
 
-    // public function getLastWatchSeriesAttribute()
-    // {
-    //     if (checkUser()) {
-    //         $user=getUser();
-    //         $history = MovieHistory::where([
-    //             'user_id'  => $user->id,
-    //             'movie_id' => $this->id,
-    //         ])->latest()->first();
-    //         return $history->series_id;
-    //     }
-    // }
+    public function getLastWatchSeriesAttribute()
+    {
+        if (checkUser()) {
+            $user=getUser();
+            $history = MovieHistory::where([
+                'user_id'  => $user->id,
+                'movie_id' => $this->id,
+            ])->latest()->first();
+            return $history->series_id;
+        }
+    }
 
-    // public function getLastWatchProgressAttribute()
-    // {
-    //     if (checkUser()) {
-    //         $user=getUser();
-    //         $history = MovieHistory::where([
-    //             'user_id'  => $user->id,
-    //             'movie_id' => $this->id,
-    //         ])->latest()->first();
-    //         return $history->progress;
-    //     }
-    // }
+    public function getLastWatchProgressAttribute()
+    {
+        if (checkUser()) {
+            $user=getUser();
+            $history = MovieHistory::where([
+                'user_id'  => $user->id,
+                'movie_id' => $this->id,
+            ])->latest()->first();
+            return $history->progress;
+        }
+    }
 
     public function getCountFavoritesAttribute()
     {

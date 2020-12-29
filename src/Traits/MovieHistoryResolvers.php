@@ -42,7 +42,7 @@ trait MovieHistoryResolvers
                         ->where('user_id', $user->id)
                         ->groupBy('movie_id');
                 }
-            );
+            )->orderByDesc('updated_at');
             return ( $var);
         }
         return [];
