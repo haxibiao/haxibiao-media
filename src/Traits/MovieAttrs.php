@@ -74,7 +74,9 @@ trait MovieAttrs
                 'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->latest()->first();
-            return $history->series_id;
+            if(isset($history)){
+                return $history->series_id;
+            }
         }
     }
 
@@ -86,7 +88,9 @@ trait MovieAttrs
                 'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->latest()->first();
-            return $history->progress;
+            if(isset($history)){
+                return $history->progress;
+            }
         }
     }
 
