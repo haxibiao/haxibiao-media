@@ -2,6 +2,9 @@
 
 namespace Haxibiao\Media\Traits;
 
+use Haxibiao\Media\Movie;
+
+
 trait MovieRepo
 {
     public static function getCDNDomain($bucket)
@@ -27,5 +30,14 @@ trait MovieRepo
             'cover'  => $this->cover_url,
             'region' => $this->type_name_attr,
         ]);
+    }
+
+    public static function getStatus()
+    {
+        return [
+            Movie::PUBLISH      => '可播放',
+            Movie::DISABLED     => '禁用',
+            Movie::ERROR => '资源错误',
+        ];
     }
 }
