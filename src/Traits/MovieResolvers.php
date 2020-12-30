@@ -24,7 +24,7 @@ trait MovieResolvers
             if ($scopes && $scopes != 'ALL') {
                 return $qb->where('region', $region);
             }
-            return $qb->where('region', $region)->inRandomOrder();
+            return $qb->where('region', $region)->orderbyDesc('year');;
         })->when($type && $type != 'ALL', function ($qb) use ($type) {
             return $qb->where('type', $type);
         })->when($style && $style != 'ALL', function ($qb) use ($style) {
