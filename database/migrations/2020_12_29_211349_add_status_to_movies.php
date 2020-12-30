@@ -14,7 +14,9 @@ class AddStatusToMovies extends Migration
     public function up()
     {
         Schema::table('movies', function (Blueprint $table) {
+            if (!Schema::hasColumn('movies', 'status')) {
             $table->tinyInteger('status')->nullable()->comment("电影状态");
+        }
         });
     }
 
