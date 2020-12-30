@@ -51,14 +51,16 @@ class Movie extends Resource
         return [
             ID::make()->sortable(),
             Text::make('电影名', 'name')->hideWhenCreating(),
+            Text::make('地区', 'region')->hideWhenCreating(),
+            Text::make('年份', 'year')->hideWhenCreating(),
+            Text::make('分类', 'type')->hideWhenCreating(),
+            Text::make('风格', 'style')->hideWhenCreating(),
             Select::make('状态', 'status')->options([
                 1  => '公开',
                 0  => '草稿',
                 -1 => '下架',
             ])->displayUsingLabels(),
-            Text::make('时间', function () {
-                return time_ago($this->created_at);
-            })->onlyOnIndex(),
+            // Text::make('添加时间', 'created_at')->sortable()->onlyOnIndex(),
             Image::make('封面', 'movie.cover')->thumbnail(
                 function () {
                     return $this->cover;
