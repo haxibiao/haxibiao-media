@@ -42,12 +42,18 @@ trait MovieResolvers
 
     public function resolversMovie($root, $args, $content, $info)
     {
-        $movie = Movie::find(data_get($args, 'movie_id'));
+        $movie = Movie:: withoutGlobalScopes()->find(data_get($args, 'movie_id'));
+        if(isset($movie)){
+            $movie->hits = $movie->hits + 1;
+            $movie->save();
+            app_track_event('看视频', '电影详情', data_get($args, 'movie_id'));
+            //可播放资源或者收藏夹资源
+            if($movie->status==Movie::PUBLISH||$movie->favorited){
+                return $movie;
+            }
+        }
+        return null;
 
-        $movie->hits = $movie->hits + 1;
-        $movie->save();
-        app_track_event('看视频', '电影详情', data_get($args, 'movie_id'));
-        return $movie;
     }
 
     public function resolversRecommendMovie($root, $args, $content, $info)
