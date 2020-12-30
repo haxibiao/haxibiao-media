@@ -12,7 +12,7 @@ type MovieHistory {
     剧集索引
     """
     series_index:Int @rename(attribute:"series_id")
-    movie: JsonType @field(resolver: "App\\MovieHistory@getSeriesHistoryResolver")
+    movie: Movie
 }
 
 extend type Query @middleware(checks:["auth:api"]){

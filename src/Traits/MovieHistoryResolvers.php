@@ -47,29 +47,5 @@ trait MovieHistoryResolvers
         }
         return [];
     }
-    public static function getSeriesHistoryResolver($root, $args, $content, $info)
-    {
-        $movieHistory =$root;
-        $movie   = $root->movie;
-        $series=$movie->data;
-
-        $seriesHistories=MovieHistory::where('user_id',$movieHistory->user_id)
-        ->where('movie_id',$movieHistory->movie_id)->get();
-        foreach($seriesHistories as $seriesHistory){
-            $sery=new \stdClass();
-            $index=$seriesHistory->series_id;
-            $sery->url=$series[$index]->url;
-            $sery->name=$series[$index]->name;
-            $sery->progress=$seriesHistory->progress;
-            $series[$index]=$sery;
-        }
-        $returnMovie=[];
-        $returnMovie['id']=$movie->id;
-        $returnMovie['cover']=$movie->cover;
-        $returnMovie['introduction']=$movie->introduction;
-        $returnMovie['name']=$movie->name;;
-        $returnMovie['series_history']=$series;
-
-        return $returnMovie;
-    }
+   
 }

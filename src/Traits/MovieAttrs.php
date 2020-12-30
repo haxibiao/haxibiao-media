@@ -37,9 +37,20 @@ trait MovieAttrs
     public function getDataAttribute()
     {
         $series = @json_decode($this->attributes['data']);
-        return array_values(array_sort($series, function ($value) {
+        $sortedSeries=array_values(array_sort($series, function ($value) {
             return $value->name;
         }));
+        if(checkUser()){
+            $user=getUser();
+            //添加进度记录
+            $seriesHistories=MovieHistory::where('user_id',$user->id)
+            ->where('movie_id',$this->id)->get();
+            foreach($seriesHistories as $seriesHistory){
+                $index=$seriesHistory->series_id;
+                $sortedSeries[$index]->progress=$seriesHistory->progress;
+            }
+        }
+        return $sortedSeries;
 
     }
     public function getCreatedAtAttribute()
