@@ -46,7 +46,7 @@ extend type Query  {
     获取指定类型的轮播图
     """
     activities(type: ActivityType=INDEX): [Activity]
-        @paginate(defaultCount:5,builder: "App\\Activity@getActivities")
+        @paginate(defaultCount:10,builder: "App\\Activity@getActivities")
 }
 
 enum ActivityType {
