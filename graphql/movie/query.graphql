@@ -141,11 +141,6 @@ extend type Query{
     movies(user_id:Int,status:Int,keyword:String, orderBy: [OrderByClause!] @orderBy): [Movie!]
         @paginate(builder: "App\\Movie@resolveMovies", defaultCount: 10)
 
-    """
-    历史观看记录
-    """
-    movieHistories: [Movie!]
-        @paginate(builder: "App\\Movie@resolveMovieHistories", defaultCount: 10)
 }
 
 type MovieData {

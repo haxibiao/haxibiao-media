@@ -3,7 +3,6 @@
 namespace Haxibiao\Media\Traits;
 
 use Haxibiao\Media\Movie;
-use Haxibiao\Media\MovieHistory;
 
 trait MovieResolvers
 {
@@ -125,22 +124,6 @@ trait MovieResolvers
             //     ['ALL', '古装', '武侠', '都市', '悬疑', '言情', '喜剧'],
             // ],
         ];
-    }
-
-    //历史观看记录(答赚在用)
-    public function resolveMovieHistories($root, array $args, $context, $info)
-    {
-        app_track_event('长视频', '获取观看记录');
-
-        $user = checkUser();
-        $qb   = Movie::publish();
-        if ($user) {
-            $movieIds = MovieHistory::where('user_id', $user->id)->pluck('movie_id');
-            if (count($movieIds) >= 2) {
-                $qb = $qb->whereIn('id', $movieIds);
-            }
-        }
-        return $qb->orderBy('hits')->orderBy('created_at');
     }
 
     //通用movies查询接口
