@@ -6,6 +6,14 @@ type Movie {
     """
     introduction:String
     """
+    影片简介(兼容答赚)
+    """
+    description: String@rename(attribute: "introduction")
+    """
+    伪装user发布者
+    """
+    user:User
+    """
     封面
     """
     cover:String
@@ -60,7 +68,7 @@ type Movie {
     """
     剧集
     """
-    data:JsonType
+    data:[MovieData]
     favorited:Boolean
     created_at: DateTime
     """
@@ -121,6 +129,24 @@ extend type Query{
     """
     searchMovie(keyword:String!): [Movie] 
      @paginate(defaultCount: 10, builder: "App\\Movie@resolversSearchMovie")
+
+
+    """
+    热门长视频
+    """
+    movies(user_id:Int,status:Int,keyword:String, orderBy: [OrderByClause!] @orderBy): [Movie!]
+        @paginate(builder: "App\\Movie@resolveMovies", defaultCount: 10)
+
+    """
+    历史观看记录
+    """
+    movieHistories: [Movie!]
+        @paginate(builder: "App\\Movie@resolveMovieHistories", defaultCount: 10)
+}
+
+type MovieData {
+  url: String
+  name: String
 }
 
 enum MovieCategory {

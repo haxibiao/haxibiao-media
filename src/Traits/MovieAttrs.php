@@ -1,8 +1,11 @@
 <?php
 
 namespace Haxibiao\Media\Traits;
+
+use App\User;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Cache;
 
 trait MovieAttrs
 {
@@ -36,18 +39,18 @@ trait MovieAttrs
     }
     public function getDataAttribute()
     {
-        $series = @json_decode($this->attributes['data']);
-        $sortedSeries=array_values(array_sort($series, function ($value) {
+        $series       = @json_decode($this->attributes['data']);
+        $sortedSeries = array_values(array_sort($series, function ($value) {
             return $value->name;
         }));
-        if(checkUser()){
-            $user=getUser();
+        if (checkUser()) {
+            $user = getUser();
             //添加进度记录
-            $seriesHistories=MovieHistory::where('user_id',$user->id)
-            ->where('movie_id',$this->id)->get();
-            foreach($seriesHistories as $seriesHistory){
-                $index=$seriesHistory->series_id;
-                $sortedSeries[$index]->progress=$seriesHistory->progress;
+            $seriesHistories = MovieHistory::where('user_id', $user->id)
+                ->where('movie_id', $this->id)->get();
+            foreach ($seriesHistories as $seriesHistory) {
+                $index                          = $seriesHistory->series_id;
+                $sortedSeries[$index]->progress = $seriesHistory->progress;
             }
         }
         return $sortedSeries;
@@ -55,7 +58,7 @@ trait MovieAttrs
     }
     public function getCreatedAtAttribute()
     {
-        $createdAt=$this->attributes['created_at'];
+        $createdAt = $this->attributes['created_at'];
         return $createdAt;
 
     }
@@ -80,12 +83,12 @@ trait MovieAttrs
     public function getLastWatchSeriesAttribute()
     {
         if (checkUser()) {
-            $user=getUser();
+            $user    = getUser();
             $history = MovieHistory::where([
                 'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->latest()->first();
-            if(isset($history)){
+            if (isset($history)) {
                 return $history->series_id;
             }
         }
@@ -94,12 +97,12 @@ trait MovieAttrs
     public function getLastWatchProgressAttribute()
     {
         if (checkUser()) {
-            $user=getUser();
+            $user    = getUser();
             $history = MovieHistory::where([
                 'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->latest()->first();
-            if(isset($history)){
+            if (isset($history)) {
                 return $history->progress;
             }
         }
@@ -113,5 +116,23 @@ trait MovieAttrs
     public function getCountCommentsAttribute()
     {
         return $this->comments()->count();
+    }
+
+    //伪装用户发布该电影，缓存三天为该用户发布
+    public function getUserAttribute()
+    {
+        $cache    = Cache::store('redis');
+        $cacheKey = sprintf('movie:id:%s', $this->id);
+        if ($cache->has($cacheKey)) {
+            $user_id = $cache->get($cacheKey);
+            return User::find($user_id);
+        } else {
+            $user = User::where('role_id', User::VEST_STATUS)->inRandomOrder()->first();
+            if ($user) {
+                $cache->put($cacheKey, $user->id, today()->addDays(3));
+                return $user;
+            }
+        }
+        return null;
     }
 }

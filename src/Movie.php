@@ -2,15 +2,15 @@
 
 namespace Haxibiao\Media;
 
-use App\Series;
 use App\Comment;
 use App\Favorite;
-use Haxibiao\Media\Traits\MovieRepo;
-use Haxibiao\Media\Traits\MovieAttrs;
+use App\Series;
 use Haxibiao\Helpers\Traits\Searchable;
-use Illuminate\Database\Eloquent\Model;
-use Haxibiao\Media\Traits\MovieResolvers;
 use Haxibiao\Media\Scopes\MovieStatusScope;
+use Haxibiao\Media\Traits\MovieAttrs;
+use Haxibiao\Media\Traits\MovieRepo;
+use Haxibiao\Media\Traits\MovieResolvers;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Movie extends Model
@@ -23,14 +23,16 @@ class Movie extends Model
     protected $guarded = [];
 
     const CATEGORY_JIESHUO = 0;
-    const MOVIE_RI_JU = 1;
-    const MOVIE_MEI_JU = 2;
-    const MOVIE_HAN_JU = 3;
-    const MOVIE_GANG_JU = 4;
+    const MOVIE_RI_JU      = 1;
+    const MOVIE_MEI_JU     = 2;
+    const MOVIE_HAN_JU     = 3;
+    const MOVIE_GANG_JU    = 4;
 
-    public const PUBLISH = 1;
-    public const DISABLED = -1;
-    public const ERROR = -2;
+    public const NOT_IDENTIFY = 0; //未识别
+    public const PUBLISH      = 1; //正常影片
+    public const NEIHAN       = 2; //“内涵”影片（尺度较大）
+    public const DISABLED     = -1; //下架处理
+    public const ERROR        = -2; //资源损坏、丢失、不完整
 
     public $casts = [
         'data' => 'array',
@@ -38,9 +40,9 @@ class Movie extends Model
 
     protected $searchable = [
         'columns' => [
-            'movies.name' => 3,
+            'movies.name'         => 3,
             'movies.introduction' => 2,
-            'movies.actors' => 1,
+            'movies.actors'       => 1,
         ],
     ];
     public static function boot()
@@ -73,4 +75,19 @@ class Movie extends Model
         return $query->whereIn('status', [self::PUBLISH])->whereNotNull('cover');
     }
 
+    public function scopePublish($query)
+    {
+        return $query->where('status', Movie::PUBLISH);
+    }
+
+    public static function getStatuses()
+    {
+        return [
+            Movie::NOT_IDENTIFY => "未标识",
+            Movie::PUBLISH      => "正常影片",
+            Movie::NEIHAN       => "尺度较大",
+            Movie::DISABLED     => "下架处理",
+            Movie::ERROR        => "资源损坏、失效、残缺",
+        ];
+    }
 }
