@@ -18,6 +18,10 @@ type Movie {
     """
     cover:String
     """
+    电影评分
+    """
+    score:Int
+    """
     导演
     """
     producer:String

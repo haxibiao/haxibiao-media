@@ -20,6 +20,8 @@ class CreateMoviesTable extends Migration
                 $table->string('introduction', 255)->index()->comment("简介");
                 $table->string('cover', 200)->index()->comment("封面");
                 $table->string('producer', 100)->index()->comment("导演");
+                $table->tinyInteger('status')->nullable()->default(1)->comment('0未标示，1正常影片，2尺度较大，-1为下架状态，-2资源损坏');
+                $table->integer('score')->index()->comment("评分0-10");
                 $table->string('year', 100)->index()->comment("年份");
                 $table->string('type', 100)->index()->comment("分类");
                 $table->string('style', 100)->index()->comment("风格");
