@@ -6,21 +6,9 @@ type Movie {
     """
     introduction:String
     """
-    影片简介(兼容答赚)
-    """
-    description: String@rename(attribute: "introduction")
-    """
-    伪装user发布者
-    """
-    user:User
-    """
     封面
     """
     cover:String
-    """
-    电影评分
-    """
-    score:Int
     """
     导演
     """
@@ -72,7 +60,7 @@ type Movie {
     """
     剧集
     """
-    data:[MovieData]
+    data:JsonType
     favorited:Boolean
     created_at: DateTime
     """
@@ -133,19 +121,6 @@ extend type Query{
     """
     searchMovie(keyword:String!): [Movie] 
      @paginate(defaultCount: 10, builder: "App\\Movie@resolversSearchMovie")
-
-
-    """
-    热门长视频
-    """
-    movies(user_id:Int,status:Int,keyword:String, orderBy: [OrderByClause!] @orderBy): [Movie!]
-        @paginate(builder: "App\\Movie@resolveMovies", defaultCount: 10)
-
-}
-
-type MovieData {
-  url: String
-  name: String
 }
 
 enum MovieCategory {
@@ -154,6 +129,7 @@ enum MovieCategory {
     MEI @enum(value: "美剧")
     RI @enum(value: "日剧")
     GANG @enum(value: "港剧")
+    JIESHUO @enum(value: "解说")
 }
 
 enum ScopesType{
@@ -161,7 +137,7 @@ enum ScopesType{
     """
     最新
     """
-    NEW @enum(value: "created_at")
+    NEW @enum(value: "year")
     """
     最热
     """
