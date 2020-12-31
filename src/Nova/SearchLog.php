@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Nova;
+namespace Haxibiao\Media\Nova;
 
+use App\Nova\Resource;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
