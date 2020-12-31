@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use Haxibiao\Dimension\Dimension;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\SearchLog;
 
@@ -153,8 +154,12 @@ trait MovieResolvers
 
         if ($keyword) {
             app_track_event('长视频', '搜索长视频', $keyword);
+            Dimension::track("长视频搜索数", 1, "长视频");
             $qb = $qb->where('name', 'like', '%' . $keyword . '%');
-            if ($qb->count() > 0 && checkUser()) {
+            if (checkUser()) {
+                if ($qb->count() > 0) {
+                    Dimension::track("长视频搜索成功数", 1, "长视频");
+                }
                 $log = SearchLog::firstOrNew([
                     'user_id' => getUserId(),
                     'keyword' => $keyword,
