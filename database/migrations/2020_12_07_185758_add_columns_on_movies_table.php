@@ -20,9 +20,6 @@ class AddColumnsOnMoviesTable extends Migration
                 $table->string('subname')->nullable()->comment('别名');
                 $table->string('tags')->nullable()->comment('标签');
                 $table->string('lang')->nullable()->comment('语言');
-
-                $table->unsignedInteger('type_name')->nullable()->comment('类型名');
-                $table->double('score')->nullable()->comment('评分');
             }
             if (!Schema::hasColumn('movies', 'hits')) {
                 $table->unsignedInteger('hits')->nullable()->comment('点击次数');
