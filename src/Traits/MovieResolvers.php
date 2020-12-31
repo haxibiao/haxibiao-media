@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 use Haxibiao\Media\Movie;
+use Haxibiao\Media\SearchLog;
 
 trait MovieResolvers
 {
@@ -42,13 +43,13 @@ trait MovieResolvers
 
     public function resolversMovie($root, $args, $content, $info)
     {
-        $movie = Movie:: withoutGlobalScopes()->find(data_get($args, 'movie_id'));
-        if(isset($movie)){
+        $movie = Movie::withoutGlobalScopes()->find(data_get($args, 'movie_id'));
+        if (isset($movie)) {
             $movie->hits = $movie->hits + 1;
             $movie->save();
             app_track_event('看视频', '电影详情', data_get($args, 'movie_id'));
             //可播放资源或者收藏夹资源
-            if($movie->status==Movie::PUBLISH||$movie->favorited){
+            if ($movie->status == Movie::PUBLISH || $movie->favorited) {
                 return $movie;
             }
         }
@@ -151,8 +152,19 @@ trait MovieResolvers
         }
 
         if ($keyword) {
-            app_track_event('长视频', '搜索长视频');
+            app_track_event('长视频', '搜索长视频', $keyword);
             $qb = $qb->where('name', 'like', '%' . $keyword . '%');
+            if ($qb->count() > 0 && checkUser()) {
+                $log = SearchLog::firstOrNew([
+                    'user_id' => getUserId(),
+                    'keyword' => $keyword,
+                ]);
+                //如果搜索过，记录搜索次数
+                if ($log->id) {
+                    $log->count += 1;
+                }
+                $log->save();
+            }
         }
 
         return $qb;
