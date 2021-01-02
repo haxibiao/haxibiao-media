@@ -30,7 +30,12 @@ class InstallCommand extends Command
     public function handle()
     {
         $this->info('发布 media');
-        $this->call('vendor:publish', ['--provider' => 'Haxibiao\Media\MediaServiceProvider', '--force']);
+        // $this->call('vendor:publish', ['--provider' => 'Haxibiao\Media\MediaServiceProvider', '--force']);
+        // 兼容内涵电影，默认不强制发布gqls，后面可以单独vendor:publish --tag=media-graphql
+        $this->call('vendor:publish', [
+            '--tag'   => 'media-config',
+            '--force' => true,
+        ]);
 
         $this->comment("复制 stubs ...");
         $this->copyStubs();
