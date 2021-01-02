@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace Haxibiao\Media\Http\Api;
 
 use App\Http\Controllers\Controller;
 use App\Movie;
