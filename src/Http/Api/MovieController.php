@@ -13,11 +13,18 @@ class MovieController extends Controller
     {
         $movie  = Movie::find($id);
         $result = [];
-        foreach ($movie->series as $series) {
+
+        //开始同步电影模块的站
+        if (config('media.movie.enable')) {
+            return $movie->data;
+        }
+
+        $series = $movie->series;
+        foreach ($series as $item) {
             $result[] = [
-                'id'   => $series->id,
-                'url'  => $series->play_url,
-                'name' => $series->name,
+                'id'   => $item->id,
+                'url'  => $item->play_url,
+                'name' => $item->name,
             ];
         }
         return $result;
