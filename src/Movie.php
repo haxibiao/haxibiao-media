@@ -2,16 +2,18 @@
 
 namespace Haxibiao\Media;
 
+use App\Activity;
 use App\Comment;
 use App\Favorite;
+use App\Model;
 use App\Series;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Scopes\MovieStatusScope;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Movie extends Model
 {
@@ -49,6 +51,11 @@ class Movie extends Model
     {
         parent::boot();
         static::addGlobalScope(new MovieStatusScope);
+    }
+
+    public function activity(): HasOne
+    {
+        return $this->hasOne(Activity::class);
     }
 
     public function series(): HasMany

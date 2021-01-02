@@ -4,7 +4,6 @@ namespace Haxibiao\Media\Traits;
 
 use App\User;
 use Haxibiao\Media\MovieHistory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Cache;
 
 trait MovieAttrs
@@ -61,11 +60,6 @@ trait MovieAttrs
         $createdAt = $this->attributes['created_at'];
         return $createdAt;
 
-    }
-
-    public function activity(): HasOne
-    {
-        return $this->hasOne(\App\Activity::class);
     }
 
     public function getFavoritedAttribute()

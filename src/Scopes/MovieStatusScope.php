@@ -11,7 +11,7 @@ class MovieStatusScope implements Scope
     public function apply(Builder $builder, Model $model)
     {
         //过滤出可展示的和带封面的
-       return $builder->whereIn('status', [Movie::PUBLISH])->whereNotNull('cover');
+        return $builder->whereIn('status', [Movie::PUBLISH])->whereNotNull('cover');
 
     }
 }
