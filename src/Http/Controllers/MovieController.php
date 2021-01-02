@@ -139,9 +139,10 @@ class MovieController extends Controller
             ], [
                 'last_watch_time' => now(),
             ]);
-            $movie->favorited = Favorite::where('user_id', $user->id)
-                ->where('faved_id', $movie->id)->where('faved_type', 'movies')->exists();
-            $movie->liked = Like::where('user_id', $user->id)
+            // $movie->favorited = Favorite::where('user_id', $user->id)
+            //     ->where('faved_id', $movie->id)->where('faved_type', 'movies')->exists();
+            $movie->favorited = false;
+            $movie->liked     = Like::where('user_id', $user->id)
                 ->where('likeable_id', $movie->id)->where('likeable_type', 'movies')->exists();
         }
         $movie->likes = Like::where('likeable_id', $movie->id)->where('likeable_type', 'movies')->count();
