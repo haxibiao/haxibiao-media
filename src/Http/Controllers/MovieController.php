@@ -128,10 +128,9 @@ class MovieController extends Controller
 
     public function show(Movie $movie)
     {
-        // dd($movie->play_url);
         $movie->hits = $movie->hits + 1;
         $movie->save();
-        $qb   = Movie::latest('updated_at')->where('region', $movie->region);
+        $qb   = Movie::latest('updated_at');
         $more = $qb->take(6)->get();
         if ($user = checkUser()) {
             MovieHistory::updateOrCreate([
@@ -143,9 +142,9 @@ class MovieController extends Controller
             $movie->favorited = Favorite::where('user_id', $user->id)
                 ->where('faved_id', $movie->id)->where('faved_type', 'movies')->exists();
             $movie->liked = Like::where('user_id', $user->id)
-                ->where('likable_id', $movie->id)->where('likable_type', 'movies')->exists();
+                ->where('likeable_id', $movie->id)->where('likeable_type', 'movies')->exists();
         }
-        $movie->likes = Like::where('likable_id', $movie->id)->where('likable_type', 'movies')->count();
+        $movie->likes = Like::where('likeable_id', $movie->id)->where('likeable_type', 'movies')->count();
         return view('movie.show')->withMovie($movie)->withMore($more);
     }
 
