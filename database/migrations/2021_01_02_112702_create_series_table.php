@@ -13,6 +13,11 @@ class CreateSeriesTable extends Migration
      */
     public function up()
     {
+
+        if (Schema::hasTable('series')) {
+            return;
+        }
+
         Schema::create('series', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('movie_id')->index()->comment('电影ID');
