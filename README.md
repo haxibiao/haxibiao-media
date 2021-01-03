@@ -7,10 +7,11 @@
 1. 新增长视频模块，支持 movie:push movie:sync 来提交和同步采集的长视频
 2. 更多新功能，参考下面的更新日志...
 
-## 环境要求
+## 主要依赖
 
 1. 部分项目还没完全检查完表结构差异，Video 多了属性的没关系，少了的需要 migrate
-2. Spider 在 Article 里实现的，需要先重构出来单独的 spider 表，再兼容如何把 spider 的任务 hook 到 media.haxibiao.com。
+2. Spider 在 Article 里实现的，需要先重构出来单独的 spider 表，再兼容如何把 spider 的任务 hook 到 media.haxibiao.com
+3. 因为 Video 和 Movie 可担任部分 content 的角色，需要依赖 haxibiao-sns 确保历史记录，点赞，收藏，举报等功能正常
 
 ## 安装步骤
 

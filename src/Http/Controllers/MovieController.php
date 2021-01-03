@@ -145,13 +145,14 @@ class MovieController extends Controller
             //     ->where('faved_id', $movie->id)->where('faved_type', 'movies')->exists();
             $movie->favorited = false;
             //喜欢状态
-            $movie->liked = Like::where('user_id', $user->id)
-                ->where('likeable_id', $movie->id)
-                ->where('likeable_type', 'movies')
-                ->exists();
+            //FIXME: 用sns里的traits实现
+            // $movie->liked = Like::where('user_id', $user->id)
+            //     ->where('likeable_id', $movie->id)
+            //     ->where('likeable_type', 'movies')
+            //     ->exists();
         }
-        //FIXME: 点赞数通过observer统计更新
-        $movie->likes = Like::where('likeable_id', $movie->id)->where('likeable_type', 'movies')->count();
+        //FIXME: 用sns里的traits实现
+        // $movie->likes = Like::where('likeable_id', $movie->id)->where('likeable_type', 'movies')->count();
         //加载剧集
         $movie->load('series');
         return view('movie.show')->with('movie', $movie)->with('more', $more);
