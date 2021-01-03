@@ -133,20 +133,28 @@ class MovieController extends Controller
         $qb   = Movie::latest('updated_at');
         $more = $qb->take(6)->get();
         if ($user = checkUser()) {
+            //记录观看位置
             MovieHistory::updateOrCreate([
                 'user_id'  => $user->id,
                 'movie_id' => $movie->id,
             ], [
                 'last_watch_time' => now(),
             ]);
+            //收藏状态
             // $movie->favorited = Favorite::where('user_id', $user->id)
             //     ->where('faved_id', $movie->id)->where('faved_type', 'movies')->exists();
             $movie->favorited = false;
-            $movie->liked     = Like::where('user_id', $user->id)
-                ->where('likeable_id', $movie->id)->where('likeable_type', 'movies')->exists();
+            //喜欢状态
+            $movie->liked = Like::where('user_id', $user->id)
+                ->where('likeable_id', $movie->id)
+                ->where('likeable_type', 'movies')
+                ->exists();
         }
+        //FIXME: 点赞数通过observer统计更新
         $movie->likes = Like::where('likeable_id', $movie->id)->where('likeable_type', 'movies')->count();
-        return view('movie.show')->withMovie($movie)->withMore($more);
+        //加载剧集
+        $movie->load('series');
+        return view('movie.show')->with('movie', $movie)->with('more', $more);
     }
 
     public function favorites()

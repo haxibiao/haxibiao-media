@@ -3,15 +3,22 @@
 namespace Haxibiao\Media\Http\Api;
 
 use App\Http\Controllers\Controller;
+use App\Like;
 use App\Movie;
 use App\MovieHistory;
 use Illuminate\Support\Facades\Auth;
 
 class MovieController extends Controller
 {
+    /**
+     * 返回剧集数据
+     * @deprecated 新版vue目前直接blade获得movie对象包含series data
+     * @param int $id
+     * @return array
+     */
     public function getSeries($id)
     {
-        $movie  = Movie::find($id);
+        $movie  = Movie::findOrFail($id);
         $result = [];
 
         //开始同步电影模块的站
@@ -68,13 +75,14 @@ class MovieController extends Controller
     //     return returnData($qb->get()->toArray(), '获取评论成功', 200);
     // }
 
+    //FIXME: 需要把sns当做base一样的基础包依赖，重构通用sns功能
     public function toggoleLike()
     {
         if (checkUser()) {
             $user     = getUser();
             $movie_id = request()->get('movie_id');
             $type     = request()->get('type');
-            $like     = \App\Like::firstOrNew([
+            $like     = Like::firstOrNew([
                 'user_id'      => $user->id,
                 'likable_id'   => $movie_id,
                 'likable_type' => $type,
@@ -94,6 +102,7 @@ class MovieController extends Controller
         }
     }
 
+    //FIXME: 需要把sns当做base一样的基础包依赖，重构通用sns功能
     public function toggoleFan()
     {
         if (checkUser()) {
