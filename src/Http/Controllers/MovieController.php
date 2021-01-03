@@ -10,15 +10,16 @@ use Haxibiao\Media\Http\Controller;
 
 class MovieController extends Controller
 {
-
     public function search()
     {
-        $query  = request()->get('q');
-        $result = Movie::orderBy('id')->where('name', 'like', '%' . $query . '%')->paginate(10);
-        $hot    = Movie::orderBy('id')->paginate(10);
+        $query     = request()->get('q');
+        $result    = Movie::orderBy('id')->where('name', 'like', '%' . $query . '%')->paginate(10);
+        $hot       = Movie::orderBy('id')->paginate(10);
+        $recommend = Movie::enable()->where('rank', 30)->inRandomOrder()->take(4)->get();
         return view('movie.search', [
             'hot'          => $hot,
             'result'       => $result,
+            'recommend'    => $recommend,
             'queryKeyword' => $query,
         ]);
     }
