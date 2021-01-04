@@ -49,11 +49,6 @@ class Movie extends Model
             'movies.actors'       => 1,
         ],
     ];
-    public static function boot()
-    {
-        parent::boot();
-        static::addGlobalScope(new MovieStatusScope);
-    }
 
     public function activity(): HasOne
     {
