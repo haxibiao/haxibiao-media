@@ -93,8 +93,9 @@ class MovieSync extends Command
                         'source'     => $this->option('source'),
                         'source_key' => data_get($movie, 'id'),
                     ]);
-                    //修复链上导演数据过长的问题
-                    $movie['producer'] = str_limit($movie['producer'], 90, null);
+                    //修复字段数据过长的问题
+                    $movie['producer'] = str_limit($movie['producer'], 97);
+                    $movie['actors']   = str_limit($movie['actors'], 97);
 
                     $model->forceFill(array_only($movie, [
                         'introduction',
