@@ -17,18 +17,20 @@ class CreateSeriesTable extends Migration
         if (config('media.movie.enable')) {
             Schema::dropIfExists('series');
         }
+        if (!Schema::hasTable('series')) {
+            Schema::create('series', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedInteger('movie_id')->index()->comment('电影ID');
+                $table->string('name')->nullable();
+                $table->string('path')->nullable();
+                $table->string('source')->nullable();
+                $table->string('bucket')->nullable();
+                $table->string('cover')->nullable()->comment('剧集 m3u8 cover');
+                $table->tinyInteger('status')->default(0)->comment('播放状态: 0-待解析 1-已解析 -1:解析失败');
+                $table->timestamps();
+            });
+        }
 
-        Schema::create('series', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedInteger('movie_id')->index()->comment('电影ID');
-            $table->string('name')->nullable();
-            $table->string('path')->nullable();
-            $table->string('source')->nullable();
-            $table->string('bucket')->nullable();
-            $table->string('cover')->nullable()->comment('剧集 m3u8 cover');
-            $table->tinyInteger('status')->default(0)->comment('播放状态: 0-待解析 1-已解析 -1:解析失败');
-            $table->timestamps();
-        });
     }
 
     // 内涵电影最近 schema dump
