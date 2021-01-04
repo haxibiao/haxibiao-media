@@ -71,7 +71,7 @@ trait VideoAttrs
 
     public function getUrlAttribute()
     {
-        if (starts_with($this->path, 'http')) {
+        if (\Str::startsWith($this->path, 'http')) {
             return $this->path;
         }
 
