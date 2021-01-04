@@ -15,7 +15,7 @@ class AddStatusToMovies extends Migration
     {
         Schema::table('movies', function (Blueprint $table) {
             if (!Schema::hasColumn('movies', 'status')) {
-                $table->tinyInteger('status')->nullable()->default(1)->comment('电影可播放状态，-1为下架状态，-2资源损坏');
+                $table->tinyInteger('status')->nullable()->index()->default(1)->comment('电影可播放状态，-1为下架状态，-2资源损坏');
             }
         });
     }
