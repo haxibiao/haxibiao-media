@@ -13,7 +13,7 @@ class ArticlePush extends Command
      *
      * @var string
      */
-    protected $signature = 'article:push {--category : 指定分类} {--id : 开始ID}';
+    protected $signature = 'article:push {--category=: 指定分类} {--id=: 开始ID}';
 
     /**
      * The console command description.
