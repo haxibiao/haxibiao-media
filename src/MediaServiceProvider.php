@@ -26,6 +26,8 @@ class MediaServiceProvider extends ServiceProvider
             Console\MovieSync::class,
             Console\MoviePush::class,
             Console\VideoPush::class,
+            Console\ArticlePush::class,
+            Console\ArticleSync::class,
             Console\VideoSync::class,
             Console\PublishConfig::class,
         ]);
@@ -61,7 +63,7 @@ class MediaServiceProvider extends ServiceProvider
             ], 'media-config');
 
             $this->publishes([
-                __DIR__ . '/../config/applist.php'   => config_path('applist.php'),
+                __DIR__ . '/../config/applist.php' => config_path('applist.php'),
             ], 'media-applist');
             // 发布 graphql
             $this->publishes([
