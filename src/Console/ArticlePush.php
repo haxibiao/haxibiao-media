@@ -63,7 +63,7 @@ class ArticlePush extends Command
             foreach ($articles as $article) {
                 echo "\n正在上传文章" . $article->title;
                 //只处理纯文章，视频article不处理
-                $content_article = \DB::connection('content')
+                $content_article = \DB::connection('media')
                     ->table('articles')
                     ->where('title', $article->title)
                     ->first();
@@ -72,7 +72,7 @@ class ArticlePush extends Command
                 }
 
                 if (empty($content_article)) {
-                    \DB::connection('content')->table('articles')->insert([
+                    \DB::connection('media')->table('articles')->insert([
                         'title'       => $article->title,
                         'description' => $article->description,
                         'body'        => $article->body,
@@ -97,12 +97,12 @@ class ArticlePush extends Command
 
     public function getContentCategory($category)
     {
-        $content_category = \DB::connection('content')
+        $content_category = \DB::connection('media')
             ->table('categories')
             ->where('name', $category->name)
             ->first();
         if (empty($content_category)) {
-            $content_category = \DB::connection('content')
+            $content_category = \DB::connection('media')
                 ->table('categories')
                 ->insert([
                     'name'        => $category->name,
@@ -112,7 +112,7 @@ class ArticlePush extends Command
                 ]);
             echo "\n创建分类成功:" . $category->name;
         }
-        return $content_category = \DB::connection('content')
+        return $content_category = \DB::connection('media')
             ->table('categories')
             ->where('name', $category->name)
             ->first();

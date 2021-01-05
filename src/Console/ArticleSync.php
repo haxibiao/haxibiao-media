@@ -43,12 +43,12 @@ class ArticleSync extends Command
         $category = $this->option('category') ?? null;
 
         $current_article_id = 0;
-        $qb                 = \DB::connection('content')->table('articles');
+        $qb                 = \DB::connection('media')->table('articles');
         if ($site) {
             $qb = $qb->where('source', $site);
         }
         if ($category ?? null) {
-            $category = \DB::connection('content')->table('categories')->where('name', $category)->first();
+            $category = \DB::connection('media')->table('categories')->where('name', $category)->first();
             if ($category) {
                 $qb = $qb->where('category_id', $category->id);
             }
