@@ -96,6 +96,8 @@ class MovieSync extends Command
                     //修复字段数据过长的问题
                     $movie['producer'] = str_limit($movie['producer'], 97);
                     $movie['actors']   = str_limit($movie['actors'], 97);
+                    //修复count_series null引起sync出错
+                    $movie['count_series'] = $movie['count_series'] ?? 0;
 
                     $model->forceFill(array_only($movie, [
                         'introduction',
