@@ -12,6 +12,9 @@ return [
      */
     'movie'                          => [
         'enable' => env('ENABLE_MOVIE', false),
+        'middleware' => [
+            'web',
+        ],
     ],
 
     /**
