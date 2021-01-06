@@ -1,5 +1,6 @@
 <?php
 return [
+    //FIXME: 急需修复的db pass暴露问题...
     'mediachain' => [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),

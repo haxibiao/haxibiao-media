@@ -134,7 +134,7 @@ class MovieController extends Controller
         $movie->save();
         $qb   = Movie::latest('updated_at');
         $more = $qb->take(6)->get();
-        if ($user = checkUser()) {
+        if ($user = getUser(false)) {
             //记录观看位置
             MovieHistory::updateOrCreate([
                 'user_id'  => $user->id,
