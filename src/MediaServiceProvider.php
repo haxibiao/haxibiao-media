@@ -25,6 +25,11 @@ class MediaServiceProvider extends ServiceProvider
             Console\FixVideoIDCommand::class,
             Console\MovieSync::class,
             Console\MoviePush::class,
+            Console\VideoPush::class,
+            Console\ArticlePush::class,
+            Console\ArticleSync::class,
+            Console\VideoSync::class,
+            Console\PublishConfig::class,
         ]);
         $this->bindPathsInContainer();
     }
@@ -57,6 +62,9 @@ class MediaServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/vod.php'   => config_path('vod.php'),
             ], 'media-config');
 
+            $this->publishes([
+                __DIR__ . '/../config/applist.php' => config_path('applist.php'),
+            ], 'media-applist');
             // 发布 graphql
             $this->publishes([
                 __DIR__ . '/../graphql' => base_path('graphql'),

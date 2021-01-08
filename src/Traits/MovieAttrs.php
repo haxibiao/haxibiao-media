@@ -36,14 +36,16 @@ trait MovieAttrs
         }
         $this->attributes['data'] = $value;
     }
+
     public function getDataAttribute()
     {
         $series       = @json_decode($this->attributes['data']);
         $sortedSeries = array_values(array_sort($series, function ($value) {
             return $value->name;
         }));
-        if (checkUser()) {
-            $user = getUser();
+
+        //这里不能强制丢异常，很多场景未登录是正常的
+        if ($user = getUser(false)) {
             //添加进度记录
             $seriesHistories = MovieHistory::where('user_id', $user->id)
                 ->where('movie_id', $this->id)->get();
@@ -53,8 +55,8 @@ trait MovieAttrs
             }
         }
         return $sortedSeries;
-
     }
+
     public function getCreatedAtAttribute()
     {
         $createdAt = $this->attributes['created_at'];
