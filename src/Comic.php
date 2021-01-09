@@ -5,6 +5,7 @@ namespace Haxibiao\Media;
 use App\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+//FIXME: 重构为 App\Article type=comic
 /**
  * Class Comic of 漫画
  * @package App

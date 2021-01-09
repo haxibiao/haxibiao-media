@@ -1,32 +1,38 @@
 {
-  "name": "haxibiao/media",
-  "description": "哈希表 media",
-  "type": "project",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "ivan",
-      "email": "ivan@haxibiao.com"
+    "name": "haxibiao/media",
+    "description": "哈希表 media",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ivan",
+            "email": "ivan@haxibiao.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "haxibiao/helpers": "*",
+        "haxibiao/config": "*",
+        "haxibiao/matomo": "*",
+        "Haxibiao/cms": "*"
+    },
+    "repositories": {},
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "Haxibiao\\Media\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Haxibiao\\Media\\MediaServiceProvider"
+            ]
+        }
     }
-  ],
-  "require": {},
-  "repositories": {},
-  "minimum-stability": "dev",
-  "autoload": {
-    "psr-0": {
-      "Haxibiao\\Media\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "classmap": [
-      "tests/"
-    ]
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Haxibiao\\Media\\MediaServiceProvider"
-      ]
-    }
-  }
 }

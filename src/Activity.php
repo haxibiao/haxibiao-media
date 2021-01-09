@@ -8,6 +8,7 @@ use Haxibiao\Media\Traits\ActivityRepo;
 use Haxibiao\Media\Traits\ActivityResolver;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+//FIXME: 这里是一种置顶场景，可以重构到Stickable
 /**
  * Class of 活动轮播图
  */

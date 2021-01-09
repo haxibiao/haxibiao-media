@@ -2,19 +2,17 @@
 
 namespace Haxibiao\Media\Traits;
 
-use Haxibiao\Media\Image;
-use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
+/**
+ * 内容的 media 特性
+ */
 trait WithMedia
 {
-    use WithImage;
-
-    public function spiders(): HasMany
+    public function movies(): HasMany
     {
-        return $this->hasMany(Spider::class);
+        return $this->hasMany(Movie::class);
     }
 
     public function videos(): HasMany

@@ -7,8 +7,8 @@ use App\Comment;
 use App\Favorite;
 use App\Model;
 use App\Series;
+use Haxibiao\Cms\Traits\PlayWithCms;
 use Haxibiao\Helpers\Traits\Searchable;
-use Haxibiao\Media\Scopes\MovieStatusScope;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
@@ -21,6 +21,7 @@ class Movie extends Model
     use Searchable;
     use MovieResolvers;
     use MovieAttrs;
+    use PlayWithCms;
 
     protected $guarded = [];
 
