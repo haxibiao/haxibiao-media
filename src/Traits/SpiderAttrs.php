@@ -15,10 +15,10 @@ trait SpiderAttrs
         $this->attributes['source_url'] = $value;
     }
 
-    public function getSourceUrlAttribute($value)
-    {
-        return trim($value);
-    }
+//    public function getSourceUrlAttribute($value)
+//    {
+//        return trim($value);
+//    }
 
     public function getTitleAttribute()
     {
