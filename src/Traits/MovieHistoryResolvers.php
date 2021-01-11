@@ -14,6 +14,7 @@ trait MovieHistoryResolvers
         $movie_id = data_get($args, 'movie_id');
         $series_index = data_get($args, 'series_index');
         $progress = data_get($args, 'progress');
+        app_track_event('长视频','保存观看记录','电影id:'.$movie_id);
         if (checkUser()) {
             $user = getUser();
             // 保存观看历史,存储每集的进度
@@ -32,6 +33,7 @@ trait MovieHistoryResolvers
 
     public static function showMovieHistoryResolver($root, $args, $content, $info)
     {
+        app_track_event('长视频','查看长视频历史记录');
         //取每个电影的最新一条剧集记录 
         if (checkUser()) {
             $user = getUser();
@@ -47,5 +49,4 @@ trait MovieHistoryResolvers
         }
         return [];
     }
-   
 }
