@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media;
 
-use App\Model;
+use Haxibiao\Base\Model;
 use Haxibiao\Media\Traits\ActivityAttrs;
 use Haxibiao\Media\Traits\ActivityRepo;
 use Haxibiao\Media\Traits\ActivityResolver;

@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media;
 
-use App\Model;
+use Haxibiao\Base\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 //FIXME: 重构为 App\Article type=comic

@@ -3,9 +3,9 @@
 namespace Haxibiao\Media;
 
 use App\Article;
-use App\Model;
 use App\Post;
 use App\User;
+use Haxibiao\Base\Model;
 use Haxibiao\Cms\Traits\PlayWithCms;
 use Haxibiao\Media\Traits\MakeCovers;
 use Haxibiao\Media\Traits\VideoAttrs;
