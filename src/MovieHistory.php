@@ -1,9 +1,9 @@
 <?php
 namespace Haxibiao\Media;
 
-use App\Model;
 use App\Movie;
 use App\Series;
+use Haxibiao\Base\Model;
 use Haxibiao\Media\Traits\MovieHistoryResolvers;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

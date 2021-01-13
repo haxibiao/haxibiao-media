@@ -5,8 +5,8 @@ namespace Haxibiao\Media;
 use App\Activity;
 use App\Comment;
 use App\Favorite;
-use App\Model;
 use App\Series;
+use Haxibiao\Base\Model;
 use Haxibiao\Cms\Traits\PlayWithCms;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieAttrs;
@@ -24,6 +24,8 @@ class Movie extends Model
     use PlayWithCms;
 
     protected $guarded = [];
+
+    protected $table = 'movies';
 
     const CATEGORY_JIESHUO = 0;
     const MOVIE_RI_JU      = 1;
@@ -50,6 +52,11 @@ class Movie extends Model
             'movies.actors'       => 1,
         ],
     ];
+
+    public function getMorphClass()
+    {
+        return 'movies';
+    }
 
     public function activity(): HasOne
     {

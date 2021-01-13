@@ -2,10 +2,10 @@
 
 namespace Haxibiao\Media;
 
-use App\Model;
 use App\Question;
 use App\User;
 use App\Video;
+use Haxibiao\Base\Model;
 use Haxibiao\Media\Traits\SpiderAttrs;
 use Haxibiao\Media\Traits\SpiderRepo;
 use Haxibiao\Media\Traits\SpiderResolvers;

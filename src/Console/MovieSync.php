@@ -98,6 +98,7 @@ class MovieSync extends Command
                     $movie['actors']   = str_limit($movie['actors'], 97);
                     //修复count_series null引起sync出错
                     $movie['count_series'] = $movie['count_series'] ?? 0;
+                    $movie['introduction'] = $movie['introduction'] ?? '';
 
                     $model->forceFill(array_only($movie, [
                         'introduction',
