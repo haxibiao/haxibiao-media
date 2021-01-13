@@ -133,10 +133,10 @@ extend type Query {
   """
   分享长视频
   """
-  shareMovie(id: ID!): String @field(resolver: "App\\Movie@getSharePciture")
+  shareMovie(id: ID!): MovieShareData @field(resolver: "App\\Movie@getSharePciture")
 }
 
-type MovieShare {
+type MovieShareData {
   title: String
   covers: [String]
 }
