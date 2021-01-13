@@ -25,6 +25,8 @@ class Movie extends Model
 
     protected $guarded = [];
 
+    protected $table = 'movies';
+
     const CATEGORY_JIESHUO = 0;
     const MOVIE_RI_JU      = 1;
     const MOVIE_MEI_JU     = 2;
@@ -50,6 +52,11 @@ class Movie extends Model
             'movies.actors'       => 1,
         ],
     ];
+
+    public function getMorphClass()
+    {
+        return 'movies';
+    }
 
     public function activity(): HasOne
     {
