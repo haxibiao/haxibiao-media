@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media;
 
-use Haxibiao\Base\Model;
+use Haxibiao\Breeze\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**

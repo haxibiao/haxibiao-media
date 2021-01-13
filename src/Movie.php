@@ -6,7 +6,7 @@ use App\Activity;
 use App\Comment;
 use App\Favorite;
 use App\Series;
-use Haxibiao\Base\Model;
+use Haxibiao\Breeze\Model;
 use Haxibiao\Cms\Traits\PlayWithCms;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieAttrs;

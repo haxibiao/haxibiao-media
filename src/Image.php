@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media;
 
-use Haxibiao\Base\Model;
+use Haxibiao\Breeze\Model;
 use Haxibiao\Media\Traits\ImageAttrs;
 use Haxibiao\Media\Traits\ImageRepo;
 use Haxibiao\Media\Traits\ImageResolvers;

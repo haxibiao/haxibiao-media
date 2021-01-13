@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media;
 
-use Haxibiao\Base\Model;
+use Haxibiao\Breeze\Model;
 use Haxibiao\Media\Traits\SeriesAttrs;
 use Haxibiao\Media\Traits\SeriesRepo;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
