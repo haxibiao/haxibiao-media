@@ -14,7 +14,7 @@
         "haxibiao/helpers": "*",
         "haxibiao/config": "*",
         "haxibiao/matomo": "*",
-        "Haxibiao/cms": "*"
+        "haxibiao/cms": "*"
     },
     "repositories": {},
     "minimum-stability": "dev",
