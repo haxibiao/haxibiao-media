@@ -2,7 +2,10 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\Exceptions\GQLException;
+use App\User;
 use Haxibiao\Dimension\Dimension;
+use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\SearchLog;
 
@@ -173,5 +176,20 @@ trait MovieResolvers
         }
 
         return $qb;
+    }
+
+    public function getSharePciture($rootValue, array $args, $context, $resolveInfo)
+    {
+        $movie = Movie::find($args['id']);
+        throw_if(is_null($movie), GQLException::class, '该电影或电视剧不存在哦~,请换一个试试吧');
+        if (empty($movie->data[0]) || empty($movie->data[0]->url)) {
+            throw new GQLException("该视频资源已丢失,请稍后再试");
+        }
+        $covers = [];
+        for ($i = 0; $i < 3; $i++) {
+            $covers[] = FFMpegUtils::saveCover($movie->data[0]->url, random_int(120, 300), "cover_{$movie->id}_" . now()->timestamp);
+        }
+
+        return ["title" => "我正在追,推荐你的一定要看完哦~", "covers" => $covers];
     }
 }
