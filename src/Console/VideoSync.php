@@ -6,6 +6,8 @@ use App\Post;
 use App\User;
 use App\Video;
 use GuzzleHttp\Client;
+use Haxibiao\Helpers\utils\QcloudUtils;
+use Haxibiao\Media\Image;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -30,6 +32,7 @@ class VideoSync extends Command
      */
     protected $description = '按分类同步视频数据';
     protected const POST_URL = 'http://media.haxibiao.com/api/post/list';
+    protected const COSV5_CDN = 'http://hashvod-1251052432.file.myqcloud.com';
 
     protected $client;
     /**
@@ -64,8 +67,6 @@ class VideoSync extends Command
             $response = self::getUrlResponse($tag, $category);
             $originResults = json_decode($response);
             $postsData = $originResults->data;
-            info($postsData);
-            // dd($posts);
             //获取分页参数
             $last_page = $originResults->meta->last_page;
             $current_page = $originResults->meta->current_page;
@@ -74,36 +75,91 @@ class VideoSync extends Command
                 $total++;
                 DB::beginTransaction();
                 try {
-                    $video = data_get($postData, 'video');
-                    //检查是否已经存在对应的video(只检查video去重，不需要检查post)
-                    if (Video::where('hash', $video->hash)->exist()) {
-                        continue;
-                    }
-                    $newVideo = new Video();
-                    $newVideo->forceFill($video)->saveDataOnly();
 
-                    //同步对应的post
-                    $post = array_except($postData, 'video');
+                    $this->info('开始导入' . $postData->description);
 
                     $vestUser = User::where('role_id', User::VEST_STATUS)->inRandomOrder()->first();
                     throw_if(empty($vestUser), \Exception::class, "未找到系统马甲号，无法完成同步");
 
+                    $video = data_get($postData, 'video');
+                    //检查是否已经存在对应的video(只检查video去重，不需要检查post)
+                    if (Video::where('hash', $video->hash)->exists()) {
+                        $this->info('该video已存在，跳过');
+                        continue;
+                    }
+
+                    //保存图片字段
+                    $cover = DB::connection('media')
+                        ->table('images')
+                        ->find($postData->cover_id);
+
+                    $newImage = new Image();
+                    $newImage->forceFill([
+                        'hash' => $cover->hash,
+                        'path' => (self::COSV5_CDN) . $cover->path,
+                        'width' => $cover->width,
+                        'height' => $cover->height,
+                        'extension' => $cover->extension,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                    )->saveDataOnly();
+
+                    $coverUrl = isset($cover->path) ?: null;
+                    $status = isset($cover) ? Video::CDN_VIDEO_STATUS : Video::COVER_VIDEO_STATUS;
+
+                    $fileId = $video->json->vod->FileId;
+
+                    //构造视频json数据
+                    $videoInfo = QcloudUtils::getVideoInfo($fileId);
+                    $width = data_get($videoInfo, 'metaData.width');
+                    $height = data_get($videoInfo, 'metaData.height');
+                    $jsonData = [
+                        'cover' => $coverUrl,
+                        'sourceVideoUrl' => $video->json->vod->MediaUrl,
+                        'duration' => $video->json->duration,
+                        'withd' => $width,
+                        'height' => $height,
+                    ];
+
+                    $newVideo = new Video();
+                    $newVideo->forceFill([
+                        'user_id' => $vestUser->id,
+                        'title' => $video->name,
+                        'path' => $video->url,
+                        'duration' => $video->json->duration,
+                        'hash' => $video->hash,
+                        'cover' => $coverUrl,
+                        'status' => $status,
+                        'json' => $jsonData,
+                        'disk' => $video->disk,
+                        'qcvod_fileid' => $fileId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                    )->saveDataOnly();
+
+                    //同步对应的post
                     $review_id = Post::makeNewReviewId();
                     $review_day = Post::makeNewReviewDay();
                     $postFields = [
                         'user_id' => $vestUser->id,
+                        'content' => $postData->description,
+                        'description' => $postData->description,
+                        'video_id' => $newVideo->id,
                         'review_id' => $review_id,
                         'review_day' => $review_day,
-
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
-                    $postFields = array_merge($postFields, $post);
                     $newPost = new Post();
-                    $newPost->forceFill([
-                        $postFields,
-                    ])->saveDataOnly();
+                    $newPost->forceFill(
+                        $postFields
+                    )->saveDataOnly();
+                    $newPost->images()->syncWithoutDetaching($cover->id);
                     DB::commit();
                     $success++;
-                    $this->info('成功');
+                    $this->info('导入成功'.$newPost);
                 } catch (\Exception $ex) {
                     dd($ex);
                     DB::rollback();
