@@ -186,8 +186,8 @@ trait MovieResolvers
             throw new GQLException("该视频资源已丢失,请稍后再试");
         }
         $covers = [];
-        for ($i = 0; $i < 3; $i++) {
-            $covers[] = FFMpegUtils::saveCover($movie->data[0]->url, random_int(120, 300), "cover_{$movie->id}_" . now()->timestamp);
+        for ($i = 1; $i <= 3; $i++) {
+            $covers[] = FFMpegUtils::saveCover($movie->data[0]->url, random_int((10 * $i), (50 * $i)), "cover_" . now()->timestamp);
         }
 
         return ["title" => "我正在追,推荐你的一定要看完哦~", "covers" => $covers];
