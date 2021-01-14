@@ -2,12 +2,20 @@
 
 namespace Haxibiao\Media\Console;
 
+use App\Post;
+use App\User;
+use App\Video;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class VideoSync extends Command
 {
+
+    /**
+     * 导入的post会随机分配到系统马甲号上，如果没有马甲号，则会导入失败
+     */
+
     /**
      * The name and signature of the console command.
      *
@@ -55,16 +63,44 @@ class VideoSync extends Command
             //提交或者重试爬虫
             $response = self::getUrlResponse($tag, $category);
             $originResults = json_decode($response);
-            $posts = $originResults->data;
+            $postsData = $originResults->data;
+            info($postsData);
+            // dd($posts);
             //获取分页参数
             $last_page = $originResults->meta->last_page;
             $current_page = $originResults->meta->current_page;
-            foreach ($posts as $post) {
-                //todo 分页插入
+            foreach ($postsData as $postData) {
 
                 $total++;
                 DB::beginTransaction();
                 try {
+                    $video = data_get($postData, 'video');
+                    //检查是否已经存在对应的video(只检查video去重，不需要检查post)
+                    if (Video::where('hash', $video->hash)->exist()) {
+                        continue;
+                    }
+                    $newVideo = new Video();
+                    $newVideo->forceFill($video)->saveDataOnly();
+
+                    //同步对应的post
+                    $post = array_except($postData, 'video');
+
+                    $vestUser = User::where('role_id', User::VEST_STATUS)->inRandomOrder()->first();
+                    throw_if(empty($vestUser), \Exception::class, "未找到系统马甲号，无法完成同步");
+
+                    $review_id = Post::makeNewReviewId();
+                    $review_day = Post::makeNewReviewDay();
+                    $postFields = [
+                        'user_id' => $vestUser->id,
+                        'review_id' => $review_id,
+                        'review_day' => $review_day,
+
+                    ];
+                    $postFields = array_merge($postFields, $post);
+                    $newPost = new Post();
+                    $newPost->forceFill([
+                        $postFields,
+                    ])->saveDataOnly();
                     DB::commit();
                     $success++;
                     $this->info('成功');
