@@ -103,24 +103,68 @@ trait VideoAttrs
     //     return $url;
     // }
 
+    /**
+     * @deprecated 命名不精准,建议使用 isStoredDamei() 进行替换
+     * @see isStoredDamei()
+     *
+     * @return boolean
+     */
     public function isDameiVideo()
+    {
+        return $this->isStoredDamei();
+    }
+
+    /**
+     * @deprecated 命名不精准,建议使用 isStoredCos() 进行替换
+     * @see isStoredCos()
+     *
+     * @return boolean
+     */
+    public function isCosVideo()
+    {
+        return $this->isStoredCos();
+    }
+
+    /**
+     * @deprecated 命名不精准,建议使用 isStoredVod() 进行替换
+     * @see isStoredVod()
+     *
+     * @return boolean
+     */
+    public function isVodVideo()
+    {
+        return $this->isStoredVod();
+    }
+
+    /**
+     * @deprecated 命名不精准,建议使用 isStoredDZ() 进行替换
+     * @see isStoredDZ()
+     *
+     * @return boolean
+     */
+    public function isDZVideo()
+    {
+        return $this->isStoredDZ();
+    }
+
+    public function isStoredDamei()
     {
         return $this->disk == 'damei';
     }
 
-    public function isCosVideo()
+    public function isStoredCos()
     {
         return $this->disk == 'cos';
     }
 
-    public function isVodVideo()
-    {
-        return $this->disk == 'vod';
-    }
-
-    public function isDZVideo()
+    public function isStoredDZ()
     {
         return $this->disk == 'dtzq';
+    }
+
+    public function isStoredVod()
+    {
+        return $this->disk == 'vod';
     }
 
     /**

@@ -36,7 +36,7 @@ class CreateVideosTable extends Migration
             $table->softDeletes();
             $table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
             $table->string('vid')->nullable()->index()->comment('视频的VID');
-
+            $table->unsignedInteger('push_url_cache_day')->default(0)->comment('预热URL日');
             //FIXME: 答妹里的字段多的
 
             // $table->string('fileid')->nullable()->comment('外部文件系统标识=vod fileid');

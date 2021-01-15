@@ -106,7 +106,7 @@ trait VideoRepo
         $params = '{"Urls":["' . $url . '"]}';
 
         $req->fromJsonString($params);
-        $client->PushUrlCache($req);
+        return $client->PushUrlCache($req);
     }
 
     /**
@@ -127,14 +127,14 @@ trait VideoRepo
             $videoInfo = QcloudUtils::getVideoInfo($this->qcvod_fileid);
             $coverUrl  = Arr::get($videoInfo, 'basicInfo.coverUrl');
         }
-        $this->duration = data_get($videoInfo, 'basicInfo.duration',0);
+        $this->duration = data_get($videoInfo, 'basicInfo.duration', 0);
         $this->cover    = $coverUrl;
         $this->path     = $sourceVideoUrl;
-        $this->hash         = hash_file('md5',$sourceVideoUrl);
-       
+        $this->hash     = hash_file('md5', $sourceVideoUrl);
+
         //TODO::这里重复给值，可能需要重构
         $this->setJsonData('cover', $coverUrl);
-        $this->setJsonData('duration', data_get($videoInfo, 'basicInfo.duration',0));
+        $this->setJsonData('duration', data_get($videoInfo, 'basicInfo.duration', 0));
         $this->setJsonData('width', data_get($videoInfo, 'metaData.width'));
         $this->setJsonData('height', data_get($videoInfo, 'metaData.height'));
         $this->disk   = "vod";
