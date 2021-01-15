@@ -13,7 +13,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'media:install';
+    protected $signature = 'media:install {--force}';
 
     /**
      * The Console command description.
@@ -29,37 +29,21 @@ class InstallCommand extends Command
      */
     public function handle()
     {
+        $force = $this->option('force');
         $this->info('发布 media');
         // $this->call('vendor:publish', ['--provider' => 'Haxibiao\Media\MediaServiceProvider', '--force']);
         // 兼容内涵电影，默认不强制发布gqls，后面可以单独vendor:publish --tag=media-graphql
         $this->call('vendor:publish', [
             '--tag'   => 'media-config',
-            '--force' => true,
+            '--force' => $force,
         ]);
 
         $this->comment("复制 stubs ...");
-        $this->copyStubs();
+        copyStubs($force);
 
         $this->comment('迁移数据库变化...');
-        $this->callSilent('migrate');
+        $this->call('migrate');
 
-    }
-
-    public function copyStubs()
-    {
-        //复制所有app stubs
-        foreach (glob(__DIR__ . '/stubs/*.stub') as $filepath) {
-            $filename = basename($filepath);
-            copy($filepath, app_path(str_replace(".stub", ".php", $filename)));
-        }
-        //复制所有nova stubs
-        if (!is_dir(app_path('Nova'))) {
-            mkdir(app_path('Nova'));
-        }
-        foreach (glob(__DIR__ . '/stubs/Nova/*.stub') as $filepath) {
-            $filename = basename($filepath);
-            copy($filepath, app_path('Nova/' . str_replace(".stub", ".php", $filename)));
-        }
     }
 
 }
