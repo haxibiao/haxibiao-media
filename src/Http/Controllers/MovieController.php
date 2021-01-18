@@ -31,7 +31,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $qb             = Movie::latest('id');
+        $qb             = Movie::latest('id')->where('status','!=',Movie::DISABLED);
         $hotMovies      = (clone $qb)->take(15)->get();
         $categoryMovies = [
             '热门美剧'  => [
