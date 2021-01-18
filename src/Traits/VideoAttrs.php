@@ -39,19 +39,26 @@ trait VideoAttrs
 
     public function getCoverUrlAttribute()
     {
+        $cover_path = $this->cover;
+
         //前端需要null,不要空字符串
-        if (empty($this->cover)) {
+        if (empty($cover_path)) {
             return null;
         }
-        $cover = $this->cover;
 
-        //标准的vod cover url...
-        if (Str::contains($cover, 'vod') && Str::contains($cover, 'http')) {
-            return $cover;
+        //标准的 vod cover url, 抖音粘贴的爬虫处理结果...
+        if (Str::contains($cover_path, 'http')) {
+            return $cover_path;
         }
 
-        //TODO: 修复数据，数据库统一存path
-        $coverPath = parse_url($cover, PHP_URL_PATH);
+        //media中心自己上传的视频，封面同步到 hasvod 的
+        // && Str::startsWith($cover_path, 'images/')
+        if ($this->disk == 'vod') {
+            return hash_vod_url($cover_path);
+        }
+
+        //最后检查本地或者默认cdn cos的文件，返回FULL URL
+        $coverPath = parse_url($cover_path, PHP_URL_PATH);
         return cdnurl($coverPath);
     }
 

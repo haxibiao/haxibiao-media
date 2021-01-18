@@ -164,27 +164,15 @@ class VideoController extends Controller
 
     public function getLatestVideo(Request $request)
     {
-        $videos   = get_stick_videos('', true);
-        $videoIds = [];
-        foreach ($videos as $video) {
-            $videoIds[] = $video->post->id;
-        }
-        if ($request->get('stick')) {
-            $data = \App\Post::whereIn('id', $videoIds);
-        } else {
-            $data = \App\Post::whereStatus(1)->orderByDesc('updated_at')->with(['video', 'user']);
-            if (!empty($videoIds)) {
-                $data = \App\Post::whereStatus(1)->whereNotIn('id', $videoIds)
-                    ->orderByDesc('updated_at')->with(['video', 'user']);
-            }
-        }
-        $data = $data->paginate(9);
+        //FIXME: stick 逻辑
+        $qb    = \App\Post::whereStatus(1)->latest('updated_at')->with(['video', 'user']);
+        $posts = $qb->paginate(9);
         //兼容vue读取 article.cover 的
-        foreach ($data as $post) {
+        foreach ($posts as $post) {
             $post->cover        = $post->cover;
             $post->user->avatar = $post->user->avatar_url;
         }
-        return $data;
+        return $posts;
     }
 
     public function showByVideoHash($hash)

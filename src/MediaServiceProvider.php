@@ -18,6 +18,12 @@ class MediaServiceProvider extends ServiceProvider
 
     public function register()
     {
+        //帮助函数
+        $src_path = __DIR__;
+        foreach (glob($src_path . '/Helpers/*.php') as $filename) {
+            require_once $filename;
+        }
+
         $this->commands([
             Console\InstallCommand::class,
             Console\ImageReFactoringCommand::class,

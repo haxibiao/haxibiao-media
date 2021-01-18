@@ -6,8 +6,6 @@ use App\Post;
 use App\User;
 use App\Video;
 use GuzzleHttp\Client;
-use Haxibiao\Helpers\utils\QcloudUtils;
-use Haxibiao\Media\Image;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -30,8 +28,8 @@ class VideoSync extends Command
      *
      * @var string
      */
-    protected $description = '按分类同步视频数据';
-    protected const POST_URL = 'http://media.haxibiao.com/api/post/list';
+    protected $description    = '按分类同步视频数据';
+    protected const POST_URL  = 'http://media.haxibiao.com/api/post/list';
     protected const COSV5_CDN = 'http://hashvod-1251052432.file.myqcloud.com';
 
     protected $client;
@@ -55,20 +53,20 @@ class VideoSync extends Command
     public function handle()
     {
 
-        $tag = $this->option('tag');
+        $tag      = $this->option('tag');
         $category = $this->option('category');
 
         $success = 0;
-        $fail = 0;
-        $total = 0;
+        $fail    = 0;
+        $total   = 0;
 
         for ($last_page = 1, $current_page = 1; $last_page <= $current_page;) {
             //提交或者重试爬虫
-            $response = self::getUrlResponse($tag, $category);
+            $response      = self::getUrlResponse($tag, $category);
             $originResults = json_decode($response);
-            $postsData = $originResults->data;
+            $postsData     = $originResults->data;
             //获取分页参数
-            $last_page = $originResults->meta->last_page;
+            $last_page    = $originResults->meta->last_page;
             $current_page = $originResults->meta->current_page;
             foreach ($postsData as $postData) {
 
@@ -88,69 +86,72 @@ class VideoSync extends Command
                         continue;
                     }
 
+                    //FIXME: 用json no sql 方式处理
                     //保存图片字段
                     $cover = DB::connection('media')
                         ->table('images')
                         ->find($postData->cover_id);
 
-                    $newImage = new Image();
-                    $newImage->forceFill([
-                        'hash' => $cover->hash,
-                        'path' => (self::COSV5_CDN) . $cover->path,
-                        'width' => $cover->width,
-                        'height' => $cover->height,
-                        'extension' => $cover->extension,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]
-                    )->saveDataOnly();
+                    // $newImage = new Image();
+                    // $newImage->forceFill([
+                    //     'hash'       => $cover->hash,
+                    //     'path'       => (self::COSV5_CDN) . $cover->path,
+                    //     'width'      => $cover->width,
+                    //     'height'     => $cover->height,
+                    //     'extension'  => $cover->extension,
+                    //     'created_at' => now(),
+                    //     'updated_at' => now(),
+                    // ]
+                    // )->saveDataOnly();
 
-                    $coverUrl = isset($cover->path) ?: null;
-                    $status = isset($cover) ? Video::CDN_VIDEO_STATUS : Video::COVER_VIDEO_STATUS;
+                    $coverUrl = isset($cover->path) ? $cover->path : null;
+                    $status   = isset($cover) ? Video::CDN_VIDEO_STATUS : Video::COVER_VIDEO_STATUS;
 
                     $fileId = $video->json->vod->FileId;
 
+                    //FIXME 修复 content中心的video json no sql数据，避免每次sync的时候调用vod api
                     //构造视频json数据
-                    $videoInfo = QcloudUtils::getVideoInfo($fileId);
-                    $width = data_get($videoInfo, 'metaData.width');
-                    $height = data_get($videoInfo, 'metaData.height');
+                    // $videoInfo = QcloudUtils::getVideoInfo($fileId);
+                    // $width     = data_get($videoInfo, 'metaData.width');
+                    // $height    = data_get($videoInfo, 'metaData.height');
                     $jsonData = [
-                        'cover' => $coverUrl,
+                        'cover'          => $coverUrl,
                         'sourceVideoUrl' => $video->json->vod->MediaUrl,
-                        'duration' => $video->json->duration,
-                        'withd' => $width,
-                        'height' => $height,
+                        'duration'       => $video->json->duration,
+                        // 'withd'          => $width,
+                        // 'height'         => $height,
                     ];
 
                     $newVideo = new Video();
                     $newVideo->forceFill([
-                        'user_id' => $vestUser->id,
-                        'title' => $video->name,
-                        'path' => $video->url,
-                        'duration' => $video->json->duration,
-                        'hash' => $video->hash,
-                        'cover' => $coverUrl,
-                        'status' => $status,
-                        'json' => $jsonData,
-                        'disk' => $video->disk,
+                        'user_id'      => $vestUser->id,
+                        'title'        => $video->name,
+                        'path'         => $video->url,
+                        'duration'     => $video->json->duration,
+                        'hash'         => $video->hash,
+                        'cover'        => $coverUrl,
+                        'status'       => $status,
+                        'json'         => $jsonData,
+                        'disk'         => $video->disk,
                         'qcvod_fileid' => $fileId,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'created_at'   => now(),
+                        'updated_at'   => now(),
                     ]
                     )->saveDataOnly();
 
                     //同步对应的post
-                    $review_id = Post::makeNewReviewId();
+                    $review_id  = Post::makeNewReviewId();
                     $review_day = Post::makeNewReviewDay();
                     $postFields = [
-                        'user_id' => $vestUser->id,
-                        'content' => $postData->description,
+                        'user_id'     => $vestUser->id,
+                        'content'     => $postData->description,
                         'description' => $postData->description,
-                        'video_id' => $newVideo->id,
-                        'review_id' => $review_id,
-                        'review_day' => $review_day,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'video_id'    => $newVideo->id,
+                        'review_id'   => $review_id,
+                        'review_day'  => $review_day,
+                        'status'      => $status,
+                        'created_at'  => now(),
+                        'updated_at'  => now(),
                     ];
                     $newPost = new Post();
                     $newPost->forceFill(
@@ -159,7 +160,7 @@ class VideoSync extends Command
                     $newPost->images()->syncWithoutDetaching($cover->id);
                     DB::commit();
                     $success++;
-                    $this->info('导入成功'.$newPost);
+                    $this->info('导入成功' . $newPost);
                 } catch (\Exception $ex) {
                     dd($ex);
                     DB::rollback();
@@ -176,10 +177,10 @@ class VideoSync extends Command
     {
         $response = $this->client->request('GET', $url, [
             'http_errors' => false,
-            'query' => [
-                'page' => $page,
-                'count' => $count,
-                'tag' => $tag,
+            'query'       => [
+                'page'     => $page,
+                'count'    => $count,
+                'tag'      => $tag,
                 'category' => $category,
             ],
         ]);
