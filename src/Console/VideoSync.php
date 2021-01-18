@@ -62,7 +62,7 @@ class VideoSync extends Command
 
         for ($last_page = 1, $current_page = 1; $last_page <= $current_page;) {
             //提交或者重试爬虫
-            $response      = self::getUrlResponse($tag, $category);
+            $response = self::getUrlResponse($tag, $category);
             $originResults = json_decode($response);
             $postsData     = $originResults->data;
             //获取分页参数
