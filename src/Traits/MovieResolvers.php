@@ -187,7 +187,19 @@ trait MovieResolvers
         }
         $covers = [];
         for ($i = 1; $i <= 3; $i++) {
-            $covers[] = FFMpegUtils::saveCover($movie->data[0]->url, random_int((10 * $i), (50 * $i)), "cover_" . now()->timestamp);
+
+            //如果在cos桶里有这个剧的截图就不重新截图了，直接返回。
+            $file_name  = "movie_cover_{$movie->id}_{$i}";
+            $cover_name = "storage/app/screenshot/" . $file_name . '.jpg';
+            if (!is_prod_env()) {
+                $cover_name = 'temp/' . $cover_name;
+            }
+            $exist = \Storage::cloud()->exists($cover_name);
+            if ($exist) {
+                $covers[] = \Storage::cloud()->url($cover_name);
+            } else {
+                $covers[] = FFMpegUtils::saveCover($movie->data[0]->url, random_int((10 * $i), (50 * $i)), $file_name);
+            }
         }
 
         return ["title" => "我正在追,推荐你的一定要看完哦~", "covers" => $covers];
