@@ -42,6 +42,7 @@ class ArticleSync extends Command
         $site     = $this->option('domain') ?? null;
         $category = $this->option('category') ?? null;
 
+        //记住最后同步的id
         $current_article_id = 0;
         $qb                 = \DB::connection('media')->table('articles');
         if ($site) {
@@ -62,10 +63,10 @@ class ArticleSync extends Command
         $count = 0;
         $qb->chunkById(100, function ($articles) use (&$count, &$current_article_id) {
             foreach ($articles as $article) {
-                echo "\n同步文章" . $article->title;
+                echo "\n同步文章:" . $article->title;
                 $current_article_id = $article->id;
                 //只处理纯文章，视频article不处理
-                $count += Article::firstOrCreate([
+                $result = Article::firstOrCreate([
                     'title' => $article->title,
                 ], [
                     'description' => $article->description,
@@ -77,6 +78,11 @@ class ArticleSync extends Command
                     'source'      => $article->source,
                     'json'        => $article->json,
                 ]);
+                if ($result->id) {
+                    echo "\n该文章已存在跳过:" . $article->title;
+                    continue;
+                }
+                $count++;
             }
         });
 
