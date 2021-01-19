@@ -68,7 +68,7 @@ trait MovieAttrs
     {
         if ($user = getUser(false)) {
             if (in_array(config('app.name'), ['datizhuanqian'])) {
-                return $favorite = $user->favoritedMovie()->where('favorable_id', $this->id)->count() > 0;
+                return $this->favorites()->where('user_id', $user->id)->count() > 0;
             } else {
                 if (!method_exists($user, 'favorites')) {
                     return false;
