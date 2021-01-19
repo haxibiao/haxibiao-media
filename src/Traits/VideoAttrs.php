@@ -39,7 +39,7 @@ trait VideoAttrs
 
     public function getCoverUrlAttribute()
     {
-        $cover_path = $this->cover;
+        $cover_path = $this->attributes['cover'] ?? null;
 
         //前端需要null,不要空字符串
         if (empty($cover_path)) {
