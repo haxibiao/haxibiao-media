@@ -20,7 +20,7 @@ class VideoSync extends Command
      *
      * @var string
      */
-    protected $signature = 'video:sync {--tag=: 视频标签} {--category=: 视频分类} {--source= : 来源，如印象视频} {--author= : 作者} {--endpoint= : 哈希云接口位置}';
+    protected $signature = 'video:sync {--tag=: 视频标签} {--category=: 视频分类} {--source= : 来源，如印象视频} {--author= : 作者} {--endpoint= : 哈希云接口位置} {--collectable : 只取有合集的视频}';
 
     /**
      * The console command description.
@@ -60,6 +60,9 @@ class VideoSync extends Command
         if ($author = $this->option('author')) {
             $qb = $qb->where('author', $author);
         }
+        if ($this->option('collectable')) {
+            $qb = $qb->whereNotNull('collection');
+        }
 
         $count = 0;
         $qb->chunk(100, function ($videos) use (&$count) {
@@ -80,15 +83,17 @@ class VideoSync extends Command
                     $duration = intval($json->duration ?? 0); //时长 秒
                 }
                 $newVideo->forceFill([
-                    'user_id'  => 1, //视频的作者id不重要
-                    'title'    => $video->description, //视频配文
-                    'path'     => $video->path,
-                    'duration' => $duration,
-                    'hash'     => $video->hash,
-                    'cover'    => $video->cover,
-                    'status'   => $video->status,
-                    'json'     => $video->json,
-                    'disk'     => $video->disk,
+                    'user_id'        => 1, //视频的作者id不重要
+                    'title'          => $video->description, //视频配文
+                    'path'           => $video->path,
+                    'duration'       => $duration,
+                    'hash'           => $video->hash,
+                    'cover'          => $video->cover,
+                    'collection'     => $video->collection,
+                    'collection_key' => $video->collection_key,
+                    'status'         => $video->status,
+                    'json'           => $video->json,
+                    'disk'           => $video->disk,
                 ]
                 )->saveDataOnly();
                 ++$count;
