@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=7.3",
+        "league/flysystem-aws-s3-v3": "*",
         "haxibiao/helpers": "*",
         "haxibiao/config": "*",
         "haxibiao/matomo": "*",

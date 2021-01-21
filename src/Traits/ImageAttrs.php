@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Traits;
 
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -26,7 +25,7 @@ trait ImageAttrs
         }
 
         //默认没问题的图片都应该在cos
-        return Storage::cloud()->url($this->path);
+        return cdnurl($this->path);
     }
 
     // FIXME:兼容Web端就兼容不了APP端 还是得改vue代码
@@ -34,7 +33,7 @@ trait ImageAttrs
     // public function getPathAttribute()
     // {
     //     //默认没问题的图片都应该在cos
-    //     return Storage::cloud()->url($this->attributes['path']);
+    //     return cdnurl($this->attributes['path']);
     // }
 
     public function getIsCosAttribute()

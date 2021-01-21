@@ -77,7 +77,7 @@ trait ImageRepo
         Storage::cloud()->put('images/' . $imageName . '.small.' . $extension, $thumbnail->__toString());
 
         //使用原图hash
-        $hash = hash_file('md5', Storage::cloud()->url('images/' . $imageName . '.' . $extension));
+        $hash = hash_file('md5', cdnurl('images/' . $imageName . '.' . $extension));
 
         //hash值匹配直接返回当前image对象
         $image = self::firstOrNew([

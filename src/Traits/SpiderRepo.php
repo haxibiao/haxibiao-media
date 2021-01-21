@@ -176,7 +176,7 @@ trait SpiderRepo
                     $dynamicCoverPath = 'images/' . genrate_uuid('webp');
                     $result           = Storage::cloud()->put($dynamicCoverPath, $stream);
                     if ($result) {
-                        $video->setJsonData('dynamic_cover', Storage::cloud()->url($dynamicCoverPath));
+                        $video->setJsonData('dynamic_cover', cdnurl($dynamicCoverPath));
                     }
                 }
             }

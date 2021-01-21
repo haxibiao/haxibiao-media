@@ -2,12 +2,13 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Exceptions\GQLException;
 use App\User;
+use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Dimension\Dimension;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\SearchLog;
+use Illuminate\Support\Facades\Storage;
 
 trait MovieResolvers
 {
@@ -194,9 +195,9 @@ trait MovieResolvers
             if (!is_prod_env()) {
                 $cover_name = 'temp/' . $cover_name;
             }
-            $exist = \Storage::cloud()->exists($cover_name);
+            $exist = Storage::cloud()->exists($cover_name);
             if ($exist) {
-                $covers[] = \Storage::cloud()->url($cover_name);
+                $covers[] = cdnurl($cover_name);
             } else {
                 $covers[] = FFMpegUtils::saveCover($movie->data[0]->url, random_int((10 * $i), (50 * $i)), $file_name);
             }

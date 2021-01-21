@@ -54,15 +54,13 @@ class VideoSync extends Command
 
         $qb = DB::connection('media')->table('videos')->orderBy('id');
 
-        // if (env('DB_PASSWORD_MEDIA') == null) {
-        //     $db_password_media = $this->ask("请注意 env('DB_PASSWORD_MEDIA') 未设置，正在用env('DB_PASSWORD'), 如果需要不同密码请输入或者[enter]跳过");
-        //     if ($db_password_media) {
-
-        //         config(['database.connections.media.password' => $db_password_media]);
-
-        //         $this->confirm("已设置media的db密码，继续吗? ");
-        //     }
-        // }
+        if (env('DB_PASSWORD_MEDIA') == null) {
+            $db_password_media = $this->ask("请注意 env('DB_PASSWORD_MEDIA') 未设置，正在用env('DB_PASSWORD'), 如果需要不同密码请输入或者[enter]跳过");
+            if ($db_password_media) {
+                config(['database.connections.media.password' => $db_password_media]);
+                $this->confirm("已设置media的db密码，继续吗? ");
+            }
+        }
 
         if ($source = $this->option('source')) {
             $qb = $qb->where('source', $source);

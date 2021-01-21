@@ -68,7 +68,7 @@ trait VideoAttrs
 
         // 相对路径 转 绝对路径
         $data = [
-            'cover'  => Storage::cloud()->url($json['cover'] ?? '/images/cover.png'),
+            'cover'  => cdnurl($json['cover'] ?? '/images/cover.png'),
             'width'  => $json['width'] ?? null,
             'height' => $json['height'] ?? null,
         ];
@@ -86,7 +86,7 @@ trait VideoAttrs
         if (Storage::disk('public')->exists($this->path)) {
             return url('/storage/' . $this->path);
         }
-        return Storage::cloud()->url($this->path);
+        return cdnurl($this->path);
     }
 
     /**

@@ -8,7 +8,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
@@ -51,7 +50,7 @@ class MakeVideoCovers implements ShouldQueue
             $videoPath = $video->path;
             $video->makeCovers($videoPath);
         } else {
-            $videoPath = Storage::cloud()->url($video->path);
+            $videoPath = cdnurl($video->path);
             $video->makeCovers($videoPath, 'cos');
         }
 

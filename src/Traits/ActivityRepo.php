@@ -9,24 +9,24 @@ trait ActivityRepo
 {
     /**
      * 通过 type 获取活动轮播图
-     * 
+     *
      * @param $type 活动轮播图类型
      */
-    public static function activities(int $type) 
+    public static function activities(int $type)
     {
         return Activity::query()
-        ->whereType($type)
-        ->enable()
-        ->orderByDesc('sort');
+            ->whereType($type)
+            ->enable()
+            ->orderByDesc('sort');
     }
     public function saveDownloadImage($file)
     {
         if ($file) {
-            $cover = '/movies' . $this->id . '_' . time() . '.png';
-            $cosDisk   = Storage::cloud();
+            $cover   = '/movies' . $this->id . '_' . time() . '.png';
+            $cosDisk = Storage::cloud();
             $cosDisk->put($cover, \file_get_contents($file->path()));
 
-            return Storage::cloud()->url($cover);;
+            return cdnurl($cover);
         }
     }
 }
