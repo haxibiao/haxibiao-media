@@ -12,6 +12,7 @@
     "require": {
         "php": ">=7.3",
         "league/flysystem-aws-s3-v3": "*",
+        "haxibiao/vod-sdk": "*",
         "haxibiao/helpers": "*",
         "haxibiao/config": "*",
         "haxibiao/matomo": "*",
