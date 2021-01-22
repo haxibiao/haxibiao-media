@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 trait WithMedia
 {
+    use WithImage;
+
     public function movies(): HasMany
     {
         return $this->hasMany(Movie::class);

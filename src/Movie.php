@@ -7,7 +7,7 @@ use App\Comment;
 use App\Favorite;
 use App\Series;
 use Haxibiao\Breeze\Model;
-use Haxibiao\Cms\Traits\PlayWithCms;
+use Haxibiao\Cms\Traits\WithCms;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
@@ -21,7 +21,7 @@ class Movie extends Model
     use Searchable;
     use MovieResolvers;
     use MovieAttrs;
-    use PlayWithCms;
+    use WithCms;
 
     protected $guarded = [];
 

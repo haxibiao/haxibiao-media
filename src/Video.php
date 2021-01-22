@@ -6,7 +6,7 @@ use App\Article;
 use App\Post;
 use App\User;
 use Haxibiao\Breeze\Model;
-use Haxibiao\Cms\Traits\PlayWithCms;
+use Haxibiao\Cms\Traits\WithCms;
 use Haxibiao\Media\Traits\MakeCovers;
 use Haxibiao\Media\Traits\VideoAttrs;
 use Haxibiao\Media\Traits\VideoRepo;
@@ -22,7 +22,7 @@ class Video extends Model
     use VideoAttrs;
     use VideoRepo;
     use MakeCovers;
-    use PlayWithCms;
+    use WithCms;
 
     protected $casts = [
         'json' => 'object',
