@@ -66,7 +66,7 @@ class ArticleSync extends Command
                 echo "\n同步文章:" . $article->title;
                 $current_article_id = $article->id;
                 //只处理纯文章，视频article不处理
-                $result = Article::firstOrCreate([
+                $result = Article::firstOrNew([
                     'title' => $article->title,
                 ], [
                     'description' => $article->description,
@@ -82,6 +82,7 @@ class ArticleSync extends Command
                     echo "\n该文章已存在跳过:" . $article->title;
                     continue;
                 }
+                $result->save();
                 $count++;
             }
         });
