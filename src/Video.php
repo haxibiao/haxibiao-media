@@ -22,7 +22,6 @@ class Video extends Model
     use VideoAttrs;
     use VideoRepo;
     use MakeCovers;
-    use WithCms;
 
     protected $casts = [
         'json' => 'object',

@@ -17,9 +17,7 @@
         "league/flysystem-aws-s3-v3": "*",
         "haxibiao/vod-sdk": "*",
         "haxibiao/helpers": "*",
-        "haxibiao/config": "*",
-        "haxibiao/matomo": "*",
-        "haxibiao/cms": "*"
+        "haxibiao/config": "*"
     },
     "repositories": {},
     "minimum-stability": "dev",
