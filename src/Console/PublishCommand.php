@@ -5,7 +5,7 @@ namespace Haxibiao\Media\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-class InstallCommand extends Command
+class PublishCommand extends Command
 {
 
     /**
@@ -13,14 +13,14 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'media:install {--force}';
+    protected $signature = 'media:publish {--force}';
 
     /**
      * The Console command description.
      *
      * @var string
      */
-    protected $description = '安装 haxibiao/media';
+    protected $description = '发布 haxibiao/media';
 
     /**
      * Execute the Console command.
@@ -30,16 +30,9 @@ class InstallCommand extends Command
     public function handle()
     {
         $force = $this->option('force');
-        $this->info('安装 media');
-
-        $this->comment("复制 stubs ...");
-        copyStubs(__DIR__, $force);
-
-        $this->comment('安装数据库...');
-        $this->call('migrate');
 
         $this->comment("发布 media");
-        $this->call('media:publish', ['--force' => $force]);
+        $this->call('vendor:publish', ['--provider' => 'Haxibiao\Media\MediaServiceProvider', '--force' => $force]);
     }
 
 }

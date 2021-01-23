@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 // api routes.
 Route::group(
     [
+        'prefix'     => 'api',
         'middleware' => ['api'],
         'namespace'  => 'Haxibiao\Media\Http\Api',
     ],

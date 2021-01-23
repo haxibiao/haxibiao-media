@@ -26,6 +26,7 @@ class MediaServiceProvider extends ServiceProvider
 
         $this->commands([
             Console\InstallCommand::class,
+            Console\PublishCommand::class,
             Console\ImageReFactoringCommand::class,
             Console\CountVideoViewsCommand::class,
             Console\FixVideoIDCommand::class,
@@ -56,7 +57,7 @@ class MediaServiceProvider extends ServiceProvider
             __DIR__ . '/../router.php'
         );
 
-        if (!$this->app->configurationIsCached()) {
+        if (!app()->configurationIsCached()) {
             $this->mergeConfigFrom(__DIR__ . '/../config/database.php', 'database.connections');
         }
 
@@ -71,10 +72,14 @@ class MediaServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../config/applist.php' => config_path('applist.php'),
             ], 'media-applist');
-            // 发布 graphql
+
             $this->publishes([
                 __DIR__ . '/../graphql' => base_path('graphql'),
             ], 'media-graphql');
+
+            $this->publishes([
+                __DIR__ . '/../resources/images' => base_path('public/images'),
+            ], 'media-resources');
 
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));

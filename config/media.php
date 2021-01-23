@@ -11,7 +11,7 @@ return [
      * 电影模块配置
      */
     'movie'                          => [
-        'enable' => env('ENABLE_MOVIE', false),
+        'enable'     => env('ENABLE_MOVIE', true),
         'middleware' => [
             'web',
         ],
