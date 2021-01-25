@@ -13,6 +13,9 @@ class CreateSearchLogsTable extends Migration
      */
     public function up()
     {
+        if(Schema::hasTable('search_logs')){
+            return;
+        }
         //搜索记录表
         Schema::create('search_logs', function (Blueprint $table) {
             $table->id();
