@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 use App\User;
 use Haxibiao\Media\MovieHistory;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 
 trait MovieAttrs
@@ -40,7 +41,7 @@ trait MovieAttrs
     public function getDataAttribute()
     {
         $series       = @json_decode($this->attributes['data']);
-        $sortedSeries = array_values(array_sort($series, function ($value) {
+        $sortedSeries = array_values(Arr::sort($series, function ($value) {
             return $value->name;
         }));
 
@@ -61,7 +62,6 @@ trait MovieAttrs
     {
         $createdAt = $this->attributes['created_at'];
         return $createdAt;
-
     }
 
     public function getFavoritedAttribute()
