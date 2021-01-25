@@ -4,22 +4,11 @@ namespace Haxibiao\Media\Traits;
 
 use Haxibiao\Media\Movie;
 
-
 trait MovieRepo
 {
     public static function getCDNDomain($bucket)
     {
-        return data_get([
-            'hanju'      => 'https://cdn-youku-com.diudie.com/',
-            'riju'       => 'https://cdn-xigua-com.diudie.com/',
-            'meiju'      => 'https://cdn-iqiyi-com.diudie.com/',
-            'gangju'     => 'https://cdn-v-qq-com.diudie.com/',
-            'blgl'       => 'https://cdn-pptv-com.diudie.com/',
-            // 印剧数量少，使用 do spaces cdn domain
-            'yinju'      => 'https://yinju.sfo2.cdn.digitaloceanspaces.com/',
-            'othermovie' => 'https://cdn-leshi-com.diudie.com/',
-            'movieimage' => 'https://cdn-douyin-com.diudie.com/',
-        ], $bucket);
+        return data_get(space_ucdn_map(), $bucket);
     }
 
     public function toResource()
@@ -35,9 +24,9 @@ trait MovieRepo
     public static function getStatus()
     {
         return [
-            Movie::PUBLISH      => '可播放',
-            Movie::DISABLED     => '禁用',
-            Movie::ERROR => '资源错误',
+            Movie::PUBLISH  => '可播放',
+            Movie::DISABLED => '禁用',
+            Movie::ERROR    => '资源错误',
         ];
     }
 }

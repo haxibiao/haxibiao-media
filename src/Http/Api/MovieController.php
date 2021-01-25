@@ -23,7 +23,19 @@ class MovieController extends Controller
 
         //开始同步电影模块的站
         if (config('media.movie.enable')) {
-            return $movie->data;
+            $series = $movie->data;
+
+            //旧的series URL: {加速域名}/{space}/{movie_id}/index.m3u8
+            //新的负载型的series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
+            foreach ($series as $item) {
+                $ucdn_domain = parse_url($item->url, PHP_URL_HOST);
+                $ucdn_root   = "https://" . $ucdn_domain . "/";
+                $space       = get_space_by_ucdn($ucdn_root);
+                $space_path  = parse_url($item->url, PHP_URL_PATH);
+                $item->url   = "https://$ucdn_domain/m3u8/$space$space_path";
+            }
+
+            return $series;
         }
 
         $series = $movie->series;
