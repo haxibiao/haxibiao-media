@@ -9,9 +9,12 @@ use Haxibiao\Breeze\Model;
 use Haxibiao\Media\Traits\SpiderAttrs;
 use Haxibiao\Media\Traits\SpiderRepo;
 use Haxibiao\Media\Traits\SpiderResolvers;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Spider extends Model
 {
+    use HasFactory;
+
     use SpiderAttrs;
     use SpiderRepo;
     use SpiderResolvers;

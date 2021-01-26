@@ -1,0 +1,3 @@
+mutation saveWatchProgressMutation($movie_id: Int!, $series_index: Int, $progress: String) {
+    saveWatchProgress(movie_id: $movie_id, series_index: $series_index, progress: $progress)
+}

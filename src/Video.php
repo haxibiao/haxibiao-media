@@ -6,17 +6,19 @@ use App\Article;
 use App\Post;
 use App\User;
 use Haxibiao\Breeze\Model;
-use Haxibiao\Cms\Traits\WithCms;
 use Haxibiao\Media\Traits\MakeCovers;
 use Haxibiao\Media\Traits\VideoAttrs;
 use Haxibiao\Media\Traits\VideoRepo;
 use Haxibiao\Media\Traits\VideoResolvers;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Video extends Model
 {
+    use HasFactory;
+
     use SoftDeletes;
     use VideoResolvers;
     use VideoAttrs;

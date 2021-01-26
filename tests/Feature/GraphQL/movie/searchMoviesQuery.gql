@@ -1,0 +1,17 @@
+
+
+# 搜索影视
+query searchMoviesQuery($keyword: String!, $count: Int, $page: Int) {
+    searchMovie(keyword: $keyword, count: $count, page: $page) {
+        paginatorInfo {
+            currentPage
+            hasMorePages
+        }
+        data {                
+        id
+        name
+        introduction
+        cover
+        }
+        }
+    }

@@ -1,0 +1,19 @@
+# 观看历史记录
+query showMovieHistoryQuery($count: Int, $page: Int) {
+    showMovieHistory(count: $count, page: $page) {
+        paginatorInfo {
+            hasMorePages
+            currentPage
+        }
+        data {
+            id
+            last_watch_time
+            movie {
+                id
+                name
+                introduction
+                cover            
+        }
+        }
+    }
+}

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\GraphQL;
 
+use Haxibiao\Breeze\GraphQLTestCase;
+
 class ImageTest extends GraphQLTestCase
 {
 

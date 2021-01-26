@@ -1,0 +1,19 @@
+# 电影详情
+query movieQuery($movie_id:ID!){
+  movie(movie_id:$movie_id){
+    id
+    name
+    introduction
+    cover
+    year
+    type
+    style
+    actors
+    count_series
+    lang
+    producer
+    region
+    score
+    data
+  }
+}

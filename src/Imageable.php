@@ -2,11 +2,14 @@
 
 namespace Haxibiao\Media;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class Imageable extends Pivot
 {
-    protected $table='imageable';
+    use HasFactory;
+
+    protected $table = 'imageable';
 
     protected $fillable = [
         'imageable_id',

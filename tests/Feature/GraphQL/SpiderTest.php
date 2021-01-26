@@ -3,6 +3,7 @@ namespace Tests\Feature\GraphQL;
 
 use App\Spider;
 use App\User;
+use Haxibiao\Breeze\GraphQLTestCase;
 
 class SpiderTest extends GraphQLTestCase
 {
@@ -11,7 +12,7 @@ class SpiderTest extends GraphQLTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = factory(User::class)->create([
+        $this->user = User::factory()->create([
             'api_token' => str_random(60),
             'ticket'    => 100,
             'account'   => rand(10000000000, 99999999999),

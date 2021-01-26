@@ -5,10 +5,12 @@ namespace Haxibiao\Media;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Media\Traits\SeriesAttrs;
 use Haxibiao\Media\Traits\SeriesRepo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Series extends Model
 {
+    use HasFactory;
 
     use SeriesRepo;
     use SeriesAttrs;

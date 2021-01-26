@@ -6,10 +6,13 @@ use Haxibiao\Breeze\Model;
 use Haxibiao\Media\Traits\ImageAttrs;
 use Haxibiao\Media\Traits\ImageRepo;
 use Haxibiao\Media\Traits\ImageResolvers;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Image extends Model
 {
+    use HasFactory;
+
     use ImageAttrs;
     use ImageRepo;
     use ImageResolvers;

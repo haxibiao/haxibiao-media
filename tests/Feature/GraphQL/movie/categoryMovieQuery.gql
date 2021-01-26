@@ -1,0 +1,37 @@
+
+# 分类筛选出来的电影
+query categoryMovieQuery(
+    $region: MovieCategory
+    $type: String
+    $style: String
+    $country: String
+    $lang: String
+    $count: Int
+    $page: Int
+    $year: String
+    $scopes: ScopesType
+) {
+    categoryMovie(
+        region: $region
+        type: $type
+        country: $country
+        lang: $lang
+        style: $style
+        count: $count
+        page: $page
+        year: $year
+        scopes: $scopes
+    ) {
+        paginatorInfo {
+            hasMorePages
+            currentPage
+        }
+        data {
+           
+        id
+        name
+        introduction
+        cover
+    }
+    }
+}
