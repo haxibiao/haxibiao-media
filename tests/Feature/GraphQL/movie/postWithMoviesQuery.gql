@@ -9,7 +9,6 @@ query postWithMoviesQuery {
     description
     status
     liked
-    count_visits
     count_likes
     count_comments
     review_id
@@ -25,12 +24,6 @@ query postWithMoviesQuery {
         gender
         age
         introduction
-    }
-    tags {
-        data {
-            id
-            name
-        }
     }
     images {
         id

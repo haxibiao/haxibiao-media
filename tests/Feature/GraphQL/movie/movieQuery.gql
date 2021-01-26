@@ -14,6 +14,9 @@ query movieQuery($movie_id:ID!){
     producer
     region
     score
-    data
+    data{
+      name
+      url
+    }
   }
 }
