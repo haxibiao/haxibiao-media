@@ -1,6 +1,6 @@
 # 观看历史记录
-query showMovieHistoryQuery($count: Int, $page: Int) {
-    showMovieHistory(count: $count, page: $page) {
+query showMovieHistoryQuery($first: Int, $page: Int) {
+    showMovieHistory(first: $first, page: $page) {
         paginatorInfo {
             hasMorePages
             currentPage

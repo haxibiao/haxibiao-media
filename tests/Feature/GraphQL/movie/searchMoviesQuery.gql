@@ -1,8 +1,8 @@
 
 
 # 搜索影视
-query searchMoviesQuery($keyword: String!, $count: Int, $page: Int) {
-    searchMovie(keyword: $keyword, count: $count, page: $page) {
+query searchMoviesQuery($keyword: String!, $first: Int, $page: Int) {
+    searchMovie(keyword: $keyword, first: $first, page: $page) {
         paginatorInfo {
             currentPage
             hasMorePages

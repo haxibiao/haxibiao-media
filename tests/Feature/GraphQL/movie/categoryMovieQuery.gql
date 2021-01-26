@@ -6,7 +6,7 @@ query categoryMovieQuery(
     $style: String
     $country: String
     $lang: String
-    $count: Int
+    $first: Int
     $page: Int
     $year: String
     $scopes: ScopesType
@@ -17,7 +17,7 @@ query categoryMovieQuery(
         country: $country
         lang: $lang
         style: $style
-        count: $count
+        first: $first
         page: $page
         year: $year
         scopes: $scopes
