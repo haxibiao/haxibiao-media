@@ -1,0 +1,19 @@
+query image(
+   $id: Int!
+) {
+  image(
+    id: $id
+  ) {
+    id
+    width
+    height
+    extension
+    path
+    url
+    thumbnail
+    user{
+      id
+      name
+    }
+  }
+}

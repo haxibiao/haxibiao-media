@@ -27,14 +27,7 @@ query SpidersQuery($type: SpiderTypeEnum) {
           id
           name
           avatar
-          followed_user_status
-          profile {
-            age
-          }
-          level {
-            id
-            level
-          }
+          followed_status
         }
       }
     }
