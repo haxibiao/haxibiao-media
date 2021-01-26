@@ -10,6 +10,8 @@ class MovieTest extends GraphQLTestCase
 {
 
     /**
+     * 电影详情
+     * 
      * @group  movie
      * @group  testMovieQuery
      */
@@ -23,6 +25,8 @@ class MovieTest extends GraphQLTestCase
     }
 
     /**
+     * 电影推荐
+     * 
      * @group  movie
      * @group  testRecommendMovieQuery
      */
@@ -35,6 +39,9 @@ class MovieTest extends GraphQLTestCase
     }
 
     /**
+     * 关联电影的视频刷
+     * 
+     * note: 该 gql 封装在 haxibiao/content 中
      * @group  movie
      * @group  testPostWithMoviesQuery
      */
@@ -47,6 +54,8 @@ class MovieTest extends GraphQLTestCase
     }
 
     /**
+     * 电影分类
+     * 
      * @group  movie
      * @group  testCategoryMovieQuery
      */
@@ -77,6 +86,8 @@ class MovieTest extends GraphQLTestCase
     }
 
     /**
+     * 搜索电影
+     * 
      * @group  movie
      * @group  testSearchMovieQuery
      */
@@ -91,6 +102,9 @@ class MovieTest extends GraphQLTestCase
     }
 
     /**
+     * 观影历史
+     * 
+     * note: 目前 haxibiao/media 中没有收录 Mutation 相关的 gql 
      * @group  movie
      * @group  testSaveWatchProgressMutation
      */
@@ -109,6 +123,8 @@ class MovieTest extends GraphQLTestCase
     }
 
     /**
+     * 长视频历史记录
+     * 
      * @group  movie
      * @group  testShowMovieHistoryQuery
      */
