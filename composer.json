@@ -24,12 +24,14 @@
     "autoload": {
         "psr-4": {
             "Haxibiao\\Media\\": "src/"
-        }
+        },
+        "classmap": [
+            "database/seeders/"
+        ]
     },
     "autoload-dev": {
         "classmap": [
             "database/factories/",
-            "database/seeder/",
             "tests/"
         ]
     },
