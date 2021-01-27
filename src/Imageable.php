@@ -9,7 +9,6 @@ class Imageable extends Pivot
 {
     use HasFactory;
 
-    protected $table = 'imageable';
 
     protected $fillable = [
         'imageable_id',

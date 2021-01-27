@@ -3,8 +3,6 @@
 namespace Haxibiao\Media\Traits;
 
 use Haxibiao\Media\Image;
-use Haxibiao\Media\Spider;
-use Haxibiao\Media\Video;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
@@ -18,14 +16,11 @@ trait WithImage
             'dongshouji', 'dongyundong', 'dongwaiyu', 'dongwaimao',
             'buyueta', 'dongdianhai', 'jinlinle', 'youjianqi', 'nashipin',
             'yanjiao', 'hengyang', 'dongwanche', 'jucheshe', 'ruqunba',
-            'haxibiao', 'dongdiancai','dianyintujie'
+            'haxibiao', 'dongdiancai', 'dianyintujie', 'yingdaquan',
         ])) {
-            if (config('app.name') == 'dongmeiwei' || config('app.name') == 'dianyintujie') {
-                return $this->morphToMany(Image::class, 'imageable', 'imageables')
-                    ->withTimestamps();
-            }
-            return $this->morphToMany(Image::class, 'imageable', 'imageable')
+            return $this->morphToMany(Image::class, 'imageable')
                 ->withTimestamps();
+
         }
         return $this->hasMany(Image::class);
     }

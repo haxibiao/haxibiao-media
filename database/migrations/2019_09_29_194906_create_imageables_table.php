@@ -14,11 +14,11 @@ class CreateImageablesTable extends Migration
     public function up()
     {
 
-        if (Schema::hasTable('imageable')) {
+        if (Schema::hasTable('imageables')) {
             return;
         }
 
-        Schema::create('imageable', function (Blueprint $table) {
+        Schema::create('imageables', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->morphs('imageable');
             $table->unsignedInteger('image_id');
