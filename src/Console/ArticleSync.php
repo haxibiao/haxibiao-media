@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Console;
 
 use App\Article;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 class ArticleSync extends Command
 {
@@ -12,7 +13,7 @@ class ArticleSync extends Command
      *
      * @var string
      */
-    protected $signature = 'article:sync {--domain= : 来源网站} {--category= : 指定分类} {--id= : 开始ID}';
+    protected $signature = 'article:sync {--domain= : 来源网站} {--category= : 指定分类} {--start= : 开始ID} {--num= : 拉取数量}';
 
     /**
      * The console command description.
@@ -41,6 +42,9 @@ class ArticleSync extends Command
 
         $site     = $this->option('domain') ?? null;
         $category = $this->option('category') ?? null;
+        $num      = $this->option('num') ?? null;
+
+        $cache_key = env('APP_NAME') . 'article_sync';
 
         //记住最后同步的id
         $current_article_id = 0;
@@ -55,16 +59,26 @@ class ArticleSync extends Command
             }
         }
 
-        if ($start_id = $this->option('id')) {
-            $qb = $qb->where('id', '>', $start_id);
+        //指定从哪个id开始同步数据，不指定读缓存id
+        $start_id = $this->option('start') ?? null;
+        if (empty($start_id)) {
+            $start_id = Cache::get($cache_key);
+            if (empty($start_id)) {
+                $start_id = 1;
+                Cache::put($cache_key, $start_id);
+            }
         }
+        $qb = $qb->where('id', '>', $start_id);
 
         echo "开始同步\n";
         $count = 0;
-        $qb->chunkById(100, function ($articles) use (&$count, &$current_article_id) {
+        $qb->chunkById(100, function ($articles) use (&$count, &$num, &$cache_key, &$current_article_id) {
             foreach ($articles as $article) {
                 echo "\n同步文章:" . $article->title;
                 $current_article_id = $article->id;
+                //缓存最后一次id
+                Cache::put($cache_key, $current_article_id);
+
                 //只处理纯文章，视频article不处理
                 $result = Article::firstOrNew([
                     'title' => $article->title,
@@ -84,6 +98,14 @@ class ArticleSync extends Command
                 }
                 $result->save();
                 $count++;
+
+                //达到指定同步数量退出
+                if ($num) {
+                    if ($count >= $num) {
+                        echo "退出";
+                        exit;
+                    }
+                }
             }
         });
 
