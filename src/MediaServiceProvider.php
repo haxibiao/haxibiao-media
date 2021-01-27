@@ -59,6 +59,12 @@ class MediaServiceProvider extends ServiceProvider
 
         if (!app()->configurationIsCached()) {
             $this->mergeConfigFrom(__DIR__ . '/../config/database.php', 'database.connections');
+            $this->mergeConfigFrom(__DIR__ . '/../config/disks.php', 'filesystems.disks');
+
+            //media 默认cloud用cos
+            config([
+                'filesystems.default' => 'cos',
+            ]);
         }
 
         //安装时需要
