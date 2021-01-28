@@ -3,7 +3,7 @@
 namespace Haxibiao\Media;
 
 use Haxibiao\Breeze\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Haxibiao\Breeze\Traits\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SearchLog extends Model

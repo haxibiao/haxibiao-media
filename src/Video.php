@@ -10,7 +10,7 @@ use Haxibiao\Media\Traits\MakeCovers;
 use Haxibiao\Media\Traits\VideoAttrs;
 use Haxibiao\Media\Traits\VideoRepo;
 use Haxibiao\Media\Traits\VideoResolvers;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Haxibiao\Breeze\Traits\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;

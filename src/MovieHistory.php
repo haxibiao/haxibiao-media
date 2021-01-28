@@ -5,7 +5,7 @@ use App\Movie;
 use App\Series;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Media\Traits\MovieHistoryResolvers;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Haxibiao\Breeze\Traits\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MovieHistory extends Model
