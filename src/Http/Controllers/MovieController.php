@@ -31,7 +31,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $qb             = Movie::latest('id')->where('status','!=',Movie::DISABLED);
+        $qb             = Movie::latest('id')->where('status', '!=', Movie::DISABLED);
         $hotMovies      = (clone $qb)->take(15)->get();
         $categoryMovies = [
             '热门美剧'  => [
@@ -143,18 +143,13 @@ class MovieController extends Controller
                 'last_watch_time' => now(),
             ]);
             //收藏状态
-            // $movie->favorited = Favorite::where('user_id', $user->id)
-            //     ->where('faved_id', $movie->id)->where('faved_type', 'movies')->exists();
             $movie->favorited = false;
             //喜欢状态
             //FIXME: 用sns里的traits实现
-            // $movie->liked = Like::where('user_id', $user->id)
-            //     ->where('likeable_id', $movie->id)
-            //     ->where('likeable_type', 'movies')
-            //     ->exists();
+
         }
         //FIXME: 用sns里的traits实现
-        // $movie->likes = Like::where('likeable_id', $movie->id)->where('likeable_type', 'movies')->count();
+
         //加载剧集
         $movie->load('series');
         return view('movie.show')->with('movie', $movie)->with('more', $more);
@@ -173,9 +168,9 @@ class MovieController extends Controller
             $cate = "喜欢";
         } else if ($type == 'favorite') {
             $movieID = Favorite::where([
-                'user_id'    => $user->id,
-                'faved_type' => 'movies',
-            ])->select('faved_id')->get()->pluck('faved_id');
+                'user_id'        => $user->id,
+                'favorable_type' => 'movies',
+            ])->select('favorable_id')->get()->pluck('favorable_id');
             $cate = "收藏";
         } else if ($type == 'history') {
             $movieID = MovieHistory::where([

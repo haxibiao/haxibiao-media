@@ -68,7 +68,7 @@ trait MovieResolvers
         if (checkUser()) {
             $user = getUser();
             //收藏过的电影类型
-            $movies_ids = $user->favoritedMovie()->pluck('faved_id')->toArray();
+            $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
             $regions    = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
             $movies     = Movie::inRandomOrder()
                 ->whereIn('region', $regions)

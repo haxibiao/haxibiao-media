@@ -66,15 +66,9 @@ trait MovieAttrs
 
     public function getFavoritedAttribute()
     {
+        //FIXME: 收藏记录数据量50w+之前记得检查index(2 morh columns + user_id column)
         if ($user = getUser(false)) {
-            if (in_array(config('app.name'), ['datizhuanqian'])) {
-                return $this->favorites()->where('user_id', $user->id)->count() > 0;
-            } else {
-                if (!method_exists($user, 'favorites')) {
-                    return false;
-                }
-                return $favorite = $user->favorites()->where('faved_type', 'movies')->where('faved_id', $this->id)->count() > 0;
-            }
+            return $this->favorites()->where('user_id', $user->id)->exists();
         }
         return false;
     }

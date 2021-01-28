@@ -121,9 +121,9 @@ class MovieController extends Controller
             $user     = getUser();
             $movie_id = request()->get('movie_id');
             $fan      = \App\Favorite::firstOrNew([
-                'user_id'    => $user->id,
-                'faved_id'   => $movie_id,
-                'faved_type' => 'movies',
+                'user_id'        => $user->id,
+                'favorable_id'   => $movie_id,
+                'favorable_type' => 'movies',
             ]);
             if ($fan->id) {
                 $fan->delete();
