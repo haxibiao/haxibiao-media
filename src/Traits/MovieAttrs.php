@@ -66,11 +66,8 @@ trait MovieAttrs
 
     public function getFavoritedAttribute()
     {
-        //FIXME: 收藏记录数据量50w+之前记得检查index(2 morh columns + user_id column)
-        if ($user = getUser(false)) {
-            return $this->favorites()->where('user_id', $user->id)->exists();
-        }
-        return false;
+        //借用favorable的特性属性
+        return $this->is_favorited;
     }
 
     public function getLastWatchSeriesAttribute()
