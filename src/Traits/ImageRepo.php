@@ -44,12 +44,9 @@ trait ImageRepo
         if (!is_prod_env()) {
             $imageName = $imageName . "." . env('APP_ENV');
         }
-        //保存原始图片
-        if (in_array(env("APP_NAME"), ["datizhuanqian", "damei"])) {
-            $imageMaker = Image::autoCut($source); //兼容答妹，图片都自动裁剪最宽640...
-        } else {
-            $imageMaker = ImageMaker::make($source);
-        }
+
+        // 部分项目需要自动裁剪,有些需要原始图片,故此通过开关控制
+        $imageMaker = config('media.image.auto_cut') ? Image::autoCut($source) : ImageMaker::make($source);
 
         if ($extension != 'gif') {
             $big_width = $imageMaker->width() > 900 ? 900 : $imageMaker->width();

@@ -39,6 +39,8 @@ class MediaServiceProvider extends ServiceProvider
             Console\PublishConfig::class,
         ]);
         $this->bindPathsInContainer();
+
+        $this->mergeConfigFrom(__DIR__ . '/../config/media.php', 'media');
     }
 
     public function boot()
