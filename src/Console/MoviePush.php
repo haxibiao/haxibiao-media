@@ -68,9 +68,11 @@ class MoviePush extends Command
                     'source_key' => $movieResource['id'],
                 ])->exists();
 
+
                 if (!$exists) {
                     \DB::connection('mediachain')->table('movies')->insert([
                         'name'         => $movieResource['name'],
+                        'actors'       => $movieResource['actors'],
                         'introduction' => $movieResource['introduction'],
                         'year'         => $movieResource['year'],
                         'count_series' => $movieResource['count_series'],
