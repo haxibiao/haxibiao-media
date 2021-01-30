@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Exceptions\UserException;
+use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Helpers\utils\QcloudUtils;
 use Haxibiao\Media\Image;
 use Illuminate\Support\Facades\Storage;
@@ -56,7 +56,9 @@ trait ImageRepo
         }
         $imageMaker->encode($extension, 100);
 
-        Storage::cloud()->put('images/' . $imageName . '.' . $extension, $imageMaker->__toString());
+        if (!is_testing_env()) {
+            Storage::cloud()->put('images/' . $imageName . '.' . $extension, $imageMaker->__toString());
+        }
 
         //保存缩略图
         $thumbnail = ImageMaker::make($source);
@@ -71,10 +73,16 @@ trait ImageRepo
         }
         $thumbnail->crop(300, 240);
         $thumbnail->encode($extension, 100);
-        Storage::cloud()->put('images/' . $imageName . '.small.' . $extension, $thumbnail->__toString());
+        if (!is_testing_env()) {
+            Storage::cloud()->put('images/' . $imageName . '.small.' . $extension, $thumbnail->__toString());
+        }
 
         //使用原图hash
-        $hash = hash_file('md5', cdnurl('images/' . $imageName . '.' . $extension));
+        $hash = time();
+        //兼容.env.testing没配置cos精准秘钥未上传cloud真实文件
+        if (!is_testing_env()) {
+            $hash = hash_file('md5', cdnurl('images/' . $imageName . '.' . $extension));
+        }
 
         //hash值匹配直接返回当前image对象
         $image = self::firstOrNew([
