@@ -8,15 +8,12 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait WithImage
 {
+    //FIXME: 多余带图的内容都有封面cover属性，这里可以集中处理 getCoverAttribute
+
     public function images()
     {
-        if (in_array(config('app.name'), [
-            'yinxiangshipin', 'dongmiaomu', 'caohan', 'dongmeiwei',
-            'dongdianyi', 'quanminwenti', 'dongdaima', 'ainicheng',
-            'dongshouji', 'dongyundong', 'dongwaiyu', 'dongwaimao',
-            'buyueta', 'dongdianhai', 'jinlinle', 'youjianqi', 'nashipin',
-            'yanjiao', 'hengyang', 'dongwanche', 'jucheshe', 'ruqunba',
-            'haxibiao', 'dongdiancai', 'dianyintujie', 'yingdaquan',
+        if (!in_array(config('app.name'), [
+            'datizhuanqian',
         ])) {
             return $this->morphToMany(Image::class, 'imageable')
                 ->withTimestamps();
@@ -24,4 +21,16 @@ trait WithImage
         }
         return $this->hasMany(Image::class);
     }
+
+    public function hasImages()
+    {
+        return $this->hasMany(Image::class);
+    }
+
+    //FIXME:答赚兼容imageable之后修复这里
+    // public function images()
+    // {
+    //     return $this->morphToMany(Image::class, 'imageable')->withTimestamps();
+    // }
+
 }

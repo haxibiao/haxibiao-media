@@ -3,15 +3,14 @@
 namespace Haxibiao\Media;
 
 use App\Activity;
-use App\Comment;
-use App\Favorite;
 use App\Series;
 use Haxibiao\Breeze\Model;
+use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
-use Haxibiao\Breeze\Traits\HasFactory;
+use Haxibiao\Sns\Traits\WithSns;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -22,6 +21,7 @@ class Movie extends Model
     use Searchable;
     use MovieResolvers;
     use MovieAttrs;
+    use WithSns;
 
     protected $guarded = [];
 
@@ -73,15 +73,6 @@ class Movie extends Model
         return $this->cover;
     }
 
-    public function favorites()
-    {
-        return $this->morphMany(Favorite::class, 'faved');
-    }
-
-    public function comments()
-    {
-        return $this->morphMany(Comment::class, 'commentable');
-    }
     public function scopeEnable($query)
     {
         return $query->whereIn('status', [self::PUBLISH])->whereNotNull('cover');
