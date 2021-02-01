@@ -6,10 +6,10 @@ use App\Question;
 use App\User;
 use App\Video;
 use Haxibiao\Breeze\Model;
+use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Media\Traits\SpiderAttrs;
 use Haxibiao\Media\Traits\SpiderRepo;
 use Haxibiao\Media\Traits\SpiderResolvers;
-use Haxibiao\Breeze\Traits\HasFactory;
 
 class Spider extends Model
 {
@@ -86,6 +86,11 @@ class Spider extends Model
     public function scopeProcessed($query)
     {
         return $query->where('status', self::PROCESSED_STATUS);
+    }
+
+    public function scopeProcessFailed($query)
+    {
+        return $query->where('status', '<', self::WATING_STATUS);
     }
 
     public static function getStatuses()
