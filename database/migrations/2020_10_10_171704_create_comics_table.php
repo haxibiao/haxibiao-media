@@ -13,6 +13,9 @@ class CreateComicsTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('comics')) {
+            return;
+        }
         Schema::create('comics', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('漫画名称');

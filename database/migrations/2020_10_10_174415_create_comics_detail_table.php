@@ -13,6 +13,9 @@ class CreateComicsDetailTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('comics_detail')) {
+            return;
+        }
         Schema::create('comics_detail', function (Blueprint $table) {
             $table->id();
             $table->integer('sort')->comment('排序');

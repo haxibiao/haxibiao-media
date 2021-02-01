@@ -13,7 +13,6 @@ class CreateImageablesTable extends Migration
      */
     public function up()
     {
-
         if (Schema::hasTable('imageables')) {
             return;
         }

@@ -29,14 +29,17 @@ class CreateVideosTable extends Migration
             $table->string('cover')->nullable()->comment('截图封面,disk同video的disk');
             $table->text('json')->nullable();
 
-            // $table->string('adstime')->nullable(); //无地方用，rename为 disk 用来标记视频成功存储位置
             $table->string('disk')->nullable()->comment('存储位置 local,vod,cos等');
+            $table->unsignedInteger('width')->nullable()->comment('宽');
+            $table->unsignedInteger('height')->nullable()->comment('高');
+            $table->string('collection', 100)->nullable()->index()->comment('合集');
+            $table->string('collection_key', 50)->nullable()->index()->comment('合集的唯一key: ainicheng_1122');
 
-            $table->timestamps();
-            $table->softDeletes();
             $table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
             $table->string('vid')->nullable()->index()->comment('视频的VID');
             $table->unsignedInteger('push_url_cache_day')->default(0)->comment('预热URL日');
+
+
             //FIXME: 答妹里的字段多的
 
             // $table->string('fileid')->nullable()->comment('外部文件系统标识=vod fileid');
@@ -50,7 +53,8 @@ class CreateVideosTable extends Migration
 
             //FIXME: 答妹里少的..
             //$table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
-
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

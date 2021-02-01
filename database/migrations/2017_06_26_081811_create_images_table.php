@@ -25,23 +25,18 @@ class CreateImagesTable extends Migration
             $table->string('source_url')->nullable()->comment('外链地址,disk为null时需要采集回来');
             $table->string('hash')->nullable()->unique();
             $table->string('path')->nullable()->index();
-
             $table->string('path_top')->nullable(); // 影响旧web，暂时不动
-
             $table->string('extension')->nullable()->index();
             $table->string('disk')->nullable();
-
             $table->integer('count')->default(0)->index()->comment('图片被引用次数，查询热门图片可用');
             $table->integer('status')->default(0)->index()->comment('-1：删除，0:隐藏，1:公开');
 
             $table->integer('width')->nullable();
             $table->integer('height')->nullable();
 
-            //答妹里的字段缺少的...
-            // $table->string('title')->nullable()->index()->comment('图片最后一次配文时的标题，方便搜索图片用');
-            // $table->string('source_url')->nullable()->comment('外链地址,disk为null时需要采集回来');
-            // $table->string('path_top')->nullable(); // 影响旧web，暂时不动
-            // $table->integer('status')->default(0)->index()->comment('-1：删除，0:隐藏，1:公开');
+            $table->integer('store_id')->nullable()->index()->comment('店铺id');
+            $table->integer('product_id')->nullable()->index()->comment('商品id');
+            $table->integer('issue_id')->nullable()->index()->comment('问答的id');
 
             $table->timestamps();
         });

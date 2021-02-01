@@ -22,7 +22,7 @@ class CreateLinkMovie extends Migration
             $table->unsignedInteger('movie_id');
             $table->morphs('linked');
             $table->timestamps();
-
+            $table->index(['linked_type', 'linked_id']);
         });
     }
 
