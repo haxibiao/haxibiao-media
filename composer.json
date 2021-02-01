@@ -13,7 +13,7 @@
         "php": ">=7.3",
         "laravel/framework": "^8.0",
         "haxibiao/console": "*",
-        "nuwave/lighthouse": "^4.10",
+        "nuwave/lighthouse": "^5.0",
         "league/flysystem-aws-s3-v3": "*",
         "haxibiao/vod-sdk": "*",
         "haxibiao/helpers": "*",
