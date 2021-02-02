@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLinkMovie extends Migration
+class CreateLinkMovieTable extends Migration
 {
     /**
      * Run the migrations.
@@ -22,7 +22,6 @@ class CreateLinkMovie extends Migration
             $table->unsignedInteger('movie_id');
             $table->morphs('linked');
             $table->timestamps();
-            $table->index(['linked_type', 'linked_id']);
         });
     }
 
