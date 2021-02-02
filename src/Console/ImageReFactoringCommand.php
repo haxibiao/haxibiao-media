@@ -50,9 +50,9 @@ class ImageReFactoringCommand extends Command
         }
 
         // imagesables
-        if (Schema::hasTable('imageables')) {
-            $this->comment('start Fix imageables');
-            $imagesables = DB::table('imageables')->get();
+        if (Schema::hasTable('imageable')) {
+            $this->comment('start Fix imageable');
+            $imagesables = DB::table('imageable')->get();
             foreach ($imagesables as $imagesable) {
                 $imageable = Imageable::firstOrNew([
                     'imageable_id'   => $imagesable->imageable_id,
