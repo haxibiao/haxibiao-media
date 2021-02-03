@@ -9,7 +9,7 @@ trait CanLinkMovie
 {
     public function linkMovies(): MorphMany
     {
-        return $this->morphMany(\App\LinkMovie::class, 'linked');
+        return $this->morphMany(LinkMovie::class, 'linked');
     }
 
     public function movie()
