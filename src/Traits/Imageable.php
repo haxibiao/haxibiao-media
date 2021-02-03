@@ -2,33 +2,18 @@
 
 namespace Haxibiao\Media\Traits;
 
+use Haxibiao\Media\Image;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Imageable extends Pivot
+trait Imageable
 {
-    protected $fillable = [
-        'imageable_id',
-        'imageable_type',
-        'image_id',
-    ];
-
-    const UPDATED_AT = null;
 
     /**
-     * 图片对象
+     * 关联的图片
      */
-    public function image()
+    public function images(): MorphToMany
     {
-        return $this->belongsTo(Image::class);
-    }
-
-    /**
-     * 图片被这些对象关联的（imageable = imageable items query builder）
-     */
-    public function imageable(): MorphToMany
-    {
-        return $this->morphToMany(Imageable::class, 'imageable');
+        return $this->morphToMany(Image::class, 'imageable');
     }
 
 }

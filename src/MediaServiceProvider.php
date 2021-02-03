@@ -1,13 +1,4 @@
 <?php
-/*
- * @Author: your name
- * @Date: 2020-12-11 10:26:43
- * @LastEditTime: 2020-12-11 10:28:28
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: /neihandianying.com/packages/haxibiao/media/src/MediaServiceProvider.php
- */
-
 namespace Haxibiao\Media;
 
 use Illuminate\Console\Scheduling\Schedule;
