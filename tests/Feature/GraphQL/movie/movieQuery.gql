@@ -1,6 +1,6 @@
 # 电影详情
-query movieQuery($movie_id:ID!){
-  movie(movie_id:$movie_id){
+query movieQuery($movie_id: ID!) {
+  movie(movie_id: $movie_id) {
     id
     name
     introduction
@@ -14,9 +14,19 @@ query movieQuery($movie_id:ID!){
     producer
     region
     score
-    data{
+    data {
       name
       url
+    }
+    collection {
+      id
+      name
+      description
+    }
+    movies {
+      id
+      name
+      introduction
     }
   }
 }

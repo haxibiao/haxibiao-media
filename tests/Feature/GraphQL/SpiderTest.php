@@ -29,16 +29,16 @@ class SpiderTest extends GraphQLTestCase
      * 
      * @group spider
      */
-    // public function testResolveDouyinVideoMutation()
-    // {
-    //     //确保后面UT不重复
-    //     $rows      = Spider::where('source_url', 'https://v.douyin.com/vruTta/')->delete();
-    //     $query     = file_get_contents(__DIR__ . '/spider/ResolveDouyinVideo.gql');
-    //     $variables = [
-    //         'share_link' => "#在抖音，记录美好生活#美元如何全球褥羊毛？经济危机下，2万亿救市的深层动力，你怎么看？#经济 #教育#云上大课堂 #抖音小助手 https://v.douyin.com/vruTta/ 复制此链接，打开【抖音短视频】，直接观看视频！",
-    //     ];
-    //     $this->runGuestGQL($query, $variables, $this->getOneHeaders($this->user));
-    // }
+    public function testResolveDouyinVideoMutation()
+    {
+        //确保后面UT不重复
+        $rows      = Spider::where('source_url', 'https://v.douyin.com/vruTta/')->delete();
+        $query     = file_get_contents(__DIR__ . '/spider/ResolveDouyinVideo.gql');
+        $variables = [
+            'share_link' => "#在抖音，记录美好生活#美元如何全球褥羊毛？经济危机下，2万亿救市的深层动力，你怎么看？#经济 #教育#云上大课堂 #抖音小助手 https://v.douyin.com/vruTta/ 复制此链接，打开【抖音短视频】，直接观看视频！",
+        ];
+        $this->runGuestGQL($query, $variables, $this->getRandomUserHeaders($this->user));
+    }
 
     /* --------------------------------------------------------------------- */
     /* ------------------------------- Query ------------------------------- */
@@ -58,14 +58,5 @@ class SpiderTest extends GraphQLTestCase
         ];
 
         $this->runGQL($query, $variables);
-    }
-
-    public function getOneHeaders($user)
-    {
-        $headers = [
-            'Authorization' => 'Bearer ' . 'BvsQolpkVH3EUMvjF4NOUTtbYcrbzuG196tVaN46qgUVV80nq1SgOoJkWxof',
-        ];
-
-        return $headers;
     }
 }

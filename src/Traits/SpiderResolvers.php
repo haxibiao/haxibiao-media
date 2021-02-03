@@ -19,6 +19,7 @@ trait SpiderResolvers
 
         $spider = static::resolveDouyinVideo(getUser(false), $args['share_link']);
         $post   = Post::with('video')->firstOrNew(['spider_id' => $spider->id]);
+        $post->user_id = $spider->user_id;
 
         $content = data_get($args, 'content');
         if ($content) {

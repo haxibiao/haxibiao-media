@@ -1,6 +1,6 @@
 # 电影推荐
-query recommendMovieQuery{
-  recommendMovie{
+query recommendMovieQuery {
+  recommendMovie {
     id
     name
     introduction
@@ -14,9 +14,19 @@ query recommendMovieQuery{
     producer
     region
     score
-    data{
+    data {
       name
       url
+    }
+    collection {
+      id
+      name
+      description
+    }
+    movies {
+      id
+      name
+      introduction
     }
   }
 }

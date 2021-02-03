@@ -1,0 +1,21 @@
+#求片
+mutation createSeekMovieMuattion($name: String!, $description: String, $images: [String]) {
+    createSeekMovie(name: $name, description: $description, images: $images) {
+        id
+        images {
+            id
+            path
+        }
+        user {
+            id
+            name
+        }
+        status
+        movies {
+            id
+            name
+        }
+        name
+        description
+    }
+}

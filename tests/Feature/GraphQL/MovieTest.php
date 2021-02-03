@@ -3,12 +3,22 @@
 namespace Tests\Feature\GraphQL;
 
 use Haxibiao\Breeze\GraphQLTestCase;
-use Haxibiao\Breeze\User;
+use App\User;
 use Haxibiao\Media\Movie;
 
 class MovieTest extends GraphQLTestCase
 {
+    protected $user;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->user = User::factory()->make([
+            'api_token' => str_random(60),
+            'ticket'    => 100,
+            'account'   => rand(10000000000, 99999999999),
+        ]);
+    }
     /**
      * 电影详情
      * 
@@ -112,7 +122,7 @@ class MovieTest extends GraphQLTestCase
     {
         $query = file_get_contents(__DIR__ . '/movie/saveWatchProgressMutation.gql');
 
-        $userHeaders = $this->getRandomUserHeaders(User::first());
+        $userHeaders = $this->getRandomUserHeaders($this->user);
         $movie_id = Movie::first()->id;
         $variables = [
             'movie_id' => $movie_id,
@@ -131,10 +141,65 @@ class MovieTest extends GraphQLTestCase
     public function testShowMovieHistoryQuery()
     {
         $query = file_get_contents(__DIR__ . '/movie/showMovieHistoryQuery.gql');
-        $userHeaders = $this->getRandomUserHeaders(User::first());
+        $userHeaders = $this->getRandomUserHeaders($this->user);
         $variables = [
         ];
         $this->startGraphQL($query, $variables, $userHeaders);
     }
 
+    /**
+     * 轮播图查询
+     * 
+     * @group  movie
+     * @group  testActivitiesMutation
+     */
+    public function testActivitiesMutation()
+    {
+        $query = file_get_contents(__DIR__ . '/movie/activitiesMutation.gql');
+        $userHeaders = $this->getRandomUserHeaders($this->user);
+        //电影轮播图
+        $variables = [
+            'type'=>'SERIES'
+        ];
+        //热搜电影榜
+        $this->startGraphQL($query, $variables, $userHeaders);
+        $variables = [
+            'type'=>'SEARCH'
+        ];
+        $this->startGraphQL($query, $variables, $userHeaders);
+
+    }
+
+
+    /**
+     * @group  movie
+     * @group  testCreateSeekMovie
+     */
+    public function testCreateSeekMovie()
+    {
+        $query       = file_get_contents(__DIR__ . '/movie/createSeekMovieMutation.gql');
+        $userHeaders = $this->getRandomUserHeaders($this->user);
+        $variables   = [
+            'name' => "逐梦圈圈圈",
+        ];
+    
+        $this->startGraphQL($query, $variables, $userHeaders);
+
+    }
+       /**
+     * @group  movie
+     * @group  testMySeekMovies
+     */
+    public function testMySeekMovies()
+    {
+        $query       = file_get_contents(__DIR__ . '/movie/mySeekMoviesQuery.gql');
+        $userHeaders = $this->getRandomUserHeaders($this->user);
+        //factory 构造的user不会保存到数据库，没有对应的id
+        $variables   = [
+            'user_id' => User::first()->id,
+        ];
+    
+        $this->startGraphQL($query, $variables, $userHeaders);
+
+    }
 }

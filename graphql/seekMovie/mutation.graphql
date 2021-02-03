@@ -1,0 +1,7 @@
+extend type Mutation {
+  createSeekMovie(
+    name: String!
+    description: String
+    images: [String]
+  ): SeekMovie! @field(resolver: "App\\SeekMovie@resolveCreateSeekMovie")
+}
