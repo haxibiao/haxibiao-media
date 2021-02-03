@@ -2,8 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\LinkMovie;
-use App\Movie;
+use Haxibiao\Media\LinkMovie;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait CanLinkMovie
@@ -45,7 +44,5 @@ trait CanLinkMovie
                 $link->delete();
             }
         }
-
     }
-
 }
