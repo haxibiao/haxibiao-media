@@ -3,6 +3,7 @@ namespace Haxibiao\Media\Traits;
 
 use App\Exceptions\UserException;
 use App\Gold;
+use App\Share;
 use App\Visit;
 use GraphQL\Type\Definition\ResolveInfo;
 use Haxibiao\Media\Video;
@@ -105,5 +106,62 @@ trait VideoResolvers
 2.日常任务和奖励任务,获得(+2*N贡献)
 3.刷视频时,查看广告视频得(+2*N贡献)
 4.动态广场,查看广告动态得(+1*N贡献)';
+    }
+
+    public function downloadVideo($rootValue, $args, $context, $resolveInfo)
+    {
+        $videoId   = data_get($args, 'video_id');
+        $video     = \App\Video::findOrFail($videoId);
+        $user      = getUser();
+        $originUrl = $video->path;
+
+        // 之前下载过,不需要重复解析
+        $share = Share::where('user_id', $user->id)
+            ->where('shareable_id', $video->id)
+            ->where('shareable_type', 'videos')
+            ->where('active', true)
+            ->first();
+        if ($share) {
+            return $share->url;
+        }
+
+        $share = Share::buildFor($video)
+            ->setActive(false)
+            ->setUrl($originUrl)
+            ->setUserId($user->id)
+            ->build();
+
+        // 请求处理media.haxibiao.com进行MetaData处理
+        $uuid           = $share->uuid;
+        $title2MetaData = sprintf('uuid:%s', $uuid);
+        $curl           = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL            => "http://media.haxibiao.com/api/video/modifyMetadata",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING       => "",
+            CURLOPT_MAXREDIRS      => 10,
+            CURLOPT_TIMEOUT        => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST  => "POST",
+            CURLOPT_POSTFIELDS     => [
+                'title' => $title2MetaData,
+                'url'   => $originUrl,
+            ],
+        ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $result = json_decode($response);
+
+        $responseCode = data_get($result, 'code');
+        $modifiedUrl  = data_get($result, 'data.MediaUrl');
+        if ($responseCode == 200 && $modifiedUrl) {
+            $share->url    = $modifiedUrl;
+            $share->active = true;
+            $share->save();
+
+            return $modifiedUrl;
+        }
+        throw new UserException('下载失败');
     }
 }

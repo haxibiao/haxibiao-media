@@ -7,6 +7,8 @@ use App\Series;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Helpers\Traits\Searchable;
+use Haxibiao\Media\Scopes\MovieStatusScope;
+use Haxibiao\Media\Traits\CanLinkMovie;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
@@ -22,6 +24,7 @@ class Movie extends Model
     use MovieResolvers;
     use MovieAttrs;
     use WithSns;
+    use CanLinkMovie;
 
     protected $guarded = [];
 
@@ -44,6 +47,12 @@ class Movie extends Model
     public $casts   = [
         'data' => 'array',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new MovieStatusScope);
+    }
 
     protected $searchable = [
         'columns' => [

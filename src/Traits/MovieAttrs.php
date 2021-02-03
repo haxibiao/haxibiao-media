@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\LinkMovie;
 use App\User;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Arr;
@@ -40,15 +41,26 @@ trait MovieAttrs
 
     public function getDataAttribute()
     {
-        $series       = @json_decode($this->attributes['data']);
-        $sortedSeries = array_values(Arr::sort($series, function ($value) {
+        $series = @json_decode($this->attributes['data']);
+        //剧集排序
+        $sortedSeries = array_values(array_sort($series, function ($value) {
             return $value->name;
         }));
+
+        //旧的series URL: {加速域名}/{space}/{movie_id}/index.m3u8
+        //新的负载型的series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
+        foreach ($series as $item) {
+            $ucdn_domain = parse_url($item->url, PHP_URL_HOST);
+            $ucdn_root   = "https://" . $ucdn_domain . "/";
+            $space       = get_space_by_ucdn($ucdn_root);
+            $space_path  = parse_url($item->url, PHP_URL_PATH);
+            $item->url   = "https://$ucdn_domain/m3u8/$space$space_path";
+        }
 
         //这里不能强制丢异常，很多场景未登录是正常的
         if ($user = getUser(false)) {
             //添加进度记录
-            $seriesHistories = MovieHistory::where('user_id', $user->id)
+            $seriesHistories = \App\MovieHistory::where('user_id', $user->id)
                 ->where('movie_id', $this->id)->get();
             foreach ($seriesHistories as $seriesHistory) {
                 $index                          = $seriesHistory->series_id;
@@ -124,5 +136,15 @@ trait MovieAttrs
             }
         }
         return null;
+    }
+
+    public function getCollectionAttribute()
+    {
+        $linkMovie = $this->hasMany(LinkMovie::class)->first();
+        if (!empty($linkMovie)) {
+            return $linkMovie->collection;
+        } else {
+            return null;
+        }
     }
 }

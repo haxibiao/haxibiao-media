@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\Post;
 use Haxibiao\Media\Spider;
 use Illuminate\Support\Arr;
 
@@ -15,6 +16,24 @@ trait SpiderResolvers
 
     public function resolveShareLink($root, $args, $context, $info)
     {
-        return Spider::resolveDouyinVideo(getUser(), $args['share_link']);
+
+        $spider = static::resolveDouyinVideo(getUser(false), $args['share_link']);
+        $post   = Post::with('video')->firstOrNew(['spider_id' => $spider->id]);
+
+        $content = data_get($args, 'content');
+        if ($content) {
+            $post->content = $content;
+        }
+
+        $description = data_get($args, 'description');
+        if ($description) {
+            $post->description = $description;
+        }
+        // 标签
+        $tagNames = data_get($args, 'tag_names', []);
+        $post->tagByNames($tagNames);
+        $post->save();
+
+        return $spider;
     }
 }

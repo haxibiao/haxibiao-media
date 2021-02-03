@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\MovieHistory;
 use App\User;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Dimension\Dimension;

@@ -26,11 +26,4 @@ trait WithImage
     {
         return $this->hasMany(Image::class);
     }
-
-    //FIXME:答赚兼容imageable之后修复这里
-    // public function images()
-    // {
-    //     return $this->morphToMany(Image::class, 'imageable')->withTimestamps();
-    // }
-
 }

@@ -11,6 +11,7 @@ use Haxibiao\Media\Traits\VideoAttrs;
 use Haxibiao\Media\Traits\VideoRepo;
 use Haxibiao\Media\Traits\VideoResolvers;
 use Haxibiao\Breeze\Traits\HasFactory;
+use Haxibiao\Sns\Traits\Shareable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,6 +25,7 @@ class Video extends Model
     use VideoAttrs;
     use VideoRepo;
     use MakeCovers;
+    use Shareable;
 
     protected $casts = [
         'json' => 'object',

@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 use App\LinkMovie;
+use App\Movie;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait CanLinkMovie
@@ -31,8 +32,8 @@ trait CanLinkMovie
         foreach ($movieIds as $key => $movieId) {
             $link = LinkMovie::firstOrNew(
                 [
-                    'movie_id' => $movieId,
-                    'linked_id' => $linkedId,
+                    'movie_id'    => $movieId,
+                    'linked_id'   => $linkedId,
                     'linked_type' => $linkedType,
                 ]
 

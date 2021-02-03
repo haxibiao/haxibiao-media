@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\SeekMovie;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,5 +25,10 @@ trait UseMedia
     public function movies(): HasMany
     {
         return $this->hasMany(Movie::class);
+    }
+
+    public function seekMovies()
+    {
+        return $this->hasMany(SeekMovie::class);
     }
 }
