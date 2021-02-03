@@ -2,11 +2,13 @@
 
 namespace Haxibiao\Media;
 
+use App\Post;
 use App\Question;
 use App\User;
 use App\Video;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
+use Haxibiao\Content\Traits\Taggable;
 use Haxibiao\Media\Traits\SpiderAttrs;
 use Haxibiao\Media\Traits\SpiderRepo;
 use Haxibiao\Media\Traits\SpiderResolvers;
@@ -18,6 +20,7 @@ class Spider extends Model
     use SpiderAttrs;
     use SpiderRepo;
     use SpiderResolvers;
+    use Taggable;
 
     protected $fillable = [
         'user_id',
@@ -60,6 +63,23 @@ class Spider extends Model
 
         self::saving(function ($spider) {
             $spider->replaceTitleBadWord();
+        });
+
+        self::created(function ($spider) {
+            //创建爬虫的时候，自动发布一个动态
+            Post::saveSpiderVideoPost($spider);
+        });
+
+        self::updated(function ($spider) {
+            if ($spider->status == Spider::PROCESSED_STATUS) {
+                Post::publishSpiderVideoPost($spider);
+                $post = Post::where(['spider_id' => $spider->id])->first();
+                if ($post) {
+                    $user = $post->user;
+                    //更新任务状态
+                    $user->reviewTasksByClass(get_class($spider));
+                }
+            }
         });
     }
 

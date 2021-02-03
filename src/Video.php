@@ -36,6 +36,14 @@ class Video extends Model
     protected static function boot()
     {
         parent::boot();
+
+        self::updated(function ($video) {
+            if ($video->cover) {
+                if ($post = Post::where('video_id', $video->id)->first()) {
+                    Post::publishPost($post);
+                }
+            }
+        });
     }
     /**
      * 状态:
