@@ -1,0 +1,12 @@
+#爬虫视频列表
+query videoQuery ($id:Int!){
+    video(id:$id) {
+        id
+        url
+        cover
+        dynamic_cover
+        duration
+        width
+        height
+    }
+}

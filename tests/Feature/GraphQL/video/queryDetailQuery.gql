@@ -1,0 +1,4 @@
+#爬虫视频列表
+query queryDetailQuery {
+  queryDetail
+}
