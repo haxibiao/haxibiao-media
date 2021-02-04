@@ -77,11 +77,6 @@ class Movie extends Model
         return $this->hasMany(Series::class);
     }
 
-    public function getCoverUrlAttribute()
-    {
-        return $this->cover;
-    }
-
     public function scopeEnable($query)
     {
         return $query->whereIn('status', [self::PUBLISH])->whereNotNull('cover');

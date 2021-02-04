@@ -17,6 +17,12 @@ trait MovieAttrs
         return url($path);
     }
 
+
+    public function getCoverUrlAttribute()
+    {
+        return $this->cover;
+    }
+
     public function getRegionNameAttribute()
     {
         return $this->region;
