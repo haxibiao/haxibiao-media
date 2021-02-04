@@ -103,7 +103,7 @@ class ArticleSync extends Command
                 if ($num) {
                     if ($count >= $num) {
                         echo "退出";
-                        exit;
+                        return false;
                     }
                 }
             }
