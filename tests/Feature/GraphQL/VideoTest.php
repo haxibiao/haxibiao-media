@@ -1,13 +1,17 @@
 <?php
-namespace Tests\Feature\GraphQL;
+
+namespace Haxibiao\Media\Tests\Feature\GraphQL;
 
 use App\User;
 use App\Video;
 use App\Article;
 use Haxibiao\Breeze\GraphQLTestCase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class VideoTest extends GraphQLTestCase
 {
+    use DatabaseTransactions;
+
     protected $user;
     protected $video;
 
@@ -25,11 +29,6 @@ class VideoTest extends GraphQLTestCase
         ])->create();
 
     }
-
-    /* --------------------------------------------------------------------- */
-    /* ------------------------------- Mutation ---------------------------- */
-    /* --------------------------------------------------------------------- */
-
     /**
      * 视频刷奖励
      *
@@ -38,7 +37,7 @@ class VideoTest extends GraphQLTestCase
      */
     public function testVideoPlayRewardMutation()
     {
-        $query     = file_get_contents(__DIR__ . '/video/videoPlayRewardMutation.gql');
+        $query     = file_get_contents(__DIR__ . '/Video/videoPlayRewardMutation.graphql');
         $variables = [
             'input'=>[
                 'video_id'=> $this->video->id,
@@ -46,12 +45,8 @@ class VideoTest extends GraphQLTestCase
                 'video_ids'=> [$this->video->id],
             ]
         ];
-        $this->runGuestGQL($query, $variables, $this->getRandomUserHeaders($this->user));
+        $this->startGraphQL($query, $variables, $this->getRandomUserHeaders($this->user));
     }
-
-    /* --------------------------------------------------------------------- */
-    /* ------------------------------- Query ------------------------------- */
-    /* --------------------------------------------------------------------- */
 
     /**
      * 工厂APP看视频赚钱部分详细文字描述用
@@ -61,11 +56,9 @@ class VideoTest extends GraphQLTestCase
      */
     public function testQueryDetailQuery()
     {
-        $query     = file_get_contents(__DIR__ . '/video/queryDetailQuery.gql');
-        $variables = [
-
-        ];
-        $this->runGQL($query, $variables);
+        $query     = file_get_contents(__DIR__ . '/Video/queryDetailQuery.graphql');
+        $variables = [];
+        $this->startGraphQL($query, $variables);
     }
 
     /**
@@ -76,11 +69,11 @@ class VideoTest extends GraphQLTestCase
      */
     public function testVideoQuery()
     {
-        $query     = file_get_contents(__DIR__ . '/video/videoQuery.gql');
+        $query     = file_get_contents(__DIR__ . '/Video/videoQuery.graphql');
         $variables = [
             'id' => $this->video->id,
         ];
 
-        $this->runGQL($query, $variables);
+        $this->startGraphQL($query, $variables);
     }
 }

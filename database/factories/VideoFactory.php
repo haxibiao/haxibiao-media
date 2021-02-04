@@ -14,6 +14,7 @@ class VideoFactory extends Factory
     public function definition()
     {
         return [
+            'path'    => $this->faker->url,
             'user_id' => random_int(1, 3), //better override manually
             'title'   => Str::random(),
             'duration'=> random_int(10, 30),

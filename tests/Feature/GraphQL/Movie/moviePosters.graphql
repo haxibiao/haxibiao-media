@@ -1,0 +1,37 @@
+query moviePosters($type: ActivityType) {
+    activities(type: $type) {
+        paginatorInfo {
+            total
+            hasMorePages
+            currentPage
+        }
+        data {
+            id
+            movie {
+                id
+                name
+                introduction
+                cover
+                producer
+                year
+                type
+                style
+                region
+                actors
+                count_series
+                country
+                lang
+                hits
+                score
+                favorited
+                created_at
+                last_watch_series
+                last_watch_progress
+                count_comments
+                count_favorites
+            }
+            image_url
+            title
+        }
+    }
+}

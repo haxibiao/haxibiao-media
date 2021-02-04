@@ -1,77 +1,57 @@
 <?php
 
-namespace Tests\Feature\GraphQL;
+namespace Haxibiao\Media\Tests\Feature\GraphQL;
 
+use App\Movie;
+use App\MovieHistory;
+use App\Post;
+use App\SeekMovie;
 use Haxibiao\Breeze\GraphQLTestCase;
 use App\User;
-use Haxibiao\Media\Movie;
+use Haxibiao\Media\LinkMovie;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 
 class MovieTest extends GraphQLTestCase
 {
+    use DatabaseTransactions;
+
     protected $user;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->user = User::factory()->make([
+        $this->user = User::factory()->create([
             'api_token' => str_random(60),
             'ticket'    => 100,
             'account'   => rand(10000000000, 99999999999),
         ]);
+        Movie::factory()->create([
+            'region' => '日剧',
+            'year'   => '2011'
+        ]);
+        Movie::factory()->create([
+            'region' => '韩剧',
+            'year'   => '2013'
+        ]);
+        Movie::factory()->create([
+            'region' => '美剧',
+            'year'   => '2012'
+        ]);
+        Movie::factory()->create([
+            'region' => '美剧',
+            'year'   => '2012'
+        ]);
     }
-    /**
-     * 电影详情
-     * 
-     * @group  movie
-     * @group  testMovieQuery
-     */
-    public function testMovieQuery()
-    {
-        $query = file_get_contents(__DIR__ . '/movie/movieQuery.gql');
-        $variables = [
-            'movie_id' => 1,
-        ];
-        $this->startGraphQL($query, $variables);
-    }
-
-    /**
-     * 电影推荐
-     * 
-     * @group  movie
-     * @group  testRecommendMovieQuery
-     */
-    public function testRecommendMovieQuery()
-    {
-        $query = file_get_contents(__DIR__ . '/movie/recommendMovieQuery.gql');
-        $variables = [
-        ];
-        $this->startGraphQL($query, $variables);
-    }
-
-    /**
-     * 关联电影的视频刷
-     * 
-     * note: 该 gql 封装在 haxibiao/content 中
-     * @group  movie
-     * @group  testPostWithMoviesQuery
-     */
-    public function testPostWithMoviesQuery()
-    {
-        $query = file_get_contents(__DIR__ . '/movie/postWithMoviesQuery.gql');
-        $variables = [
-        ];
-        $this->startGraphQL($query, $variables);
-    }
-
     /**
      * 电影分类
-     * 
+     *
      * @group  movie
      * @group  testCategoryMovieQuery
      */
     public function testCategoryMovieQuery()
     {
-        $query = file_get_contents(__DIR__ . '/movie/categoryMovieQuery.gql');
+        $query = file_get_contents(__DIR__ . '/Movie/categoryMovieQuery.graphql');
         //查询全部地区的电影
         $variables = [
             'region' => 'ALL',
@@ -81,14 +61,14 @@ class MovieTest extends GraphQLTestCase
         //查询2012年的美剧
         $variables = [
             'region' => 'MEI',
-            'year' => '2012',
+            'year'   => '2012',
         ];
         $this->startGraphQL($query, $variables);
 
         //按热度排序2020年韩剧
         $variables = [
             'region' => 'HAN',
-            'year' => '2020',
+            'year'   => '2013',
             'scopes' => 'HOT',
         ];
         $this->startGraphQL($query, $variables);
@@ -96,66 +76,210 @@ class MovieTest extends GraphQLTestCase
     }
 
     /**
-     * 搜索电影
-     * 
+     * 筛选电影条件
+     *
      * @group  movie
-     * @group  testSearchMovieQuery
+     * @group  testGetFiltersQuery
      */
-    public function testSearchMovieQuery()
+    public function testGetFiltersQuery()
     {
-        $query = file_get_contents(__DIR__ . '/movie/searchMoviesQuery.gql');
-        $keyword = Movie::first()->name;
+        $query = file_get_contents(__DIR__ . '/Movie/getFiltersQuery.graphql');
+        $this->startGraphQL($query);
+    }
+
+    /**
+     *
+     * @group  movie
+     * @group  testMoviePosters
+     */
+    public function testMoviePosters()
+    {
+        $query = file_get_contents(__DIR__ . '/Movie/moviePosters.graphql');
+
+        // 首页
         $variables = [
-            'keyword' => $keyword,
+            'type' => 'INDEX',
+        ];
+        $this->startGraphQL($query, $variables);
+
+        // 电视剧
+        $variables = [
+            'type' => 'SERIES',
+        ];
+        $this->startGraphQL($query, $variables);
+
+        // 电影专题
+        $variables = [
+            'type' => 'THEME',
+        ];
+        $this->startGraphQL($query, $variables);
+
+        // 搜索页展示
+        $variables = [
+            'type' => 'SEARCH',
         ];
         $this->startGraphQL($query, $variables);
     }
 
     /**
-     * 观影历史
-     * 
-     * note: 目前 haxibiao/media 中没有收录 Mutation 相关的 gql 
+     * 电影详情
+     *
+     * @group  movie
+     * @group  testMovieQuery
+     */
+    public function testMovieQuery()
+    {
+        $movie = Movie::factory()->create([
+            'region' => '日剧',
+            'year'   => '2011',
+            'status' => 1
+        ]);
+        $query = file_get_contents(__DIR__ . '/Movie/movieQuery.graphql');
+        $variables = [
+            'movie_id' => $movie->id,
+        ];
+        $this->startGraphQL($query, $variables);
+    }
+
+    /**
+     * 我的求片记录
+     *
+     * @group  movie
+     * @group  testMySeekMovies
+     */
+    public function testMySeekMovies()
+    {
+        SeekMovie::factory(5)->create([
+            'user_id' => $this->user->id,
+        ]);
+        $query       = file_get_contents(__DIR__ . '/Movie/mySeekMoviesQuery.graphql');
+        $headers = $this->getRandomUserHeaders($this->user);
+        $variables   = [
+            'user_id' => $this->user->id,
+        ];
+
+        $this->startGraphQL($query, $variables, $headers);
+    }
+
+    /**
+     * 电影推荐
+     *
+     * @group  movie
+     * @group  testRecommendMovieQuery
+     */
+    public function testRecommendMovieQuery()
+    {
+        $query = file_get_contents(__DIR__ . '/Movie/recommendMovieQuery.graphql');
+
+        // 登录
+        $headers = $this->getRandomUserHeaders($this->user);
+        $this->startGraphQL($query, [],$headers);
+
+        // 未登录
+        $headers = [];
+        $this->startGraphQL($query, [],$headers);
+    }
+
+    /**
+     * 观影进度
+     *
+     * note: 目前 haxibiao/media 中没有收录 Mutation 相关的 gql
      * @group  movie
      * @group  testSaveWatchProgressMutation
      */
     public function testSaveWatchProgressMutation()
     {
-        $query = file_get_contents(__DIR__ . '/movie/saveWatchProgressMutation.gql');
+        $movie = Movie::factory()->create([
+            'region' => '日剧',
+            'year'   => '2011'
+        ]);
+        $query = file_get_contents(__DIR__ . '/Movie/saveWatchProgressMutation.graphql');
 
         $userHeaders = $this->getRandomUserHeaders($this->user);
-        $movie_id = Movie::first()->id;
         $variables = [
-            'movie_id' => $movie_id,
-            'series_index' => 0,
+            'movie_id' => $movie->id,
+            'series_index' => 1,
             'progress' => "100",
         ];
         $this->startGraphQL($query, $variables, $userHeaders);
     }
 
     /**
-     * 长视频历史记录
-     * 
+     * 观看历史记录
+     *
      * @group  movie
      * @group  testShowMovieHistoryQuery
      */
     public function testShowMovieHistoryQuery()
     {
-        $query = file_get_contents(__DIR__ . '/movie/showMovieHistoryQuery.gql');
+        $movie = Movie::factory()->create();
+        $user  = User::factory()->create();
+        MovieHistory::factory(5)->create([
+            'movie_id' => $movie->id,
+            'user_id'  => $user->id
+        ]);
+        $query = file_get_contents(__DIR__ . '/Movie/showMovieHistoryQuery.graphql');
         $userHeaders = $this->getRandomUserHeaders($this->user);
-        $variables = [
-        ];
-        $this->startGraphQL($query, $variables, $userHeaders);
+        $this->startGraphQL($query, [], $userHeaders);
     }
 
     /**
-     * 轮播图查询
-     * 
+     * 关联电影的视频刷
+     *
+     * note: 该 gql 封装在 haxibiao/content 中
+     * @group  movie
+     * @group  testPostWithMoviesQuery
+     */
+    public function testPostWithMoviesQuery()
+    {
+        $movie = Movie::factory()->create();
+        $post  = Post::factory()->create();
+        $link  =  new LinkMovie();
+        $link->movie_id     = $movie->id;
+        $link->linked_type  = $post->getMorphClass();
+        $link->linked_id    = $post->id;
+        $link->save();
+
+        $query = file_get_contents(__DIR__ . '/Movie/postWithMoviesQuery.graphql');
+        $variables = [];
+        $this->startGraphQL($query, $variables);
+    }
+
+    /**
+     * 搜索电影
+     *
+     * @group  movie
+     * @group  testSearchMovieQuery
+     */
+    public function testSearchMovieQuery()
+    {
+        Movie::factory()->create([
+            'name' => '独孤九剑'
+        ]);
+        $query = file_get_contents(__DIR__ . '/Movie/searchMoviesQuery.graphql');
+
+        // 有搜索结果
+        $variables = [
+            'keyword' => '独孤',
+        ];
+        $this->startGraphQL($query, $variables);
+
+        // 无搜索结果
+        $variables = [
+            'keyword' => Str::random(),
+        ];
+        $this->startGraphQL($query, $variables);
+    }
+
+    /**
+     * 电影轮播图，热搜榜设置
+     *
      * @group  movie
      * @group  testActivitiesMutation
      */
     public function testActivitiesMutation()
     {
-        $query = file_get_contents(__DIR__ . '/movie/activitiesMutation.gql');
+        $query = file_get_contents(__DIR__ . '/Movie/activitiesMutation.graphql');
         $userHeaders = $this->getRandomUserHeaders($this->user);
         //电影轮播图
         $variables = [
@@ -170,36 +294,9 @@ class MovieTest extends GraphQLTestCase
 
     }
 
-
-    /**
-     * @group  movie
-     * @group  testCreateSeekMovie
-     */
-    public function testCreateSeekMovie()
+    protected function tearDown(): void
     {
-        $query       = file_get_contents(__DIR__ . '/movie/createSeekMovieMutation.gql');
-        $userHeaders = $this->getRandomUserHeaders($this->user);
-        $variables   = [
-            'name' => "逐梦圈圈圈",
-        ];
-    
-        $this->startGraphQL($query, $variables, $userHeaders);
-
-    }
-       /**
-     * @group  movie
-     * @group  testMySeekMovies
-     */
-    public function testMySeekMovies()
-    {
-        $query       = file_get_contents(__DIR__ . '/movie/mySeekMoviesQuery.gql');
-        $userHeaders = $this->getRandomUserHeaders($this->user);
-        //factory 构造的user不会保存到数据库，没有对应的id
-        $variables   = [
-            'user_id' => User::first()->id,
-        ];
-    
-        $this->startGraphQL($query, $variables, $userHeaders);
-
+        $this->user->forceDelete();
+        parent::tearDown();
     }
 }

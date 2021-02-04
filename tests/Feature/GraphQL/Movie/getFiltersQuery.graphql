@@ -1,0 +1,9 @@
+# 筛选电影条件
+query getFiltersQuery {
+    getFilters {
+        id
+        filterName
+        filterOptions
+        filterValue
+    }
+}

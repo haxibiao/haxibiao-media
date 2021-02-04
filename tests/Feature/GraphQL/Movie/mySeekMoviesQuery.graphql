@@ -1,0 +1,47 @@
+#我的求片记录
+query mySeekMoviesQuery($user_id: Int!, $page: Int) {
+    mySeekMovies(user_id: $user_id, page: $page) {
+        data {
+            id
+            images {
+                id
+                path
+            }
+            user {
+                id
+                name
+                avatar
+            }
+            status
+            movies {
+                id
+                name
+                introduction
+                cover
+                producer
+                year
+                type
+                style
+                region
+                actors
+                count_series
+                country
+                lang
+                hits
+                score
+                favorited
+                created_at
+                last_watch_series
+                last_watch_progress
+                count_comments
+                count_favorites
+            }
+            name
+            description
+        }
+        paginatorInfo {
+            currentPage
+            hasMorePages
+        }
+    }
+}

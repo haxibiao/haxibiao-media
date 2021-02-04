@@ -1,4 +1,3 @@
-
 # 分类筛选出来的电影
 query categoryMovieQuery(
     $region: MovieCategory
@@ -6,7 +5,7 @@ query categoryMovieQuery(
     $style: String
     $country: String
     $lang: String
-    $first: Int
+    $count: Int
     $page: Int
     $year: String
     $scopes: ScopesType
@@ -17,7 +16,7 @@ query categoryMovieQuery(
         country: $country
         lang: $lang
         style: $style
-        first: $first
+        count: $count
         page: $page
         year: $year
         scopes: $scopes
@@ -27,11 +26,27 @@ query categoryMovieQuery(
             currentPage
         }
         data {
-           
-        id
-        name
-        introduction
-        cover
-    }
+            id
+            name
+            introduction
+            cover
+            producer
+            year
+            type
+            style
+            region
+            actors
+            count_series
+            country
+            lang
+            hits
+            score
+            favorited
+            created_at
+            last_watch_series
+            last_watch_progress
+            count_comments
+            count_favorites
+        }
     }
 }
