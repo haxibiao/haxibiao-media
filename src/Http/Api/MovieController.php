@@ -2,14 +2,49 @@
 
 namespace Haxibiao\Media\Http\Api;
 
+use App\Comment;
 use App\Http\Controllers\Controller;
 use App\Like;
 use App\Movie;
 use App\MovieHistory;
+use Haxibiao\Media\Danmu;
+use Haxibiao\Media\Events\DanmuEvent;
 use Illuminate\Support\Facades\Auth;
 
 class MovieController extends Controller
 {
+
+    public function getComment($id)
+    {
+        $movie = Movie::find($id);
+        $page  = request()->get('page');
+        // $order = request()->get('order', 'id');
+        $qb = Comment::where([
+            'commentable_id'   => $movie->id,
+            'commentable_type' => 'movies',
+        ])->latest('id')->with('user')->take(10);
+        if ($page && $page > 1) {
+            $qb->offset($page * 10);
+        }
+        return returnData($qb->get()->toArray(), '获取评论成功', 200);
+    }
+
+    public function comment()
+    {
+        $user     = getUser();
+        $content  = request()->get('content');
+        $movie_id = request()->get('movie_id');
+        $comment  = Comment::create([
+            'user_id'          => $user->id,
+            'body'             => $content,
+            'commentable_id'   => $movie_id,
+            'commentable_type' => 'movies',
+        ]);
+        // 兼容前端结构，并且需要多包一个 collect
+        $comment = Comment::find($comment->id);
+        return returnData(collect($comment->toArray()), '发布评论成功', 200);
+    }
+
     /**
      * 返回剧集数据
      * @deprecated 新版vue目前直接blade获得movie对象包含series data
@@ -58,34 +93,6 @@ class MovieController extends Controller
             'status_code' => 200,
         ];
     }
-
-    // public function comment()
-    // {
-    //     $user     = \Auth::user();
-    //     $content  = request()->get('content');
-    //     $movie_id = request()->get('movie_id');
-    //     $comment  = Comment::with('user')->create([
-    //         'user_id'          => $user->id,
-    //         'content'          => $content,
-    //         'commentable_id'   => $movie_id,
-    //         'commentable_type' => 'movies',
-    //     ]);
-    //     // 兼容前端结构，并且需要多包一个 collect
-    //     $comment = Comment::find($comment->id);
-    //     return returnData(collect($comment->toArray()), '发布评论成功', 200);
-    // }
-
-    // public function getComment($id)
-    // {
-    //     $movie = Movie::find($id);
-    //     $page  = request()->get('page');
-    //     $order = request()->get('order', 'like_count');
-    //     $qb    = Comment::morphQuery('movies', $movie->id)->latest($order)->with('user')->take(10);
-    //     if ($page && $page > 1) {
-    //         $qb->offset($page * 10);
-    //     }
-    //     return returnData($qb->get()->toArray(), '获取评论成功', 200);
-    // }
 
     //FIXME: 需要把sns当做base一样的基础包依赖，重构通用sns功能
     public function toggoleLike()
@@ -138,6 +145,89 @@ class MovieController extends Controller
                 'status_code' => 200,
             ];
         }
+    }
+
+/**
+ * 发送弹幕
+ */
+    public function sendDanmu()
+    {
+        //发送弹幕用户 此处如果前端不传递 默认是DIYgod 正确的参数应该是user id
+        $author = request()->get('author');
+
+        if ($author != "DIYgod") {
+            //弹幕颜色
+            $color = request()->get('color') ?? 16777215;
+            //弹幕内容
+            $text = request()->get('text');
+            //发送弹幕时间
+            $time = request()->get('time') ?? "1";
+            //发送弹幕类型
+            $type = request()->get('type');
+
+            //series index；
+            $id           = request()->get('id');
+            $array        = explode('_', $id);
+            $movie_id     = $array[0];
+            $series_index = $array[1];
+            $series_id    = Movie::query()->find($movie_id)->series->get($series_index - 1)->id;
+
+            //假设目前登录 添加到数据库 目前数据库结构不兼容弹幕结构
+            $danmu = Danmu::create([
+                'user_id'   => $author,
+                'series_id' => $series_id,
+                'content'   => $text,
+                'color'     => $color,
+                'time'      => $time,
+                'type'      => $type,
+            ]);
+            $result = [
+                'code' => 0,
+                'data' => [],
+            ];
+
+            //实时弹幕
+            broadcast(new DanmuEvent($danmu, $movie_id, $series_index));
+
+            $result['data'] = $danmu->toArray();
+
+            return $result;
+        }
+
+        //如果code 不为0 前端会报错
+        return
+            [
+            'code' => 0,
+            'data' => [],
+        ];
+    }
+
+    /**
+     * 返回弹幕
+     */
+    public function danmu()
+    {
+        $id           = request()->get('id');
+        $array        = explode('_', $id);
+        $movie_id     = $array[0];
+        $series_index = $array[1] - 1;
+        $series_id    = Movie::query()->find($movie_id)->series->get($series_index)->id;
+        $result       = [
+            'code' => 0,
+            'data' => [],
+        ];
+        $comments = Danmu::query()->where('series_id', $series_id)->get();
+        foreach ($comments as $key => $comment) {
+            $temp[] = $comment->time;
+            $temp[] = $comment->type;
+            $temp[] = $comment->color;
+            $temp[] = "弹幕小子";
+            $temp[] = $comment->content;
+
+            $result['data'][$key] = $temp;
+            $temp                 = [];
+        }
+        return $result;
     }
 
     public function saveWatchProgress()

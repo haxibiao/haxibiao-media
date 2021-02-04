@@ -149,10 +149,12 @@ class MovieController extends Controller
 
         }
         //FIXME: 用sns里的traits实现
-
+        $recommend = Movie::enable()->latest('rank')->inRandomOrder()->take(6)->get();
+        $more      = Movie::enable()->latest('rank')->inRandomOrder()->take(6)->get();
         //加载剧集
         $movie->load('series');
-        return view('movie.show')->with('movie', $movie)->with('more', $more);
+        return view('movie.show')->with('movie', $movie)->with('recommend', $recommend)
+            ->with('more', $more);
     }
 
     public function favorites()
