@@ -43,7 +43,7 @@ trait MovieAttrs
     {
         $series = @json_decode($this->attributes['data']);
         //剧集排序
-        $sortedSeries = array_values(array_sort($series, function ($value) {
+        $sortedSeries = array_values(Arr::sort($series, function ($value) {
             return $value->name;
         }));
 
