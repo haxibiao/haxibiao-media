@@ -17,7 +17,6 @@ trait MovieAttrs
         return url($path);
     }
 
-
     public function getCoverUrlAttribute()
     {
         return $this->cover;
@@ -55,13 +54,13 @@ trait MovieAttrs
 
         //旧的series URL: {加速域名}/{space}/{movie_id}/index.m3u8
         //新的负载型的series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
-        foreach ($series as $item) {
-            $ucdn_domain = parse_url($item->url, PHP_URL_HOST);
-            $ucdn_root   = "https://" . $ucdn_domain . "/";
-            $space       = get_space_by_ucdn($ucdn_root);
-            $space_path  = parse_url($item->url, PHP_URL_PATH);
-            $item->url   = "https://$ucdn_domain/m3u8/$space$space_path";
-        }
+        // foreach ($series as $item) {
+        //     $ucdn_domain = parse_url($item->url, PHP_URL_HOST);
+        //     $ucdn_root   = "https://" . $ucdn_domain . "/";
+        //     $space       = get_space_by_ucdn($ucdn_root);
+        //     $space_path  = parse_url($item->url, PHP_URL_PATH);
+        //     $item->url   = "https://$ucdn_domain/m3u8/$space$space_path";
+        // }
 
         //这里不能强制丢异常，很多场景未登录是正常的
         if ($user = getUser(false)) {
