@@ -25,6 +25,24 @@ class MovieController extends Controller
         ]);
     }
 
+    public function category($id)
+    {
+        $qb      = Movie::enable()->where('category_id', $id)->latest('rank');
+        $orderBy = 'like_count';
+        if ($order = request()->get('order')) {
+            $qb->latest($order);
+            $orderBy = $order;
+        }
+        $data = [
+            'cate'        => Movie::getCategories()[$id],
+            'movies'      => $qb->paginate(30),
+            'category_id' => $id,
+            'orderBy'     => $orderBy,
+        ];
+
+        return view('movie.category', $data);
+    }
+
     /**
      * 首页数据的全部逻辑
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
