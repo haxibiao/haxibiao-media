@@ -18,7 +18,7 @@ trait WithMedia
      *
      * @return HasMany
      */
-    public function movies(): HasMany
+    public function movies()
     {
         return $this->hasMany(Movie::class);
     }
