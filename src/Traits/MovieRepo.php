@@ -29,4 +29,21 @@ trait MovieRepo
             Movie::ERROR    => '资源错误',
         ];
     }
+
+	public static function getCategories()
+	{
+		return [
+			Movie::CATEGORY_RI      => '日剧',
+			Movie::CATEGORY_MEI     => '美剧',
+			Movie::CATEGORY_HAN     => '韩剧',
+			Movie::CATEGORY_GANG    => '港剧',
+			Movie::CATEGORY_TAI     => '泰剧',
+			Movie::CATEGORY_YIN     => '印度剧',
+			Movie::CATEGORY_BLGL    => '同性恋',
+			Movie::CATEGORY_JIESHUO => '解说',
+			Movie::CATEGORY_ZHONGGUO => '中国',
+			Movie::CATEGORY_HOT => '热门/热播',
+			Movie::CATEGORY_NEWST => '最新',
+		];
+	}
 }
