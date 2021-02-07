@@ -1,18 +1,15 @@
 type SeekMovie {
-  id: Int!
-  name: String!
-  description: String
-  user: User
-  images: [Image]
-  movies: [Movie]
-  status: String
-  created_at: DateTime!
-  updated_at: DateTime!
+    id: Int!
+    name: String!
+    description: String
+    user: User
+    images: [Image]
+    movies: [Movie]
+    status: String
+    created_at: DateTime!
+    updated_at: DateTime!
 }
 
-extend type Query @middleware(checks: ["auth:api"]) {
-  mySeekMovies(
-    user_id: Int! @eq
-    orderBy: [OrderByClause!] @orderBy
-  ): [SeekMovie!] @paginate(defaultCount: 10)
+extend type Query @guard {
+    mySeekMovies(user_id: Int! @eq, orderBy: [OrderByClause!] @orderBy): [SeekMovie!] @paginate(defaultCount: 10)
 }
