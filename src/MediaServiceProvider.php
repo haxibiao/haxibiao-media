@@ -26,6 +26,8 @@ class MediaServiceProvider extends ServiceProvider
             Console\VideoPush::class,
             Console\ArticlePush::class,
             Console\ArticleSync::class,
+            Console\ComicSync::class,
+            Console\ComicPush::class,
             Console\VideoSync::class,
             Console\PublishConfig::class,
         ]);

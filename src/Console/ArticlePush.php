@@ -49,7 +49,7 @@ class ArticlePush extends Command
                 //拿到哈希云分类对象
                 $content_category = self::getContentCategory($category);
             } else {
-                echo "\n没有该分类：" . $category;
+                $this->error("\n没有该分类：" . $category);
             }
         }
 
@@ -81,6 +81,7 @@ class ArticlePush extends Command
                         'cover_path'  => $article->cover_path,
                         'status'      => $article->status,
                         'source'      => env('APP_DOMAIN'),
+                        'source_id'   => $article->id,
                         'json'        => $article->json,
                         'created_at'  => now(),
                         'updated_at'  => now(),
@@ -95,7 +96,7 @@ class ArticlePush extends Command
         echo "\n上传成功" . $count . "条文章数据";
     }
 
-    public function getContentCategory($category)
+    public static function getContentCategory($category)
     {
         $content_category = \DB::connection('media')
             ->table('categories')
