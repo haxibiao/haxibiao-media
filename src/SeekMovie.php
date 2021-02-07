@@ -2,14 +2,14 @@
 
 namespace Haxibiao\Media;
 
-use Haxibiao\Breeze\User;
-use Haxibiao\Breeze\Model;
-use Haxibiao\Media\Traits\WithImage;
-use Haxibiao\Media\Traits\CanLinkMovie;
 use GraphQL\Type\Definition\ResolveInfo;
+use Haxibiao\Breeze\Model;
+use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Breeze\Traits\ModelHelpers;
+use Haxibiao\Breeze\User;
+use Haxibiao\Media\Traits\CanLinkMovie;
+use Haxibiao\Media\Traits\WithImage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class SeekMovie extends Model
