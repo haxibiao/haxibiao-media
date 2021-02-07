@@ -12,7 +12,7 @@ trait CanLinkMovie
         return $this->morphMany(LinkMovie::class, 'linked');
     }
 
-    public function movie()
+    public function firstMovie()
     {
         return $this->linkMovies->first()->movie();
     }
