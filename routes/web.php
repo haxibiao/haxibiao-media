@@ -11,6 +11,5 @@ Route::middleware(config('media.movie.middleware', []))
         Route::get('/movie/qita', 'MovieController@qita');
         Route::get('/movie/search', 'MovieController@search');
         Route::get('/movie/favorites', 'MovieController@favorites');
-        Route::any('/category/{id}', 'MovieController@category');
         Route::resource('/movie', 'MovieController');
     });

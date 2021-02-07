@@ -30,11 +30,21 @@ class Movie extends Model
 
     protected $table = 'movies';
 
-    const CATEGORY_JIESHUO = 0;
-    const MOVIE_RI_JU      = 1;
-    const MOVIE_MEI_JU     = 2;
-    const MOVIE_HAN_JU     = 3;
-    const MOVIE_GANG_JU    = 4;
+     /**
+     * 日韩美港剧
+     */
+    public const CATEGORY_RI   = 1;
+    public const CATEGORY_MEI  = 2;
+    public const CATEGORY_HAN  = 3;
+    public const CATEGORY_GANG = 4;
+    public const CATEGORY_TAI  = 5;
+    public const CATEGORY_YIN  = 6;
+    // boy love,girl love
+    public const CATEGORY_BLGL     = 7;
+    public const CATEGORY_JIESHUO  = 8; // 解说
+    public const CATEGORY_ZHONGGUO = 9; // 中国
+    public const CATEGORY_HOT      = 10; // 热门
+    public const CATEGORY_NEWST    = 11; // 最新
 
     public const NOT_IDENTIFY = 0; //未识别
     public const PUBLISH      = 1; //正常影片
