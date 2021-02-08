@@ -48,7 +48,7 @@ class SpiderController extends Controller
             }
 
             // 修复乱码标题
-            if ($spider->isDirty()) {
+            if ($spider && $spider->isDirty()) {
                 $spider->save();
             }
 
