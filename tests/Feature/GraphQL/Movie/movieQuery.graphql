@@ -22,9 +22,6 @@ query movieQuery($movie_id: ID!) {
         last_watch_progress
         count_comments
         count_favorites
-        data{
-            url
-            name
-        }
+        data
     }
 }
