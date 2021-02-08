@@ -72,7 +72,7 @@ type Movie {
     """
     剧集
     """
-    data: [MovieData]
+    data: JsonType
     favorited: Boolean
     created_at: DateTime
     """
