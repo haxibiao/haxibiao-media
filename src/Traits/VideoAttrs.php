@@ -53,7 +53,7 @@ trait VideoAttrs
 
         //media中心自己上传的视频，封面同步到 hasvod 的
         // && Str::startsWith($cover_path, 'images/')
-        if ($this->disk == 'vod') {
+        if ('vod' == $this->disk) {
             return hash_vod_url($cover_path);
         }
 
@@ -82,11 +82,18 @@ trait VideoAttrs
             return $this->path;
         }
 
-        //还存本地...
-        if (Storage::disk('public')->exists($this->path)) {
-            return url('/storage/' . $this->path);
+        if ('vod' == $this->disk) {
+            $json = json_decode($this->json, true);
+            return data_get($json, 'vod.MediaUrl');
         }
-        return cdnurl($this->path);
+
+        if (!Storage::disk('public')->exists($this->path)) {
+            //自己项目cos上?
+            return cdnurl($this->path);
+        }
+
+        //还存本地?
+        return url('/storage/' . $this->path);
     }
 
     /**
@@ -156,22 +163,22 @@ trait VideoAttrs
 
     public function isStoredDamei()
     {
-        return $this->disk == 'damei';
+        return 'damei' == $this->disk;
     }
 
     public function isStoredCos()
     {
-        return $this->disk == 'cos';
+        return 'cos' == $this->disk;
     }
 
     public function isStoredDZ()
     {
-        return $this->disk == 'dtzq';
+        return 'dtzq' == $this->disk;
     }
 
     public function isStoredVod()
     {
-        return $this->disk == 'vod';
+        return 'vod' == $this->disk;
     }
 
     /**
@@ -209,7 +216,7 @@ trait VideoAttrs
     {
         $count = 0;
         $type  = $this->type;
-        if ($type == 'videos') {
+        if ('videos' == $type) {
             $count = $this->likes()->count();
         }
         return $count;
@@ -222,7 +229,7 @@ trait VideoAttrs
     {
         $count = 0;
         $type  = $this->type;
-        if ($type == 'videos') {
+        if ('videos' == $type) {
             $count = $this->comments()->count();
         }
         return $count;
