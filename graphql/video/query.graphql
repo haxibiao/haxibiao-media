@@ -24,12 +24,18 @@ type Video {
     """
     封面
     """
-    cover: String
+    cover: String @rename(attribute: "cover_url")
+
+    """
+    视频封面的cdn url
+    """
+    cover_url: String
 
     """
     动图
     """
     dynamic_cover: String
+
     """
     视频广告
     """
@@ -56,10 +62,6 @@ type Video {
     info: VideoInfo @rename(attribute: "video_info")
 
     status: Int!
-    """
-    视频封面的cdn url
-    """
-    cover_url: String
 
     """
     合集名
