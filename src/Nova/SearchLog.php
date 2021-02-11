@@ -12,11 +12,9 @@ use Laravel\Nova\Fields\Text;
 class SearchLog extends Resource
 {
     public static $model = 'Haxibiao\Media\SearchLog';
-
-    public static $category = "用户内容";
-
     public static $title = 'name';
 
+    public static $group = "数据中心";
     public static function label()
     {
         return "搜索记录";
