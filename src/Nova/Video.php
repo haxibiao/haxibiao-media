@@ -16,20 +16,18 @@ class Video extends Resource
 {
 
     public static $model = 'App\Video';
-
     public static $title = 'id';
 
-    public static $displayInNavigation = false;
-
-    public static $search = [
+    public static $displayInNavigation = true;
+    public static $search              = [
         'id',
     ];
+
+    public static $group = '媒体中心';
     public static function label()
     {
         return '视频';
     }
-
-    public static $group = '内容管理';
 
     public function fields(Request $request)
     {

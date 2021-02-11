@@ -11,7 +11,7 @@ use Laravel\Nova\Resource;
 
 class Movie extends Resource
 {
-    public static $group = "媒体管理";
+    public static $group = "媒体中心";
     public static function label()
     {
         return '电影';

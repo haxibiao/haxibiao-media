@@ -9,49 +9,20 @@ use Laravel\Nova\Resource;
 
 class Image extends Resource
 {
-    /**
-     * The model the resource corresponds to.
-     *
-     * @var string
-     */
     public static $model = 'App\Image';
-
-    public static $displayInNavigation = false;
-
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     *
-     * @var string
-     */
     public static $title = 'id';
 
-    /**
-     * The columns that should be searched.
-     *
-     * @var array
-     */
-    public static $search = [
+    public static $displayInNavigation = true;
+    public static $search              = [
         'id',
     ];
 
-    public static $group = '内容管理';
-
+    public static $group = '媒体中心';
     public static function label()
     {
         return '图片';
     }
 
-    public static function singularLabel()
-    {
-        return '图片资源';
-    }
-
-    /**
-     * Get the fields displayed by the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
     public function fields(Request $request)
     {
         return [

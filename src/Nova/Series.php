@@ -10,31 +10,13 @@ use Laravel\Nova\Fields\Text;
 
 class Series extends Resource
 {
-    /**
-     * The model the resource corresponds to.
-     *
-     * @var string
-     */
-    public static $model = \App\Series::class;
-
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     *
-     * @var string
-     */
-    public static $title = 'name';
-
-    /**
-     * The columns that should be searched.
-     *
-     * @var array
-     */
+    public static $model  = \App\Series::class;
+    public static $title  = 'name';
     public static $search = [
         'id', 'name',
     ];
 
-    public static $group = 'B:主要玩法';
-
+    public static $group = '媒体中心';
     public static function label()
     {
         return '剧集';

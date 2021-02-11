@@ -11,11 +11,6 @@ use Laravel\Nova\Fields\Text;
 
 class SearchLog extends Resource
 {
-    /**
-     * The model the resource corresponds to.
-     *
-     * @var string
-     */
     public static $model = 'Haxibiao\Media\SearchLog';
 
     public static $category = "用户内容";
@@ -27,26 +22,9 @@ class SearchLog extends Resource
         return "搜索记录";
     }
 
-    public static function singularLabel()
-    {
-        return "搜索记录";
-    }
-
-    /**
-     * The columns that should be searched.
-     *
-     * @var array
-     */
     public static $search = [
         'name', 'id',
     ];
-
-    /**
-     * Get the fields displayed by the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
 
     public function fields(Request $request)
     {

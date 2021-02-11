@@ -12,42 +12,19 @@ use Laravel\Nova\Resource;
 
 class Activity extends Resource
 {
-    /**
-     * The model the resource corresponds to.
-     *
-     * @var string
-     */
-    public static $model = \App\Activity::class;
-
-    /**
-     * The single value that should be used to represent the resource when being displayed.
-     *
-     * @var string
-     */
-    public static $title = 'name';
-
-    /**
-     * The columns that should be searched.
-     *
-     * @var array
-     */
+    public static $model  = \App\Activity::class;
+    public static $title  = 'name';
     public static $search = [
         'title',
     ];
 
-    public static $group = '内容管理';
+    public static $group = '媒体中心';
 
     public static function label()
     {
-        return '活动轮播图';
+        return '轮播图';
     }
 
-    /**
-     * Get the fields displayed by the resource.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
     public function fields(Request $request)
     {
         return [
