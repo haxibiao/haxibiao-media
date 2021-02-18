@@ -13,6 +13,9 @@ class CreateDanmuTable extends Migration
      */
     public function up()
     {
+        if(Schema::hasTable('danmu')){
+            return;
+        }
         Schema::create('danmu', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id')->comment("弹幕发送者id");
