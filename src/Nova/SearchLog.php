@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Nova;
 
 use App\Nova\Resource;
+use Haxibiao\Breeze\Nova\User;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
@@ -44,9 +45,7 @@ class SearchLog extends Resource
      */
     public function cards(Request $request)
     {
-        return [
-
-        ];
+        return [];
     }
 
     /**
@@ -57,9 +56,7 @@ class SearchLog extends Resource
      */
     public function filters(Request $request)
     {
-        return [
-
-        ];
+        return [];
     }
 
     /**
@@ -81,8 +78,6 @@ class SearchLog extends Resource
      */
     public function actions(Request $request)
     {
-        return [
-
-        ];
+        return [];
     }
 }
