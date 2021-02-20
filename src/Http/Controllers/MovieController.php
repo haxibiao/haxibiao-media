@@ -7,6 +7,7 @@ use App\Like;
 use App\Movie;
 use App\MovieHistory;
 use Haxibiao\Media\Http\Controller;
+use Haxibiao\Media\SearchLog;
 
 class MovieController extends Controller
 {
@@ -17,6 +18,7 @@ class MovieController extends Controller
         $result->appends(['q' => $query]);
         $hot       = Movie::orderBy('id')->paginate(10);
         $recommend = Movie::enable()->where('rank', 30)->inRandomOrder()->take(4)->get();
+        SearchLog::saveSearchLog($query);
         return view('movie.search', [
             'hot'          => $hot,
             'result'       => $result,

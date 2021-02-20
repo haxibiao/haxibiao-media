@@ -2,10 +2,12 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\Post;
 use GuzzleHttp\Client;
 use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Helpers\utils\QcloudUtils;
 use Haxibiao\Media\Jobs\MediaProcess;
+use Haxibiao\Media\Jobs\PullUploadVideo;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
@@ -77,6 +79,26 @@ trait SpiderRepo
         }
 
         return $spider;
+    }
+
+    public static function fastProcessDouyinVideo($user, $shareLink)
+    {
+        $title = static::extractTitle($shareLink);
+        //提取URL
+        $dyUrl      = static::extractURL($shareLink);
+        $url        = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $dyUrl);
+        $data       = json_decode(file_get_contents($url), true)['data'];
+        $videoPath  = $data['video']['play_url'];
+        $title      = $data['video']['info']['0']['desc'];
+        $video      = Video::create(['path' => $videoPath, 'title' => $title]);
+        $createData = [
+            'user_id'     => $user->id,
+            'description' => $title,
+            'video_id'    => $video->id,
+        ];
+        $post = Post::create($createData);
+        dispatch(new PullUploadVideo($video, $post));
+        return $post;
     }
 
     public static function extractURL($str)
