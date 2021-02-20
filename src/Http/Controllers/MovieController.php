@@ -22,13 +22,13 @@ class MovieController extends Controller
         $log = SearchLog::firstOrNew([
             'keyword' => $query,
         ]);
+        if (isset($log->id)) {
+            $log->increment('count');
+        }
         // 如果有完全匹配的作品名字
         if ($movie = Movie::where('name', $query)->orderBy('id')->first()) {
             $log->movie_type   = $movie->type_name;
             $log->movie_reigon = $movie->country;
-            if (isset($log->id)) {
-                $log->increment('count');
-            }
         }
         $log->save();
 
