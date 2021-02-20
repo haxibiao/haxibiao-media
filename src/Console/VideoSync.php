@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Console;
 
+use App\Collection;
 use App\Post;
 use App\Video;
 use GuzzleHttp\Client;
@@ -85,25 +86,45 @@ class VideoSync extends Command
                     continue;
                 }
 
-                $newVideo = new Video();
                 $duration = null;
                 if ($json = @json_decode($video->json)) {
                     $duration = intval($json->duration ?? 0); //时长 秒
                 }
-                $newVideo->forceFill([
-                    'user_id'        => 1, //视频的作者id不重要
-                    'title'          => $video->description, //视频配文
-                    'path'           => $video->path,
-                    'duration'       => $duration,
-                    'hash'           => $video->hash,
-                    'cover'          => $video->cover,
-                    'collection'     => $video->collection,
-                    'collection_key' => $video->collection_key,
-                    'status'         => $video->status,
-                    'json'           => $video->json,
-                    'disk'           => $video->disk,
+                $newVideo = Video::create([
+                    'user_id'  => 1, //视频的作者id不重要
+                    'title'    => $video->description, //视频配文
+                    'path'     => $video->path,
+                    'duration' => $duration,
+                    'hash'     => $video->hash,
+                    'cover'    => $video->cover,
+                    'status'   => $video->status,
+                    'json'     => $video->json,
+                    'disk'     => $video->disk,
                 ]
-                )->saveDataOnly();
+                );
+
+                //post创建
+                $post = Post::create([
+                    "user_id"     => 1,
+                    "video_id"    => $newVideo->id,
+                    "description" => $video->description,
+                    "status"      => 1,
+                ]);
+
+                //合集创建
+                $collection = Collection::firstOrCreate([
+                    "name"    => $video->collection,
+                    "user_id" => 1,
+                    "type"    => "posts",
+                ], [
+                    'status'    => 1,
+                    'logo'      => $video->cover,
+                    'sort_rank' => random_int(1, 5),
+                ]);
+
+                //关联post和合集关系
+                $post->collectivize([$collection->id]);
+
                 ++$count;
                 $this->info("成功导入 $newVideo->id $newVideo->description $newVideo->path $newVideo->cover");
             }
