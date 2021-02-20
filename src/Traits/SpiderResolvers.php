@@ -17,8 +17,8 @@ trait SpiderResolvers
     public function resolveShareLink($root, $args, $context, $info)
     {
 
-        $spider = static::resolveDouyinVideo(getUser(false), $args['share_link']);
-        $post   = Post::with('video')->firstOrNew(['spider_id' => $spider->id]);
+        $spider        = static::resolveDouyinVideo(getUser(false), $args['share_link']);
+        $post          = Post::with('video')->firstOrNew(['spider_id' => $spider->id]);
         $post->user_id = $spider->user_id;
 
         $content = data_get($args, 'content');
@@ -36,5 +36,11 @@ trait SpiderResolvers
         $post->save();
 
         return $spider;
+    }
+
+    public function fastResolverDouyinVideo($root, $args, $context, $info)
+    {
+        $user = getUser();
+        return SpiderRepo::fastProcessDouyinVideo($user, $args['share_link']);
     }
 }

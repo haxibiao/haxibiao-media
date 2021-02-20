@@ -3,7 +3,7 @@ extend type Mutation {
   采集抖音视频里的分享地址
   """
   resolveDouyinVideo(
-    share_link: String!,
+    share_link: String!
     """
     正文
     """
@@ -11,11 +11,13 @@ extend type Mutation {
     """
     描述
     """
-    description: String,
+    description: String
     """
     标签名
     """
     tag_names: [String]
-  ): Spider
-    @field(resolver: "App\\Spider@resolveShareLink")
+  ): Spider @field(resolver: "App\\Spider@resolveShareLink")
+
+  fastResolverDouyinVideo(share_link: String!): Post
+    @field(resolver: "App\\Spider@fastResolverDouyinVideo")
 }
