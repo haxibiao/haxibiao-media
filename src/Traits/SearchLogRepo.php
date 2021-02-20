@@ -7,10 +7,11 @@ use Haxibiao\Media\SearchLog;
 
 trait SearchLogRepo
 {
-    public static function saveSearchLog($query)
+    public static function saveSearchLog($query, $userId = null)
     {
         // 保存搜索记录
         $log = SearchLog::firstOrNew([
+            'user_id' => $userId,
             'keyword' => $query,
         ]);
         if (isset($log->id)) {
@@ -22,5 +23,7 @@ trait SearchLogRepo
             $log->movie_reigon = $movie->country;
         }
         $log->save();
+
+        return $log;
     }
 }

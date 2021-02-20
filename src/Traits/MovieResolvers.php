@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\MovieHistory;
 use App\User;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Dimension\Dimension;
@@ -165,15 +164,7 @@ trait MovieResolvers
                 if ($qb->count() > 0) {
                     Dimension::track("长视频搜索成功数", 1, "长视频");
                 }
-                $log = SearchLog::firstOrNew([
-                    'user_id' => getUserId(),
-                    'keyword' => $keyword,
-                ]);
-                //如果搜索过，记录搜索次数
-                if ($log->id) {
-                    $log->count += 1;
-                }
-                $log->save();
+                $log = SearchLog::saveSearchLog($keyword, getUserId());
             }
         }
 
