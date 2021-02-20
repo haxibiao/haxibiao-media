@@ -7,6 +7,7 @@ use App\Like;
 use App\Movie;
 use App\MovieHistory;
 use Haxibiao\Media\Http\Controller;
+use Haxibiao\Media\SearchLog;
 
 class MovieController extends Controller
 {
@@ -17,6 +18,20 @@ class MovieController extends Controller
         $result->appends(['q' => $query]);
         $hot       = Movie::orderBy('id')->paginate(10);
         $recommend = Movie::enable()->where('rank', 30)->inRandomOrder()->take(4)->get();
+        // 保存搜索记录
+        $log = SearchLog::firstOrNew([
+            'keyword' => $query,
+        ]);
+        // 如果有完全匹配的作品名字
+        if ($movie = Movie::where('name', $query)->orderBy('id')->first()) {
+            $log->movie_type   = $movie->type_name;
+            $log->movie_reigon = $movie->country;
+            if (isset($log->id)) {
+                $log->increment('count');
+            }
+        }
+        $log->save();
+
         return view('movie.search', [
             'hot'          => $hot,
             'result'       => $result,

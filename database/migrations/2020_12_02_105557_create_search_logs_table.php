@@ -13,7 +13,7 @@ class CreateSearchLogsTable extends Migration
      */
     public function up()
     {
-        if(Schema::hasTable('search_logs')){
+        if (Schema::hasTable('search_logs')) {
             return;
         }
         //搜索记录表
@@ -22,6 +22,8 @@ class CreateSearchLogsTable extends Migration
             $table->unsignedInteger('user_id')->nullable()->index();
             $table->string('keyword')->nullable()->index()->comment('搜索关键词');
             $table->string('count')->default(1)->comment('搜索次数');
+            $table->string('movie_type', 30)->nullable();
+            $table->string('movie_reigon', 30)->nullable();
             $table->timestamps();
         });
     }
