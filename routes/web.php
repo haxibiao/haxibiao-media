@@ -10,6 +10,7 @@ Route::middleware(config('media.movie.middleware', []))
         Route::get('/movie/gangju', 'MovieController@gangju');
         Route::get('/movie/qita', 'MovieController@qita');
         Route::get('/movie/search', 'MovieController@search');
+        Route::get('/category/{id}', 'MovieController@category');
         Route::get('/movie/favorites', 'MovieController@favorites');
         Route::resource('/movie', 'MovieController');
     });
