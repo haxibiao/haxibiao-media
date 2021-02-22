@@ -161,8 +161,14 @@ extend type Query {
   """
   韩剧星球，高甜榜单接口
   """
-  sweetyRankList(id: ID!): [Movie!]
+  sweetyRankList: [Movie!]
     @paginate(builder: "App\\Movie@sweetyRankList", defaultCount: 10)
+
+  """
+  全部影视作品
+  """
+  movieList: [Movie!]
+    @paginate(builder: "App\\Movie@movieList", defaultCount: 10)
 }
 
 type MovieShareData {

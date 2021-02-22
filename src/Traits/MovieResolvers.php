@@ -172,9 +172,15 @@ trait MovieResolvers
     }
 
     // 韩剧星球，高甜榜单接口
-    public function sweetyRankList()
+    public function sweetyRankList($rootValue, array $args, $context, $resolveInfo)
     {
-        return Movie::hanju()->latest('rank');
+        return Movie::hanju()->latest('rank')->latest('hits');
+    }
+
+    // 全部影视
+    public function movieList($rootValue, array $args, $context, $resolveInfo)
+    {
+        return Movie::latest('rank')->latest('hits');
     }
 
     public function getSharePciture($rootValue, array $args, $context, $resolveInfo)
