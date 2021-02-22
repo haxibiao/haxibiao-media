@@ -169,6 +169,12 @@ extend type Query {
   """
   movieList: [Movie!]
     @paginate(builder: "App\\Movie@movieList", defaultCount: 10)
+
+  """
+  影视解说列表
+  """
+  explainMovieList: [Movie!]
+    @paginate(builder: "App\\Movie@explainMovieList", defaultCount: 10)
 }
 
 type MovieShareData {

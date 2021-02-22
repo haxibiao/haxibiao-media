@@ -59,7 +59,11 @@ trait MovieResolvers
             }
         }
         return null;
+    }
 
+    public function explainMovieList($root, $args, $content, $info)
+    {
+        return Movie::where('type_name', '电影解说')->latest('rank')->latest('hits');
     }
 
     public function resolversRecommendMovie($root, $args, $content, $info)
