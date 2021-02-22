@@ -30,7 +30,7 @@ class Movie extends Model
 
     protected $table = 'movies';
 
-     /**
+    /**
      * 日韩美港剧
      */
     public const CATEGORY_RI   = 1;
@@ -106,5 +106,10 @@ class Movie extends Model
             Movie::DISABLED     => "下架处理",
             Movie::ERROR        => "资源损坏、失效、残缺",
         ];
+    }
+
+    public function scopeHanju($query)
+    {
+        return $query->where('country', '韩国');
     }
 }

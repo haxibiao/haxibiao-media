@@ -171,6 +171,12 @@ trait MovieResolvers
         return $qb;
     }
 
+    // 韩剧星球，高甜榜单接口
+    public function sweetyRankList()
+    {
+        return Movie::hanju()->latest('rank');
+    }
+
     public function getSharePciture($rootValue, array $args, $context, $resolveInfo)
     {
         $movie = Movie::find($args['id']);
