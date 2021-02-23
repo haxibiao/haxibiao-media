@@ -1,7 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-//电影
+
+// 图片
+Route::resource('/image', 'ImageController');
+
+// 视频
+Route::get('/video/list', 'VideoController@list');
+Route::get('/video/{id}', 'VideoController@show');
+Route::get('/video/{id}/process', 'VideoController@processVideo');
+Route::resource('/video', 'VideoController');
+
+// 电影
 Route::middleware(config('media.movie.middleware', []))
     ->group(function () {
         Route::get('/movie/riju', 'MovieController@riju');
