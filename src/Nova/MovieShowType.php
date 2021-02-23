@@ -4,8 +4,8 @@ namespace Haxibiao\Media\Nova;
 
 use Haxibiao\Media\MovieShowType as MediaMovieShowType;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Resource;
 
 class MovieShowType extends Resource
@@ -50,7 +50,7 @@ class MovieShowType extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            HasMany::make('电影', 'movies', Movie::class),
+            Text::make('名字', 'name'),
         ];
     }
 
