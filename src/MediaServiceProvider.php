@@ -75,7 +75,7 @@ class MediaServiceProvider extends ServiceProvider
             ], 'media-applist');
 
             $this->publishes([
-                __DIR__ . '/../graphql' => base_path('graphql'),
+                __DIR__ . '/../graphql' => base_path('graphql/media'),
             ], 'media-graphql');
 
             $this->publishes([
