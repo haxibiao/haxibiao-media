@@ -2,19 +2,19 @@
 
 namespace Haxibiao\Media\Nova;
 
+use Haxibiao\Media\MovieShowType as MediaMovieShowType;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Image;
-use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Resource;
 
-class Movie extends Resource
+class MovieShowType extends Resource
 {
+
     public static $group = "媒体中心";
     public static function label()
     {
-        return '电影';
+        return '电影展示类型';
     }
 
     /**
@@ -22,7 +22,7 @@ class Movie extends Resource
      *
      * @var string
      */
-    public static $model = 'Haxibiao\Media\Movie';
+    public static $model = MediaMovieShowType::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -49,27 +49,8 @@ class Movie extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
-            Text::make('电影名', 'name')->hideWhenCreating(),
-            Text::make('地区', 'region')->hideWhenCreating(),
-            Text::make('年份', 'year')->hideWhenCreating(),
-            Text::make('分类', 'type')->hideWhenCreating(),
-            Text::make('风格', 'style')->hideWhenCreating(),
-            Select::make('状态', 'status')->options([
-                1  => '公开',
-                0  => '草稿',
-                -1 => '下架',
-            ])->displayUsingLabels(),
-            // Text::make('添加时间', 'created_at')->sortable()->onlyOnIndex(),
-            Image::make('封面', 'movie.cover')->thumbnail(
-                function () {
-                    return $this->cover;
-                }
-            )->preview(
-                function () {
-                    return $this->cover;
-                }
-            ),
+            ID::make(__('ID'), 'id')->sortable(),
+            HasMany::make('电影', 'movies', Movie::class),
         ];
     }
 
@@ -114,7 +95,6 @@ class Movie extends Resource
      */
     public function actions(Request $request)
     {
-        return [
-        ];
+        return [];
     }
 }

@@ -1,0 +1,10 @@
+type MovieShowType {
+  id: ID
+  name: String
+  movies: [Movies] @hasMany(type: "paginator", defaultCount: 10)
+}
+
+extend type Query {
+  movieShowTypeList: MovieShowType
+    @paginate(defaultCount: 10, builder: "App\\MovieShowType@movieShowTypeList")
+}
