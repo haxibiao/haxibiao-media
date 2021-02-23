@@ -103,6 +103,10 @@ type Movie {
   关联的合集
   """
   collection: Collection
+  """
+  是否已经观看过了/正在观看
+  """
+  is_viewed: Boolean
 }
 
 extend type Query {

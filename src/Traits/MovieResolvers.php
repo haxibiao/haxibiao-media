@@ -66,6 +66,12 @@ trait MovieResolvers
         return Movie::where('type_name', '电影解说')->latest('rank')->latest('hits');
     }
 
+    public function userViewingHistory($root, $args, $content, $info)
+    {
+        $user = getUser();
+
+    }
+
     public function resolversRecommendMovie($root, $args, $content, $info)
     {
         $count = data_get($args, 'count', 7);

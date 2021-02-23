@@ -27,6 +27,17 @@ trait MovieAttrs
         return $this->region;
     }
 
+    public function getIsViewedAttribute()
+    {
+        if ($user = checkUser()) {
+            return MovieHistory::where([
+                'user_id'  => $user->id,
+                'movie_id' => $this->id,
+            ])->exists();
+        }
+        return false;
+    }
+
     /**
      * 默认的第一集播放地址
      */
