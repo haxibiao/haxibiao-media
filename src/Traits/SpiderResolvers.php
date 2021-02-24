@@ -3,11 +3,13 @@
 namespace Haxibiao\Media\Traits;
 
 use App\Post;
+use Haxibiao\Media\Jobs\CrawlCollection;
 use Haxibiao\Media\Spider;
 use Illuminate\Support\Arr;
 
 trait SpiderResolvers
 {
+
     public function resolveSpiders($root, $args, $context, $info)
     {
         $type = Arr::get($args, 'type', null);
@@ -42,5 +44,13 @@ trait SpiderResolvers
     {
         $user = getUser();
         return SpiderRepo::fastProcessDouyinVideo($user, $args['share_link']);
+    }
+
+    public function crawlCollection($root, $args, $context, $info)
+    {
+        $user            = getUser();
+        $user_share_link = $args['user_share_link'];
+        dispatch(new CrawlCollection($user, $user_share_link));
+        return true;
     }
 }

@@ -20,4 +20,10 @@ extend type Mutation {
 
   fastResolverDouyinVideo(share_link: String!): Post
     @field(resolver: "App\\Spider@fastResolverDouyinVideo")
+
+  """
+  解析抖音合集功能
+  """
+  crawlCollection(user_share_link: String!): Boolean
+    @field(resolver: "App\\Spider@crawlCollection")
 }

@@ -49,6 +49,9 @@ class Spider extends Model
     const VIDEO_TYPE    = 'videos';
     const QUESTION_TYPE = 'questions';
 
+    const COLLECTIONS_URL = "https://aweme-lq.snssdk.com/aweme/v1/mix/list/?user_id=%s&cursor=%s&count=%s";
+    const VIDEOS_URL      = "https://aweme-lq.snssdk.com/aweme/v1/mix/aweme/?mix_id=%s&cursor=%s&count=%s";
+
     const DOUYIN_VIDEO_DOMAINS = [
         'v.douyin.com',
         'www.iesdouyin.com',
