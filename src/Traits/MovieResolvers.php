@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 use App\User;
 use Haxibiao\Breeze\Exceptions\GQLException;
+use Haxibiao\Content\Post;
 use Haxibiao\Dimension\Dimension;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
@@ -70,6 +71,13 @@ trait MovieResolvers
     {
         $user = getUser();
 
+    }
+
+    public function movieRelationPost($root, $args, $content, $info)
+    {
+        $id    = $args['movie_id'];
+        $movie = Movie::find($id);
+        return Post::where('description', 'like', "%$movie->name%")->take(10)->get();
     }
 
     public function resolversRecommendMovie($root, $args, $content, $info)
