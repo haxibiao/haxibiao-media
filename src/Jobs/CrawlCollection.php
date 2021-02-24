@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 class CrawlCollection implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable;
-
+    public $timeout = 6000;
     protected $user, $user_share_link;
     /**
      * Create a new job instance.
