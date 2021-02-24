@@ -6,5 +6,8 @@ type MovieShowType {
 
 extend type Query {
   movieShowTypeList: MovieShowType
-    @paginate(defaultCount: 10, builder: "App\\MovieShowType@movieShowTypeList")
+    @paginate(
+      defaultCount: 10
+      builder: "Haxibiao\\Media\\MovieShowType@movieShowTypeList"
+    )
 }
