@@ -6,6 +6,8 @@ use App\Activity;
 use App\Series;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
+use Haxibiao\Content\Traits\Stickable;
+use Haxibiao\Content\Traits\WithCms;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Scopes\MovieStatusScope;
 use Haxibiao\Media\Traits\CanLinkMovie;
@@ -25,6 +27,9 @@ class Movie extends Model
     use MovieAttrs;
     use WithSns;
     use CanLinkMovie;
+
+    use WithCms;
+    use Stickable;
 
     protected $guarded = [];
 
