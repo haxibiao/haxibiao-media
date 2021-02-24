@@ -1,7 +1,7 @@
 type MovieShowType {
   id: ID
   name: String
-  movies: [Movies] @hasMany(type: "paginator", defaultCount: 10)
+  movies: [Movie]
 }
 
 extend type Query {
