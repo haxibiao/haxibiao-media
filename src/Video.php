@@ -28,7 +28,7 @@ class Video extends Model
     use MakeCovers;
     use Shareable;
 
-//    use WithCms;
+    use WithCms;
 
     protected $casts = [
         'json' => 'object',
