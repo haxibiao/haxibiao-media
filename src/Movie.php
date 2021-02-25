@@ -28,8 +28,8 @@ class Movie extends Model
     use WithSns;
     use CanLinkMovie;
 
-    use WithCms;
-    use Stickable;
+//    use WithCms;
+//    use Stickable;
 
     protected $guarded = [];
 
