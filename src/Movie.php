@@ -3,11 +3,10 @@
 namespace Haxibiao\Media;
 
 use App\Activity;
+use App\Post;
 use App\Series;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
-use Haxibiao\Content\Traits\Stickable;
-use Haxibiao\Content\Traits\WithCms;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Scopes\MovieStatusScope;
 use Haxibiao\Media\Traits\CanLinkMovie;
@@ -116,5 +115,10 @@ class Movie extends Model
     public function scopeHanju($query)
     {
         return $query->where('country', '韩国');
+    }
+
+    public function post()
+    {
+        return $this->hasOne(Post::class);
     }
 }
