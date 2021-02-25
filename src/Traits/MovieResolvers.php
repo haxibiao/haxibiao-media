@@ -105,6 +105,25 @@ trait MovieResolvers
     {
         $keyword = data_get($args, 'keyword');
         app_track_event('电影', '搜索电影', $keyword);
+        //记录搜索历史
+        // 保存搜索记录
+        $log = SearchLog::firstOrNew([
+            'keyword' => $keyword,
+        ]);
+        // 如果有完全匹配的作品名字
+        if ($movie = Movie::where('name', $keyword)->orderBy('id')->first()) {
+            $log->movie_type   = $movie->type_name;
+            $log->movie_reigon = $movie->country;
+            //记录用户，作为展示的历史搜索数据
+            if (checkUser()) {
+                $log->user_id=getUser()->id;
+            }
+            if (isset($log->id)) {
+                $log->increment('count');
+            }
+        }
+        $log->save();
+
         return static::search($keyword);
 
     }
