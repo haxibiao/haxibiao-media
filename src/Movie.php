@@ -7,6 +7,8 @@ use App\Post;
 use App\Series;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
+use Haxibiao\Cms\Traits\Stickable;
+use Haxibiao\Cms\Traits\WithCms;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Scopes\MovieStatusScope;
 use Haxibiao\Media\Traits\CanLinkMovie;

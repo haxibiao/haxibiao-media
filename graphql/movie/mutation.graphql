@@ -1,0 +1,7 @@
+extend type Mutation {
+    """
+    关联电影
+    """
+    relateMovie(movie_name: String!, post_id: Int!): Movie
+        @field(resolver: "App\\Movie@relateMovie")
+}
