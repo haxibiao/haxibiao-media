@@ -48,7 +48,7 @@ class MoviePush extends Command
         }
         $qb->chunk(1000, function ($movies) {
             foreach ($movies as $movie) {
-                $series        = $movie->series()->get(['path', 'name', 'bucket']);
+                $series        = $movie->series()->get(['path', 'name', 'bucket', 'source']);
                 $movieResource = $movie->toResource();
                 $seriesJson    = [];
                 $sourceJson    = [];
@@ -67,7 +67,6 @@ class MoviePush extends Command
                     'source'     => config('app.name'),
                     'source_key' => $movieResource['id'],
                 ])->exists();
-
 
                 if (!$exists) {
                     \DB::connection('mediachain')->table('movies')->insert([
