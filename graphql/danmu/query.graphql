@@ -1,0 +1,6 @@
+type Danmu {
+  id: Int
+  content: String
+  time: String
+  created_at: DateTime
+}
