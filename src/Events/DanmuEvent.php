@@ -38,6 +38,11 @@ class DanmuEvent implements ShouldBroadcast
         return new Channel('danmu_' . $this->movie_id . '_' . $this->series_name);
     }
 
+    public function broadcastAs()
+    {
+        return "movie-danmu";
+    }
+
     public function broadcastWith()
     {
         return [
