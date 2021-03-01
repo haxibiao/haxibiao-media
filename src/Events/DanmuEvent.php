@@ -14,18 +14,18 @@ class DanmuEvent implements ShouldBroadcast
 
     public $danmu;
     public $movie_id;
-    public $series_id;
+    public $series_name;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($danmu, $movie_id, $series_id)
+    public function __construct($danmu, $movie_id, $series_name)
     {
-        $this->danmu     = $danmu;
-        $this->movie_id  = $movie_id;
-        $this->series_id = $series_id;
+        $this->danmu       = $danmu;
+        $this->movie_id    = $movie_id;
+        $this->series_name = $series_name;
     }
 
     /**
@@ -35,17 +35,18 @@ class DanmuEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('danmu_' . $this->movie_id . '_' . $this->series_id);
+        return new Channel('danmu_' . $this->movie_id . '_' . $this->series_name);
     }
 
     public function broadcastWith()
     {
         return [
-            'id'      => $this->danmu->series_id,
-            'content' => $this->danmu->content,
-            'user_id' => $this->danmu->user_id,
-            'color'   => $this->danmu->color,
-            'type'    => $this->danmu->type,
+            'movie_id'    => $this->danmu->movie_id,
+            'series_name' => $this->danmu->series_name,
+            'content'     => $this->danmu->content,
+            'user_id'     => $this->danmu->user_id,
+            'color'       => $this->danmu->color,
+            'type'        => $this->danmu->type,
         ];
     }
 }
