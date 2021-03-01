@@ -2,15 +2,15 @@
 
 namespace Haxibiao\Media\Events;
 
+use Haxibiao\Media\Danmu;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
 class DanmuEvent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, InteractsWithSockets;
 
     public $danmu;
     public $movie_id;
@@ -21,7 +21,7 @@ class DanmuEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($danmu, $movie_id, $series_name)
+    public function __construct(Danmu $danmu, $movie_id, $series_name)
     {
         $this->danmu       = $danmu;
         $this->movie_id    = $movie_id;
@@ -45,8 +45,6 @@ class DanmuEvent implements ShouldBroadcast
             'series_name' => $this->danmu->series_name,
             'content'     => $this->danmu->content,
             'user_id'     => $this->danmu->user_id,
-            'color'       => $this->danmu->color,
-            'type'        => $this->danmu->type,
         ];
     }
 }
