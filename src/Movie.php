@@ -67,7 +67,9 @@ class Movie extends Model
     public static function boot()
     {
         parent::boot();
-        static::addGlobalScope(new MovieStatusScope);
+        if (!in_array(config('app.name'), ['dianyintujie','diudie'])) {
+            static::addGlobalScope(new MovieStatusScope);
+        }
     }
 
     protected $searchable = [
