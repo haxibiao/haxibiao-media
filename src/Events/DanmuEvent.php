@@ -2,30 +2,30 @@
 
 namespace Haxibiao\Media\Events;
 
+use Haxibiao\Media\Danmu;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 
 class DanmuEvent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable, InteractsWithSockets;
 
     public $danmu;
     public $movie_id;
-    public $series_index;
+    public $series_name;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($danmu, $movie_id, $series_index)
+    public function __construct(Danmu $danmu, $movie_id, $series_name)
     {
-        $this->danmu        = $danmu;
-        $this->movie_id     = $movie_id;
-        $this->series_index = $series_index;
+        $this->danmu       = $danmu;
+        $this->movie_id    = $movie_id;
+        $this->series_name = $series_name;
     }
 
     /**
@@ -35,17 +35,21 @@ class DanmuEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('danmu_' . $this->movie_id . '_' . $this->series_index);
+        return new Channel('danmu_' . $this->movie_id . '_' . $this->series_name);
+    }
+
+    public function broadcastAs()
+    {
+        return "movie-danmu";
     }
 
     public function broadcastWith()
     {
         return [
-            'id'      => $this->danmu->series_id,
-            'content' => $this->danmu->content,
-            'user_id' => $this->danmu->user_id,
-            'color'   => $this->danmu->color,
-            'type'    => $this->danmu->type,
+            'movie_id'    => $this->danmu->movie_id,
+            'series_name' => $this->danmu->series_name,
+            'content'     => $this->danmu->content,
+            'user_id'     => $this->danmu->user_id,
         ];
     }
 }

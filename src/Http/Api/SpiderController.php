@@ -2,11 +2,10 @@
 
 namespace Haxibiao\Media\Http\Api;
 
-
-use Haxibiao\Media\Spider;
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
 use Haxibiao\Media\Http\Controller;
+use Haxibiao\Media\Spider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class SpiderController extends Controller
 {
@@ -18,27 +17,27 @@ class SpiderController extends Controller
         $shareTitle = data_get($data, 'raw.raw.item_list.0.share_info.share_title');
 
         if (!empty($sourceUrl)) {
-            $spider = Spider::where('source_url', $sourceUrl)->first();
-            $status = Arr::get($data, 'status');
-            $video  = Arr::get($data, 'video');
-            $comment  = data_get($data, 'raw.comment');
+            $spider  = Spider::where('source_url', $sourceUrl)->first();
+            $status  = Arr::get($data, 'status');
+            $video   = Arr::get($data, 'video');
+            $comment = data_get($data, 'raw.comment');
             if (!is_null($spider) && !$spider->isProcessed()) {
 
                 //重新获取json中的标题
                 if (!empty($shareTitle)) {
                     $spider->setTitle($shareTitle);
                 }
-
+                request()->bearerToken();
                 //重试n次仍然失败
                 if ($status == 'INVALID_STATUS') {
                     $spider->status = Spider::INVALID_STATUS;
                     return $spider->save(); //不删除这个爬虫信息，保留！
                 }
 
-                $dataFromModel        = $spider->data;
-                $dataFromModel['raw'] = data_get($data, 'raw.raw', []);
+                $dataFromModel            = $spider->data;
+                $dataFromModel['raw']     = data_get($data, 'raw.raw', []);
                 $dataFromModel['comment'] = $comment;
-                $spider->data         = $dataFromModel;
+                $spider->data             = $dataFromModel;
                 $spider->save();
 
                 //处理好的视频

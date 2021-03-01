@@ -125,6 +125,12 @@ extend type Query {
     @paginate(defaultCount: 10, builder: "App\\Movie@resolversCategoryMovie")
 
   """
+  作品相关短视频
+  """
+  movieRelationPost(movie_id: Int!): [Post]
+    @field(resolver: "App\\Movie@movieRelationPost")
+
+  """
   获取过滤条件
   """
   getFilters: [MovieFilterData] @field(resolver: "App\\Movie@getFilters")

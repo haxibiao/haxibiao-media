@@ -194,7 +194,7 @@ trait VideoAttrs
      */
     public function getCoverAttribute()
     {
-        $cover = null;
+        $cover = $this->getRawOriginal('cover');
         if (isset($this->json) && isset($this->json->cover)) {
             $cover = $this->json->cover;
         }

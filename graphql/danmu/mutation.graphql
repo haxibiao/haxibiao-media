@@ -1,0 +1,11 @@
+extend type Mutation {
+  """
+  发送弹幕
+  """
+  sendDanmu(
+    content: String!
+    movie_id: ID!
+    series_name: String!
+    time: String
+  ): Danmu @field(resolver: "Haxibiao\\Media\\Danmu@sendDanmu")
+}

@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 use App\User;
 use Haxibiao\Breeze\Exceptions\GQLException;
+use Haxibiao\Content\Post;
 use Haxibiao\Dimension\Dimension;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
@@ -72,6 +73,26 @@ trait MovieResolvers
 
     }
 
+    public function relateMovie($rootValue, array $args, $context, $resolveInfo)
+    {
+        // TODO: 没搜到相关作品，也记录用户输入的影片名字(加个表)
+        // first = null ，即没有匹配的电影
+        $name  = $args['movie_name'];
+        $movie = Movie::where('name', 'like', "%{$name}%")->where('type_name', '<>', '电影解说')->first();
+        if ($movie) {
+            $post = Post::find($args['post_id']);
+            optional($post)->update(['movie_id' => $movie->id]);
+        }
+        return $movie;
+    }
+
+    public function movieRelationPost($root, $args, $content, $info)
+    {
+        $id    = $args['movie_id'];
+        $movie = Movie::find($id);
+        return Post::where('description', 'like', "%$movie->name%")->take(10)->get();
+    }
+
     public function resolversRecommendMovie($root, $args, $content, $info)
     {
         $count = data_get($args, 'count', 7);
@@ -97,6 +118,25 @@ trait MovieResolvers
     {
         $keyword = data_get($args, 'keyword');
         app_track_event('电影', '搜索电影', $keyword);
+        //记录搜索历史
+        // 保存搜索记录
+        $log = SearchLog::firstOrNew([
+            'keyword' => $keyword,
+        ]);
+        // 如果有完全匹配的作品名字
+        if ($movie = Movie::where('name', $keyword)->orderBy('id')->first()) {
+            $log->movie_type   = $movie->type_name;
+            $log->movie_reigon = $movie->country;
+            //记录用户，作为展示的历史搜索数据
+            if (checkUser()) {
+                $log->user_id = getUser()->id;
+            }
+            if (isset($log->id)) {
+                $log->increment('count');
+            }
+        }
+        $log->save();
+
         return static::search($keyword);
 
     }

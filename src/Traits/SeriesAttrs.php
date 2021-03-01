@@ -12,4 +12,12 @@ trait SeriesAttrs
         }
         return $this->source;
     }
+
+    public function getPlayWayAttribute()
+    {
+        return [
+            '默认线路' => $this->play_url,
+            '线路二'  => $this->source,
+        ];
+    }
 }

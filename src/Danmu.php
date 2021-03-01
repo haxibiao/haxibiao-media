@@ -3,9 +3,12 @@
 namespace Haxibiao\Media;
 
 use Haxibiao\Breeze\Model;
+use Haxibiao\Media\Traits\DanmuResolvers;
 
 class Danmu extends Model
 {
-    protected $table      = "danmu";
-    protected $timestamps = false;
+
+    use DanmuResolvers;
+
+    protected $table = "danmu";
 }

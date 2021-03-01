@@ -48,7 +48,7 @@ class MoviePush extends Command
         }
         $qb->chunk(1000, function ($movies) {
             foreach ($movies as $movie) {
-                $series        = $movie->series()->get(['path', 'name', 'bucket']);
+                $series        = $movie->series()->get(['path', 'name', 'bucket', 'source']);
                 $movieResource = $movie->toResource();
                 $seriesJson    = [];
                 $sourceJson    = [];
@@ -67,7 +67,6 @@ class MoviePush extends Command
                     'source'     => config('app.name'),
                     'source_key' => $movieResource['id'],
                 ])->exists();
-
 
                 if (!$exists) {
                     \DB::connection('mediachain')->table('movies')->insert([
@@ -91,6 +90,8 @@ class MoviePush extends Command
                         'source_key'   => $movieResource['id'],
                         'data'         => json_encode($seriesJson),
                         'data_source'  => json_encode($sourceJson),
+                        'created_at'   => now(),
+                        'updated_at'   => now(),
                     ]);
                     $this->info("同步{$movie['name']}数据到 media chain 成功");
                     \Cache::put(self::CACHE_KEY, $movie->id);
