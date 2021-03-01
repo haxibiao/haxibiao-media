@@ -20,6 +20,7 @@ class EditDanmuTable extends Migration
             $table->string('content')->nullable();
             $table->string('series_name')->nullable();
             $table->string('time')->nullable();
+            $table->timestamps();
         });
     }
 
