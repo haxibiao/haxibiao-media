@@ -53,7 +53,7 @@ trait MovieResolvers
         if (isset($movie)) {
             $movie->hits = $movie->hits + 1;
             $movie->save();
-            app_track_event('看视频', '电影详情', data_get($args, 'movie_id'));
+            app_track_event('长视频', '电影详情', data_get($args, 'movie_id'));
             //可播放资源或者收藏夹资源
             if ($movie->status == Movie::PUBLISH || $movie->favorited) {
                 return $movie;
@@ -117,7 +117,7 @@ trait MovieResolvers
     public function resolversSearchMovie($root, $args, $content, $info)
     {
         $keyword = data_get($args, 'keyword');
-        app_track_event('电影', '搜索电影', $keyword);
+        app_track_event('长视频', '搜索电影', $keyword);
         //记录搜索历史
         // 保存搜索记录
         $log = SearchLog::firstOrNew([
