@@ -172,14 +172,12 @@ class MovieController extends Controller
             $series_index = $array[1];
             $series_id    = Movie::query()->find($movie_id)->series->get($series_index - 1)->id;
 
-            //假设目前登录 添加到数据库 目前数据库结构不兼容弹幕结构
             $danmu = Danmu::create([
                 'user_id'   => $author,
+                'movie_id'  => $movie_id,
                 'series_id' => $series_id,
                 'content'   => $text,
-                'color'     => $color,
                 'time'      => $time,
-                'type'      => $type,
             ]);
             $result = [
                 'code' => 0,
