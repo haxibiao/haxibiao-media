@@ -8,7 +8,6 @@ use App\Post;
 use App\SeekMovie;
 use Haxibiao\Breeze\GraphQLTestCase;
 use App\User;
-use Haxibiao\Media\LinkMovie;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 
@@ -223,27 +222,6 @@ class MovieTest extends GraphQLTestCase
         $this->startGraphQL($query, [], $userHeaders);
     }
 
-    /**
-     * 关联电影的视频刷
-     *
-     * note: 该 gql 封装在 haxibiao/content 中
-     * @group  movie
-     * @group  testPostWithMoviesQuery
-     */
-    public function testPostWithMoviesQuery()
-    {
-        $movie = Movie::factory()->create();
-        $post  = Post::factory()->create();
-        $link  =  new LinkMovie();
-        $link->movie_id     = $movie->id;
-        $link->linked_type  = $post->getMorphClass();
-        $link->linked_id    = $post->id;
-        $link->save();
-
-        $query = file_get_contents(__DIR__ . '/Movie/postWithMoviesQuery.graphql');
-        $variables = [];
-        $this->startGraphQL($query, $variables);
-    }
 
     /**
      * 搜索电影

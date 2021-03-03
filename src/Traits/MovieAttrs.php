@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\LinkMovie;
 use App\User;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Arr;
@@ -154,13 +153,4 @@ trait MovieAttrs
         return null;
     }
 
-    public function getCollectionAttribute()
-    {
-        $linkMovie = $this->hasMany(LinkMovie::class)->first();
-        if (!empty($linkMovie)) {
-            return $linkMovie->collection;
-        } else {
-            return null;
-        }
-    }
 }
