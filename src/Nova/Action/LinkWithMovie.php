@@ -2,9 +2,6 @@
 
 namespace Haxibiao\Media\Nova\Action;
 
-use App\Collection as AppCollection;
-use App\Movie;
-use App\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
@@ -34,19 +31,7 @@ class LinkWithMovie extends Action
         }
         $movieIds = array_values(json_decode($fields->movie_id));
         foreach ($models as $linkedModel) {
-            // $linked_type=array_search(get_class($linkedModel),Relation::$morphMap);
-            $linked_type = get_class($linkedModel);
-            //morphmap不可用暂时手动判断type
-            if ($linkedModel instanceof AppCollection) {
-                $linked_type = 'collections';
-            } elseif ($linkedModel instanceof Post) {
-                $linked_type = 'posts';
-
-            } elseif ($linkedModel instanceof Movie) {
-                $linked_type = 'movies';
-            }
-
-            $linkedModel->toggleLink($movieIds, $linkedModel->id, $linked_type);
+            $linkedModel->movie_id = $movieIds[0];
         }
     }
 
