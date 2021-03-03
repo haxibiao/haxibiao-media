@@ -13,15 +13,6 @@ trait WithMedia
 {
     use WithImage;
 
-    /**
-     * 一对多的电影
-     *
-     * @return HasMany
-     */
-    public function movies()
-    {
-        return $this->hasMany(Movie::class);
-    }
 
     /**
      * 一对一的视频，比如视频动态Post

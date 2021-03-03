@@ -3,6 +3,7 @@
 namespace Haxibiao\Media;
 
 use App\Activity;
+use App\Collection;
 use App\Post;
 use App\Series;
 use Haxibiao\Breeze\Model;
@@ -11,7 +12,6 @@ use Haxibiao\Content\Traits\Stickable;
 use Haxibiao\Content\Traits\WithCms;
 use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Scopes\MovieStatusScope;
-use Haxibiao\Media\Traits\CanLinkMovie;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
@@ -27,7 +27,6 @@ class Movie extends Model
     use MovieResolvers;
     use MovieAttrs;
     use WithSns;
-    use CanLinkMovie;
 
     use WithCms;
     use Stickable;
@@ -67,7 +66,7 @@ class Movie extends Model
     public static function boot()
     {
         parent::boot();
-        if (!in_array(config('app.name'), ['dianyintujie','diudie'])) {
+        if (!in_array(config('app.name'), ['dianyintujie', 'diudie'])) {
             static::addGlobalScope(new MovieStatusScope);
         }
     }
@@ -124,5 +123,10 @@ class Movie extends Model
     public function post()
     {
         return $this->hasOne(Post::class);
+    }
+
+    public function collection()
+    {
+        return $this->hasOne(Collection::class);
     }
 }

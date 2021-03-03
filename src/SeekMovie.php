@@ -7,7 +7,6 @@ use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Breeze\Traits\ModelHelpers;
 use Haxibiao\Breeze\User;
-use Haxibiao\Media\Traits\CanLinkMovie;
 use Haxibiao\Media\Traits\WithImage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
@@ -17,7 +16,6 @@ class SeekMovie extends Model
     use HasFactory;
     use WithImage;
     use ModelHelpers;
-    use CanLinkMovie;
     protected $fillable = [
         'name',
         'user_id',
