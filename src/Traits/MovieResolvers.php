@@ -3,9 +3,9 @@
 namespace Haxibiao\Media\Traits;
 
 use App\User;
+use Haxibiao\Breeze\Dimension;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Content\Post;
-use Haxibiao\Dimension\Dimension;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\SearchLog;
