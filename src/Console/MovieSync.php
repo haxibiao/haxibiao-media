@@ -126,6 +126,7 @@ class MovieSync extends Command
                         'lang',
                         'type_name',
                         'data',
+                        'data_source',
                     ]))->save();
                     DB::commit();
                     $success++;
