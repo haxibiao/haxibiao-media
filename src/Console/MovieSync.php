@@ -107,6 +107,8 @@ class MovieSync extends Command
                     //修复count_series null引起sync出错
                     $movie['count_series'] = $movie['count_series'] ?? 0;
                     $movie['introduction'] = $movie['introduction'] ?? '';
+                    //同步type
+                    $movie['type'] = $movie['type_name'];
 
                     $model->forceFill(array_only($movie, [
                         'introduction',
@@ -124,13 +126,13 @@ class MovieSync extends Command
                         'tags',
                         'hits',
                         'lang',
-                        'type_name',
+                        'type',
                         'data',
                         'data_source',
                     ]))->save();
                     DB::commit();
                     $success++;
-                    $this->info('已成功导入：' . $success . '部, 当前导入:' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
+                    $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
                 } catch (\Exception $ex) {
                     dd($ex);
                     DB::rollback();
