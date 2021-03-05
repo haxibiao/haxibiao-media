@@ -190,9 +190,9 @@ extend type Query {
   explainMovieList: [Movie!]
     @paginate(builder: "App\\Movie@explainMovieList", defaultCount: 10)
   """
-  为您推荐
+  影片的相关推荐
   """
-  recommendMovies(movie_id: Int!, first: Int = 6): [Movie!]
+  recommendMovies(movie_id: Int!, limit: Int = 6): [Movie!]
     @field(resolver: "App\\Movie@resolveRecommendMovies")
 }
 

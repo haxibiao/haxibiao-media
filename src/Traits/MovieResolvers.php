@@ -15,11 +15,11 @@ trait MovieResolvers
 {
 
     /**
-     * 为您推荐
+     * 影片的相关推荐
      */
     public function resolveRecommendMovies($root, $args, $content, $info)
     {
-        $first = $args['first'] ?? 6;
+        $first = $args['limit'] ?? 6;
         $movie_id = $args['movie_id'] ?? 0;
         $movie = Movie::findOrFail($movie_id);
         $movies = collect([]);
