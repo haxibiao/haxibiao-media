@@ -13,6 +13,28 @@ use Illuminate\Support\Facades\Storage;
 
 trait MovieResolvers
 {
+
+    public function resolveRelatedMovies($root, $args, $content, $info)
+    {
+        $returnCount = 6;
+        $movie       = Movie::find($args['movie_id']);
+        // 优先同导演
+        $producerMovies = Movie::where('producer', $movie->producer)->take($returnCount)->latest('score')->latest('year')->get();
+        if ($returnCount > $producerMovies->count()) {
+            // 同导演电影不够、合并同国家的
+            $countryMovies = Movie::where('country', $movie->country)->take($returnCount)->latest('score')->latest('year')->get();
+            if ($returnCount > ($producerMovies->count() + $countryMovies->count())) {
+                // 同类型
+                $typeMovies = Movie::where('type_name', $movie->type_name)->take($returnCount)->latest('score')->latest('year')->get();
+                return $producerMovies->merge($countryMovies)->merge($typeMovies)->take(6);
+            } else {
+                return $producerMovies->merge($countryMovies);
+            }
+        } else {
+            return $producerMovies;
+        }
+    }
+
     public function resolversCategoryMovie($root, $args, $content, $info)
     {
         $region = data_get($args, 'region');
