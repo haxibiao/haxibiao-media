@@ -9,6 +9,7 @@ trait DanmuResolvers
 {
     public function sendDanmu($rootValue, array $args, $context, $resolveInfo)
     {
+        request()->bearerToken();
         if ($user = getUser()) {
             $danmu = Danmu::create([
                 'user_id'     => $user->id,
