@@ -190,10 +190,10 @@ extend type Query {
   explainMovieList: [Movie!]
     @paginate(builder: "App\\Movie@explainMovieList", defaultCount: 10)
   """
-  新相关推荐接口
+  为您推荐
   """
-  relatedMovies(movie_id: Int!): [Movie!]
-    @field(resolver: "App\\Movie@resolveRelatedMovies")
+  recommendMovies(movie_id: Int!, first: Int = 6): [Movie!]
+    @field(resolver: "App\\Movie@resolveRecommendMovies")
 }
 
 type MovieShareData {

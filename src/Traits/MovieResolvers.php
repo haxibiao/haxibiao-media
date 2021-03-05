@@ -14,25 +14,68 @@ use Illuminate\Support\Facades\Storage;
 trait MovieResolvers
 {
 
-    public function resolveRelatedMovies($root, $args, $content, $info)
+    /**
+     * 为您推荐
+     */
+    public function resolveRecommendMovies($root, $args, $content, $info)
     {
-        $returnCount = 6;
-        $movie       = Movie::find($args['movie_id']);
-        // 优先同导演
-        $producerMovies = Movie::where('producer', $movie->producer)->take($returnCount)->latest('score')->latest('year')->get();
-        if ($returnCount > $producerMovies->count()) {
-            // 同导演电影不够、合并同国家的
-            $countryMovies = Movie::where('country', $movie->country)->take($returnCount)->latest('score')->latest('year')->get();
-            if ($returnCount > ($producerMovies->count() + $countryMovies->count())) {
-                // 同类型
-                $typeMovies = Movie::where('type_name', $movie->type_name)->take($returnCount)->latest('score')->latest('year')->get();
-                return $producerMovies->merge($countryMovies)->merge($typeMovies)->take(6);
-            } else {
-                return $producerMovies->merge($countryMovies);
+        $first = $args['first'] ?? 6;
+        $movie_id = $args['movie_id'] ?? 0;
+        $movie = Movie::findOrFail($movie_id);
+        $movies = collect([]);
+
+        $qb = Movie::latest('updated_at');
+
+        // 1.优先同演员
+        $actor = explode(",", $movie->actors)[0] ?? null;
+        if (!blank($actor)) {
+            $qb_actor = $qb->where('actors', 'like', "%$actor%");
+            if ($qb_actor->exists()) {
+                $items = $qb_actor->take($first)->get();
+                $movies = $movies->merge($items);
+                if ($movies->count() >= $first) {
+                    return $movies;
+                }
             }
-        } else {
-            return $producerMovies;
         }
+
+        // 2.再同导演
+        if (!blank($movie->producer)) {
+            $qb_producer = $qb->where('producer', $movie->producer);
+            if ($qb_producer->exists()) {
+                $items = $qb_producer->take($first)->get();
+                $movies = $movies->merge($items);
+                if ($movies->count() >= $first) {
+                    return $movies;
+                }
+            }
+        }
+
+        // 3.同国家+同类型
+        if (!blank($movie->country) && !blank($movie->type)) {
+            $qb_country_type = $qb->where('country', $movie->country)->where('type', $movie->type);
+            if ($qb_country_type->exists()) {
+                $items = $qb_country_type->take($first)->get();
+                $movies = $movies->merge($items);
+                if ($movies->count() >= $first) {
+                    return $movies;
+                }
+            }
+        }
+
+        // 4.只同国家
+        if (!blank($movie->country)) {
+            $qb_country = $qb->where('country', $movie->country);
+            if ($qb_country->exists()) {
+                $items = $qb_country->take($first)->get();
+                $movies = $movies->merge($items);
+                if ($movies->count() >= $first) {
+                    return $movies;
+                }
+            }
+        }
+
+        return $movies;
     }
 
     public function resolversCategoryMovie($root, $args, $content, $info)
@@ -41,7 +84,7 @@ trait MovieResolvers
         //类型
         $type = data_get($args, 'type');
         //风格
-        $style   = data_get($args, 'style');
+        $style = data_get($args, 'style');
         $country = data_get($args, 'country');
         //语言
         $lang = data_get($args, 'lang');
@@ -75,7 +118,7 @@ trait MovieResolvers
         if (isset($movie)) {
             $movie->hits = $movie->hits + 1;
             $movie->save();
-            app_track_event('长视频', '电影详情', data_get($args, 'movie_id'));
+            // app_track_event('长视频', '电影详情', data_get($args, 'movie_id'));
             //可播放资源或者收藏夹资源
             if ($movie->status == Movie::PUBLISH || $movie->favorited) {
                 return $movie;
@@ -99,7 +142,7 @@ trait MovieResolvers
     {
         // TODO: 没搜到相关作品，也记录用户输入的影片名字(加个表)
         // first = null ，即没有匹配的电影
-        $name  = $args['movie_name'];
+        $name = $args['movie_name'];
         $movie = Movie::where('name', 'like', "%{$name}%")->where('type_name', '<>', '电影解说')->first();
         if ($movie) {
             $post = Post::find($args['post_id']);
@@ -110,7 +153,7 @@ trait MovieResolvers
 
     public function movieRelationPost($root, $args, $content, $info)
     {
-        $id    = $args['movie_id'];
+        $id = $args['movie_id'];
         $movie = Movie::find($id);
         return Post::where('description', 'like', "%$movie->name%")->take(10)->get();
     }
@@ -122,14 +165,14 @@ trait MovieResolvers
             $user = getUser();
             //收藏过的电影类型
             $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
-            $regions    = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
-            $movies     = Movie::inRandomOrder()
+            $regions = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
+            $movies = Movie::inRandomOrder()
                 ->whereIn('region', $regions)
                 ->take($count)->get();
             $moviesCount = count($movies);
             if ($moviesCount < $count) {
                 $random_movies = Movie::inRandomOrder()->take($count - $moviesCount)->get();
-                $movies        = array_merge($movies->toArray(), $random_movies->toArray());
+                $movies = array_merge($movies->toArray(), $random_movies->toArray());
             }
             return $movies;
         } else {
@@ -147,7 +190,7 @@ trait MovieResolvers
         ]);
         // 如果有完全匹配的作品名字
         if ($movie = Movie::where('name', $keyword)->orderBy('id')->first()) {
-            $log->movie_type   = $movie->type_name;
+            $log->movie_type = $movie->type_name;
             $log->movie_reigon = $movie->country;
             //记录用户，作为展示的历史搜索数据
             if (checkUser()) {
@@ -167,19 +210,19 @@ trait MovieResolvers
     {
         return [
             [
-                'id'            => 'scopes',
-                'filterName'    => '排序选项',
+                'id' => 'scopes',
+                'filterName' => '排序选项',
                 'filterOptions' =>
                 ['全部', '最新', '最热', '评分'],
-                'filterValue'   =>
+                'filterValue' =>
                 ['ALL', 'NEW', 'HOT', 'SCORE'],
             ],
             [
-                'id'            => 'region',
-                'filterName'    => '剧种',
+                'id' => 'region',
+                'filterName' => '剧种',
                 'filterOptions' =>
                 ['全部', '韩剧', '日剧', '美剧', '港剧'],
-                'filterValue'   =>
+                'filterValue' =>
                 ['ALL', 'HAN', 'RI', 'MEI', 'GANG'],
             ],
             //此字段中数据为空,暂时不展示此过滤条件
@@ -192,11 +235,11 @@ trait MovieResolvers
             //     ['ALL', '美国', '香港', '韩国', '日本','印度', '欧美', '泰国'],
             // ],
             [
-                'id'            => 'year',
-                'filterName'    => '年份',
+                'id' => 'year',
+                'filterName' => '年份',
                 'filterOptions' =>
                 ['全部', '2020', '2019', '2018', '2017', '2016'],
-                'filterValue'   =>
+                'filterValue' =>
                 ['ALL', '2020', '2019', '2018', '2017', '2016'],
             ],
             // [
@@ -214,7 +257,7 @@ trait MovieResolvers
     public function resolveMovies($root, array $args, $context, $info)
     {
         $user_id = $args['user_id'] ?? null;
-        $status  = $args['status'] ?? null;
+        $status = $args['status'] ?? null;
         $keyword = $args['keyword'] ?? null;
 
         $qb = Movie::publish();
@@ -266,7 +309,7 @@ trait MovieResolvers
         for ($i = 1; $i <= 3; $i++) {
 
             //如果在cos桶里有这个剧的截图就不重新截图了，直接返回。
-            $file_name  = "movie_cover_{$movie->id}_{$i}";
+            $file_name = "movie_cover_{$movie->id}_{$i}";
             $cover_name = "storage/app/screenshot/" . $file_name . '.jpg';
             if (!is_prod_env()) {
                 $cover_name = 'temp/' . $cover_name;
