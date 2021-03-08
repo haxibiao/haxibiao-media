@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Cache;
 
 trait MovieAttrs
 {
+    public function getIntroductionAttribute()
+    {
+        $str = preg_replace("/<(\/?span.*?)>/si", "", $this->attributes["introduction"]);
+        return $str;
+    }
     /**
      * 影片线路
      */
@@ -193,5 +198,4 @@ trait MovieAttrs
         }
         return null;
     }
-
 }
