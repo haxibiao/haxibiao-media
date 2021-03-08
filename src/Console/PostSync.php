@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Console;
 
+use App\Movie;
 use App\Post;
 use App\User;
 use App\Video;
@@ -56,8 +57,7 @@ class PostSync extends Command
 
         if ($this->option('hasMovie') ?? null) {
             $qb = $qb->join("videos", "videos.id", "=", "posts.video_id")
-                ->whereNotNUll('videos.movie_key');
-            // });
+                ->where('videos.movie_key', '>', 0);
         }
 
         $user_id = User::first()->id;
@@ -77,8 +77,10 @@ class PostSync extends Command
                         'hash' => $post->hash,
                     ]);
 
-                    $movie_id      = str_after($post->movie_key, "_") ?? null;
-                    $collection_id = str_after($post->collection_key, "_") ?? null;
+                    //关联电影信息
+                    $movie    = Movie::where('source_key', $post->movie_key)->first();
+                    $movie_id = empty($movie) ? null : $movie->id;
+                    // $collection_id = str_after($post->collection_key, "_") ?? null;
 
                     //不存在创建，存在直接修改数据
                     if (!$localVideo->exists()) {
@@ -92,7 +94,8 @@ class PostSync extends Command
                             'hash'           => $post->hash,
                             'json'           => json_encode($post->json),
                             'status'         => $post->status,
-                            'collection_key' => 11,
+                            'collection_key' => null,
+                            'is_hd'          => CURLOPT_SSL_FALSESTART,
                             'created_at'     => now(),
                             'updated_at'     => now(),
                         ]);
@@ -103,6 +106,7 @@ class PostSync extends Command
                             'user_id'     => $user_id,
                             'video_id'    => $localVideo->id,
                             'movie_id'    => $movie_id,
+                            'status'      => 1,
                             'review_id'   => str_replace("-", "", today()->toDateString()) . substr(100001, 1, 5),
                             'review_day'  => str_replace("-", "", today()->toDateString()),
                             'created_at'  => now(),
@@ -113,8 +117,9 @@ class PostSync extends Command
                         DB::commit();
                         continue;
                     }
-                    $post->update(['movie_id' => $movie_id]);
-                    $this->info("修改成功" . $movie_id);
+                    // dd($localVideo->post);
+                    // $localVideo->post->update(['movie_id' => $movie_id]);
+                    // $this->info("修改成功" . $movie_id);
                     $count++;
                     DB::commit();
                     Cache::put(self::CACHE_KEY, $post->id);

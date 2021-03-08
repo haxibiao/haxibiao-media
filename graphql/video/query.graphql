@@ -52,6 +52,11 @@ type Video {
     liked: Boolean
 
     """
+    是否高清无水印资源
+    """
+    isHd:Boolean @rename(attribute:"is_hd")
+
+    """
     视频文件的信息
     """
     video_info: VideoInfo

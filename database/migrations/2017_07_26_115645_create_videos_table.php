@@ -39,6 +39,7 @@ class CreateVideosTable extends Migration
             $table->string('vid')->nullable()->index()->comment('视频的VID');
             $table->unsignedInteger('push_url_cache_day')->default(0)->comment('预热URL日');
 
+            $table->boolean('is_hd')->default(true)->comment("有无高清无水印");
 
             //FIXME: 答妹里的字段多的
 

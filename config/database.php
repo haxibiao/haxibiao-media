@@ -24,7 +24,7 @@ return [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),
         'host'           => 'media.haxibiao.com',
-        'port'           => '3306',
+        'port'           => '3366',
         'database'       => 'media',
         'username'       => 'root',
         'password'       => env('DB_PASSWORD_MEDIA', env('DB_PASSWORD')),
