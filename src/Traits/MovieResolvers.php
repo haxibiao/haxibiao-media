@@ -323,32 +323,4 @@ trait MovieResolvers
         return ["title" => "我正在追,推荐你的一定要看完哦~", "covers" => $covers];
     }
 
-
-
-    public function resolveMoviePlayLine($rootValue, array $args, $context, $resolveInfo)
-    {
-        $line_name = $args["line"] ?? "默认";
-        $movie = Movie::query()->where('id', $args['movie_id'])->first();
-
-        //新的负载型的series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
-        $data = $movie->data;
-        if ($line_name == "默认") {
-            foreach ($data as $item) {
-                $ucdn_domain = parse_url($item->url, PHP_URL_HOST);
-                $ucdn_root   = "https://" . $ucdn_domain . "/";
-                $space       = get_space_by_ucdn($ucdn_root);
-                $space_path  = parse_url($item->url, PHP_URL_PATH);
-                $item->url   = "https://$ucdn_domain/m3u8/$space$space_path";
-            }
-
-            $line_name = "默认加速线路";
-        } else if ($line_name == "北美") {
-            $data = json_decode($movie->data_source, true);
-            $line_name = "北美加速线路";
-        }
-        return [
-            "name" => $line_name,
-            "data" => $data,
-        ];
-    }
 }

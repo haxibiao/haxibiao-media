@@ -58,22 +58,7 @@ class MovieController extends Controller
 
         //同步电影模块的站 用 data json读取剧集播放
         if (config('media.movie.enable')) {
-            // $series = $movie->data;
-            //避免 casts appends 对 data属性的影响破坏了剧集播放源关键接口
-            $raw_data = $movie->getRawOriginal('data');
-            $series   = json_decode($raw_data, true) ?? [];
-
-            //旧的series URL: {加速域名}/{space}/{movie_id}/index.m3u8
-            //新的负载型的series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
-            foreach ($series as $item) {
-                $ucdn_domain = parse_url($item['url'], PHP_URL_HOST);
-                $ucdn_root   = "https://" . $ucdn_domain . "/";
-                $space       = get_space_by_ucdn($ucdn_root);
-                $space_path  = parse_url($item['url'], PHP_URL_PATH);
-                $item['url'] = "https://$ucdn_domain/m3u8/$space$space_path";
-            }
-
-            return $series;
+            return $movie->series_urls;
         }
 
         //内涵电影，用源series

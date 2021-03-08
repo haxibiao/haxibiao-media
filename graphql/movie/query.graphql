@@ -1,5 +1,8 @@
 type Movie {
     id: ID
+    """
+    影片名
+    """
     name: String
     """
     简介
@@ -74,9 +77,16 @@ type Movie {
     """
     lang: String
     """
-    剧集
+    剧集的默认线路
     """
     data: JsonType
+
+    """
+    剧集的所有线路
+    """
+    play_lines: [PlayLine!]
+
+    type_name: String
     favorited: Boolean
     created_at: DateTime
     """
@@ -181,11 +191,6 @@ extend type Query {
     影片的相关推荐
     """
     recommendMovies(movie_id: Int!, limit: Int = 6): [Movie!] @field(resolver: "App\\Movie@resolveRecommendMovies")
-
-    """
-    播放线路
-    """
-    getMoviePlayLine(movie_id: Int!, line: String): PlayLine @field(resolver: "App\\Movie@resolveMoviePlayLine")
 }
 
 type MovieShareData {
@@ -193,14 +198,26 @@ type MovieShareData {
     covers: [String]
 }
 
+"""
+影片的线路播放地址
+"""
 type PlayLine {
+    """
+    线路名
+    """
     name: String
     data: JsonType
 }
 
-type MovieData {
-    url: String
+"""
+剧集线路播放地址
+"""
+type SeriePlayLine {
+    """
+    线路名
+    """
     name: String
+    url: String
 }
 
 enum MovieCategory {
