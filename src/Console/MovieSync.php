@@ -60,17 +60,13 @@ class MovieSync extends Command
         $actors    = $this->option('actors');
         $start_id  = $this->option('id');
         $is_neihan = $this->option('is_neihan');
-        $is_neihan = settype($is_neihan, 'boolean');
-
-        $success = 0;
-        $fail    = 0;
-        $total   = 0;
+        $success   = 0;
+        $fail      = 0;
+        $total     = 0;
 
         $qb = DB::connection('mediachain')->table('movies')
             ->when($is_neihan, function ($q) use ($is_neihan) {
-                if ($is_neihan) {
-                    $q->where('is_neihan', 1);
-                } else {
+                if ($is_neihan == 'false') {
                     $q->where('is_neihan', 0);
                 }
             })
