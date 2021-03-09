@@ -41,16 +41,19 @@ trait MovieAttrs
     public function getSeriesUrlsAttribute()
     {
         //避免 casts appends 对 data属性的影响破坏了剧集播放源关键接口
-        $raw_data = $this->getRawOriginal('data');
-        $series = json_decode($raw_data, true) ?? [];
+        $raw_data   = $this->getRawOriginal('data');
+        $raw_series = json_decode($raw_data, true) ?? [];
+
         //旧的series URL: {加速域名}/{space}/{movie_id}/index.m3u8
         //新的负载型的series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
-        foreach ($series as $item) {
+        $series = [];
+        foreach ($raw_series as $item) {
             $ucdn_domain = parse_url($item['url'], PHP_URL_HOST);
-            $ucdn_root = "https://" . $ucdn_domain . "/";
-            $space = get_space_by_ucdn($ucdn_root);
-            $space_path = parse_url($item['url'], PHP_URL_PATH);
+            $ucdn_root   = "https://" . $ucdn_domain . "/";
+            $space       = get_space_by_ucdn($ucdn_root);
+            $space_path  = parse_url($item['url'], PHP_URL_PATH);
             $item['url'] = "https://$ucdn_domain/m3u8/$space$space_path";
+            $series[]    = $item;
         }
         return $series;
     }
@@ -76,7 +79,7 @@ trait MovieAttrs
     {
         if ($user = checkUser()) {
             return MovieHistory::where([
-                'user_id' => $user->id,
+                'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->exists();
         }
@@ -124,7 +127,7 @@ trait MovieAttrs
             $seriesHistories = \App\MovieHistory::where('user_id', $user->id)
                 ->where('movie_id', $this->id)->get();
             foreach ($seriesHistories as $seriesHistory) {
-                $index = $seriesHistory->series_id;
+                $index                          = $seriesHistory->series_id;
                 $sortedSeries[$index]->progress = $seriesHistory->progress;
             }
         }
@@ -146,9 +149,9 @@ trait MovieAttrs
     public function getLastWatchSeriesAttribute()
     {
         if (checkUser()) {
-            $user = getUser();
+            $user    = getUser();
             $history = MovieHistory::where([
-                'user_id' => $user->id,
+                'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->latest()->first();
             if (isset($history)) {
@@ -160,9 +163,9 @@ trait MovieAttrs
     public function getLastWatchProgressAttribute()
     {
         if (checkUser()) {
-            $user = getUser();
+            $user    = getUser();
             $history = MovieHistory::where([
-                'user_id' => $user->id,
+                'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->latest()->first();
             if (isset($history)) {
@@ -184,7 +187,7 @@ trait MovieAttrs
     //伪装用户发布该电影，缓存三天为该用户发布
     public function getUserAttribute()
     {
-        $cache = Cache::store('redis');
+        $cache    = Cache::store('redis');
         $cacheKey = sprintf('movie:id:%s', $this->id);
         if ($cache->has($cacheKey)) {
             $user_id = $cache->get($cacheKey);
