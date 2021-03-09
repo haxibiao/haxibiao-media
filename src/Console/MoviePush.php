@@ -78,6 +78,7 @@ class MoviePush extends Command
                         'producer'     => $movieResource['producer'],
                         'region'       => $movieResource['region'],
                         'cover'        => $movieResource['cover'],
+                        'is_neihan'    => $movieResource['is_neihan'],
                         'rank'         => $movieResource['rank'],
                         'country'      => $movieResource['country'],
                         'subname'      => $movieResource['subname'],

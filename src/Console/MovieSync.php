@@ -14,7 +14,7 @@ class MovieSync extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:sync {--source=内涵电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id}';
+    protected $signature = 'movie:sync {--is_neihan=false} {--source=内涵电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id}';
 
     /**
      * The console command description.
@@ -52,19 +52,28 @@ class MovieSync extends Command
             return $this->error("没有movies表");
         }
 
-        $region   = $this->option('region');
-        $type     = $this->option('type');
-        $style    = $this->option('style');
-        $year     = $this->option('year');
-        $producer = $this->option('producer');
-        $actors   = $this->option('actors');
-        $start_id = $this->option('id');
+        $region    = $this->option('region');
+        $type      = $this->option('type');
+        $style     = $this->option('style');
+        $year      = $this->option('year');
+        $producer  = $this->option('producer');
+        $actors    = $this->option('actors');
+        $start_id  = $this->option('id');
+        $is_neihan = $this->option('is_neihan');
+        $is_neihan = settype($is_neihan, 'boolean');
 
         $success = 0;
         $fail    = 0;
         $total   = 0;
 
         $qb = DB::connection('mediachain')->table('movies')
+            ->when($is_neihan, function ($q) use ($is_neihan) {
+                if ($is_neihan) {
+                    $q->where('is_neihan', 1);
+                } else {
+                    $q->where('is_neihan', 0);
+                }
+            })
             ->when($start_id, function ($q) use ($start_id) {
                 $q->where('id', '>', $start_id);})
             ->when($region, function ($q) use ($region) {
@@ -99,7 +108,7 @@ class MovieSync extends Command
                     $model = Movie::firstOrNew([
                         'name'       => data_get($movie, 'name'),
                         'source'     => $this->option('source'),
-                        'source_key' => data_get($movie, 'id'),
+                        'source_key' => data_get($movie, 'source_key'),
                     ]);
                     //修复字段数据过长的问题
                     $movie['producer'] = str_limit($movie['producer'], 97);
