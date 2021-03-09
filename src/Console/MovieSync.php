@@ -14,7 +14,7 @@ class MovieSync extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:sync {--is_neihan=false} {--source=内涵电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id}';
+    protected $signature = 'movie:sync {--is_neihan=false} {--source=内函电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id}';
 
     /**
      * The console command description.
