@@ -40,7 +40,7 @@ class MoviePush extends Command
     public function handle()
     {
         // 从小到大push数据
-        $qb    = Movie::query()->oldest('id')->where('status', 1);
+        $qb    = Movie::query()->oldest('id')->where('status', 1)->withoutGlobalScopes([new \Haxibiao\Media\Scopes\MovieStatusScope]);
         $maxid = \Cache::get(self::CACHE_KEY);
         // 跳过已push的数据，从上次结束的地方开始push
         if ($maxid) {
@@ -78,7 +78,7 @@ class MoviePush extends Command
                         'producer'     => $movieResource['producer'],
                         'region'       => $movieResource['region'],
                         'cover'        => $movieResource['cover'],
-                        'is_neihan'    => $movieResource['is_neihan'],
+                        'is_neihan'    => $movieResource['is_neihan'] == true ? 1 : 0,
                         'rank'         => $movieResource['rank'],
                         'country'      => $movieResource['country'],
                         'subname'      => $movieResource['subname'],
