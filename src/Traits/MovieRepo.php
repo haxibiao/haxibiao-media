@@ -2,7 +2,10 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\Post;
+use App\Video;
 use Haxibiao\Media\Movie;
+use Illuminate\Support\Facades\Storage;
 
 trait MovieRepo
 {
@@ -69,6 +72,39 @@ trait MovieRepo
         // 拼接结尾
         $newIndexM3u8 = $m3u8Prefix . $newTSList . "#EXT-X-ENDLIST\n";
         return $newIndexM3u8;
+    }
+
+    /**
+     * 存储剪辑影片到动态
+     */
+    public static function storeClipMovie($user, $movie, $m3u8, $postTitle)
+    {
+        // 文件名 = source_key + 当前时间戳.m3u8
+        $filename    = $movie->source_key . '-' . time() . ".m3u8";
+        $cdn         = rand_pick_ucdn_domain();
+        $newM3u8Path = '/clip/' . $filename;
+        // 影片剪辑都存储到 othermovie bucket 里面
+        $playUrl = "{$cdn}m3u8/othermovie{$newM3u8Path}";
+        Storage::disk('othermovie')->put($newM3u8Path, $m3u8, 'public');
+        // 计算视频时长
+        preg_match_all('/\d+[.]\d+/', $m3u8, $arr);
+        $duration = array_sum($arr[0]);
+        $duration = (int) $duration;
+        // 存储成视频
+        $video = Video::create([
+            'user_id'  => $user->id,
+            'duration' => $duration,
+            'disk'     => 'othermovie',
+            'path'     => $playUrl,
+        ]);
+        // 存储成动态
+        $post = Post::create([
+            'user_id'     => $user->id,
+            'video_id'    => $video->id,
+            'description' => $postTitle,
+            'movie_id'    => $movie->id,
+        ]);
+        return $post;
     }
 
     public static function getCategories()

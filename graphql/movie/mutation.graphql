@@ -4,4 +4,14 @@ extend type Mutation {
   """
   relateMovie(movie_name: String!, post_id: Int!): Movie
     @field(resolver: "App\\Movie@relateMovie")
+  """
+  剪辑电影
+  """
+  clipMovie(
+    targetM3u8: String!
+    postTitle: String!
+    movie_id: Int!
+    startTime: Int!
+    endTime: Int!
+  ): Post @field(resolver: "App\\Movie@resolveClipMovie") @guard
 }
