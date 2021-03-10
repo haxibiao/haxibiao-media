@@ -69,12 +69,16 @@ class MovieController extends Controller
                 (clone $qb)->where('region', '韩剧')->take(12)->get(),
                 'hanju',
             ],
-            '怀旧老港剧' => [
-                (clone $qb)->where('region', '港剧')->latest('id')->take(6)->get(),
-                (clone $qb)->where('region', '港剧')->latest('id')->take(12)->get(),
-                'gangju',
-            ],
         ];
+        if(is_null(data_get(app('cms_site'),'company',null))){
+			$categoryMovies = array_merge($categoryMovies,[
+				'怀旧老港剧' => [
+					(clone $qb)->where('region', '港剧')->latest('id')->take(6)->get(),
+					(clone $qb)->where('region', '港剧')->latest('id')->take(12)->get(),
+					'gangju',
+				]
+			]);
+		}
         $cate_ranks = [
             '美剧' => [
                 'cate'   => 'meiju',
@@ -88,11 +92,15 @@ class MovieController extends Controller
                 'cate'   => 'hanju',
                 'movies' => (clone $qb)->where('region', '韩剧')->offset(18)->take(8)->get(),
             ],
-            '港剧' => [
-                'cate'   => 'gangju',
-                'movies' => (clone $qb)->where('region', '港剧')->offset(18)->take(8)->get(),
-            ],
         ];
+		if(is_null(data_get(app('cms_site'),'company',null))){
+			$cate_ranks = array_merge($cate_ranks,[
+				'港剧' => [
+					'cate'   => 'gangju',
+					'movies' => (clone $qb)->where('region', '港剧')->offset(18)->take(8)->get(),
+				],
+			]);
+		}
         return view('movie.index', [
             'hotMovies'      => $hotMovies,
             'categoryMovies' => $categoryMovies,
