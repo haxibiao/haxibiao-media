@@ -94,6 +94,11 @@ class Movie extends Model
         return $this->hasMany(Series::class);
     }
 
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
     public function scopeEnable($query)
     {
         return $query->whereIn('status', [self::PUBLISH])->whereNotNull('cover');

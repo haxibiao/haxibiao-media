@@ -2,7 +2,9 @@
 
 namespace Haxibiao\Media\Nova;
 
+use Haxibiao\Content\Nova\Post;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Select;
@@ -55,6 +57,7 @@ class Movie extends Resource
             Text::make('年份', 'year')->hideWhenCreating(),
             Text::make('分类', 'type')->hideWhenCreating(),
             Text::make('风格', 'style')->hideWhenCreating(),
+            HasMany::make('关联动态', 'posts', Post::class),
             Select::make('状态', 'status')->options([
                 1  => '公开',
                 0  => '草稿',

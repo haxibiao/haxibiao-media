@@ -59,12 +59,12 @@ trait MovieRepo
                 // 还没到指定裁剪TS
                 continue;
             }
+            // 拼接新ts路径
+            $newTSList = $newTSList . "#EXTINF:{$time},\n" . "{$url}\n";
             // 指定结束时间已大于总视频时长
             if ($startTsTime >= $endTime) {
                 break;
             }
-            // 拼接新ts路径
-            $newTSList = $newTSList . "#EXTINF:{$time},\n" . "{$url}\n";
         }
         // 拼接结尾
         $newIndexM3u8 = $m3u8Prefix . $newTSList . "#EXT-X-ENDLIST\n";
