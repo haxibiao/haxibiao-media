@@ -20,58 +20,84 @@ trait MovieResolvers
      */
     public function resolveRecommendMovies($root, $args, $content, $info)
     {
-        $first    = $args['limit'] ?? 6;
+        $first = $args['limit'] ?? 6;
+        //不同类型的权重（名称,导演，演员）
+        $rankNmae  = 3;
+        $rankOther = 1;
+
+        //查询依赖的movie对象
         $movie_id = $args['movie_id'] ?? 0;
         $movie    = Movie::findOrFail($movie_id);
         $movies   = collect([]);
+        $qb       = Movie::latest('updated_at');
 
-        $qb = Movie::latest('updated_at');
+        //1.优先电影名匹配（xxx第一部 xxx第二部）
+        if (!empty($movie->producer)) {
+            $query = Movie::publish()
+                ->where('id', '!=', $movie->id);
 
-        // 1.优先同演员
+            if (mb_strlen($movie->name) >= 6 || in_array(mb_substr($movie->name, -1), ['集', '季', '部'])) {
+                $query = $query->where('name', 'like', mb_substr($movie->name, 0, -3) . "%")->take($first);
+            } else {
+                if (is_numeric(mb_substr($movie->name, -1))) {
+                    $query = $query->where('name', 'like', mb_substr($movie->name, 0, -1) . "%")->take($first);
+                }
+            }
+
+            $similarMovies = $query->get();
+            foreach ($similarMovies as $similarMovie) {
+                similar_text($movie->name, $similarMovie->name, $percent);
+                //影片名字相似度百分之80-以上差不多就是第一部第二部的关系
+                if ($percent > 80) {
+                    $movies->push($similarMovie);
+                    if (count($movies) >= $rankNmae) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 2.优先同演员
         $actor = explode(",", $movie->actors)[0] ?? null;
         if (!blank($actor)) {
-            $qb_actor = $qb->where('actors', 'like', "%$actor%");
+            $qb       = Movie::latest('updated_at');
+            $qb_actor = $qb->where('actors', 'like', "%$actor%")
+                ->where('id', '!=', $movie->id)
+                ->whereNotIn('id', $movies->pluck('id')->toArray());
             if ($qb_actor->exists()) {
-                $items  = $qb_actor->take($first)->get();
+                $items  = $qb_actor->take($rankOther)->get();
                 $movies = $movies->merge($items);
-                if ($movies->count() >= $first) {
-                    return $movies;
-                }
             }
         }
-
-        // 2.再同导演
+        // 3.再同导演
         if (!blank($movie->producer)) {
-            $qb_producer = $qb->where('producer', $movie->producer);
+            $qb          = Movie::latest('updated_at');
+            $qb_producer = $qb->where('producer', $movie->producer)
+                ->where('id', '!=', $movie->id)
+                ->whereNotIn('id', $movies->pluck('id')->toArray());
             if ($qb_producer->exists()) {
-                $items  = $qb_producer->take($first)->get();
+                $items  = $qb_producer->take($rankOther)->get();
                 $movies = $movies->merge($items);
-                if ($movies->count() >= $first) {
-                    return $movies;
-                }
             }
         }
+        // dd($movies->pluck('name')->toarray());
 
-        // 3.同国家+同类型
-        if (!blank($movie->country) && !blank($movie->type)) {
-            $qb_country_type = $qb->where('country', $movie->country)->where('type', $movie->type);
-            if ($qb_country_type->exists()) {
-                $items  = $qb_country_type->take($first)->get();
-                $movies = $movies->merge($items);
-                if ($movies->count() >= $first) {
-                    return $movies;
-                }
-            }
-        }
+        if (count($movies) < $first) {
+            // 4.同国家+同类型
+            if (!empty($movie->country) || !empty($movie->type) || !empty($movie->region)) {
+                $qb              = Movie::latest('updated_at');
+                $qb_country_type = $qb
+                    ->where('id', '<', $movie->id)
+                    ->whereNotIn('id', $movies->pluck('id')->toArray())
+                    ->where(function ($q) use ($movie) {
+                        $q->orWhere('region', $movie->region)
+                            ->orWhere('country', $movie->country)
+                            ->orWhere('type', $movie->type);
+                    });
 
-        // 4.只同国家
-        if (!blank($movie->country)) {
-            $qb_country = $qb->where('country', $movie->country);
-            if ($qb_country->exists()) {
-                $items  = $qb_country->take($first)->get();
-                $movies = $movies->merge($items);
-                if ($movies->count() >= $first) {
-                    return $movies;
+                if ($qb_country_type->exists()) {
+                    $items  = $qb_country_type->take(($first - count($movies)))->get();
+                    $movies = $movies->merge($items);
                 }
             }
         }

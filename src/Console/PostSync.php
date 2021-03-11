@@ -95,7 +95,7 @@ class PostSync extends Command
                             'json'           => json_encode($post->json),
                             'status'         => $post->status,
                             'collection_key' => null,
-                            'is_hd'          => CURLOPT_SSL_FALSESTART,
+                            'is_hd'          => true,
                             'created_at'     => now(),
                             'updated_at'     => now(),
                         ]);
