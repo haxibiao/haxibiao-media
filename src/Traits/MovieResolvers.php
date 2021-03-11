@@ -32,19 +32,22 @@ trait MovieResolvers
         $qb       = Movie::latest('updated_at');
 
         //1.优先电影名匹配（xxx第一部 xxx第二部）
-        if (!empty($movie->producer)) {
-            $query = Movie::publish()
-                ->where('id', '!=', $movie->id);
+        $query = Movie::publish()
+            ->where('id', '!=', $movie->id);
 
-            if (mb_strlen($movie->name) >= 6 || in_array(mb_substr($movie->name, -1), ['集', '季', '部'])) {
-                $query = $query->where('name', 'like', mb_substr($movie->name, 0, -3) . "%")->take($first);
-            } else {
-                if (is_numeric(mb_substr($movie->name, -1))) {
-                    $query = $query->where('name', 'like', mb_substr($movie->name, 0, -1) . "%")->take($first);
-                }
+        $likeName = false;
+        if (mb_strlen($movie->name) >= 6 || in_array(mb_substr($movie->name, -1), ['集', '季', '部'])) {
+            $query    = $query->where('name', 'like', mb_substr($movie->name, 0, -3) . "%");
+            $likeName = true;
+        } else {
+            if (is_numeric(mb_substr($movie->name, -1))) {
+                $query    = $query->where('name', 'like', mb_substr($movie->name, 0, -1) . "%");
+                $likeName = true;
             }
+        }
 
-            $similarMovies = $query->get();
+        if ($likeName) {
+            $similarMovies = $query->take($first)->get();
             foreach ($similarMovies as $similarMovie) {
                 similar_text($movie->name, $similarMovie->name, $percent);
                 //影片名字相似度百分之80-以上差不多就是第一部第二部的关系
