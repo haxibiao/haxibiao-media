@@ -84,8 +84,9 @@ trait MovieResolvers
         $user  = Auth::user();
         $movie = Movie::findOrFail($args['movie_id']);
         // 获取新m3u8
-        $newM3u8 = MovieRepo::ClipMovie($args['targetM3u8'], $args['startTime'], $args['endTime']);
-        $post    = MovieRepo::storeClipMovie($user, $movie, $newM3u8, $args['postTitle']);
+        $newM3u8    = MovieRepo::ClipMovie($args['targetM3u8'], $args['startTime'], $args['endTime']);
+        $seiresName = MovieRepo::findSeriesName($args['targetM3u8'], $movie);
+        $post       = MovieRepo::storeClipMovie($user, $movie, $newM3u8, $args['postTitle'], $seiresName);
         return $post;
     }
 

@@ -5,6 +5,7 @@ namespace Haxibiao\Media\Traits;
 use App\Post;
 use App\Video;
 use Haxibiao\Media\Movie;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 trait MovieRepo
@@ -77,7 +78,7 @@ trait MovieRepo
     /**
      * 存储剪辑影片到动态
      */
-    public static function storeClipMovie($user, $movie, $m3u8, $postTitle)
+    public static function storeClipMovie($user, $movie, $m3u8, $postTitle, $seriseName)
     {
         // 文件名 = source_key + 当前时间戳.m3u8
         $filename    = $movie->source_key . '-' . time() . ".m3u8";
@@ -104,7 +105,29 @@ trait MovieRepo
             'description' => $postTitle,
             'movie_id'    => $movie->id,
         ]);
+        DB::connection('mediachain')->table('videos')->insert([
+            'movie_key'   => $movie->source_key,
+            'source_name' => $seriseName,
+            'duration'    => $duration,
+            'url'         => $playUrl,
+            'title'       => $postTitle,
+            'created_at'  => now(),
+            'updated_at'  => now(),
+        ]);
         return $post;
+    }
+
+    /**
+     * 根据m3u8地址获取目标集名字
+     */
+    public static function findSeriesName($m3u8, $movie)
+    {
+        $series = $movie->data;
+        foreach ($series as $item) {
+            if ($item->url == $m3u8) {
+                return $item->name;
+            }
+        }
     }
 
     public static function getCategories()

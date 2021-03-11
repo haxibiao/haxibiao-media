@@ -77,15 +77,16 @@ class MovieController extends Controller
 
     public function cilp(Request $request)
     {
-        $user      = \Auth::user();
-        $start     = $request->get('start_time');
-        $end       = $request->get('end_time');
-        $postTitle = $request->get('post_title');
-        $movie_id  = $request->get('movie_id');
-        $m3u8      = $request->get('m3u8');
-        $movie     = Movie::find($movie_id);
-        $newM3u8   = MovieRepo::ClipMovie($m3u8, $start, $end);
-        $post      = MovieRepo::storeClipMovie($user, $movie, $newM3u8, $postTitle);
+        $user       = \Auth::user();
+        $start      = $request->get('start_time');
+        $end        = $request->get('end_time');
+        $postTitle  = $request->get('post_title');
+        $movie_id   = $request->get('movie_id');
+        $m3u8       = $request->get('m3u8');
+        $movie      = Movie::find($movie_id);
+        $seriesName = MovieRepo::findSeriesName($m3u8, $movie);
+        $newM3u8    = MovieRepo::ClipMovie($m3u8, $start, $end);
+        $post       = MovieRepo::storeClipMovie($user, $movie, $newM3u8, $postTitle, $seriesName);
         return returnData($post->toArray(), '剪辑成功', 200);
     }
 
