@@ -82,7 +82,7 @@ class ArticlePush extends Command
                         'status'      => $article->status,
                         'source'      => env('APP_DOMAIN'),
                         'source_id'   => $article->id,
-                        'json'        => $article->json,
+                        'json'        => json_encode($article->json),
                         'created_at'  => now(),
                         'updated_at'  => now(),
                     ]);
