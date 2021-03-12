@@ -186,6 +186,9 @@ trait VideoAttrs
      */
     public function getDurationAttribute(): float
     {
+        if ($duration = $this->getRawOriginal('duration') ?? null) {
+            return $duration;
+        }
         return $this->json->duration ?? 0;
     }
 
