@@ -118,6 +118,10 @@ type Movie {
     """
     post: Post
     """
+    上传用户
+    """
+    user: User
+    """
     是否已经观看过了/正在观看
     """
     is_viewed: Boolean

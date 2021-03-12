@@ -134,4 +134,9 @@ class Movie extends Model
     {
         return $this->hasOne(Collection::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
