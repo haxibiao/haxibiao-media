@@ -70,15 +70,16 @@ class MovieController extends Controller
                 'hanju',
             ],
         ];
-        if(is_null(data_get(app('cms_site'),'company',null))){
-			$categoryMovies = array_merge($categoryMovies,[
-				'怀旧老港剧' => [
-					(clone $qb)->where('region', '港剧')->latest('id')->take(6)->get(),
-					(clone $qb)->where('region', '港剧')->latest('id')->take(12)->get(),
-					'gangju',
-				]
-			]);
-		}
+//		注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
+//        if(is_null(data_get(app('cms_site'),'company',null))){
+//			$categoryMovies = array_merge($categoryMovies,[
+//				'怀旧老港剧' => [
+//					(clone $qb)->where('region', '港剧')->latest('id')->take(6)->get(),
+//					(clone $qb)->where('region', '港剧')->latest('id')->take(12)->get(),
+//					'gangju',
+//				]
+//			]);
+//		}
         $cate_ranks = [
             '美剧' => [
                 'cate'   => 'meiju',
@@ -93,14 +94,15 @@ class MovieController extends Controller
                 'movies' => (clone $qb)->where('region', '韩剧')->offset(18)->take(8)->get(),
             ],
         ];
-		if(is_null(data_get(app('cms_site'),'company',null))){
-			$cate_ranks = array_merge($cate_ranks,[
-				'港剧' => [
-					'cate'   => 'gangju',
-					'movies' => (clone $qb)->where('region', '港剧')->offset(18)->take(8)->get(),
-				],
-			]);
-		}
+//		注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
+//		if(is_null(data_get(app('cms_site'),'company',null))){
+//			$cate_ranks = array_merge($cate_ranks,[
+//				'港剧' => [
+//					'cate'   => 'gangju',
+//					'movies' => (clone $qb)->where('region', '港剧')->offset(18)->take(8)->get(),
+//				],
+//			]);
+//		}
         return view('movie.index', [
             'hotMovies'      => $hotMovies,
             'categoryMovies' => $categoryMovies,
