@@ -16,9 +16,9 @@ use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
 use Haxibiao\Sns\Traits\WithSns;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Builder;
 
 class Movie extends Model
 {
@@ -70,23 +70,25 @@ class Movie extends Model
         if (!in_array(config('app.name'), ['dianyintujie', 'diudie'])) {
             static::addGlobalScope(new MovieStatusScope);
         }
-		static::addGlobalScope('avaiable',function (Builder $builder){
-			/**
-			 * 公司实名备案的域名不展示港剧，避免版权风险
-			 * https://pm.haxifang.com/browse/NHY-380
-			 */
-//			注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
-//			$unRecorded = is_null(
-//				data_get(app('cms_site'), 'company', null)
-//			);
-//			if($unRecorded){
-//				return $builder;
-//			}
-			$builder->whereNotIn('region',['未知分类','港剧'])->where(function ($query){
-				$query->whereIn('country', ['中国大陆', '中国', ' 香港', '大陆'])->where('region', '解说')
-					->orWhereNotNull('region');
-			});
-		});
+        if (!in_array(config('app.name'), ['内函电影'])) {
+            static::addGlobalScope('avaiable', function (Builder $builder) {
+                /**
+                 * 公司实名备案的域名不展示港剧，避免版权风险
+                 * https://pm.haxifang.com/browse/NHY-380
+                 */
+                //            注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
+                //            $unRecorded = is_null(
+                //                data_get(app('cms_site'), 'company', null)
+                //            );
+                //            if($unRecorded){
+                //                return $builder;
+                //            }
+                $builder->whereNotIn('region', ['未知分类', '港剧'])->where(function ($query) {
+                    $query->whereIn('country', ['中国大陆', '中国', ' 香港', '大陆'])->where('region', '解说')
+                        ->orWhereNotNull('region');
+                });
+            });
+        }
     }
 
     protected $searchable = [
