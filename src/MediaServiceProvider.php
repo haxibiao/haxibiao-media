@@ -15,6 +15,17 @@ class MediaServiceProvider extends ServiceProvider
             require_once $filename;
         }
 
+        //合并view paths
+        if (!app()->configurationIsCached()) {
+            $view_paths = array_merge(
+                //APP 的 views 最先匹配
+                config('view.paths'),
+                //然后 匹配 breeze的默认views
+                [media_path('resources/views')]
+            );
+            config(['view.paths' => $view_paths]);
+        }
+
         $this->commands([
             Console\InstallCommand::class,
             Console\PublishCommand::class,
