@@ -43,6 +43,7 @@ class MediaServiceProvider extends ServiceProvider
             Console\ComicPush::class,
             Console\VideoSync::class,
             Console\PublishConfig::class,
+            Console\CrawlDouyinVideos::class,
         ]);
         $this->bindPathsInContainer();
 
