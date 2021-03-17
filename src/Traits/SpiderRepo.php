@@ -81,7 +81,7 @@ trait SpiderRepo
         return $spider;
     }
 
-    public static function fastProcessDouyinVideo($user, $shareLink)
+    public static function fastProcessDouyinVideo($user, $shareLink, $content)
     {
         $title = static::extractTitle($shareLink);
         //提取URL
@@ -93,7 +93,7 @@ trait SpiderRepo
         $video      = Video::create(['path' => $videoPath, 'title' => $title]);
         $createData = [
             'user_id'     => $user->id,
-            'description' => $title,
+            'description' => $content ?? $title,
             'video_id'    => $video->id,
         ];
         $post = Post::create($createData);

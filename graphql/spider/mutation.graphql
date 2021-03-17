@@ -18,7 +18,7 @@ extend type Mutation {
     tag_names: [String]
   ): Spider @field(resolver: "App\\Spider@resolveShareLink")
 
-  fastResolverDouyinVideo(share_link: String!): Post
+  fastResolverDouyinVideo(share_link: String!, content: String): Post
     @field(resolver: "App\\Spider@fastResolverDouyinVideo")
 
   """

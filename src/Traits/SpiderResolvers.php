@@ -42,8 +42,9 @@ trait SpiderResolvers
 
     public function fastResolverDouyinVideo($root, $args, $context, $info)
     {
-        $user = getUser();
-        return SpiderRepo::fastProcessDouyinVideo($user, $args['share_link']);
+        $user    = getUser();
+        $content = data_get($args, 'content');
+        return SpiderRepo::fastProcessDouyinVideo($user, $args['share_link'], $content);
     }
 
     public function crawlCollection($root, $args, $context, $info)

@@ -18,7 +18,7 @@ trait MovieResolvers
     public function resolveMovieExists($root, $args, $content, $info)
     {
         $name = $args['input'];
-        return Movie::where('name', 'like', "%{$name}%")->where('type_name', '<>', '电影解说')->first();
+        return Movie::withoutGlobalScopes()->where('name', 'like', "%{$name}%")->where('type_name', '<>', '电影解说')->first();
     }
 
     /**
