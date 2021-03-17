@@ -6,11 +6,12 @@ function hash_vod_url($path)
     return "http://hashvod-1251052432.file.myqcloud.com/" . $path;
 }
 
-function media_path($path)
-{
-    return __DIR__ . "/../../" . $path;
+if (!function_exists('media_path')) {
+    function media_path($path)
+    {
+        return __DIR__ . "/../../" . $path;
+    }
 }
-
 /**
  * media的laravel mix pack后的资源地址
  */
