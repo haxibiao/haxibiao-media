@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Storage;
 trait MovieResolvers
 {
 
+    public function resolveMovieExists($root, $args, $content, $info)
+    {
+        $name = $args['input'];
+        return Movie::where('name', 'like', "%{$name}%")->where('type_name', '<>', '电影解说')->first();
+    }
+
     /**
      * 影片的相关推荐
      */
