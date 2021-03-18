@@ -83,10 +83,12 @@ class Movie extends Model
                 //            if($unRecorded){
                 //                return $builder;
                 //            }
-                $builder->whereNotIn('region', ['未知分类', '港剧'])->where(function ($query) {
-                    $query->whereIn('country', ['中国大陆', '中国', ' 香港', '大陆'])->where('region', '解说')
-                        ->orWhereNotNull('region');
-                });
+                $builder->whereNotIn('region', ['未知分类', '港剧'])
+                    ->where(function ($query) {
+                        $query->whereNotIn('country', ['中国大陆', '中国', '香港', '大陆'])->where('region', '解说')
+                            ->orWhereNotNull('region');
+                    })
+                ;
             });
         }
     }
