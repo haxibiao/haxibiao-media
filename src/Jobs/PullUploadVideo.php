@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Jobs;
 
 use App\Post;
+use App\Spider;
 use App\Video;
 use Haxibiao\Helpers\utils\VodUtils;
 use Illuminate\Bus\Queueable;
@@ -80,6 +81,10 @@ class PullUploadVideo implements ShouldQueue
             $this->post->update([
                 'status' => Post::PUBLISH_STATUS,
             ]);
+            Spider::where([
+                'spider_id'   => $this->post->id,
+                'spider_type' => 'posts',
+            ])->update('status', Spider::PROCESSED_STATUS);
         } catch (\Throwable $th) {
             $this->post->update([
                 'status' => Post::DELETED_STATUS,

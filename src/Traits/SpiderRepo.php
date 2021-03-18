@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 use App\Post;
 use GuzzleHttp\Client;
+use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Helpers\utils\QcloudUtils;
 use Haxibiao\Media\Jobs\MediaProcess;
@@ -85,7 +86,10 @@ trait SpiderRepo
     {
         $title = static::extractTitle($shareLink);
         //提取URL
-        $dyUrl      = static::extractURL($shareLink);
+        $dyUrl = static::extractURL($shareLink);
+        if (Spider::where('source_url', $dyUrl)->exists()) {
+            throw new GQLException('该视频已被采集，请再换一个！');
+        }
         $url        = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $dyUrl);
         $data       = json_decode(file_get_contents($url), true)['data'];
         $videoPath  = $data['video']['play_url'];
@@ -97,6 +101,13 @@ trait SpiderRepo
             'video_id'    => $video->id,
         ];
         $post = Post::create($createData);
+        Spider::firstOrCreate([
+            'spider_id'   => $post->id,
+            'user_id'     => $user->id,
+            'spider_type' => 'posts',
+            'raw'         => $data,
+            'source_url'  => $dyUrl,
+        ]);
         dispatch(new PullUploadVideo($video, $post));
         return $post;
     }
