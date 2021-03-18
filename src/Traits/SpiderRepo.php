@@ -84,12 +84,15 @@ trait SpiderRepo
 
     public static function fastProcessDouyinVideo($user, $shareLink, $content)
     {
-        $title = static::extractTitle($shareLink);
+        $content = static::extractTitle($content);
+        $title   = static::extractTitle($shareLink);
         //提取URL
         $dyUrl = static::extractURL($shareLink);
         if (Spider::where('source_url', $dyUrl)->exists()) {
             throw new GQLException('该视频已被采集，请再换一个！');
         }
+
+        //标签
         $url        = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $dyUrl);
         $data       = json_decode(file_get_contents($url), true)['data'];
         $videoPath  = $data['video']['play_url'];
@@ -124,8 +127,9 @@ trait SpiderRepo
     {
         preg_match_all('#(.*?)http.*?#', $str, $match);
         if (isset($match[1][0])) {
-            return str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', '@DOU+小助手', '快手', '#快手创作者服务中心', ' @快手小助手', '#快看'], '', $match[1][0]);
+            $str = $match[1][0];
         }
+        return str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', '@DOU+小助手', '快手', '#快手创作者服务中心', ' @快手小助手', '#快看'], '', $str);
     }
 
     /**
