@@ -184,12 +184,11 @@ trait MovieResolvers
         $user = getUser();
     }
 
-    public function relateMovie($rootValue, array $args, $context, $resolveInfo)
+    public function resolveRelateMovie($rootValue, array $args, $context, $resolveInfo)
     {
         // TODO: 没搜到相关作品，也记录用户输入的影片名字(加个表)
         // first = null ，即没有匹配的电影
-        $name  = $args['movie_name'];
-        $movie = Movie::where('name', 'like', "%{$name}%")->where('type_name', '<>', '电影解说')->first();
+        $movie = Movie::withoutGlobalScopes()->find($args['movie_id']);
         if ($movie) {
             $post = Post::find($args['post_id']);
             optional($post)->update(['movie_id' => $movie->id]);
