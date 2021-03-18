@@ -2,6 +2,7 @@
 namespace Haxibiao\Media;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
 class MediaServiceProvider extends ServiceProvider
@@ -21,7 +22,7 @@ class MediaServiceProvider extends ServiceProvider
                 //APP 的 views 最先匹配
                 config('view.paths'),
                 //然后 匹配 breeze的默认views
-                [media_path('resources/views')]
+                [media_path('resources/movie')]
             );
             config(['view.paths' => $view_paths]);
         }
