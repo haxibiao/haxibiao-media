@@ -12,6 +12,7 @@ use Haxibiao\Content\Traits\Taggable;
 use Haxibiao\Media\Traits\SpiderAttrs;
 use Haxibiao\Media\Traits\SpiderRepo;
 use Haxibiao\Media\Traits\SpiderResolvers;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Spider extends Model
 {
@@ -114,6 +115,11 @@ class Spider extends Model
     public function scopeProcessFailed($query)
     {
         return $query->where('status', '<', self::WATING_STATUS);
+    }
+
+    public function spider(): MorphTo
+    {
+        return $this->morphTo('spider');
     }
 
     public static function getStatuses()
