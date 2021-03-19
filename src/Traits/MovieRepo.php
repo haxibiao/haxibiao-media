@@ -107,12 +107,12 @@ trait MovieRepo
         ]);
         // 存储成动态
         $post = Post::create([
-            'user_id'       => $user->id,
-            'video_id'      => $video->id,
-            'description'   => $postTitle,
-            'movie_id'      => $movie->id,
-            'collection_id' => $collection->id,
+            'user_id'     => $user->id,
+            'video_id'    => $video->id,
+            'description' => $postTitle,
+            'movie_id'    => $movie->id,
         ]);
+        $post->collections()->attach([$collection->id]);
         DB::connection('mediachain')->table('videos')->insert([
             'movie_key'   => $movie->source_key,
             'source_name' => $seriseName,
