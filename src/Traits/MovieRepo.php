@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\Collection;
 use App\Post;
 use App\Video;
 use Haxibiao\Media\Movie;
@@ -98,12 +99,19 @@ trait MovieRepo
             'disk'     => 'othermovie',
             'path'     => $playUrl,
         ]);
+        $collection = Collection::firstOrCreate([
+            'name' => "{$movie->name} 的剪辑合集",
+            'type' => 'post',
+        ], [
+            'user_id' => $user->id,
+        ]);
         // 存储成动态
         $post = Post::create([
-            'user_id'     => $user->id,
-            'video_id'    => $video->id,
-            'description' => $postTitle,
-            'movie_id'    => $movie->id,
+            'user_id'       => $user->id,
+            'video_id'      => $video->id,
+            'description'   => $postTitle,
+            'movie_id'      => $movie->id,
+            'collection_id' => $collection->id,
         ]);
         DB::connection('mediachain')->table('videos')->insert([
             'movie_key'   => $movie->source_key,
