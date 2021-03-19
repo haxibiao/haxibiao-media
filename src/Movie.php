@@ -70,7 +70,7 @@ class Movie extends Model
         if (!in_array(config('app.name'), ['dianyintujie', 'diudie'])) {
             static::addGlobalScope(new MovieStatusScope);
         }
-        if (!in_array(config('app.name'), ['内函电影', 'yingdaquan'])) {
+        if (!in_array(config('app.name'), ['内函电影', 'yingdaquan','dianyintujie','diudie'])) {
             static::addGlobalScope('avaiable', function (Builder $builder) {
                 /**
                  * 公司实名备案的域名不展示港剧，避免版权风险
