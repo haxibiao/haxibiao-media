@@ -114,8 +114,11 @@ trait MovieAttrs
             $seriesHistories = \App\MovieHistory::where('user_id', $user->id)
                 ->where('movie_id', $this->id)->get();
             foreach ($seriesHistories as $seriesHistory) {
-                $index                    = $seriesHistory->series_id;
-                $series[$index]->progress = $seriesHistory->progress;
+                $index = $seriesHistory->series_id;
+                //修复观看历史数据对不上的异常
+                if ($serie = $series[$index] ?? null) {
+                    $serie->progress = $seriesHistory->progress;
+                }
             }
         }
         return $series;
