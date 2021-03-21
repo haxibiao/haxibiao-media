@@ -1,0 +1,29 @@
+#report-modal {
+    .modal-content {
+        max-width: 410px;
+    }
+    .modal-title {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+    .close {
+        .iconfont {
+            font-weight: 500;
+        }
+    }
+    .btn-submit {
+        color: $theme-color;
+    }
+}
+
+.report-panel {
+    margin: 0;
+    .reason-type {
+        margin: 6px 0;
+        padding: 0 5px;
+        span {
+            margin: 0 20px 0 6px;
+            vertical-align: middle;
+        }
+    }
+}

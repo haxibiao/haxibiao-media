@@ -12,11 +12,12 @@ if (!function_exists('media_path')) {
         return __DIR__ . "/../../" . $path;
     }
 }
+
 /**
  * media的laravel mix pack后的资源地址
  */
 function media_mix($path)
 {
-    //FIXME: 支持version 变化
-    return url("/vendor/media/" . $path);
+    $manifestPath = media_path('public/mix-manifest.json');
+    return breeze_mix($path, $manifestPath);
 }

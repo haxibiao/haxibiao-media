@@ -22,35 +22,39 @@
     <!-- Styles -->
     <link href="{{ media_mix('css/movie.css') }}" rel="stylesheet">
 
-    @stack('head-styles')
+    @stack('styles')
     <!-- Scripts -->
-    <script type="text/javascript" src="{{ media_mix('/js/movie.js') }}"></script>
-    @stack('head-scripts')
+
+    @stack('scripts')
 </head>
 
 <body>
     @yield('top')
     @include('movie.parts.header')
+
     <div id="app">
         @yield('content')
     </div>
+
+    <script type="text/javascript" src="{{ media_mix('js/movie.js') }}"></script>
+    @if (Auth::user())
+        <script type="text/javascript">
+            const appUser = {
+                id: '{{ Auth::user()->id }}',
+                token: '{{ Auth::user()->token }}',
+                name: '{{ Auth::user()->name }}',
+                avatar: '{{ Auth::user()->avatar }}',
+            };
+            window.appUser = appUser
+
+        </script>
+    @endif
+    @stack('css')
+    @stack('js')
+
     @include('movie.parts.footer')
     @yield('bottom')
+
 </body>
-
-@if (Auth::user())
-    <script type="text/javascript">
-        const appUser = {
-            id: '{{ Auth::user()->id }}',
-            token: '{{ Auth::user()->token }}',
-            name: '{{ Auth::user()->name }}',
-            avatar: '{{ Auth::user()->avatar }}',
-        };
-        window.appUser = appUser
-
-    </script>
-@endif
-
-@stack('foot-scripts')
 
 </html>

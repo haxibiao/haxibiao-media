@@ -1,0 +1,18 @@
+[dropdown-toggle] {
+    position: relative;
+}
+
+.dropdown-box {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transform: translateX(-50%);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.5s cubic-bezier(0.215, 0.61, 0.355, 1);
+    &.open {
+        opacity: 1;
+        visibility: visible;
+    }
+}

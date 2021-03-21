@@ -495,6 +495,13 @@ input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: none;
 }
+
+@media (max-width: $col-sm-width - 1px) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 // scrollbar
 // ::-webkit-scrollbar {
 //     width: 14px;
@@ -523,33 +530,28 @@ input[type="search"]::-webkit-search-results-decoration {
 html,
 body {
     width: 100%;
-    min-height: 100vh;
     background: #fff;
-    overflow-x: hidden;
 }
 
-@media (max-width: $col-md-width - 1px) {
-    html {
-        zoom: 0.8;
+html {
+    font-size: 16px;
+    @media (max-width: $col-sm-width - 1px) {
+        font-size: 12px;
     }
+    line-height: 1.2;
 }
 
 body {
+    color: $neutral-color_content;
     text-size-adjust: 100%;
     text-rendering: auto;
-    color: #303030;
-    font-size: 16px;
-    line-height: 120%;
     font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, Helvetica, Arial, PingFang SC, Hiragino Sans GB,
         Microsoft YaHei, sans-serif;
     word-wrap: break-word;
-    // @media (max-width: $col-md-width - 1px) {
-    //     font-size: 14px;
-    // }
 }
 
 a:hover {
-    color: $theme-blue;
+    color: $auxiliary-color_info;
 }
 
 textarea {
@@ -563,12 +565,26 @@ textarea {
     color: inherit;
 }
 
+.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
 .text-left {
     text-align: left;
 }
 
 .text-right {
     text-align: right;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
 }
 
 //单行

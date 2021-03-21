@@ -2,12 +2,12 @@
 $body-bg: #f8fafc;
 
 // Typography
-$font-family-sans-serif: 'Nunito', sans-serif;
+$font-family-sans-serif: "Nunito", sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
 // Colors
-$blue: #32A6F9;
+$blue: #32a6f9;
 $indigo: #6574cd;
 $purple: #9561e2;
 $pink: #f66d9b;
@@ -18,17 +18,31 @@ $green: #38c172;
 $teal: #4dc0b5;
 $cyan: #6cb2eb;
 
+// Here's what I've customized 🔽
+
 // media width
 $col-xl-width: 1200px;
 $col-lg-width: 992px;
 $col-md-width: 768px;
 $col-sm-width: 576px;
+$col-xs-width: 420px;
 
-// theme #FE7705
-$auxiliary-color_info: #29b6f6;
+// Theme color
 $theme-color: #ff5c38;
-$theme-blue: #29b6f6;
-$neutral-color_border: #dcdee2;
 $theme-light: #fe7705;
+
+// Auxiliary color 2db7f5
+$auxiliary-color_info: #29b6f6;
+$auxiliary-color_success: #19be6b;
+$auxiliary-color_warning: #ff9900;
+$auxiliary-color_error: #ed4014;
+
+// Neutral colors
+$neutral-color_title: #200706;
 $neutral-color_subTitle: #808695;
+$neutral-color_content: #282828;
 $neutral-color_information: #99a2aa;
+$neutral-color_border: #dcdee2;
+$neutral-color_divider: #e8eaec;
+$neutral-color_background: #f8f8f9;
+$neutral-color_disabled: #c5c8ce;

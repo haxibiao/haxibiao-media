@@ -1,6 +1,7 @@
 <?php
 namespace Haxibiao\Media;
 
+use Haxibiao\Breeze\Breeze;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
@@ -9,11 +10,18 @@ class MediaServiceProvider extends ServiceProvider
 
     public function register()
     {
+
         //帮助函数
         $src_path = __DIR__;
         foreach (glob($src_path . '/Helpers/*.php') as $filename) {
             require_once $filename;
         }
+
+        //注册css js
+        Breeze::asset('/css/movie.css', media_path('public/css/movie.css'));
+        Breeze::asset('/js/movie.js', media_path('public/js/movie.js'));
+        Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf'));
+        Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff'));
 
         //合并view paths
         if (!app()->configurationIsCached()) {

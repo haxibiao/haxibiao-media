@@ -1,0 +1,264 @@
+.movie-player {
+    position: relative;
+    background-color: #1c1d30;
+    //   background-color: #0f0f1e;
+    @media (min-width: $col-xl-width + 30) {
+        margin-left: -15px;
+        margin-right: -15px;
+    }
+    @media (max-width: $col-sm-width) {
+        margin-left: -15px;
+        margin-right: -15px;
+    }
+    .player-main {
+        position: relative;
+        padding: 0 !important;
+        transition: all 0.2s ease;
+        .embed-responsive {
+            padding-bottom: 56.25%;
+        }
+        .video-player {
+            position: absolute;
+            display: block;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .fluid_video_wrapper {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+    }
+    // 切换播放器宽度
+    .player_container_wide_switch {
+        position: absolute;
+        top: 50%;
+        right: -9px;
+        width: 9px;
+        height: 58px;
+        margin-top: -29px;
+        cursor: pointer;
+        z-index: 10;
+        .btn_switch_bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            background-color: #36363e;
+            // &::before {
+            //     content: "";
+            //     position: absolute;
+            //     bottom: 100%;
+            //     left: -1px;
+            //     width: 18px;
+            //     height: 18px;
+            //     margin-bottom: -3px;
+            //     background-color: #1c1d30;
+            // }
+            // &::after {
+            //     content: "";
+            //     position: absolute;
+            //     top: 100%;
+            //     left: -1px;
+            //     width: 18px;
+            //     height: 18px;
+            //     border-radius: 9px;
+            //     margin-top: -3px;
+            //     background-color: #1c1d30;
+            // }
+        }
+
+        .iconfont {
+            position: absolute;
+            top: 22px;
+            left: -3px;
+            color: #666;
+            &.hidden {
+                display: none;
+            }
+        }
+    }
+    // 播放器底部控件
+    .player__operate {
+        background: #0f0f1e;
+        padding: 10px 5px;
+        .operation {
+            padding: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            white-space: nowrap;
+            position: relative;
+            font-size: 13px;
+            margin-right: 15px;
+            a {
+                line-height: 30px;
+                display: inline-block;
+                vertical-align: middle;
+                color: #999;
+                &:hover,
+                &.highlight {
+                    color: $theme-light;
+                }
+                &.disabled {
+                    &:hover {
+                        color: #999;
+                    }
+                }
+                i {
+                    font-size: 25px;
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+                span {
+                    display: inline-block;
+                    vertical-align: middle;
+                    &.num {
+                        font-size: 14px;
+                    }
+                    &.mobile {
+                        margin-left: -2px;
+                    }
+                }
+            }
+        }
+    }
+    .download-app_qrcode {
+        left: 20px;
+        padding: 15px 20px 10px;
+        background: radial-gradient(80px at left top, #fee2d3, transparent),
+            radial-gradient(80px at right top, #ecfde9, transparent) #fff;
+        box-shadow: 0 0 5px 1px #ddd;
+        @media (min-width: $col-sm-width) {
+            top: auto;
+            bottom: 40px;
+        }
+        .qrcode_section {
+            .qr_pic {
+                width: 120px;
+                height: 120px;
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+            .qr_txt {
+                margin-top: 5px;
+                color: $neutral-color_title;
+                font-size: 12px;
+                text-align: center;
+            }
+        }
+    }
+    // 播放器侧栏
+    .player-side {
+        .side-panel {
+            padding: 10px;
+        }
+        .video_desc {
+            position: relative;
+            margin-bottom: 10px;
+            .title {
+                display: inline-block;
+                margin: 0;
+                padding-right: 10px;
+                line-height: 30px;
+                font-size: 1.5rem;
+                color: #f0f0f0;
+                .text-ep {
+                    color: $theme-color;
+                }
+            }
+            .type {
+                font-size: 0.9rem;
+                color: #999;
+            }
+        }
+        .video_playlist {
+            overflow: auto;
+            max-height: 160px;
+            @media (min-width: $col-lg-width) {
+                max-height: 400px;
+            }
+            &::-webkit-scrollbar {
+                width: 4px;
+                background-color: #0f0f1e;
+            }
+            &::-webkit-scrollbar-thumb {
+                background-color: #434145;
+            }
+        }
+        .panel-content__list {
+            display: flex;
+            flex-wrap: wrap;
+            [class*="col-"] {
+                padding: 10px 5px;
+            }
+            @media (max-width: 991px) {
+                [class*="col-"] {
+                    padding: 10px;
+                }
+            }
+        }
+        .btn-episode {
+            display: block;
+            padding: 8px 0;
+            border-radius: 3px;
+            width: 100%;
+            font-size: 0.8rem;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #ddd;
+            &.active {
+                background-color: #0f0f1e;
+                color: $theme-color;
+            }
+            &.btn-md {
+                padding: 8px;
+                color: #fff;
+                background-color: $auxiliary-color_warning;
+                &:hover {
+                    color: #fff;
+                    background-color: $auxiliary-color_warning;
+                }
+            }
+            &:hover {
+                background-color: #0f0f1e;
+                color: $theme-color;
+            }
+        }
+    }
+    @media (min-width: $col-lg-width) {
+        .player-main {
+            width: 75%;
+        }
+        .player-side {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 25%;
+        }
+        &.player_container_wide {
+            .player-main {
+                width: 100%;
+            }
+            .player-side {
+                display: none;
+            }
+            .player_container_wide_switch {
+                right: 0;
+                .btn_switch_bg {
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    border-top-left-radius: 4px;
+                    border-bottom-left-radius: 4px;
+                    box-shadow: -1px 0 5px 1px #ccc;
+                }
+            }
+        }
+    }
+}

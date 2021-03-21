@@ -11,15 +11,15 @@
                         <ul class="clearfix">
                             <li
                                 data-order="1"
-                                :class="['hot-order', order == 'id' && 'on']"
-                                v-on:click="changeCommentsOrder('count_likes')"
+                                :class="['hot-order', order == 'like_count' && 'on']"
+                                v-on:click="changeCommentsOrder('like_count')"
                             >
                                 按热度排序
                             </li>
                             <li
                                 data-order="2"
                                 :class="['hot-order', order == 'id' && 'on']"
-                                v-on:click="changeCommentsOrder('like')"
+                                v-on:click="changeCommentsOrder('id')"
                             >
                                 按时间排序
                             </li>
@@ -56,7 +56,6 @@ export default {
         },
         // 获取评论数据
         fetchData() {
-            console.log('this.order',this.order)
             const that = this;
             window.axios
                 .get(`/api/movie/${that.movieId}/comment?page=${this.currentPage}&order=${this.order}`, {
@@ -112,7 +111,7 @@ export default {
     },
     data() {
         return {
-            order: 'id',
+            order: 'like_count',
             currentPage: 1,
             commentData: [],
         };
