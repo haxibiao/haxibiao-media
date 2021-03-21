@@ -17,7 +17,7 @@
     <link rel="apple-touch-icon" href="{{ touch_logo() }}" sizes="160*160">
 
     <!-- Icons -->
-    <link rel="stylesheet" href="https://at.alicdn.com/t/font_2196966_ku6kbo1v4j.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_2196966_42rkthrsjjm.css">
 
     <!-- Styles -->
     <link href="{{ media_mix('css/movie.css') }}" rel="stylesheet">
@@ -26,14 +26,19 @@
     <!-- Scripts -->
 
     @stack('scripts')
+
+    <!--[if lt IE 9]>
+    <script src="html5shiv/dist/html5shiv.js"></script>
+    <![endif]-->
 </head>
 
 <body>
     @yield('top')
-    @include('movie.parts.header')
+    @include('parts.movie.header')
 
     <div id="app">
         @yield('content')
+        @include('parts.movie.modal.login')
     </div>
 
     <script type="text/javascript" src="{{ media_mix('js/movie.js') }}"></script>
@@ -52,7 +57,7 @@
     @stack('css')
     @stack('js')
 
-    @include('movie.parts.footer')
+    @include('parts.movie.footer')
     @yield('bottom')
 
 </body>

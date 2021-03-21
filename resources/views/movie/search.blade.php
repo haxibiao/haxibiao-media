@@ -1,4 +1,4 @@
-@extends('movie.layouts.movie')
+@extends('layouts.movie')
 
 
 @section('content')
@@ -7,7 +7,7 @@
             <div class="main col-xl-9 col-lg-9">
                 <div class="search_result">
                     @foreach ($result as $movie)
-                        @include('movie.parts.result_item')
+                        @include('parts.movie.result_item')
                     @endforeach
                     <div>
                         {{ $result->links() }}

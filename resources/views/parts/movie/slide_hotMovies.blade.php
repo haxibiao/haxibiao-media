@@ -2,7 +2,7 @@
     @foreach ($hotMovies as $movie)
         <div class="movie-info">
             <h3 class="movie-name">{{ $movie->name }}</h3>
-            <p class="movie-abstract webkit-ellipsis">
+            <p class="movie-abstract webkit-ellipsis hide-xs">
                 {{ $movie->introduction }}
             </p>
         </div>
@@ -10,8 +10,8 @@
 </div>
 <div id="hot-movies" class="hot-movies-panel">
     @foreach ($hotMovies as $movie)
-        <a href="/movie/{{ $movie->id }}"   class="movie-item">
-            <img data-src="{{ $movie->cover }}" alt="{{ $movie->name }}" class="movie-pic">
+        <a href="/movie/{{ $movie->id }}" target="_blank" class="movie-item">
+            <img data-src="{{ $movie->cover_url }}" alt="{{ $movie->name }}" class="movie-pic">
         </a>
     @endforeach
 </div>

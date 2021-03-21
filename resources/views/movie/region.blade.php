@@ -1,4 +1,4 @@
-@extends('movie.layouts.movie')
+@extends('layouts.movie')
 
 @section('content')
     <div class="movie_category">
@@ -45,7 +45,7 @@
                     <ul class="row">
                         @foreach ($movies as $movie)
                             <li class="col-lg-2 col-md-3 col-sm-3 col-xs-4 padding-10">
-                                @include('movie.parts.movie_item')
+                                @include('parts.movie.movie_item')
                             </li>
                         @endforeach
                     </ul>

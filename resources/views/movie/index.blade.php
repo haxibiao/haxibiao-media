@@ -5,7 +5,7 @@ $movieTitle = array_fill(0, 12, '我和我的家乡');
 $videoList = array_fill(0, 4, 'video_list');
 @endphp
 
-@extends('movie.layouts.movie')
+@extends('layouts.movie')
 
 
 @section('top')
@@ -16,7 +16,7 @@ $videoList = array_fill(0, 4, 'video_list');
     <div class="hot-video-box">
         <div class="container-xl">
             <div class="row">
-                @include('movie.parts.hotMovies')
+                @include('parts.movie.hotMovies')
             </div>
         </div>
     </div>
@@ -34,7 +34,7 @@ $videoList = array_fill(0, 4, 'video_list');
                         <div class="movie-list">
                             @foreach ($movies[0] as $movie)
                                 <div class="col-lg-2 col-md-3 col-sm-3 col-xs-4">
-                                    @include('movie.parts.movie_item')
+                                    @include('parts.movie.movie_item')
                                 </div>
                             @endforeach
                         </div>
@@ -58,7 +58,7 @@ $videoList = array_fill(0, 4, 'video_list');
             <div class="row">
                 @foreach ($cate_ranks as $title => $data)
                     <div class="col-lg-3 col-sm-6 col-xs-12">
-                        @include('movie.parts.home_region_rank',[
+                        @include('parts.movie.home_region_rank',[
                         'title'=>$title,
                         'data'=>$data,
                         ])
