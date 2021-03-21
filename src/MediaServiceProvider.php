@@ -101,8 +101,8 @@ class MediaServiceProvider extends ServiceProvider
             ], 'media-graphql');
 
             $this->publishes([
-                __DIR__ . '/../resources/images' => base_path('public/images'),
-            ], 'media-resources');
+                __DIR__ . '/../public/images' => base_path('public/images'),
+            ], 'media-images');
 
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));

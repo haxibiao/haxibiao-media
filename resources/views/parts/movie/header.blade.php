@@ -22,7 +22,7 @@ $cateogriesMenu = [
         <div class="app-header clearfix">
             <h1 class="app-header__logo">
                 <a class="pic_logo" href="/">
-                    <img src="/picture/logo.png" alt="{{ siteName() }}">
+                    <img src="{{ small_logo() }}" alt="{{ siteName() }}">
                 </a>
             </h1>
             <ul class="app-header__type">
@@ -127,6 +127,6 @@ $cateogriesMenu = [
     </div>
 
     {{-- 下拉顶部菜单 --}}
-    @include('parts.movie.nav_drawer')
+    @include('parts.movie.modal.nav_drawer')
 </header>
 

@@ -16,7 +16,7 @@ $videoList = array_fill(0, 4, 'video_list');
     <div class="hot-video-box">
         <div class="container-xl">
             <div class="row">
-                @include('parts.movie.hotMovies')
+                @include('parts.movie.hot_movies')
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 <template>
     <div :class="['comment-send', !$user.token && 'no-login']">
         <div class="user-face">
-            <img class="user-head" :src="$user.avatar || '/images/movie/not_avatart.png'" />
+            <img class="user-head" :src="$user.avatar || '/images/movie/noavatar.png'" />
         </div>
         <div class="textarea-container clearfix">
             <div class="baffle-wrap">

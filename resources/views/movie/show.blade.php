@@ -52,7 +52,7 @@
                         相关视频推荐
                     </div>
                     <div class="rc-list row">
-                        @foreach ($recommend as $relateMovie)
+                        @foreach ($recommend ?? [] as $relateMovie)
                             <div class="col-xs-6 col-sm-6">
                                 @include('parts.movie.recommend_movie_item')
                             </div>
@@ -70,7 +70,7 @@
                         近期热播榜单
                     </div>
                     <div class="rc-list row margin-0">
-                        @foreach ($more as $relateMovie)
+                        @foreach ($more ?? [] as $relateMovie)
                             <div class="col-lg-12 col-sm-6 padding-0">
                                 @include('parts.movie.recommend_movie_item')
                             </div>
@@ -80,5 +80,5 @@
             </div>
         </div>
     </div>
-    @include('parts.modal.report')
+    @include('parts.movie.modal.report')
 @endsection
