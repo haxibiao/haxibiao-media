@@ -116,8 +116,9 @@ trait MovieAttrs
             foreach ($seriesHistories as $seriesHistory) {
                 $index = $seriesHistory->series_id;
                 //修复观看历史数据对不上的异常
-                if (isset($series[$index])) {
-                    $series[$index]->progress = $seriesHistory->progress;
+                $serie = $series[$index] ?? null;
+                if ($serie) {
+                    $serie->progress = $seriesHistory->progress;
                 }
             }
         }
