@@ -190,16 +190,19 @@ export default {
         if (this.initEpisode) {
             this.currentEpisode = Number(this.initEpisode) + 1;
         }
+    },
+    mounted() {
         if (this.movieData !== null && typeof this.movieData === 'object') {
             this.movie = this.movieData;
             this.series = this.movie.series || [];
-            this.source = this.$optional(this.series, `${this.currentEpisode - 1}.play_url`);
+            console.log('this.series', this.series);
+            this.source = this.$optional(this.series, `${this.currentEpisode - 1}.url`);
+            console.log('this.source', this.source);
         }
-    },
-    mounted() {
+
         const that = this;
         let apiReport = this.apiReport ?? '/report';
-        this.$nextTick(function () {
+        this.$nextTick(function() {
             // 举报视频submit事件
             $('#report-modal .btn-submit').on('click', function reportSubmit(event) {
                 const params = $('#report-form').serialize();
@@ -210,12 +213,12 @@ export default {
                     processData: false,
                     contentType: false,
                 })
-                    .done(function (res) {
+                    .done(function(res) {
                         if (res.data) {
                         } else if (res.message) {
                         }
                     })
-                    .fail(function (err) {})
+                    .fail(function(err) {})
                     .always(() => {
                         $('#report-modal').modal('hide');
                     });
@@ -235,13 +238,15 @@ export default {
         // 点击集数播放
         clickEpisode(index) {
             this.currentEpisode = index + 1;
-            this.source = this.series[index].play_url;
+            this.source = this.series[index].url;
+            console.log('clickEpisode.source', this.source);
         },
         // 播放下一集
         nextPicode() {
             if (this.series.length > this.currentEpisode) {
                 this.currentEpisode++;
-                this.source = this.series[this.currentEpisode - 1].play_url;
+                this.source = this.series[this.currentEpisode - 1].url;
+                console.log('nextPicode.source', this.source);
             }
         },
         toggleLike() {
@@ -268,9 +273,9 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    },
+                    }
                 )
-                .then(function (response) {
+                .then(function(response) {
                     if (response && response.data) {
                         that.noticeInfo = that.movie.isliked ? '视频已收入我的喜欢' : '';
                     } else {
@@ -304,9 +309,9 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    },
+                    }
                 )
-                .then(function (response) {
+                .then(function(response) {
                     if (response && response.data) {
                         that.noticeInfo = that.movie.isFan ? '视频已放到收藏夹' : '';
                     } else {

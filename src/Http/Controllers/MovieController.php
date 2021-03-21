@@ -54,32 +54,32 @@ class MovieController extends Controller
         $qb             = Movie::latest('id')->where('status', '!=', Movie::DISABLED);
         $hotMovies      = (clone $qb)->take(15)->get();
         $categoryMovies = [
-            '热门美剧'  => [
+            '热门美剧' => [
                 (clone $qb)->where('region', '美剧')->take(6)->get(),
                 (clone $qb)->where('region', '美剧')->take(12)->get(),
                 'meiju',
             ],
-            '热门日剧'  => [
+            '热门日剧' => [
                 (clone $qb)->where('region', '日剧')->latest('id')->take(6)->get(),
                 (clone $qb)->where('region', '日剧')->latest('id')->take(12)->get(),
                 'riju',
             ],
-            '热门韩剧'  => [
+            '热门韩剧' => [
                 (clone $qb)->where('region', '韩剧')->latest('id')->take(6)->get(),
                 (clone $qb)->where('region', '韩剧')->take(12)->get(),
                 'hanju',
             ],
         ];
-//		注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
-//        if(is_null(data_get(app('cms_site'),'company',null))){
-//			$categoryMovies = array_merge($categoryMovies,[
-//				'怀旧老港剧' => [
-//					(clone $qb)->where('region', '港剧')->latest('id')->take(6)->get(),
-//					(clone $qb)->where('region', '港剧')->latest('id')->take(12)->get(),
-//					'gangju',
-//				]
-//			]);
-//		}
+//        注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
+        //        if(is_null(data_get(app('cms_site'),'company',null))){
+        //            $categoryMovies = array_merge($categoryMovies,[
+        //                '怀旧老港剧' => [
+        //                    (clone $qb)->where('region', '港剧')->latest('id')->take(6)->get(),
+        //                    (clone $qb)->where('region', '港剧')->latest('id')->take(12)->get(),
+        //                    'gangju',
+        //                ]
+        //            ]);
+        //        }
         $cate_ranks = [
             '美剧' => [
                 'cate'   => 'meiju',
@@ -94,15 +94,15 @@ class MovieController extends Controller
                 'movies' => (clone $qb)->where('region', '韩剧')->offset(18)->take(8)->get(),
             ],
         ];
-//		注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
-//		if(is_null(data_get(app('cms_site'),'company',null))){
-//			$cate_ranks = array_merge($cate_ranks,[
-//				'港剧' => [
-//					'cate'   => 'gangju',
-//					'movies' => (clone $qb)->where('region', '港剧')->offset(18)->take(8)->get(),
-//				],
-//			]);
-//		}
+//        注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
+        //        if(is_null(data_get(app('cms_site'),'company',null))){
+        //            $cate_ranks = array_merge($cate_ranks,[
+        //                '港剧' => [
+        //                    'cate'   => 'gangju',
+        //                    'movies' => (clone $qb)->where('region', '港剧')->offset(18)->take(8)->get(),
+        //                ],
+        //            ]);
+        //        }
         return view('movie.index', [
             'hotMovies'      => $hotMovies,
             'categoryMovies' => $categoryMovies,
@@ -164,25 +164,15 @@ class MovieController extends Controller
         $movie->save();
         $qb   = Movie::latest('updated_at');
         $more = $qb->take(6)->get();
-        if ($user = getUser(false)) {
-            //记录观看位置
-            MovieHistory::updateOrCreate([
-                'user_id'  => $user->id,
-                'movie_id' => $movie->id,
-            ], [
-                'last_watch_time' => now(),
-            ]);
-            //收藏状态
-            $movie->favorited = false;
-            //喜欢状态
-            //FIXME: 用sns里的traits实现
+        //FIXME: 用sns 实现是否已收藏...
+        $movie->favorited = false;
+        $recommend        = Movie::enable()->latest('rank')->inRandomOrder()->take(6)->get();
+        $more             = Movie::enable()->latest('rank')->inRandomOrder()->take(6)->get();
 
-        }
-        //FIXME: 用sns里的traits实现
-        $recommend = Movie::enable()->latest('rank')->inRandomOrder()->take(6)->get();
-        $more      = Movie::enable()->latest('rank')->inRandomOrder()->take(6)->get();
-        //加载剧集
-        $movie->load('series');
+        // 兼容内涵电影vue用的series属性
+        $movie->series = $movie->data;
+        $movie->data   = null;
+
         return view('movie.show')->with('movie', $movie)->with('recommend', $recommend)
             ->with('more', $more);
     }

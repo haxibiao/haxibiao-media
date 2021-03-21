@@ -23,12 +23,12 @@ export default {
         if (Hls.isSupported()) {
             console.log('hello hls.js isSupported!');
         }
-        this.player = new DPlayer({
+
+        let options = {
             container: document.getElementById('dplayer'),
             preload: true,
             autoplay: true,
             screenshot: true,
-            danmaku: true,
             video: {
                 url: this.source,
                 type: 'hls',
@@ -36,13 +36,19 @@ export default {
             pluginOptions: {
                 hls: {},
             },
-            danmaku: {
+        };
+
+        console.log('this.apiDanmu', this.apiDanmu ? true : false);
+        // options.danmaku = this.apiDanmu ? true : false;
+        if (this.apiDanmu) {
+            options.danmaku = {
                 id: this.movie_id + '_' + this.series_index,
                 user: this.getUserId(),
-                api: this.apiDanmu ?? '/api/movie/danmu/',
+                api: '/api/movie/danmu/',
                 token: this.episode, //是series 的 index
-            },
-        });
+            };
+        }
+        this.player = new DPlayer(options);
 
         // 绑定事件，监听页面刷新or关闭
         window.addEventListener('beforeunload', this.beforeunloadFn);
@@ -103,6 +109,7 @@ export default {
     },
     watch: {
         source(newV, oldV) {
+            console.log('开始播放 url:' + newV);
             if (this.player) {
                 this.player.switchVideo({
                     url: newV,
@@ -135,9 +142,9 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    },
+                    }
                 )
-                .then(function (response) {
+                .then(function(response) {
                     if (response && response.data) {
                         console.log(response);
                     }
@@ -160,9 +167,9 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    },
+                    }
                 )
-                .then(function (response) {
+                .then(function(response) {
                     if (response.data.status_code == 200) {
                         //返回历史观看时长
                         const history = response.data.data;
@@ -193,7 +200,7 @@ export default {
         //绑定弹幕发送事件，验证是否登录 发送弹幕长度
         bindDanmuSend() {
             var that = this;
-            this.player.on('danmaku_send', function (danmu) {
+            this.player.on('danmaku_send', function(danmu) {
                 //调用一下评论接口，如果没有登录则打回来叫用户登录
                 if (Object.keys(that.$user).length === 0) {
                     that.player.notice('您还没有登录，请登录后愉快的发送吧~', '5000');
@@ -206,7 +213,7 @@ export default {
         //绑定播放源更新事件
         bindVideoSourceUpdate() {
             var that = this;
-            this.player.on('loadeddata', function () {
+            this.player.on('loadeddata', function() {
                 this.series_index = that.episode;
             });
         },

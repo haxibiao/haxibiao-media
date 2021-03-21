@@ -4,7 +4,6 @@ namespace Haxibiao\Media\Traits;
 
 use App\User;
 use Haxibiao\Media\MovieHistory;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 
 trait MovieAttrs
@@ -99,39 +98,27 @@ trait MovieAttrs
     {
         if (is_string($value)) {
             $this->attributes['data'] = @json_decode($value);
+        } else {
+            $this->attributes['data'] = $value;
         }
-        $this->attributes['data'] = $value;
     }
 
     public function getDataAttribute()
     {
-        $series = @json_decode($this->attributes['data']);
-        //剧集排序
-        $sortedSeries = array_values(Arr::sort($series, function ($value) {
-            return $value->name;
-        }));
+        //重用加载多线路的
+        $series = $this->getSeriesUrlsAttribute();
 
-        //旧的series URL: {加速域名}/{space}/{movie_id}/index.m3u8
-        //新的负载型的series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
-        // foreach ($series as $item) {
-        //     $ucdn_domain = parse_url($item->url, PHP_URL_HOST);
-        //     $ucdn_root   = "https://" . $ucdn_domain . "/";
-        //     $space       = get_space_by_ucdn($ucdn_root);
-        //     $space_path  = parse_url($item->url, PHP_URL_PATH);
-        //     $item->url   = "https://$ucdn_domain/m3u8/$space$space_path";
-        // }
-
-        //这里不能强制丢异常，很多场景未登录是正常的
+        //app 访问这里
         if ($user = getUser(false)) {
-            //添加进度记录
+            //获取观看进度记录
             $seriesHistories = \App\MovieHistory::where('user_id', $user->id)
                 ->where('movie_id', $this->id)->get();
             foreach ($seriesHistories as $seriesHistory) {
-                $index                          = $seriesHistory->series_id;
-                $sortedSeries[$index]->progress = $seriesHistory->progress;
+                $index                    = $seriesHistory->series_id;
+                $series[$index]->progress = $seriesHistory->progress;
             }
         }
-        return $sortedSeries;
+        return $series;
     }
 
     public function getCreatedAtAttribute()
