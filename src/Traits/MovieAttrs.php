@@ -115,9 +115,9 @@ trait MovieAttrs
                 ->where('movie_id', $this->id)->get();
             foreach ($seriesHistories as $seriesHistory) {
                 $index = $seriesHistory->series_id;
-                //修复观看历史数据对不上的异常
+                //修复观看历史数据对不上的脏数据异常
                 $serie = $series[$index] ?? null;
-                if ($serie) {
+                if ($serie && isset($serie->progress)) {
                     $serie->progress = $seriesHistory->progress;
                 }
             }
