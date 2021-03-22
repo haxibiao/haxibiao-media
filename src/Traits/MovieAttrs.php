@@ -103,6 +103,25 @@ trait MovieAttrs
         }
     }
 
+    /**
+     * 兼容内涵电影代码用 series属性(serie对象的数组)写逻辑的部分
+     *
+     * @return array
+     */
+    public function getSeriesAttribute()
+    {
+        if (isset($this->attributes['series']) && is_array($this->attributes['series'])) {
+            return $this->series;
+        }
+        //转换data的数组为serie对象数组
+        $series      = [];
+        $data_series = $this->getSeriesUrlsAttribute();
+        foreach ($data_series as $data_serie) {
+            $series[] = (object) $data_serie;
+        }
+        return $series;
+    }
+
     public function getDataAttribute()
     {
         //重用加载多线路的

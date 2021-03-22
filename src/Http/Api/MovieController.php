@@ -77,7 +77,7 @@ class MovieController extends Controller
 
     public function clip(Request $request)
     {
-        $user       = \Auth::user();
+        $user       = getUser();
         $start      = $request->get('start_time');
         $end        = $request->get('end_time');
         $postTitle  = $request->get('post_title');

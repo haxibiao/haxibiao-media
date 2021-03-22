@@ -130,7 +130,7 @@ trait MovieRepo
      */
     public static function findSeriesName($m3u8, $movie)
     {
-        $series = $movie->data;
+        $series = $movie->series;
         foreach ($series as $item) {
             if ($item->url == $m3u8) {
                 return $item->name;
