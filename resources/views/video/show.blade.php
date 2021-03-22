@@ -26,7 +26,7 @@
                     <div class="h5-player">
                         <div class="embed-responsive embed-responsive-16by9">
                             <video controls="" poster="{{ $video->cover }}" preload="auto" autoplay="true">
-                                <source src="{{ $video->url }}" type="{{ $video->isHls ? 'application/x-mpegURL' : 'video/mp34' }}">
+                                <source src="{{ $video->url }}" type="{{ $video->isHls ? 'application/x-mpegURL' : 'video/mp4' }}">
                                 </source>
                             </video>
                         </div>
