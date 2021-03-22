@@ -75,7 +75,7 @@ class MovieController extends Controller
         return $result;
     }
 
-    public function cilp(Request $request)
+    public function clip(Request $request)
     {
         $user       = \Auth::user();
         $start      = $request->get('start_time');

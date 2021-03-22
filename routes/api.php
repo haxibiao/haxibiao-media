@@ -17,7 +17,7 @@ Route::get('/video/{id}/fix', 'VideoController@fix'); //修复封面
 Route::get('/video/hash/{hash}', 'VideoController@showByVideoHash');
 
 Route::group(['prefix' => 'movie'], function ($api) {
-    Route::get('/movie/cilp', 'MovieController@cilp');
+    Route::get('/movie/clip', 'MovieController@clip');
     Route::post('/danmu/v3', 'MovieController@sendDanmu');
     Route::get('/danmu/v3', 'MovieController@danmu');
     Route::post('/comment/store', 'MovieController@comment');
