@@ -111,7 +111,7 @@ trait MovieAttrs
     public function getSeriesAttribute()
     {
         if (isset($this->attributes['series']) && is_array($this->attributes['series'])) {
-            return $this->series;
+            return $this->attributes['series'];
         }
         //转换data的数组为serie对象数组
         $series      = [];
