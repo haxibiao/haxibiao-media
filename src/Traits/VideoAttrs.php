@@ -237,4 +237,9 @@ trait VideoAttrs
         }
         return $count;
     }
+
+    public function getIsHlsAttribute()
+    {
+        return str_contains($this->url, '.m3u8');
+    }
 }

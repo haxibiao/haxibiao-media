@@ -165,8 +165,10 @@ class VideoController extends Controller
         $video                = Video::findOrFail($id);
         $data['related_page'] = request()->get('related_page') ?? 0;
 
+        //传统视频文章 + article
         $view = 'video.show';
-        // 视频动态
+
+        // 视频动态模板 + post，对合集支持好
         if ($video->post) {
             $view = 'video.post';
         }
