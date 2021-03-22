@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://at.alicdn.com/t/font_2196966_42rkthrsjjm.css">
 
     <!-- Styles -->
-    <link href="{{ media_mix('css/movie.css') }}" rel="stylesheet">
+    <link href="{{ media_mix('css/media.css') }}" rel="stylesheet">
 
     @stack('styles')
     <!-- Scripts -->
@@ -53,7 +53,7 @@
             window.appUser = appUser
         </script>
     @endif
-    <script type="text/javascript" src="{{ media_mix('js/movie.js') }}"></script>
+    <script type="text/javascript" src="{{ media_mix('js/media.js') }}"></script>
     @stack('css')
     @stack('js')
 
