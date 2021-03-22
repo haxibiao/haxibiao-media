@@ -13,9 +13,9 @@ const mix = require('laravel-mix');
 
 mix.setPublicPath('public');
 
-mix.js('resources/assets/js/app.js', 'public/js/_movie.js')
-    .sass('resources/assets/sass/app.scss', 'public/css/movie.css')
+mix.js('resources/assets/js/app.js', 'public/js/_media.js')
+    .sass('resources/assets/sass/app.scss', 'css/media.css')
     .version();
 
-// movie.js
-mix.scripts(['public/js/_movie.js', 'node_modules/hls.js/dist/hls.js'], 'public/js/movie.js').version();
+// media.js
+mix.scripts(['public/js/_media.js', 'node_modules/hls.js/dist/hls.js'], 'public/js/media.js').version();

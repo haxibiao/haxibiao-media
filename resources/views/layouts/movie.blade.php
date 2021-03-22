@@ -41,7 +41,7 @@
         @include('parts.movie.modal.login')
     </div>
 
-    <script type="text/javascript" src="{{ media_mix('js/movie.js') }}"></script>
+    {{-- 先注入的vue APP user  --}}
     @if (Auth::user())
         <script type="text/javascript">
             const appUser = {
@@ -51,9 +51,9 @@
                 avatar: '{{ Auth::user()->avatar }}',
             };
             window.appUser = appUser
-
         </script>
     @endif
+    <script type="text/javascript" src="{{ media_mix('js/movie.js') }}"></script>
     @stack('css')
     @stack('js')
 

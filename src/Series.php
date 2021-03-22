@@ -3,9 +3,9 @@
 namespace Haxibiao\Media;
 
 use Haxibiao\Breeze\Model;
+use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Media\Traits\SeriesAttrs;
 use Haxibiao\Media\Traits\SeriesRepo;
-use Haxibiao\Breeze\Traits\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Series extends Model
@@ -19,7 +19,7 @@ class Series extends Model
     public const STATUS_ENABLE  = 1;
     public const STATUS_DISABLE = -1;
 
-    protected $appends = ['play_url'];
+    protected $appends = ['url'];
 
     public function movie(): BelongsTo
     {

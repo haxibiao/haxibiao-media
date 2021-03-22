@@ -18,8 +18,8 @@ class MediaServiceProvider extends ServiceProvider
         }
 
         //注册css js
-        Breeze::asset('/css/movie.css', media_path('public/css/movie.css'));
-        Breeze::asset('/js/movie.js', media_path('public/js/movie.js'));
+        Breeze::asset('/css/media.css', media_path('public/css/media.css'));
+        Breeze::asset('/js/media.js', media_path('public/js/media.js'));
         Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf'));
         Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff'));
 

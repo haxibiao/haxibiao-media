@@ -4,7 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 trait SeriesAttrs
 {
-    public function getPlayUrlAttribute()
+    public function getUrlAttribute()
     {
         if ($this->path) {
             $cdn = rand_pick_ucdn_domain();
