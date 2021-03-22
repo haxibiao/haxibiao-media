@@ -30,12 +30,13 @@ $post = $video->post;
             <div class="player-basic clearfix">
                 <div class="playerArea col-sm-8">
                     <div class="h5-player">
-                        <div class="embed-responsive embed-responsive-16by9">
+                        {{--  <div class="embed-responsive embed-responsive-16by9">
                             <video controls="" poster="{{ $video->cover }}" preload="auto" autoplay="true">
                                 <source src="{{ $video->url }}" type="{{ $video->isHls ? 'application/x-mpegURL' : 'video/mp4' }}">
                                 </source>
                             </video>
-                        </div>
+                        </div>  --}}
+                        <dplayer source="{{ $video->url }}" />
                     </div>
                     <div class="video-body">
                         @if($post->collections)
@@ -53,7 +54,6 @@ $post = $video->post;
                     <div class="h5-option">
                         <video-like id="{{ $post->id }}" type="posts" is-login="{{ Auth::check() }}">
                         </video-like>
-
 
                         <div class="comments">
                             {{-- <i class="iconfont icon-xinxi2"></i>
@@ -86,7 +86,7 @@ $post = $video->post;
                 </div>
             </div>
             <div class="video-title">
-                {{ $post->body }}
+                配文：{{ $post->description ?? $post->content }}
                 <div class="video-info">
                     @if (!empty($collection))
                         <a href="/category/{{ $collection->id }}" class="category-name">合集: {{ $collection->name }}</a>
@@ -159,11 +159,6 @@ $post = $video->post;
         <script type="text/javascript">
             var at_config = {
                 at: "@",
-                {
-                    {
-                        --这个是触发弹出菜单的按键--
-                    }
-                }
                 data: window.tokenize('/api/related-users'),
                 insertTpl: '<span data-id="${id}">@${name}</span>',
                 displayTpl: "<li > ${name} </li>",
@@ -174,6 +169,7 @@ $post = $video->post;
         </script>
     @endif
 @endpush
+
 @push('modals')
     {{-- 分享到微信 --}}
 {{--    <modal-share-wx url="{{ url()->full() }}" aid="{{ $post->video_id }}"></modal-share-wx>--}}

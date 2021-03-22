@@ -27,9 +27,6 @@
 
     @stack('scripts')
 
-    <!--[if lt IE 9]>
-    <script src="html5shiv/dist/html5shiv.js"></script>
-    <![endif]-->
 </head>
 
 <body>

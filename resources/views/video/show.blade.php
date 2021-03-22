@@ -93,11 +93,11 @@
         </div>
 
     </div>
-{{--    <div class="share-module">--}}
-{{--        <div class="module-share-h3">分享到....</div>--}}
-{{--        <div>@include('video.parts.share', ['subject' => $video->title, 'url'=>url('/video/'.$video->id)])</div>--}}
-{{--        <close-share></close-share>--}}
-{{--    </div>--}}
+    {{-- <div class="share-module">
+        <div class="module-share-h3">分享到....</div>
+        <div>@include('video.parts.share', ['subject' => $video->title, 'url'=>url('/video/'.$video->id)])</div>
+        <close-share></close-share>
+    </div>--}}
     <div id="pageLayout">
 
     </div>

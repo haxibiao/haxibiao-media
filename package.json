@@ -31,7 +31,6 @@
         "element-ui": "^2.15.1",
         "es6-promise-promise": "^1.0.0",
         "hls.js": "^0.14.16",
-        "html5shiv": "^3.7.3",
         "laravel-echo": "^1.8.1",
         "socket.io-client": "^2.3.0"
     }
