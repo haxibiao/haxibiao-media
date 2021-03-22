@@ -114,6 +114,8 @@ class MovieSync extends Command
                     $movie['introduction'] = $movie['introduction'] ?? '';
                     //同步type
                     $movie['type'] = $movie['type_name'];
+                    $movie['data']  = json_encode($movie['data']);
+
 
                     $model->forceFill(array_only($movie, [
                         'introduction',
