@@ -11,12 +11,10 @@ use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Content\Traits\Stickable;
 use Haxibiao\Content\Traits\WithCms;
 use Haxibiao\Helpers\Traits\Searchable;
-use Haxibiao\Media\Scopes\MovieStatusScope;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
 use Haxibiao\Sns\Traits\WithSns;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -68,7 +66,7 @@ class Movie extends Model
     {
         parent::boot();
         //以下逻辑在本地项目做，限制住了其他项目了
-        
+
         // if (!in_array(config('app.name'), ['dianyintujie', 'diudie'])) {
         //     static::addGlobalScope(new MovieStatusScope);
         // }
@@ -92,7 +90,7 @@ class Movie extends Model
         //             })
         //         ;
         //     });
-        }
+        // }
     }
 
     protected $searchable = [

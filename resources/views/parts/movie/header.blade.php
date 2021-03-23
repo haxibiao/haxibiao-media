@@ -1,22 +1,3 @@
-@php
-$cateogries = [
-'/movie/riju' => '日剧',
-'/movie/meiju' => '美剧',
-'/movie/hanju' => '韩剧',
-'/movie/gangju' => '港剧',
-// '/movie/category/8' => '解说',
-// '/app' => '下载App',
-];
-$cateogriesMenu = [
-'/' => '首页',
-'/movie/riju' => '日剧',
-'/movie/meiju' => '美剧',
-'/movie/hanju' => '韩剧',
-'/movie/gangju' => '港剧',
-// '/movie/category/8' => '解说',
-// '/collection' => '合集',
-];
-@endphp
 <header class="head-box clearfix" id="header-top">
     <div class="container-xl">
         <div class="app-header clearfix">
@@ -26,30 +7,7 @@ $cateogriesMenu = [
                 </a>
             </h1>
             <ul class="app-header__type">
-                <li class="hide-xs" title="展开更多" dropdown-target=".category-menu" dropdown-toggle="hover">
-                    <a href="/">
-                        主站
-                        <i class="iconfont icon-arrow-down"></i>
-                    </a>
-                    <div class="dropdown-box category-menu">
-                        <ul class="menu-list">
-                            @foreach ($cateogriesMenu as $key => $category)
-                                @if (isset($cate) && $cate == $category)
-                                    <li class="menu-item active"><a href={{ $key }}>{{ $category }}</a></li>
-                                @else
-                                    <li class="menu-item"><a href={{ $key }}>{{ $category }}</a></li>
-                                @endif
-                            @endforeach
-                        </ul>
-                    </div>
-                </li>
-                @foreach ($cateogries as $key => $category)
-                    @if (isset($cate) && $cate == $category)
-                        <li class="hide-xs active"><a href={{ $key }}>{{ $category }}</a></li>
-                    @else
-                        <li class="hide-xs"><a href={{ $key }}>{{ $category }}</a></li>
-                    @endif
-                @endforeach
+                @include('parts.movie.header_menu')
             </ul>
             <ul class="app-header__menu">
                 <li class="search">
@@ -112,14 +70,7 @@ $cateogriesMenu = [
     </div>
     <div class="category_nav">
         <ul class="swipe_nav">
-            @foreach ($cateogriesMenu as $key => $category)
-                @if (isset($cate) && $cate == $category)
-                    <li class="tab-item active"><a href={{ $key }}>{{ $category }}</a>
-                    </li>
-                @else
-                    <li class="tab-item"><a href={{ $key }}>{{ $category }}</a></li>
-                @endif
-            @endforeach
+            @include('parts.movie.header_menu_drop',['item_class'=>'tab-item'])
         </ul>
         <div class="nav-arrow">
             <i class="iconfont icon-arrow-down"></i>
