@@ -13,7 +13,7 @@
                     comment.user.name
                 }}</a>
             </div>
-            <p class="text">{{ comment.content }}</p>
+            <p class="text">{{ comment.body }}</p>
             <div class="info">
                 <span class="time">{{ comment.time_ago }}</span>
                 <span :class="['like', comment.is_Liked && 'liked']" v-on:click="likeHandler">
