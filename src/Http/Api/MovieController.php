@@ -35,15 +35,15 @@ class MovieController extends Controller
 
     public function comment()
     {
-        $user     = getUser();
-        $content  = request()->get('content');
-        $movie_id = request()->get('movie_id');
-        $comment  = Comment::create([
-            'user_id'          => $user->id,
-            'body'             => $content,
-            'commentable_id'   => $movie_id,
-            'commentable_type' => 'movies',
-        ]);
+        $user                      = getUser();
+        $content                   = request()->get('content');
+        $movie_id                  = request()->get('movie_id');
+        $comment                   = new Comment();
+        $comment->user_id          = $user->id;
+        $comment->body             = $content;
+        $comment->commentable_id   = $movie_id;
+        $comment->commentable_type = 'movies';
+        $comment->save();
         // 兼容前端结构，并且需要多包一个 collect
         $comment = Comment::find($comment->id);
         return returnData(collect($comment->toArray()), '发布评论成功', 200);
