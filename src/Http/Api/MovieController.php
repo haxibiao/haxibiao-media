@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Like;
 use App\Movie;
 use App\MovieHistory;
+use App\Report;
 use App\User;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
@@ -125,6 +126,21 @@ class MovieController extends Controller
                 'message'     => '点赞操作成功',
                 'status_code' => 200,
             ];
+        }
+    }
+
+    public function report()
+    {
+        if ($user = checkUser()) {
+            $id     = request()->get('id');
+            $remark = request()->get('remark');
+            $report = Report::create([
+                'reportable_type' => 'movies',
+                'reportable_id'   => $id,
+                'reason'          => $remark,
+                'user_id'         => optional($user)->id,
+            ]);
+            return returnData($report, '举报成功', 200);
         }
     }
 

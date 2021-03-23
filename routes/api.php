@@ -22,6 +22,13 @@ Route::group(['prefix' => 'movie'], function ($api) {
     Route::get('/danmu/v3', 'MovieController@danmu');
     Route::post('/comment/store', 'MovieController@comment');
     Route::get('/{id}/comment', 'MovieController@getComment');
+    Route::post('/comment/store', 'MovieController@comment');
+    Route::any('/toggle-like', 'MovieController@toggoleLike');
+    Route::any('/toggle-fan', 'MovieController@toggoleFan');
+    Route::any('/save-watch_progress', 'MovieController@saveWatchProgress');
+    Route::any('/get-watch_progress', 'MovieController@getWatchProgress');
+    Route::any('/report', 'MovieController@report');
+    Route::any('/history', 'MovieController@movieHistory');
 });
 
 Route::middleware('auth:api')->post('/video', 'VideoController@store'); //新短视频视频文件上传视频接口
