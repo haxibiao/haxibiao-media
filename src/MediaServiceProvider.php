@@ -102,7 +102,8 @@ class MediaServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__ . '/../public/images' => base_path('public/images'),
-            ], 'media-images');
+                // __DIR__ . '/../public/fonts'  => base_path('public/fonts'),
+            ], 'media-assets');
 
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));
