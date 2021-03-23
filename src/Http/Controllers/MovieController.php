@@ -233,7 +233,27 @@ class MovieController extends Controller
         // 兼容内涵电影vue用的series属性
         $movie->series = $movie->data;
         $movie->data   = null;
-
+        if ($user = checkUser()) {
+            // 保存观看历史
+            MovieHistory::updateOrCreate([
+                'user_id'  => $user->id,
+                'movie_id' => $movie->id,
+            ], [
+                'last_watch_time' => now(),
+            ]);
+            $isLike = Like::where([
+                'user_id'      => $user->id,
+                'likable_type' => 'movies',
+                'likable_id'   => $movie->id,
+            ])->exists();
+            $isBeMovieFan = Favorite::where([
+                'user_id'        => $user->id,
+                'favorable_type' => 'movies',
+                'favorable_id'   => $movie->id,
+            ])->exists();
+            $movie->isliked = $isLike;
+            $movie->isFan   = $isBeMovieFan;
+        }
         return view('movie.show')->with('movie', $movie)->with('recommend', $recommend)
             ->with('more', $more);
     }
