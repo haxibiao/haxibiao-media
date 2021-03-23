@@ -201,7 +201,7 @@ export default {
         }
 
         const that = this;
-        let apiReport = this.apiReport ?? '/report';
+        let apiReport = this.apiReport ?? '/api/movie/report';
         this.$nextTick(function() {
             // 举报视频submit事件
             $('#report-modal .btn-submit').on('click', function reportSubmit(event) {
