@@ -1,10 +1,9 @@
 <?php
 return [
-    //FIXME: 急需修复的db pass暴露问题...
     'mediachain' => [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),
-        'host'           => 'hk008.haxibiao.com',
+        'host'           => env('DB_HOST_MEDIACHAIN') ?? 'hk008.haxibiao.com',
         'port'           => '3306',
         'database'       => 'mediachain',
         'username'       => 'root',
@@ -23,7 +22,7 @@ return [
     'media'      => [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),
-        'host'           => 'media.haxibiao.com',
+        'host'           => env('DB_HOST_MEDIA') ?? 'media.haxibiao.com',
         'port'           => '3366',
         'database'       => 'media',
         'username'       => 'root',

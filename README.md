@@ -21,26 +21,24 @@
 
 -   trait UseMedia
 
-## 互相依赖
-
--   haxibiao-content Video/Movie 如同 Article,作为内容载体需要内容系统相同的能力
--   haxibiao-cms Video/Movie 站群化，seo 优化
-
 ## 安装步骤
 
-1. `composer.json`改动如下：
-   在`repositories`中添加 vcs 类型远程仓库指向
-   `http://code.haxibiao.cn/packages/haxibiao-media`
+1. `composer.json`改动如下：在`repositories`中添加 vcs 类型远程仓库指向`http://code.haxibiao.cn/packages/haxibiao-media`
 2. 执行`composer require haxibiao/media`
 3. 执行`php artisan media:install && composer dump`
 4. 给 app/User.php 添加 use UseMedia
 5. 执行`php artisan migrate`
 6. 完成
 
-### 更新 UI
+## artisan 命令说明
+
+-   php artisan movie:sync --help (暂时需要配置内部 DB_HOST_MEDIACHAIN, DB_PASSWORD_MEDIA)
+-   php artisan video:sync --help (暂时需要配置内部 DB_HOST_MEDIA, DB_PASSWORD_MEDIA)
+
+### 更新前端
 
 1. 直接使用的 php artisan media:publish
-2. 开发模式的 编译前端， cd {vendor_media_folder} && npm run prod
+2. 开发模式的 编译前端， cd {vendor_media} && npm run prod
 
 ### 更新日志
 
