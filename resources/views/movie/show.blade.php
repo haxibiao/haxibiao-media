@@ -60,8 +60,7 @@
                     </div>
                 </div>
                 <div class="video-comment">
-                    <comment-module movie-id={{ $movie->id }} count-comment={{ $movie->comment_count }}
-                        page-offset={{ 10 }} />
+                    <comment-module movie-id="{{ $movie->id }}" count-comment="{{ $movie->comment_count }}" page-offset="{{ 10 }}" />
                 </div>
             </div>
             <div class="side-right col-lg-3 hide-md">
