@@ -240,7 +240,7 @@ class MovieController extends Controller
 
     public function favorites()
     {
-        $user = \Auth::user();
+        $user = getUser();
         $type = request()->get('type');
 
         if ($type == 'like') {
@@ -262,7 +262,7 @@ class MovieController extends Controller
             $cate = "足迹";
         }
 
-        $movies = Movie::whereIn('id', $movieID)->paginate(18);
+        $movies = Movie::withoutGlobalScopes()->whereIn('id', $movieID)->paginate(18);
         return view('movie.favorites', [
             'cate'   => $cate,
             'movies' => $movies,

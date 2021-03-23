@@ -93,8 +93,8 @@ $cateogriesMenu = [
                         <a href=" javascript:;"><i class="iconfont icon-usercenter"></i></a>
                         <div class="dropdown-box user-center">
                             <ul class="clearfix">
-                                <li><a class="item" href="/favorites?type=like">我的喜欢</a></li>
-                                <li><a class="item" href="/favorites?type=favorite">我的收藏</a></li>
+                                <li><a class="item" href="/movie/favorites?type=like">我的喜欢</a></li>
+                                <li><a class="item" href="/movie/favorites?type=favorite">我的收藏</a></li>
                                 <li><a class="item logout">退出登录</a></li>
                             </ul>
                         </div>
