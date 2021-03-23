@@ -12,12 +12,13 @@ function hash_vod_url($path)
  * 格式化电影路由
  * https://pm.haxifang.com/browse/HXB-134
  */
-function movie_url($url,$index,$value){
-	$basename     = basename($url);
-	$parameters     = explode('-',$basename);
-	$new = data_set($parameters,$index,$value);
-	$new = implode('-',$new);
-	return Str::replaceFirst($basename,$new,$url);
+function movie_url($url, $index, $value)
+{
+    $basename   = basename($url);
+    $parameters = explode('-', $basename);
+    $new        = data_set($parameters, $index, $value);
+    $new        = implode('-', $new);
+    return Str::replaceFirst($basename, $new, $url);
 }
 
 if (!function_exists('media_path')) {
@@ -25,13 +26,4 @@ if (!function_exists('media_path')) {
     {
         return __DIR__ . "/../../" . $path;
     }
-}
-
-/**
- * media的laravel mix pack后的资源地址
- */
-function media_mix($path)
-{
-    $manifestPath = media_path('public/mix-manifest.json');
-    return breeze_mix($path, $manifestPath);
 }
