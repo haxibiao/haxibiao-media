@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Like;
 use App\Movie;
 use App\MovieHistory;
+use App\User;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
 use Haxibiao\Media\Traits\MovieRepo;

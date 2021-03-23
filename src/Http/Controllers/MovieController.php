@@ -6,50 +6,53 @@ use App\Favorite;
 use App\Like;
 use App\Movie;
 use App\MovieHistory;
+use App\User;
 use Haxibiao\Media\Http\Controller;
 use Haxibiao\Media\SearchLog;
+use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-	// movie/list/{分类}-{年代}-{类型}-{地区}-{语言}-{排序}----
-	// 预留三个参数
-	public function movies($pattern){
-		$parameters = explode('-',$pattern);
+    // movie/list/{分类}-{年代}-{类型}-{地区}-{语言}-{排序}----
+    // 预留三个参数
+    public function movies($pattern)
+    {
+        $parameters = explode('-', $pattern);
 
-		$categoryId   = data_get($parameters,'0');// region
-		$year   	  = data_get($parameters,'1');// year
-		$type   	  = data_get($parameters,'2');// type_name
-		$area   	  = data_get($parameters,'3');// country
-		$language     = data_get($parameters,'4');// lang
-		$order     	  = data_get($parameters,'5','latest');// order
+        $categoryId = data_get($parameters, '0'); // region
+        $year       = data_get($parameters, '1'); // year
+        $type       = data_get($parameters, '2'); // type_name
+        $area       = data_get($parameters, '3'); // country
+        $language   = data_get($parameters, '4'); // lang
+        $order      = data_get($parameters, '5', 'latest'); // order
 
-		$category = data_get(Movie::getCategories(),$categoryId);
+        $category = data_get(Movie::getCategories(), $categoryId);
 
-		$query = \App\Movie::where('status', '!=', Movie::DISABLED)
-			->when($category, function ($q) use ($category) {
-				return $q->where('region', $category);
-			})->when($year, function ($q) use ($year) {
-				$years = explode('_',$year);
-				if(count($years)>2){
-					return $q->whereBetWeen('year', [data_get($years,'1'),data_get($years,'0')]);
-				}
-				return $q->where('year', $year);
-			})->when($type, function ($q) use ($type) {
-				return $q->where('type_name', $type);
-			})->when($area, function ($q) use ($area) {
-				return $q->where('country', $area);
-			})->when($language, function ($q) use ($language) {
-				return $q->where('lang', $language);
-			});
-		// TODO tracker
-//		if($order === 'latest'){
-			$query = $query->orderBy('id','desc');
-//		} elseif ($order === 'hot'){
-//			$query = $query->orderBy('rank', 'desc');
-//		}
-		$movies = $query->paginate(40);
-		return view('movie.region')->with('movies',$movies);
-	}
+        $query = \App\Movie::where('status', '!=', Movie::DISABLED)
+            ->when($category, function ($q) use ($category) {
+                return $q->where('region', $category);
+            })->when($year, function ($q) use ($year) {
+            $years = explode('_', $year);
+            if (count($years) > 2) {
+                return $q->whereBetWeen('year', [data_get($years, '1'), data_get($years, '0')]);
+            }
+            return $q->where('year', $year);
+        })->when($type, function ($q) use ($type) {
+            return $q->where('type_name', $type);
+        })->when($area, function ($q) use ($area) {
+            return $q->where('country', $area);
+        })->when($language, function ($q) use ($language) {
+            return $q->where('lang', $language);
+        });
+        // TODO tracker
+        //        if($order === 'latest'){
+        $query = $query->orderBy('id', 'desc');
+//        } elseif ($order === 'hot'){
+        //            $query = $query->orderBy('rank', 'desc');
+        //        }
+        $movies = $query->paginate(40);
+        return view('movie.region')->with('movies', $movies);
+    }
 
     public function search()
     {
@@ -160,6 +163,24 @@ class MovieController extends Controller
         }
         $movies = (clone $qb)->where('region', "日剧")->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("日剧")->with('cate_id', 1);
+    }
+
+    public function login(Request $request)
+    {
+        $phone = $request->get('phone');
+        $pwd   = $request->get('pwd');
+        $name  = $request->get('name', '匿名用户');
+        $user  = User::where('phone', $phone)->first();
+        if ($user) {
+            if (password_verify($pwd, $user->password) == false) {
+                return returnData(null, '账号或密码不对', 403);
+            }
+        } else {
+            // 首次登陆即注册
+            $user = User::CreateUser($name, $phone, $pwd);
+        }
+        \Auth::login($user, true);
+        return returnData($user->toArray(), '登录成功', 200);
     }
 
     public function meiju()
