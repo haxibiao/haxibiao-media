@@ -26,4 +26,5 @@ Route::middleware(config('media.movie.middleware', []))
         Route::get('/movie/category/{id}', 'MovieController@category');
         Route::get('/movie/favorites', 'MovieController@favorites');
         Route::resource('/movie', 'MovieController');
+		Route::get('/movie/list/{pattern}', 'MovieController@movies');
     });

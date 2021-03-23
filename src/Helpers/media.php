@@ -1,9 +1,23 @@
 <?php
 
+use Illuminate\Support\Str;
+
 function hash_vod_url($path)
 {
     $path = ltrim($path, '/');
     return "http://hashvod-1251052432.file.myqcloud.com/" . $path;
+}
+
+/**
+ * 格式化电影路由
+ * https://pm.haxifang.com/browse/HXB-134
+ */
+function movie_url($url,$index,$value){
+	$basename     = basename($url);
+	$parameters     = explode('-',$basename);
+	$new = data_set($parameters,$index,$value);
+	$new = implode('-',$new);
+	return Str::replaceFirst($basename,$new,$url);
 }
 
 if (!function_exists('media_path')) {
