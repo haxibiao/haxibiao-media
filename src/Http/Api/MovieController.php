@@ -94,7 +94,7 @@ class MovieController extends Controller
 
     public function movieHistory()
     {
-        $user = Auth::user();
+        $user = getUser();
         return [
             'data'        => MovieHistory::where('user_id', $user->id)->get()->toArray(),
             'message'     => '获取浏览记录成功',
