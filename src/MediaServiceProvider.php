@@ -20,8 +20,9 @@ class MediaServiceProvider extends ServiceProvider
         //注册css js
         Breeze::asset('/css/media.css', media_path('public/css/media.css'));
         Breeze::asset('/js/media.js', media_path('public/js/media.js'));
-        Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf'));
-        Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff'));
+
+        // Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf'));
+        // Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff'));
 
         //合并view paths
         if (!app()->configurationIsCached()) {
@@ -102,7 +103,7 @@ class MediaServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__ . '/../public/images' => base_path('public/images'),
-                // __DIR__ . '/../public/fonts'  => base_path('public/fonts'),
+                __DIR__ . '/../public/fonts'  => base_path('public/fonts'),
             ], 'media-assets');
 
             //注册 migrations paths

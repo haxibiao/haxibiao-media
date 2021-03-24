@@ -110,6 +110,7 @@ trait MovieRepo
             'video_id'    => $video->id,
             'description' => $postTitle,
             'movie_id'    => $movie->id,
+            'status'      => Post::PUBLISH_STATUS,
         ]);
         $post->collections()->attach([$collection->id]);
         DB::connection('mediachain')->table('videos')->insert([
