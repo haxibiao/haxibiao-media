@@ -4,7 +4,7 @@
       <a href="{{ $article->url }}"  >
         <img src="{{ $article->cover }}" alt="{{ $article->subject }}">
         <i class="duration">
-          {{-- 持续时间 --}}  
+          {{-- 持续时间 --}}
           @sectominute($article->video->duration)
         </i>
       </a>
@@ -13,10 +13,12 @@
       <li class="video-title">
         <a href="{{ $article->url }}"  >{{ $article->subject }}</a>
       </li>
+      @if(config('content.show_video_plays'))
       <li>
         {{-- 播放量 --}}
         <p class="subtitle single-line">{{ $article->hits }}次播放</p>
       </li>
+      @endif
     </ul>
   </div>
 </li>

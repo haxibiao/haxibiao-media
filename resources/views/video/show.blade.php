@@ -74,8 +74,10 @@
                 {{-- 专题 合集？ --}}
                 <i class="iconfont icon-shijian"></i>
                 <span>发布于：{{ $video->createdAt() }}</span>
-                <i class="iconfont icon-shipin1"></i>
-                <span class="hits">{{ $video->hits ?? rand(1000,50000) }}次播放</span>
+                @if(config('content.show_video_plays'))
+                    <i class="iconfont icon-shipin1"></i>
+                    <span class="hits">{{ $video->hits ?? rand(1000,50000) }}次播放</span>
+                @endif
             </div>
         </div>
         <div class="sectionBox">
