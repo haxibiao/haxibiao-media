@@ -51,7 +51,11 @@ class MovieSync extends Command
         if (!Schema::hasTable('movies')) {
             return $this->error("没有movies表");
         }
+        $this->database();
+    }
 
+    public function getArgs()
+    {
         $region    = $this->option('region');
         $type      = $this->option('type');
         $style     = $this->option('style');
@@ -60,11 +64,104 @@ class MovieSync extends Command
         $actors    = $this->option('actors');
         $start_id  = $this->option('id');
         $is_neihan = $this->option('is_neihan');
-        $success   = 0;
-        $fail      = 0;
-        $total     = 0;
+        return [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan];
+    }
 
-        $qb = DB::connection('mediachain')->table('movies')
+    public function api()
+    {
+        [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan] = $this->getArgs();
+        $success                                                                   = 0;
+        $fail                                                                      = 0;
+        $total                                                                     = 0;
+        $url                                                                       = "https://mediachain.info/api/resource/list/";
+        $args                                                                      = [];
+        $agrs['page']                                                              = 1;
+        if ($region) {
+            $args['region'] = $region;
+        }
+        if ($type) {
+            $args['type_name'] = $region;
+        }
+        if ($year) {
+            $args['year'] = $year;
+        }
+        if ($producer) {
+            $args['producer'] = $producer;
+        }
+        if ($actors) {
+            $args['actors'] = $actors;
+        }
+        if ($start_id) {
+            $args['start_id'] = $start_id;
+        }
+        if ($is_neihan) {
+            $args['is_neihan'] = $is_neihan;
+        }
+        $args = http_build_query($args);
+        $url .= '?' . $args;
+        $result = json_decode(file_get_contents($url), true);
+        if ($result['status'] == 200) {
+            DB::beginTransaction();
+            $resultMovies = $result['data'];
+            foreach ($resultMovies as $movie) {
+                try {
+                    //按source 和 key 排重导入
+                    $movie = @json_decode(json_encode($movie), true);
+                    $model = Movie::firstOrNew([
+                        'name'       => $movie['name'],
+                        'source'     => $this->option('source'),
+                        'source_key' => $movie['source_key'],
+                    ]);
+                    $movie['producer'] = str_limit($movie['producer'], 97);
+                    $movie['actors']   = str_limit($movie['actors'], 97);
+                    //修复count_series null引起sync出错
+                    $movie['count_series'] = $movie['count_series'] ?? 0;
+                    $movie['introduction'] = $movie['introduction'] ?? '';
+                    //同步type
+                    $movie['type']        = $movie['type_name'];
+                    $movie['data']        = json_encode($movie['data']);
+                    $movie['data_source'] = json_encode($movie['data_source']);
+                    $model->forceFill(array_only($movie, [
+                        'introduction',
+                        'cover',
+                        'producer',
+                        'year',
+                        'region',
+                        'actors',
+                        'miner',
+                        'count_series',
+                        'rank',
+                        'country',
+                        'subname',
+                        'score',
+                        'tags',
+                        'hits',
+                        'lang',
+                        'type',
+
+                    ]))->save();
+                    dd($model);
+                    DB::commit();
+                    $success++;
+                    $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
+                } catch (\Throwable $th) {
+                    dd($th);
+                    DB::rollback();
+                    $fail++;
+                    $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
+                }
+            }
+        }
+        $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部');
+    }
+
+    public function database()
+    {
+        [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan] = $this->getArgs();
+        $success                                                                   = 0;
+        $fail                                                                      = 0;
+        $total                                                                     = 0;
+        $qb                                                                        = DB::connection('mediachain')->table('movies')
             ->when($is_neihan, function ($q) use ($is_neihan) {
                 if ($is_neihan == 'false') {
                     $q->where('is_neihan', 0);
@@ -114,8 +211,7 @@ class MovieSync extends Command
                     $movie['introduction'] = $movie['introduction'] ?? '';
                     //同步type
                     $movie['type'] = $movie['type_name'];
-                    $movie['data']  = json_encode($movie['data']);
-
+                    $movie['data'] = json_encode($movie['data']);
 
                     $model->forceFill(array_only($movie, [
                         'introduction',
@@ -141,7 +237,6 @@ class MovieSync extends Command
                     $success++;
                     $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
                 } catch (\Exception $ex) {
-                    dd($ex);
                     DB::rollback();
                     $fail++;
                     $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
