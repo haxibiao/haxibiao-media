@@ -1,5 +1,6 @@
 @extends('layouts.movie')
 
+
 @section('content')
     <div class="movie_favorites">
         <div class="container-xl padding-0">
@@ -24,11 +25,11 @@
                                 @foreach ($orders as $order => $word)
                                     @if ($word == $cate)
                                         <li>
-                                            <a class="btn-order active" href="/movie/favorites?type={{ $order }}">{{ $word }}</a>
+                                            <a class="btn-order active" href="/favorites?type={{ $order }}">{{ $word }}</a>
                                         </li>
                                     @else
                                         <li>
-                                            <a class="btn-order" href="/movie/favorites?type={{ $order }}">{{ $word }}</a>
+                                            <a class="btn-order" href="/favorites?type={{ $order }}">{{ $word }}</a>
                                         </li>
                                     @endif
                                 @endforeach
@@ -43,7 +44,7 @@
                     <ul class="row">
                         @foreach ($movies as $movie)
                             <li class="col-lg-2 col-md-3 col-sm-3 col-xs-4 padding-10">
-                                @include('parts.movie.collecte_movie_item')
+                                @include('parts.movie.movie_item')
                             </li>
                         @endforeach
                     </ul>

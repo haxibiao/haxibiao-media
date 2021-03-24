@@ -100,9 +100,8 @@ trait MovieRepo
             'path'     => $playUrl,
         ]);
         $collection = Collection::firstOrCreate([
-            'name' => "{$movie->name} 的剪辑合集",
-            'type' => 'post',
-        ], [
+            'name'    => "{$movie->name}的剪辑",
+            'type'    => 'post',
             'user_id' => $user->id,
         ]);
         // 存储成动态
@@ -130,22 +129,12 @@ trait MovieRepo
      */
     public static function findSeriesName($m3u8, $movie)
     {
-        if (config('app.name') == '内函电影') {
-            $series = $movie->series()->get();
-            foreach ($series as $item) {
-                if ($item->url == $m3u8) {
-                    return $item->name;
-                }
-            }
-        } else {
-            $series = $movie->data;
-            foreach ($series as $item) {
-                if ($item['url'] == $m3u8) {
-                    return $item['name'];
-                }
+        $series = $movie->series;
+        foreach ($series as $item) {
+            if ($item->url == $m3u8) {
+                return $item->name;
             }
         }
-
     }
 
     public static function getCategories()
