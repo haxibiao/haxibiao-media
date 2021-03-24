@@ -38,7 +38,7 @@ $post = $video->post;
                                 </source>
                             </video>
                         </div>  --}}
-                        <dplayer source="{{ $video->url }}" />
+                        <dplayer style="height: 500px;" source="{{ $video->url }}" />
                     </div>
                     <div class="video-body">
                         @if($post->collections)
