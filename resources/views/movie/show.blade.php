@@ -1,8 +1,18 @@
 @extends('layouts.movie')
 
-@section('title')
-    {{ $movie->name }} -
-@endsection
+@section('title') {{ $movie->name.'在线观看,独家高清免费'}} @stop
+
+@section('keywords') {{ $movie->name.'在线观看免费' }} @stop
+
+@section('description') {{ seo_site_name() }}{{'为您提供'.$movie->name.'免费在线观看，'.$movie->name.'独家最新高清完整版视频在线云播放，' }}{{mb_substr($movie->introduction,0,40).'...'}} @stop
+
+@push('seo_og_result')
+<meta property="og:type" content="movies" />
+<meta property="og:url" content="https://{{ get_domain() }}/movie/{{ $movie->id }}" />
+<meta property="og:title" content="{{ $movie->name }}" />
+<meta property="og:description" content="{{ mb_substr($movie->introduction,0,80).'...' }}" />
+<meta property="og:image" content="{{ $movie->cover_url }}" />
+@endpush
 
 
 @section('content')
