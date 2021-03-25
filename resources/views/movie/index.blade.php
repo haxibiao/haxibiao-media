@@ -7,13 +7,6 @@ $videoList = array_fill(0, 4, 'video_list');
 
 @extends('layouts.movie')
 
-@section('title') 在线观看,独家高清免费 @stop
-
-@section('keywords') 在线电影,最新电影,免费电影,电影在线观看,内涵电影，{{ seo_site_name() }} @stop
-
-@section('description') {{seo_site_name()}}({{get_domain()}})免费提供热门电影、热播韩剧、高分美剧、最新日剧，及时收录最新、最热、最全的电影大片，高清正版视频免费在线观看 @stop
-
-
 @section('top')
     <div class="home-top-bg"></div>
 @endsection
