@@ -4,6 +4,7 @@ namespace Haxibiao\Media;
 
 use App\Post;
 use App\Question;
+use App\Taggable;
 use App\User;
 use App\Video;
 use Haxibiao\Breeze\Model;
@@ -20,6 +21,7 @@ class Spider extends Model
     use SpiderAttrs;
     use SpiderRepo;
     use SpiderResolvers;
+    use Taggable;
 
     protected $fillable = [
         'user_id',
