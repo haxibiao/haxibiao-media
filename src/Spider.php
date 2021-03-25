@@ -8,7 +8,7 @@ use App\User;
 use App\Video;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
-use Haxibiao\Content\Taggable;
+use Haxibiao\Content\Traits\Taggable;
 use Haxibiao\Media\Traits\SpiderAttrs;
 use Haxibiao\Media\Traits\SpiderRepo;
 use Haxibiao\Media\Traits\SpiderResolvers;
