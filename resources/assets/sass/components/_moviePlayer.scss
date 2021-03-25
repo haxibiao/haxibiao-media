@@ -84,6 +84,9 @@
     .player__operate {
         background: #0f0f1e;
         padding: 10px 5px;
+        @media (max-width: $col-sm-width) {
+            zoom: 0.8;
+        }
         .operation {
             padding: 0 5px;
             cursor: pointer;

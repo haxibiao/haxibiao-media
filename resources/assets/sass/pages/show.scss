@@ -3,12 +3,6 @@
 @import "../components/reportModal";
 @import "../components/comment/commentItem";
 
-.app-player {
-    @media (max-width: $col-sm-width) {
-        zoom: 0.8;
-    }
-}
-
 .movie_loading:nth-child(1) {
     width: 100%;
     background-color: #efefef;
