@@ -96,7 +96,7 @@ trait MovieAttrs
 
     public function setDataAttribute($value)
     {
-        if (is_string($value)) {
+        if (is_string($value) && !app()->runningInConsole()) {
             $this->attributes['data'] = @json_decode($value);
         } else {
             $this->attributes['data'] = $value;

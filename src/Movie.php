@@ -57,8 +57,8 @@ class Movie extends Model
     public const ERROR        = -2; //资源损坏、丢失、不完整
 
     //加载data到json位series数据只给vue播放器
-    public $appends = ['data'];
-    public $casts   = [
+    protected $appends = ['data'];
+    protected $casts   = [
         'data' => 'array',
     ];
 

@@ -14,7 +14,7 @@ class MovieSync extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:sync {--is_neihan=false} {--source=内函电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id}';
+    protected $signature = 'movie:sync {--way=database} {--is_neihan=false} {--source=内函电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id}';
 
     /**
      * The console command description.
@@ -51,7 +51,8 @@ class MovieSync extends Command
         if (!Schema::hasTable('movies')) {
             return $this->error("没有movies表");
         }
-        $this->database();
+        $way = $this->option('way');
+        $this->$way();
     }
 
     public function getArgs()
@@ -75,7 +76,7 @@ class MovieSync extends Command
         $total                                                                     = 0;
         $url                                                                       = "https://mediachain.info/api/resource/list/";
         $args                                                                      = [];
-        $agrs['page']                                                              = 1;
+        $page                                                                      = 1;
         if ($region) {
             $args['region'] = $region;
         }
@@ -97,61 +98,67 @@ class MovieSync extends Command
         if ($is_neihan) {
             $args['is_neihan'] = $is_neihan;
         }
-        $args = http_build_query($args);
-        $url .= '?' . $args;
-        $result = json_decode(file_get_contents($url), true);
-        if ($result['status'] == 200) {
-            DB::beginTransaction();
-            $resultMovies = $result['data'];
-            foreach ($resultMovies as $movie) {
-                try {
-                    //按source 和 key 排重导入
-                    $movie = @json_decode(json_encode($movie), true);
-                    $model = Movie::firstOrNew([
-                        'name'       => $movie['name'],
-                        'source'     => $this->option('source'),
-                        'source_key' => $movie['source_key'],
-                    ]);
-                    $movie['producer'] = str_limit($movie['producer'], 97);
-                    $movie['actors']   = str_limit($movie['actors'], 97);
-                    //修复count_series null引起sync出错
-                    $movie['count_series'] = $movie['count_series'] ?? 0;
-                    $movie['introduction'] = $movie['introduction'] ?? '';
-                    //同步type
-                    $movie['type']        = $movie['type_name'];
-                    $movie['data']        = json_encode($movie['data']);
-                    $movie['data_source'] = json_encode($movie['data_source']);
-                    $model->forceFill(array_only($movie, [
-                        'introduction',
-                        'cover',
-                        'producer',
-                        'year',
-                        'region',
-                        'actors',
-                        'miner',
-                        'count_series',
-                        'rank',
-                        'country',
-                        'subname',
-                        'score',
-                        'tags',
-                        'hits',
-                        'lang',
-                        'type',
 
-                    ]))->save();
-                    dd($model);
-                    DB::commit();
-                    $success++;
-                    $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
-                } catch (\Throwable $th) {
-                    dd($th);
-                    DB::rollback();
-                    $fail++;
-                    $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
+        $returnCount = 0;
+        do {
+            data_set($args, 'page', $page);
+            $args = http_build_query($args);
+            $url .= '?' . $args;
+            $result      = json_decode(file_get_contents($url), true);
+            $returnCount = count($result['data']);
+            if ($result['status'] == 200) {
+                DB::beginTransaction();
+                $resultMovies = $result['data'];
+                foreach ($resultMovies as $movie) {
+                    try {
+                        //按source 和 key 排重导入
+                        $movie = @json_decode(json_encode($movie), true);
+                        $model = Movie::firstOrNew([
+                            'name'       => $movie['name'],
+                            'source'     => $this->option('source'),
+                            'source_key' => $movie['source_key'],
+                        ]);
+                        $movie['producer'] = str_limit($movie['producer'], 97);
+                        $movie['actors']   = str_limit($movie['actors'], 97);
+                        //修复count_series null引起sync出错
+                        $movie['count_series'] = $movie['count_series'] ?? 0;
+                        $movie['introduction'] = $movie['introduction'] ?? '';
+                        //同步type
+                        $movie['type']        = $movie['type_name'];
+                        $movie['data']        = json_encode($movie['data']);
+                        $movie['data_source'] = json_encode($movie['data_source']);
+                        $model->forceFill(array_only($movie, [
+                            'introduction',
+                            'cover',
+                            'producer',
+                            'year',
+                            'region',
+                            'actors',
+                            'miner',
+                            'count_series',
+                            'rank',
+                            'country',
+                            'subname',
+                            'score',
+                            'tags',
+                            'hits',
+                            'lang',
+                            'type',
+                            'data',
+                            'data_source',
+                        ]))->save();
+                        DB::commit();
+                        $success++;
+                        $page++;
+                        $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
+                    } catch (\Throwable $th) {
+                        DB::rollback();
+                        $fail++;
+                        $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
+                    }
                 }
             }
-        }
+        } while ($returnCount >= 300);
         $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部');
     }
 
@@ -172,7 +179,7 @@ class MovieSync extends Command
             ->when($region, function ($q) use ($region) {
                 $q->where('region', $region);})
             ->when($type, function ($q) use ($type) {
-                $q->where('type', $type);})
+                $q->where('type_name', $type);})
             ->when($style, function ($q) use ($style) {
                 $q->where('style', $style);})
             ->when($year, function ($q) use ($year) {
@@ -190,7 +197,6 @@ class MovieSync extends Command
                     }
                 });})
             ->orderBy('id');
-
         $qb->chunk(100, function ($movies) use (&$fail, &$success, &$total) {
             foreach ($movies as $movie) {
                 $total++;
@@ -212,7 +218,6 @@ class MovieSync extends Command
                     //同步type
                     $movie['type'] = $movie['type_name'];
                     $movie['data'] = json_encode($movie['data']);
-
                     $model->forceFill(array_only($movie, [
                         'introduction',
                         'cover',
