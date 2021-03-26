@@ -83,8 +83,12 @@ trait VideoAttrs
         }
 
         if ('vod' == $this->disk) {
-            $json = json_decode($this->json, true);
-            return data_get($json, 'vod.MediaUrl');
+			$json = $this->json;
+            $isString = is_string($json);
+            if($isString){
+				$json = json_decode($json, true);
+			}
+			return data_get($json, 'json.vod.MediaUrl');
         }
 
         if (!Storage::disk('public')->exists($this->path)) {
