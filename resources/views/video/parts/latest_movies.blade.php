@@ -1,3 +1,4 @@
+ @if(isset($movies))
  <div class="video-top">
  	<div class="vd-head">
               <h3 class="vd-title">
@@ -16,4 +17,5 @@
     	</li>			
 		@endforeach
 	</ul>
-</div>  
+</div>
+@endif

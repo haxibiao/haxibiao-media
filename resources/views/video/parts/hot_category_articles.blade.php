@@ -1,4 +1,7 @@
 <div class="video-box">
+
+{{-- 每个专题前几个文章 --}}
+
 {{--    @foreach($articles as $article)--}}
 {{--        @if($loop->last)--}}
 {{--            <div class="box-top">--}}
@@ -14,6 +17,8 @@
 {{--            </div>--}}
 {{--        @endif--}}
 {{--    @endforeach--}}
+
+@if(isset($articles))
     <div class="box-body">
         <ul class="game-video-list">
             @foreach($articles as $article)
@@ -38,3 +43,4 @@
         </ul>
     </div>
 </div>
+@endif

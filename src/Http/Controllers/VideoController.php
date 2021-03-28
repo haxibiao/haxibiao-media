@@ -27,6 +27,10 @@ class VideoController extends Controller
         $data = [];
         $site = cms_get_site();
 
+        //置顶 - 合集
+        $collections = \App\Collection::latest('updated_at')->take(6)->get();
+
+        $movies = collect([]);
         // 置顶 - 电影
         if ($site && $site->stickyMovies()->byStickableName('视频页-电影')->count()) {
             $movies = $site->stickyMovies()
@@ -34,13 +38,12 @@ class VideoController extends Controller
                 ->latest('stickables.updated_at')
                 ->take(6)
                 ->get();
-        } else {
+        }
+        if ($movies->isEmpty()) {
             $movies = indexTopMovies(6);
         }
 
-        //置顶 - 抖音合集
-        $collections = \App\Collection::latest('updated_at')->take(6)->get();
-
+        $articles = collect([]);
         //置顶 - 电影图解
         if ($site) {
             $articles = $site->stickyArticles()->whereType('diagrams')
@@ -48,7 +51,8 @@ class VideoController extends Controller
                 ->latest('stickables.updated_at')
                 ->take(6)
                 ->get();
-        } else {
+        }
+        if ($articles->isEmpty()) {
             $articles = Article::query()->whereType('diagrams')
                 ->latest('updated_at')
                 ->take(6)
