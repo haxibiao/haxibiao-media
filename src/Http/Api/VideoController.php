@@ -170,7 +170,7 @@ class VideoController extends Controller
         //兼容vue读取 article.cover 的
         foreach ($posts as $post) {
             $post->cover        = $post->cover;
-            $post->user->avatar = data_get($post,'user.avatar');
+            data_set($post,'user.avatar',data_get($post,'user.avatar'));
         }
         return $posts;
     }
