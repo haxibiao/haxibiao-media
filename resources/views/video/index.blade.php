@@ -32,7 +32,7 @@
     </div>
     @include('video.parts.hot_category_articles')
 
-    <video-list api="api/getlatestVideo" is-desktop="{{ isDeskTop() == 1 }}" ></video-list>
+    <video-list api="api/getlatestVideo" is-desktop="{{ isDeskTop() == 1 }}" start-page="1"></video-list>
 </div>
 @stop
 
