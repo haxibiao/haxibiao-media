@@ -14,7 +14,7 @@ class MovieSync extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:sync {--way=database} {--is_neihan=false} {--source=内函电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id}';
+    protected $signature = 'movie:sync {--way=database} {--is_neihan=false} {--source=内函电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id} {--movie_name = :指定电影名称}';
 
     /**
      * The console command description.
@@ -49,20 +49,21 @@ class MovieSync extends Command
 
     public function getArgs()
     {
-        $region    = $this->option('region');
-        $type      = $this->option('type');
-        $style     = $this->option('style');
-        $year      = $this->option('year');
-        $producer  = $this->option('producer');
-        $actors    = $this->option('actors');
-        $start_id  = $this->option('id');
-        $is_neihan = $this->option('is_neihan');
-        return [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan];
+        $region     = $this->option('region');
+        $type       = $this->option('type');
+        $style      = $this->option('style');
+        $year       = $this->option('year');
+        $producer   = $this->option('producer');
+        $actors     = $this->option('actors');
+        $start_id   = $this->option('id');
+        $is_neihan  = $this->option('is_neihan');
+        $movie_name =  $this->option('movie_name');
+        return [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan, $movie_name];
     }
 
     public function api()
     {
-        [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan] = $this->getArgs();
+        [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan, $movie_name] = $this->getArgs();
         $success                                                                   = 0;
         $fail                                                                      = 0;
         $total                                                                     = 0;
@@ -89,6 +90,9 @@ class MovieSync extends Command
         }
         if ($is_neihan) {
             $args['is_neihan'] = $is_neihan;
+        }
+        if ($movie_name) {
+            $args['movie_name'] = $movie_name;
         }
 
         $returnCount = 0;
@@ -166,11 +170,11 @@ class MovieSync extends Command
             }
         }
 
-        [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan] = $this->getArgs();
-        $success                                                                   = 0;
-        $fail                                                                      = 0;
-        $total                                                                     = 0;
-        $qb                                                                        = DB::connection('mediachain')->table('movies')
+        [$region, $type, $style, $year, $producer, $actors, $start_id, $is_neihan, $movie_name] = $this->getArgs();
+        $success                                                                                = 0;
+        $fail                                                                                   = 0;
+        $total                                                                                  = 0;
+        $qb                                                                                     = DB::connection('mediachain')->table('movies')
             ->when($is_neihan, function ($q) use ($is_neihan) {
                 if ($is_neihan == 'false') {
                     $q->where('is_neihan', 0);
@@ -188,6 +192,9 @@ class MovieSync extends Command
                 $q->where('year', $year);})
             ->when($producer, function ($q) use ($producer) {
                 $q->where('producer', $producer);})
+            ->when($movie_name, function ($q) use ($movie_name){
+                $q->where('name', $movie_name);
+            })    
             ->when($actors, function ($q) use ($actors) {
                 $actors = explode(',', $actors);
                 $q->where(function ($q) use ($actors) {
