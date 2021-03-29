@@ -73,7 +73,7 @@ export default {
             this.loading = true;
             var startTime = moment.toSecond(new Date(this.startTime));
             var endTime = startTime + this.duration;
-            let apiClip = this.apiClip ?? '/api/movie/clip';
+            let apiClip = this.apiClip ? this.apiClip : '/api/movie/clip';
             window.axios
                 .post(
                     `${apiClip}`,

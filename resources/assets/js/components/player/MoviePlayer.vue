@@ -53,7 +53,7 @@
                     </a>
                 </li>
                 <li class="fl operation download-app" dropdown-target=".download-app_qrcode" dropdown-toggle="hover">
-                    <a :href="appDownloadUrl" target="_blank">
+                    <a :href="downloadPageUrl" target="_blank">
                         <i class="iconfont icon-mobile"></i>
                         <span class="mobile">观看</span>
                     </a>
@@ -177,6 +177,7 @@ export default {
         'movieData',
         'initEpisode',
         'qrcode',
+        'apkUrl',
         'appDownload',
         'apiDanmu',
         'apiSaveProgress',
@@ -201,7 +202,7 @@ export default {
         }
 
         const that = this;
-        let apiReport = this.apiReport ?? '/api/movie/report';
+        let apiReport = this.apiReport ? this.apiReport : '/api/movie/report';
         this.$nextTick(function() {
             // 举报视频submit事件
             $('#report-modal .btn-submit').on('click', function reportSubmit(event) {
@@ -227,9 +228,10 @@ export default {
             $('.download-app').on('click touchstart', function downloadApk(event) {
                 if ('ontouchstart' in document.documentElement) {
                     // 移动端直接下载
-                    window.location.href = this.appDownloadUrl;
+                    window.location.href = that.apkUrl;
                 } else {
-                    window.location.href = this.appDownloadUrl;
+                    // PC进入下载扫码页
+                    window.location.href = that.downloadPageUrl;
                 }
             });
         });
@@ -260,7 +262,7 @@ export default {
                 return;
             }
             const that = this;
-            let apiLike = this.apiLike ?? '/api/movie/toggle-like';
+            let apiLike = this.apiLike ? this.apiLike : '/api/movie/toggle-like';
             this.toggleLike();
             window.axios
                 .post(
@@ -296,7 +298,7 @@ export default {
                 return;
             }
             const that = this;
-            let apiFavorite = this.apiFavorite ?? '/api/movie/toggle-fan';
+            let apiFavorite = this.apiFavorite ? this.apiFavorite : '/api/movie/toggle-fan';
             this.toggleFavorite();
             window.axios
                 .post(
@@ -341,8 +343,9 @@ export default {
         seriesName() {
             return this.series[this.currentEpisode - 1].name;
         },
-        appDownloadUrl() {
-            return this.appDownload ?? '/app';
+        downloadPageUrl() {
+            // return !this.appDownload ? '/app' : this.appDownload;
+            return this.appDownload ? this.appDownload : '/app';
         },
     },
     data() {

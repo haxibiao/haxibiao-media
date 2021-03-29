@@ -81,7 +81,7 @@ export default {
             this.bindDanmuSend();
 
             //绘制scoket弹幕
-            let danmuPrefix = this.apiDanmu ?? 'danmu_';
+            let danmuPrefix = this.apiDanmu ? this.apiDanmu : 'danmu_';
             var channel = danmuPrefix + this.movie_id + '_' + this.episode;
             Echo.channel(channel).listen('DanmuEvent', (e) => {
                 const danmu = {
@@ -132,7 +132,7 @@ export default {
             }
             window.axios
                 .post(
-                    this.apiSaveProgress ?? `/api/movie/save-watch_progress`,
+                    this.apiSaveProgress ? this.apiSaveProgress : `/api/movie/save-watch_progress`,
                     {
                         movie_id: this.movie_id,
                         series_id: this.series[this.episode - 1].id,
@@ -154,12 +154,12 @@ export default {
         //获取历史观看时长
         jumpUserHistory() {
             var that = this;
-            if (!this.ss) {
+            if (!this.apiGetProgress) {
                 return;
             }
             window.axios
                 .post(
-                    this.ss ?? `/api/movie/get-watch_progress`,
+                    this.apiGetProgress ? this.apiGetProgress : `/api/movie/get-watch_progress`,
                     {
                         movie_id: that.movie_id,
                     },
