@@ -57,7 +57,11 @@ trait ImageRepo
         $imageMaker->encode($extension, 100);
 
         if (!is_testing_env()) {
-            Storage::cloud()->put('images/' . $imageName . '.' . $extension, $imageMaker->__toString());
+			if ($extension == 'gif') {
+				Storage::put('images/' . $imageName . '.' . $extension,@file_get_contents($source));
+			} else {
+				Storage::cloud()->put('images/' . $imageName . '.' . $extension, $imageMaker->__toString());
+			}
         }
 
         //保存缩略图
