@@ -1,9 +1,9 @@
 type Movie {
-  id: ID
+  id: Int!
   """
   影片名
   """
-  name: String
+  name: String!
   """
   简介
   """
