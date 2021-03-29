@@ -165,7 +165,7 @@ class VideoController extends Controller
     public function getLatestVideo(Request $request)
     {
         //FIXME: stick 逻辑
-        $qb    = \App\Post::whereStatus(1)->latest('updated_at')->with(['video', 'user']);
+        $qb    = \App\Post::whereStatus(1)->latest('updated_at')->has('user')->with(['video', 'user']);
         $posts = $qb->paginate(9);
         //兼容vue读取 article.cover 的
         foreach ($posts as $post) {
