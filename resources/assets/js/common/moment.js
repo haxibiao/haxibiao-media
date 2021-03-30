@@ -12,7 +12,6 @@ function format(second) {
         return v >> 0 < 10 ? '0' + v : v;
     };
     const arr = [zero(h), zero(m), zero(s)];
-    h > 0 && arr.unshift(zero(h));
     return arr.join(':');
 }
 
