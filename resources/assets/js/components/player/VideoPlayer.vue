@@ -72,6 +72,7 @@ export default {
             });
             this.player.on('seeking', () => {
                 const currentTime = moment.format(this.player.video.currentTime);
+                console.log('seeking currentTime', currentTime);
                 this.$emit('update:currentTime', currentTime);
             });
             document.addEventListener('message', this.onWebViewMessage);
@@ -83,7 +84,7 @@ export default {
             //绘制scoket弹幕
             let danmuPrefix = this.apiDanmu ? this.apiDanmu : 'danmu_';
             var channel = danmuPrefix + this.movie_id + '_' + this.episode;
-            Echo.channel(channel).listen('DanmuEvent', (e) => {
+            Echo.channel(channel).listen('DanmuEvent', e => {
                 const danmu = {
                     text: e.content,
                     color: '#FFF',
@@ -142,14 +143,14 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    }
+                    },
                 )
                 .then(function(response) {
                     if (response && response.data) {
                         console.log(response);
                     }
                 })
-                .catch((e) => {});
+                .catch(e => {});
         },
         //获取历史观看时长
         jumpUserHistory() {
@@ -167,7 +168,7 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    }
+                    },
                 )
                 .then(function(response) {
                     if (response.data.status_code == 200) {

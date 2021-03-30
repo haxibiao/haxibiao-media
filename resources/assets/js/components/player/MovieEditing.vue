@@ -55,7 +55,6 @@
 </template>
 
 <script>
-// import 'element-ui/lib/theme-chalk/index.css';
 import 'element-ui/lib/theme-chalk/base.css';
 import 'element-ui/lib/theme-chalk/time-picker.css';
 import 'element-ui/lib/theme-chalk/input.css';
@@ -89,9 +88,9 @@ export default {
                         headers: {
                             token: this.$user.token,
                         },
-                    }
+                    },
                 )
-                .then((response) => {
+                .then(response => {
                     this.startTime = '';
                     this.$message({
                         showClose: true,
@@ -99,7 +98,7 @@ export default {
                         type: 'success',
                     });
                 })
-                .catch((e) => {
+                .catch(e => {
                     this.$message({
                         showClose: true,
                         message: '剪辑失败',
