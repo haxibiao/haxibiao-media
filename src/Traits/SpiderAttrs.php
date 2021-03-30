@@ -2,16 +2,16 @@
 
 namespace Haxibiao\Media\Traits;
 
-use Exception;
 use Haxibiao\Media\Spider;
 use Illuminate\Support\Arr;
+use Haxibiao\Breeze\Exceptions\GQLException;
 
 trait SpiderAttrs
 {
 
     public function setSourceUrlAttribute($value)
     {
-        throw_if(strlen($value) > 255, Exception::class, '分享失败,Url不符合规定!');
+        throw_if(strlen($value) > 255, GQLException::class, '分享失败,Url不符合规定!');
         $this->attributes['source_url'] = $value;
     }
 
