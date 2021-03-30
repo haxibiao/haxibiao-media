@@ -1,5 +1,10 @@
 @php
 $post = $video->post;
+if($post){
+    $content = $post->content;
+}else{
+    $content = $video->title;
+}
 @endphp
 
 {{-- 短视频动态时代的，关联动态+合集为主 --}}
@@ -7,7 +12,7 @@ $post = $video->post;
 @extends('layouts.video')
 
 @section('title')
-    {{ $post->content}}
+    {{ $content }}
 @stop
 
 @push('seo_og_result')
