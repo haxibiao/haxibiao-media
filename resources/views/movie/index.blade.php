@@ -8,7 +8,7 @@ $videoList = array_fill(0, 4, 'video_list');
 @extends('layouts.movie')
 
 @section('top')
-    <div class="home-top-bg"></div>
+    <div class="header-top-bg"></div>
 @endsection
 
 @section('content')
@@ -28,7 +28,9 @@ $videoList = array_fill(0, 4, 'video_list');
                             <div class="title">
                                 {{ $cate }}
                             </div>
-                            <a class="more" href="/movie/{{ $movies[2] }}">更多<i class="iconfont icon-arrow-right"></i></a>
+                            <a class="more" href="/movie/{{ $movies[2] }}">更多
+                                <i class="iconfont icon-arrow-right"></i>
+                            </a>
                         </div>
                         <div class="movie-list">
                             @foreach ($movies[0] as $movie)
@@ -67,5 +69,3 @@ $videoList = array_fill(0, 4, 'video_list');
         </div>
     </div>
 @endsection
-
-
