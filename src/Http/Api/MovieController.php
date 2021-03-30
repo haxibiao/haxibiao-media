@@ -9,6 +9,7 @@ use App\Movie;
 use App\MovieHistory;
 use App\Report;
 use App\User;
+use App\Video;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
 use Haxibiao\Media\Traits\MovieRepo;
@@ -90,6 +91,15 @@ class MovieController extends Controller
         $newM3u8    = MovieRepo::ClipMovie($m3u8, $start, $end);
         $post       = MovieRepo::storeClipMovie($user, $movie, $newM3u8, $postTitle, $seriesName);
         return returnData($post->toArray(), '剪辑成功', 200);
+    }
+
+    public function updateClipVideoCover(Request $request)
+    {
+        $video = $request->get('video');
+        $model = Video::where('path', $video['url'])->first();
+        optional($model)->update([
+            'cover' => $video['cover'],
+        ]);
     }
 
     public function movieHistory()
