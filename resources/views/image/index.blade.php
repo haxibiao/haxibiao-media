@@ -20,7 +20,7 @@
             @foreach($images as $image)
             <div class="media">
                 <a class="pull-left" href="/image/{{ $image->id }}">
-                    <img alt="{{ $image->title }}" class="media-object" 
+                    <img alt="{{ $image->title }}" class="media-object"
                     	src="{{ $image->path_small() }}">
                     </img>
                 </a>
@@ -28,7 +28,7 @@
                     @if(checkEditor())
                     <div class="pull-right">
                       {!! Form::open(['method' => 'delete', 'route' => ['image.destroy', $image->id], 'class' => 'form-horizontal pull-left right10']) !!}
-                        {!! Form::submit('删除', ['class' => 'btn btn-danger']) !!}                
+                        {!! Form::submit('删除', ['class' => 'btn btn-danger']) !!}
                       {!! Form::close() !!}
                         <a class="btn btn-success" href="/image/{{ $image->id }}/edit" role="button">
                             编辑
@@ -39,10 +39,10 @@
                         {{ $image->title }}
                     </h4>
                     <p>
-                        上传用户:　<a href="/user/{{ $image->user->id }}">{{ $image->user->name }}</a>
+                        上传用户:　<a href="/user/{{ data_get($image,'user.id') }}">{{ data_get($image,'user.name') }}</a>
                     </p>
                     <p>
-                        最后更新: {{ $image->updatedAt()) }}
+                        最后更新: {{ $image->updatedAt() }}
                     </p>
                 </div>
             </div>
