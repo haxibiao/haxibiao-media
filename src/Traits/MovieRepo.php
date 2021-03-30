@@ -137,7 +137,7 @@ trait MovieRepo
 
     public static function storeClipMovieByApi($user, $movie, $m3u8, $startTime, $endTime, $postTitle, $seriesName)
     {
-        $endPoint    = 'http://l.mediachain.info/api/clip?';
+        $endPoint    = 'https://mediachain.info/api/clip?';
         $requestArgs = [
             'm3u8'        => $m3u8,
             'video_title' => $postTitle,
