@@ -5,6 +5,7 @@ namespace Haxibiao\Media\Traits;
 use App\Collection;
 use App\Post;
 use App\Video;
+use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Media\Movie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -132,6 +133,54 @@ trait MovieRepo
             'updated_at'  => now(),
         ]);
         return $post;
+    }
+
+    public static function storeClipMovieByApi($user, $movie, $m3u8, $startTime, $endTime, $postTitle, $seriesName)
+    {
+        $endPoint    = 'http://l.mediachain.info/api/clip?';
+        $requestArgs = [
+            'm3u8'        => $m3u8,
+            'video_title' => $postTitle,
+            'end_time'    => $endTime,
+            'start_time'  => $startTime,
+            'series_name' => $seriesName,
+            'source_key'  => $movie->source_key,
+            'callbackurl' => config('app.url') . '/api/movie/update_video_cover',
+        ];
+        $url    = $endPoint . http_build_query($requestArgs);
+        $result = json_decode(file_get_contents($url), true);
+        if ($result['status'] == 200) {
+            $video = $result['data'];
+            // 存储成视频
+            $video = Video::create([
+                'user_id'  => $user->id,
+                'duration' => $video['duration'],
+                'disk'     => 'othermovie',
+                'path'     => $video['url'],
+            ]);
+            //创建合集
+            $collection = Collection::firstOrNew([
+                'name'    => "{$movie->name}的剪辑",
+                'type'    => 'post',
+                'user_id' => $user->id,
+            ]);
+            $collection->logo = $movie->cover_url;
+            $collection->save();
+            // 发布动态
+            $post = Post::firstOrNew([
+                'user_id'  => $user->id,
+                'video_id' => $video->id,
+                'movie_id' => $movie->id,
+                'status'   => Post::PUBLISH_STATUS,
+            ]);
+            $post->description   = $postTitle;
+            $post->collection_id = $collection->id; //主合集
+            $post->save();
+            $post->collections()->attach([$collection->id]);
+            return $post;
+        } else {
+            throw new GQLException('剪辑失败！');
+        }
     }
 
     /**

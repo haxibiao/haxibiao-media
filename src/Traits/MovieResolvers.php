@@ -116,13 +116,10 @@ trait MovieResolvers
 
     public function resolveClipMovie($root, $args, $content, $info)
     {
-        $user  = Auth::user();
-        $movie = Movie::findOrFail($args['movie_id']);
-        // 获取新m3u8
-        $newM3u8    = MovieRepo::ClipMovie($args['targetM3u8'], $args['startTime'], $args['endTime']);
+        $user       = Auth::user();
+        $movie      = Movie::findOrFail($args['movie_id']);
         $seiresName = MovieRepo::findSeriesName($args['targetM3u8'], $movie);
-        $post       = MovieRepo::storeClipMovie($user, $movie, $newM3u8, $args['postTitle'], $seiresName);
-        return $post;
+        return MovieRepo::storeClipMovieByApi($user, $movie, $args['targetM3u8'], $args['startTime'], $args['endTime'], $args['postTitle'], $seiresName);
     }
 
     public function resolversCategoryMovie($root, $args, $content, $info)
