@@ -173,7 +173,7 @@ class VideoController extends Controller
         $view = 'video.show';
 
         //传统视频文章 + article
-        if (!$video->path || $video->article  ) {
+        if (!$video->post || $video->article  ) {
             $view = 'video.article';
         }
 
