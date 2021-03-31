@@ -25,11 +25,11 @@
                                 @foreach ($orders as $order => $word)
                                     @if ($word == $cate)
                                         <li>
-                                            <a class="btn-order active" href="/favorites?type={{ $order }}">{{ $word }}</a>
+                                            <a class="btn-order active" href="/movie/favorites?type={{ $order }}">{{ $word }}</a>
                                         </li>
                                     @else
                                         <li>
-                                            <a class="btn-order" href="/favorites?type={{ $order }}">{{ $word }}</a>
+                                            <a class="btn-order" href="/movie/favorites?type={{ $order }}">{{ $word }}</a>
                                         </li>
                                     @endif
                                 @endforeach
