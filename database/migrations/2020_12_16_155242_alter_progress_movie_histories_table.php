@@ -14,7 +14,7 @@ class AlterProgressMovieHistoriesTable extends Migration
     public function up()
     {
         Schema::table('movie_histories', function (Blueprint $table) {
-            if (!Schema::hasColumn('movie_histories', 'progress')) {
+            if (Schema::hasColumn('movie_histories', 'progress')) {
                 $table->string('progress')->nullable()->change();
             }
         });
