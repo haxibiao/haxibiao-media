@@ -117,7 +117,7 @@ trait MovieAttrs
         $series      = [];
         $data_series = $this->getSeriesUrlsAttribute();
         foreach ($data_series as $data_serie) {
-            $series[] = (object) $data_serie;
+            $series[] = $data_serie;
         }
         return $series;
     }

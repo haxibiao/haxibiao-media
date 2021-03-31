@@ -190,8 +190,8 @@ trait MovieRepo
     {
         $series = $movie->series;
         foreach ($series as $item) {
-            if ($item->url == $m3u8) {
-                return $item->name;
+            if ($item['url'] == $m3u8) {
+                return $item['name'];
             }
         }
     }
