@@ -152,11 +152,16 @@ trait MovieRepo
         if ($result['status'] == 200) {
             $video = $result['data'];
             // 存储成视频
+            $clipInfo = (object) [
+                'start_time' => $startTime,
+                'end_time'   => $endTime,
+            ];
             $video = Video::create([
                 'user_id'  => $user->id,
                 'duration' => $video['duration'],
                 'disk'     => 'othermovie',
                 'path'     => $video['url'],
+                'json'     => $clipInfo,
             ]);
             //创建合集
             $collection = Collection::firstOrNew([
