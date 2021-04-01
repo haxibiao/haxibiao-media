@@ -1,7 +1,6 @@
 <?php
 namespace Haxibiao\Media;
 
-use Haxibiao\Breeze\Breeze;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,12 +16,11 @@ class MediaServiceProvider extends ServiceProvider
             require_once $filename;
         }
 
-        //注册css js
-        Breeze::asset('/css/media.css', media_path('public/css/media.css'));
-        Breeze::asset('/js/media.js', media_path('public/js/media.js'));
-
-        // Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.ttf'));
-        // Breeze::asset('/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff', media_path('public/fonts/vendor/element-ui/lib/theme-chalk/element-icons.woff'));
+        //加载 css js
+        // Breeze::asset('/css/media.css', media_path('public/css/media.css'));
+        // Breeze::asset('/js/media.js', media_path('public/js/media.js'));
+        //加载 css js images
+        load_breeze_assets(media_path('public'));
 
         //合并view paths
         if (!app()->configurationIsCached()) {
