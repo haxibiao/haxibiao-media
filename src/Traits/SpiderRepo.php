@@ -175,7 +175,8 @@ trait SpiderRepo
         $mediaUrl = Arr::get($data, 'url');
         $coverUrl = Arr::get($data, 'cover');
         $video    = Video::firstOrNew(['hash' => $hash]);
-        if (!isset($video->id)) {
+
+        if (!isset($video->id) || ($video->disk == 'tj') ) {
             $video->user_id = $this->user_id;
             //更改VOD地址
             $video->disk = 'vod';
@@ -289,4 +290,41 @@ trait SpiderRepo
 
         return $this;
     }
+
+    protected function getVideoByDyShareLink($shareLink){
+		try {
+			$shareLink = static::extractURL($shareLink);
+			$url            = sprintf('http://gz012.haxibiao.com/simple-spider/parse.php?url=%s',  $shareLink);
+			$data 		    = data_get( json_decode(@file_get_contents($url), true),'data');
+			$cover       	= data_get($data, 'raw.item_list.0.video.origin_cover.url_list.0');
+			$width    		= data_get($data, 'raw.item_list.0.video.width');
+			$height    		= data_get($data, 'raw.item_list.0.video.height');
+			$duration    	= data_get($data, 'raw.item_list.0.duration');
+			$dynamicCover   = data_get($data, 'raw.item_list.0.video.dynamic_cover.url_list.0');
+			$play_url    	= data_get($data, 'video.play_url');
+			$title       	= data_get($data, 'video.info.0.desc');
+
+			$hash = hash_file('md5', $play_url);
+			$video = \App\Video::firstOrNew(['hash' => $hash]);
+			if (!isset($video->id)) {
+				$video->setJsonData('cover', $cover);
+				$video->setJsonData('sourceVideoUrl', $play_url);
+				$video->setJsonData('duration', $duration);
+				$video->setJsonData('width', $width);
+				$video->setJsonData('height', $height);
+				$video->setJsonData('dynamic_cover', $dynamicCover);
+				$videoData = [
+					'title'      => $title,
+					'path'      => $play_url,
+					'disk'      => 'tj',
+					'duration'  => $duration,
+				];
+				$video->fill($videoData);
+				$video->saveDataOnly();
+			}
+			return $video;
+		} catch (\Exception $e){
+			return null;
+		}
+	}
 }
