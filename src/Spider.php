@@ -11,6 +11,7 @@ use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Media\Traits\SpiderAttrs;
 use Haxibiao\Media\Traits\SpiderRepo;
 use Haxibiao\Media\Traits\SpiderResolvers;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Spider extends Model
@@ -119,6 +120,11 @@ class Spider extends Model
     {
         return $this->morphTo('spider');
     }
+
+	public function post(): HasOne
+	{
+		return $this->hasOne(\App\Post::class);
+	}
 
     public static function getStatuses()
     {
