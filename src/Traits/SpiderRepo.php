@@ -294,7 +294,7 @@ trait SpiderRepo
     protected function getVideoByDyShareLink($shareLink){
 		try {
 			$shareLink = static::extractURL($shareLink);
-			$url            = sprintf('http://gz012.haxibiao.com/simple-spider/parse.php?url=%s',  $shareLink);
+			$url        = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $shareLink);
 			$data 		    = data_get( json_decode(@file_get_contents($url), true),'data');
 			$cover       	= data_get($data, 'raw.item_list.0.video.origin_cover.url_list.0');
 			$width    		= data_get($data, 'raw.item_list.0.video.width');
