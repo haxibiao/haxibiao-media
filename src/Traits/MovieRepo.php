@@ -144,7 +144,8 @@ trait MovieRepo
             'end_time'    => $endTime,
             'start_time'  => $startTime,
             'series_name' => $seriesName,
-            'source_key'  => $movie->source_key,
+            // 兼容内涵电影
+            'source_key'  => $movie->source_key ?? $movie->id,
             'callbackurl' => config('app.url') . '/api/movie/update_video_cover',
         ];
         $url    = $endPoint . http_build_query($requestArgs);
