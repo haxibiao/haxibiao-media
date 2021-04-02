@@ -86,8 +86,9 @@ class MovieController extends Controller
         $postTitle  = $request->get('post_title');
         $movie_id   = $request->get('movie_id');
         $m3u8       = $request->get('m3u8');
+        $seriesName = $request->get('series_name');
         $movie      = Movie::find($movie_id);
-        $seriesName = MovieRepo::findSeriesName($m3u8, $movie);
+        $seriesName = $seriesName ?? MovieRepo::findSeriesName($m3u8, $movie);
         $post       = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $seriesName);
         return returnData($post->toArray(), '剪辑成功', 200);
     }
