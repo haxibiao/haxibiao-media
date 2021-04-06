@@ -135,6 +135,15 @@ trait MovieRepo
         return $post;
     }
 
+    public static function findSeriesIndexByM3u8($movie, $m3u8)
+    {
+        foreach ($movie->series as $i => $item) {
+            if ($item['url'] == $m3u8) {
+                return $i;
+            }
+        }
+    }
+
     public static function storeClipMovieByApi($user, $movie, $m3u8, $startTime, $endTime, $postTitle, $seriesName)
     {
         $endPoint    = 'https://mediachain.info/api/clip?';
@@ -154,9 +163,10 @@ trait MovieRepo
             $video = $result['data'];
             // 存储成视频
             $clipInfo = (object) [
-                'series_name' => $seriesName,
-                'start_time'  => $startTime,
-                'end_time'    => $endTime,
+                'series_name'  => $seriesName,
+                'start_time'   => $startTime,
+                'end_time'     => $endTime,
+                'series_index' => self::findSeriesIndexByM3u8($movie, $m3u8),
             ];
             $video = Video::create([
                 'user_id'  => $user->id,
