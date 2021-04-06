@@ -152,6 +152,22 @@ export default {
                     value: 60,
                     label: '60s',
                 },
+                {
+                    value: 120,
+                    label: '2min',
+                },
+                {
+                    value: 180,
+                    label: '3min',
+                },
+                {
+                    value: 240,
+                    label: '4min',
+                },
+                {
+                    value: 300,
+                    label: '5min',
+                },
             ],
             duration: '',
             loading: false,
