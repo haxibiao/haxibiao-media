@@ -154,8 +154,9 @@ trait MovieRepo
             $video = $result['data'];
             // 存储成视频
             $clipInfo = (object) [
-                'start_time' => $startTime,
-                'end_time'   => $endTime,
+                'series_name' => $seriesName,
+                'start_time'  => $startTime,
+                'end_time'    => $endTime,
             ];
             $video = Video::create([
                 'user_id'  => $user->id,
