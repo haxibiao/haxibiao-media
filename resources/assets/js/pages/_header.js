@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
     // 自动验证input value
     require('../plugins/automaticValidationForm');
     // 登录模态框切换tab
@@ -26,7 +26,7 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
         })
-            .done(function (res) {
+            .done(function(res) {
                 if (res.data) {
                     // 登录成功
                     window.location.reload();
@@ -50,7 +50,7 @@ $(document).ready(function () {
                     });
                 }
             })
-            .fail(function (err) {
+            .fail(function(err) {
                 // 登录报错
             })
             .always(() => {
@@ -67,13 +67,13 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
         })
-            .done(function (res) {
+            .done(function(res) {
                 if (res.data) {
                     window.location.reload();
                 } else if (res.message) {
                 }
             })
-            .fail(function (err) { });
+            .fail(function(err) {});
     });
     // dropdown box 事件监听
     (function Dropdown(that) {
@@ -98,7 +98,6 @@ $(document).ready(function () {
             // 阻止冒泡
             return false;
         }
-        $(document).on('click', clearDropdowns);
         $('[dropdown-toggle="click"]').on('click touchstart', toggle);
         $('[dropdown-toggle="hover"]').hover(toggle, function hide(event) {
             $(this)
