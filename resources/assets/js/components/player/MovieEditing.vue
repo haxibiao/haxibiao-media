@@ -55,11 +55,6 @@
 </template>
 
 <script>
-import 'element-ui/lib/theme-chalk/base.css';
-import 'element-ui/lib/theme-chalk/time-picker.css';
-import 'element-ui/lib/theme-chalk/input.css';
-import 'element-ui/lib/theme-chalk/select.css';
-import 'element-ui/lib/theme-chalk/button.css';
 import moment from '../../common/moment';
 
 export default {

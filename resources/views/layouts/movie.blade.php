@@ -38,16 +38,17 @@
         @include('parts.movie.modal.login')
     </div>
 
-    {{-- 先注入的vue APP user  --}}
+    {{-- 先注入的vue APP user --}}
     @if (Auth::user())
         <script type="text/javascript">
-            const appUser = {
+            const user = {
                 id: '{{ Auth::user()->id }}',
                 token: '{{ Auth::user()->token }}',
                 name: '{{ Auth::user()->name }}',
                 avatar: '{{ Auth::user()->avatar }}',
             };
-            window.appUser = appUser
+            window.user = user
+
         </script>
     @endif
     <script type="text/javascript" src="{{ breeze_mix('js/media.js') }}"></script>
