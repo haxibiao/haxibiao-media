@@ -7,6 +7,14 @@
                     <div class="video-player">
                         <div class="fluid_video_wrapper">
                             <template v-if="source">
+                                <div class="alert-wrap">
+                                    <el-alert
+                                        title="谨防被骗！请不要相信视频中的广告和网站"
+                                        type="warning"
+                                        center
+                                        show-icon
+                                    />
+                                </div>
                                 <video-player
                                     :current-time.sync="currentTime"
                                     :video-duration.sync="videoDuration"
@@ -167,9 +175,6 @@
 </template>
 
 <script>
-import 'element-ui/lib/theme-chalk/popover.css';
-import 'element-ui/lib/theme-chalk/loading.css';
-import 'element-ui/lib/theme-chalk/message.css';
 import moment from '../../common/moment';
 
 export default {
@@ -275,7 +280,7 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    }
+                    },
                 )
                 .then(function(response) {
                     if (response && response.data) {
@@ -284,7 +289,7 @@ export default {
                         that.toggleLike();
                     }
                 })
-                .catch((e) => {
+                .catch(e => {
                     that.toggleLike();
                 });
         },
@@ -311,7 +316,7 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    }
+                    },
                 )
                 .then(function(response) {
                     if (response && response.data) {
@@ -320,7 +325,7 @@ export default {
                         that.toggleFavorite();
                     }
                 })
-                .catch((e) => {
+                .catch(e => {
                     that.toggleFavorite();
                 });
         },
@@ -368,5 +373,11 @@ export default {
 .el-popover {
     padding: 0 !important;
     border: none !important;
+}
+.alert-wrap {
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+    padding: 10px;
 }
 </style>
