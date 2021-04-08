@@ -32,26 +32,28 @@ class MediaServiceProvider extends ServiceProvider
             );
             config(['view.paths' => $view_paths]);
         }
+		if ($this->app->runningInConsole()) {
+			$this->commands([
+				Console\InstallCommand::class,
+				Console\PublishCommand::class,
+				Console\ImageReFactoringCommand::class,
+				Console\CountVideoViewsCommand::class,
+				Console\FixVideoIDCommand::class,
+				Console\MovieSync::class,
+				Console\MoviePush::class,
+				Console\VideoPush::class,
+				Console\PostPush::class,
+				Console\PostSync::class,
+				Console\ArticlePush::class,
+				Console\ArticleSync::class,
+				Console\ComicSync::class,
+				Console\ComicPush::class,
+				Console\VideoSync::class,
+				Console\PublishConfig::class,
+				Console\CrawlDouyinVideos::class,
+			]);
+		}
 
-        $this->commands([
-            Console\InstallCommand::class,
-            Console\PublishCommand::class,
-            Console\ImageReFactoringCommand::class,
-            Console\CountVideoViewsCommand::class,
-            Console\FixVideoIDCommand::class,
-            Console\MovieSync::class,
-            Console\MoviePush::class,
-            Console\VideoPush::class,
-            Console\PostPush::class,
-            Console\PostSync::class,
-            Console\ArticlePush::class,
-            Console\ArticleSync::class,
-            Console\ComicSync::class,
-            Console\ComicPush::class,
-            Console\VideoSync::class,
-            Console\PublishConfig::class,
-            Console\CrawlDouyinVideos::class,
-        ]);
         $this->bindPathsInContainer();
 
         $this->mergeConfigFrom(__DIR__ . '/../config/media.php', 'media');
@@ -59,14 +61,13 @@ class MediaServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        // 更新视频的每日播放量
-        $enabled = config('media.enabled_statistics_video_views', false);
-        if ($enabled) {
-            $this->app->booted(function () {
-                $schedule = $this->app->make(Schedule::class);
-                $schedule->command('haxibiao:video:CountVideoViewers')->dailyAt('1:30');;
-            });
-        }
+		$this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+			// 更新视频的每日播放量
+			$enabled = config('media.enabled_statistics_video_views', false);
+			if ($enabled) {
+				$schedule->command('haxibiao:video:CountVideoViewers')->dailyAt('1:30');
+			}
+		});
 
         //注册路由
         $this->loadRoutesFrom(
