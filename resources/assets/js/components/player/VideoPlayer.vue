@@ -24,14 +24,16 @@ export default {
             console.log('hello hls.js isSupported!');
         }
 
+        let video_type = this.source.indexOf('.m3u8') !== -1 ? 'hls' : 'auto';
+        console.log('video_type', video_type);
         let options = {
             container: document.getElementById('dplayer'),
-            preload: true,
+            preload: false,
             autoplay: true,
             screenshot: true,
             video: {
                 url: this.source,
-                type: 'hls',
+                type: video_type,
             },
             pluginOptions: {
                 hls: {},
@@ -49,6 +51,14 @@ export default {
             };
         }
         this.player = new DPlayer(options);
+
+        if (this.source) {
+            console.log('mounted 开始播放 source:' + this.source);
+            this.player.switchVideo({
+                url: this.source,
+            });
+            this.player.play();
+        }
 
         // 绑定事件，监听页面刷新or关闭
         window.addEventListener('beforeunload', this.beforeunloadFn);
@@ -84,7 +94,7 @@ export default {
             //绘制scoket弹幕
             let danmuPrefix = this.apiDanmu ? this.apiDanmu : 'danmu_';
             var channel = danmuPrefix + this.movie_id + '_' + this.episode;
-            Echo.channel(channel).listen('DanmuEvent', e => {
+            Echo.channel(channel).listen('DanmuEvent', (e) => {
                 const danmu = {
                     text: e.content,
                     color: '#FFF',
@@ -110,10 +120,11 @@ export default {
     },
     watch: {
         source(newV, oldV) {
-            console.log('开始播放 url:' + newV);
+            console.log('watch 开始播放 source:' + newV);
             if (this.player) {
                 this.player.switchVideo({
                     url: newV,
+                    type: newV.indexOf('.m3u8') !== -1 ? 'hls' : 'auto',
                 });
                 this.player.play();
             }
@@ -143,14 +154,14 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    },
+                    }
                 )
                 .then(function(response) {
                     if (response && response.data) {
                         console.log(response);
                     }
                 })
-                .catch(e => {});
+                .catch((e) => {});
         },
         //获取历史观看时长
         jumpUserHistory() {
@@ -168,7 +179,7 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    },
+                    }
                 )
                 .then(function(response) {
                     if (response.data.status_code == 200) {
