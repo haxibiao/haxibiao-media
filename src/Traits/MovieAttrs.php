@@ -51,8 +51,10 @@ trait MovieAttrs
             $ucdn_root   = "https://" . $ucdn_domain . "/";
             $space       = get_space_by_ucdn($ucdn_root);
             $space_path  = parse_url($item['url'], PHP_URL_PATH);
-            $item['url'] = "https://$ucdn_domain/m3u8/$space$space_path";
-            $series[]    = $item;
+            if (str_contains($space_path, ".m3u8")) {
+                $item['url'] = "https://$ucdn_domain/m3u8/$space$space_path";
+            }
+            $series[] = $item;
         }
         return $series;
     }
