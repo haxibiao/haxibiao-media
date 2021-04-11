@@ -67,7 +67,6 @@ class MovieSync extends Command
         $success                                                                                = 0;
         $fail                                                                                   = 0;
         $total                                                                                  = 0;
-        $url                                                                                    = "https://mediachain.info/api/resource/list/";
         $args                                                                                   = [];
         $page                                                                                   = 1;
         if ($region) {
@@ -98,8 +97,8 @@ class MovieSync extends Command
         $returnCount = 0;
         do {
             data_set($args, 'page', $page);
-            $args = http_build_query($args);
-            $url .= '?' . $args;
+            $args        = http_build_query($args);
+            $url         = "https://mediachain.info/api/resource/list/" . '?' . $args;
             $result      = json_decode(file_get_contents($url), true);
             $returnCount = count($result['data']);
             if ($result['status'] == 200) {
