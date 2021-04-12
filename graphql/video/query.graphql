@@ -54,7 +54,7 @@ type Video {
     """
     是否高清无水印资源
     """
-    isHd:Boolean @rename(attribute:"is_hd")
+    isHd: Boolean @rename(attribute: "is_hd")
 
     """
     视频文件的信息
@@ -116,6 +116,7 @@ type Video {
     创建时间
     """
     created_at: DateTime
+    json: JsonType
 }
 
 type VideoInfo {
