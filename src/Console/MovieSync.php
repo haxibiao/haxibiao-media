@@ -14,7 +14,7 @@ class MovieSync extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:sync {--way=api} {--is_neihan=false} {--source=内函电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id} {--movie_name= :指定电影名称}';
+    protected $signature = 'movie:sync {--way=api} {--is_neihan=false} {--source=内函电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id} {--movie_name= : 指定电影名称}';
 
     /**
      * The console command description.
@@ -205,6 +205,8 @@ class MovieSync extends Command
                     }
                 });})
             ->orderBy('id');
+
+        $this->info('总计电影数:' . $qb->count());
         $qb->chunk(100, function ($movies) use (&$fail, &$success, &$total) {
             foreach ($movies as $movie) {
                 $total++;
