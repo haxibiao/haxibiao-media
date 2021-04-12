@@ -99,7 +99,6 @@ class CrawlCollection implements ShouldQueue
                     $post->created_at  = $created;
                     $post->user_id     = $this->user->id;
                     $shareTitle        = data_get($video, 'share_info.share_title');
-                    $post->content     = str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', 'dou', 'Dou', 'DOU', '抖音助手'], '', $shareTitle);
                     $post->description = str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', 'dou', 'Dou', 'DOU', '抖音助手'], '', $shareTitle);
 
                     $reviewDay        = $post->created_at->format('Ymd');

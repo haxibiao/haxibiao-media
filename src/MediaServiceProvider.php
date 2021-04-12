@@ -16,10 +16,7 @@ class MediaServiceProvider extends ServiceProvider
             require_once $filename;
         }
 
-        //加载 css js
-        // Breeze::asset('/css/media.css', media_path('public/css/media.css'));
-        // Breeze::asset('/js/media.js', media_path('public/js/media.js'));
-        //加载 css js images
+        //加载 assets
         load_breeze_assets(media_path('public'));
 
         //合并view paths
@@ -32,27 +29,29 @@ class MediaServiceProvider extends ServiceProvider
             );
             config(['view.paths' => $view_paths]);
         }
-		if ($this->app->runningInConsole()) {
-			$this->commands([
-				Console\InstallCommand::class,
-				Console\PublishCommand::class,
-				Console\ImageReFactoringCommand::class,
-				Console\CountVideoViewsCommand::class,
-				Console\FixVideoIDCommand::class,
-				Console\MovieSync::class,
-				Console\MoviePush::class,
-				Console\VideoPush::class,
-				Console\PostPush::class,
-				Console\PostSync::class,
-				Console\ArticlePush::class,
-				Console\ArticleSync::class,
-				Console\ComicSync::class,
-				Console\ComicPush::class,
-				Console\VideoSync::class,
-				Console\PublishConfig::class,
-				Console\CrawlDouyinVideos::class,
-			]);
-		}
+
+        //注册commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Console\InstallCommand::class,
+                Console\PublishCommand::class,
+                Console\ImageReFactoringCommand::class,
+                Console\CountVideoViewsCommand::class,
+                Console\FixVideoIDCommand::class,
+                Console\MovieSync::class,
+                Console\MoviePush::class,
+                Console\VideoPush::class,
+                Console\PostPush::class,
+                Console\PostSync::class,
+                Console\ArticlePush::class,
+                Console\ArticleSync::class,
+                Console\ComicSync::class,
+                Console\ComicPush::class,
+                Console\VideoSync::class,
+                Console\PublishConfig::class,
+                Console\CrawlDouyinVideos::class,
+            ]);
+        }
 
         $this->bindPathsInContainer();
 
@@ -61,13 +60,15 @@ class MediaServiceProvider extends ServiceProvider
 
     public function boot()
     {
-		$this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-			// 更新视频的每日播放量
-			$enabled = config('media.enabled_statistics_video_views', false);
-			if ($enabled) {
-				$schedule->command('haxibiao:video:CountVideoViewers')->dailyAt('1:30');
-			}
-		});
+        $this->bindObservers();
+
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            // 更新视频的每日播放量
+            $enabled = config('media.enabled_statistics_video_views', false);
+            if ($enabled) {
+                $schedule->command('haxibiao:video:CountVideoViewers')->dailyAt('1:30');
+            }
+        });
 
         //注册路由
         $this->loadRoutesFrom(
@@ -108,6 +109,12 @@ class MediaServiceProvider extends ServiceProvider
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));
         }
+    }
+
+    public function bindObservers()
+    {
+        \Haxibiao\Media\Spider::observe(\Haxibiao\Media\Observers\SpiderObserver::class);
+        \Haxibiao\Media\Video::observe(\Haxibiao\Media\Observers\VideoObserver::class);
     }
 
     /**

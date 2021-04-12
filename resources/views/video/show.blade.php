@@ -1,10 +1,5 @@
 @php
 $post = $video->post;
-if($post){
-    $content = $post->content;
-}else{
-    $content = $video->title;
-}
 @endphp
 
 {{-- 短视频动态时代的，关联动态+合集为主 --}}
@@ -12,14 +7,14 @@ if($post){
 @extends('layouts.video')
 
 @section('title')
-    {{ $content }}
+    {{ $video->title ?? $post->description}}
 @stop
 
 @push('seo_og_result')
     @if ($video->post)
         <meta property="og:type" content="video" />
         <meta property="og:url" content="https://{{ get_domain() }}/video/{{ $video->id }}" />
-        <meta property="og:title" content="{{$post->content }}" />
+        <meta property="og:title" content="{{$post->description }}" />
         <meta property="og:description" content="{{$post->description }}" />
         <meta property="og:image" content="{{ $video->cover }}" />
         <meta name="weibo: article:create_at" content="{{$post->created_at }}" />
@@ -96,7 +91,7 @@ if($post){
                 </div>
             </div>
             <div class="video-title">
-                配文：{{ $post->description ?? $post->content }}
+                配文：{{ $post->description }}
                 <div class="video-info">
                     @if (!empty($collection))
                         <a href="/collection/{{ $collection->id }}" class="category-name">合集: {{ $collection->name }}</a>
@@ -160,7 +155,7 @@ if($post){
     </div>
     <div class="share-module">
         <div class="module-share-h3">分享到....</div>
-        <div>@include('video.parts.share', ['subject' => $post->content, 'url'=>url('/video/'.$video->id)])</div>
+        <div>@include('video.parts.share', ['subject' => $post->description, 'url'=>url('/video/'.$video->id)])</div>
         <close-share></close-share>
     </div>
     <div id="pageLayout">

@@ -6,12 +6,12 @@ use App\Article;
 use App\Post;
 use App\User;
 use Haxibiao\Breeze\Model;
+use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Content\Traits\WithCms;
 use Haxibiao\Media\Traits\MakeCovers;
 use Haxibiao\Media\Traits\VideoAttrs;
 use Haxibiao\Media\Traits\VideoRepo;
 use Haxibiao\Media\Traits\VideoResolvers;
-use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Sns\Traits\Shareable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -39,7 +39,6 @@ class Video extends Model
     protected static function boot()
     {
         parent::boot();
-
         self::updated(function ($video) {
             if ($video->cover) {
                 if ($post = Post::where('video_id', $video->id)->first()) {
@@ -69,12 +68,25 @@ class Video extends Model
         return $this->belongsTo(User::class);
     }
 
-    //FIXME: 这里兼容哈希表video对象过复杂的情况 重构好后，也应该去掉
+    /**
+     * 剪辑的电影
+     */
+    public function movie(): BelongsTo
+    {
+        return $this->belongsTo(Movie::class);
+    }
+
+    /**
+     * 视频关联的文章
+     */
     public function article(): HasOne
     {
         return $this->hasOne(Article::class);
     }
 
+    /**
+     * 视频关联的动态
+     */
     public function post(): HasOne
     {
         return $this->hasOne(Post::class);

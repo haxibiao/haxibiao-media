@@ -2,11 +2,9 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Collection;
-use App\Post;
-use App\Video;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Media\Movie;
+use Haxibiao\Media\Video;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -94,33 +92,15 @@ trait MovieRepo
         $duration = array_sum($arr[0]);
         $duration = (int) $duration;
         // 存储成视频
-        $video = Video::create([
+        $video = new Video([
             'user_id'  => $user->id,
             'duration' => $duration,
             'disk'     => 'othermovie',
             'path'     => $playUrl,
+            'title'    => $postTitle,
         ]);
-
-        //创建合集
-        $collection = Collection::firstOrNew([
-            'name'    => "{$movie->name}的剪辑",
-            'type'    => 'post',
-            'user_id' => $user->id,
-        ]);
-        $collection->logo = $movie->cover_url;
-        $collection->save();
-
-        // 发布动态
-        $post = Post::firstOrNew([
-            'user_id'  => $user->id,
-            'video_id' => $video->id,
-            'movie_id' => $movie->id,
-            'status'   => Post::PUBLISH_STATUS,
-        ]);
-        $post->description   = $postTitle;
-        $post->collection_id = $collection->id; //主合集
-        $post->save();
-        $post->collections()->attach([$collection->id]);
+        //触发 VideoObserver 维护内容关系
+        $video->save();
 
         //同步到内涵云vidoes
         DB::connection('mediachain')->table('videos')->insert([
@@ -132,7 +112,7 @@ trait MovieRepo
             'created_at'  => now(),
             'updated_at'  => now(),
         ]);
-        return $post;
+        return $video->post;
     }
 
     public static function findSeriesIndexByM3u8($movie, $m3u8)
@@ -160,41 +140,29 @@ trait MovieRepo
         $url    = $endPoint . http_build_query($requestArgs);
         $result = json_decode(file_get_contents($url), true);
         if ($result['status'] == 200) {
-            $video = $result['data'];
-            // 存储成视频
+            $video    = $result['data'];
             $clipInfo = (object) [
                 'series_name'  => $seriesName,
                 'start_time'   => $startTime,
                 'end_time'     => $endTime,
                 'series_index' => self::findSeriesIndexByM3u8($movie, $m3u8),
             ];
-            $video = Video::create([
+
+            // 创建剪辑的视频
+            $video = new Video([
                 'user_id'  => $user->id,
-                'duration' => $video['duration'],
+                'movie_id' => $movie->id,
+                'title'    => $postTitle,
+                'duration' => $video['duration'] ?? 15,
                 'disk'     => 'othermovie',
                 'path'     => $video['url'],
-                'json'     => $clipInfo,
             ]);
-            //创建合集
-            $collection = Collection::firstOrNew([
-                'name'    => "{$movie->name}的剪辑",
-                'type'    => 'post',
-                'user_id' => $user->id,
-            ]);
-            $collection->logo = $movie->cover_url;
-            $collection->save();
-            // 发布动态
-            $post = Post::firstOrNew([
-                'user_id'  => $user->id,
-                'video_id' => $video->id,
-                'movie_id' => $movie->id,
-                'status'   => Post::PUBLISH_STATUS,
-            ]);
-            $post->description   = $postTitle;
-            $post->collection_id = $collection->id; //主合集
-            $post->save();
-            $post->collections()->attach([$collection->id]);
-            return $post;
+            $video->json = $clipInfo;
+            $video->save();
+
+            //此处代码已重构 到VideoObserver触发自动发布内容
+
+            return $video;
         } else {
             throw new GQLException('剪辑失败！');
         }

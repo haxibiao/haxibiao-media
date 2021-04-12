@@ -123,7 +123,7 @@ class VideoSync extends Command
                 ]);
 
                 //关联post和合集关系
-                $post->collectivize([$collection->id]);
+                $post->addCollections([$collection->id]);
 
                 ++$count;
                 $this->info("成功导入 $newVideo->id $newVideo->description $newVideo->path $newVideo->cover");

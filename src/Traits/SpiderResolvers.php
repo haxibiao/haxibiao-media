@@ -3,7 +3,6 @@
 namespace Haxibiao\Media\Traits;
 
 use App\Post;
-use App\Video;
 use Haxibiao\Media\Jobs\CrawlCollection;
 use Haxibiao\Media\Spider;
 use Illuminate\Support\Arr;
@@ -26,7 +25,7 @@ trait SpiderResolvers
 
         $content = data_get($args, 'content');
         if ($content) {
-            $post->content = $content;
+            $post->description = $content;
         }
 
         $description = data_get($args, 'description');
@@ -39,14 +38,13 @@ trait SpiderResolvers
         $post->save();
 
         // 乐观更新
-		$video = static::getVideoByDyShareLink($args['share_link']);
-		if($video){
-			$post->video_id = $video->id;
-			$post->status        = Post::PUBLISH_STATUS;
-			$post->content       = data_get($post,'content',data_get($video,'title'));
-			$post->description   = data_get($post,'description',data_get($video,'title'));
-			$post->save();
-		}
+        $video = static::getVideoByDyShareLink($args['share_link']);
+        if ($video) {
+            $post->video_id    = $video->id;
+            $post->status      = Post::PUBLISH_STATUS;
+            $post->description = data_get($post, 'description', data_get($video, 'title'));
+            $post->save();
+        }
 
         return $spider;
     }

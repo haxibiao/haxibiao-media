@@ -63,7 +63,6 @@ class CrawlDouyinVideos extends Command
             $post              = Post::firstOrNew(['spider_id' => $spider->id]);
             $post->status      = Post::PRIVARY_STATUS;
             $post->user_id     = $user_id;
-            $post->content     = str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', 'dou', 'Dou', 'DOU', '抖音助手'], '', $title);
             $post->description = str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', 'dou', 'Dou', 'DOU', '抖音助手'], '', $title);
 
             $post->review_id  = Post::makeNewReviewId();

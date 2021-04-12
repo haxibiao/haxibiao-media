@@ -2,11 +2,15 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Exceptions\UserException;
 use App\Question;
 use App\User;
 use App\Video;
 use App\Visit;
+use Haxibiao\Breeze\Exceptions\UserException;
+use Haxibiao\Content\Article;
+use Haxibiao\Content\Category;
+use Haxibiao\Content\Collection;
+use Haxibiao\Content\Post;
 use Haxibiao\Helpers\utils\QcloudUtils;
 use Haxibiao\Helpers\utils\VodUtils;
 use Illuminate\Http\UploadedFile;
@@ -23,6 +27,87 @@ use Vod\VodUploadClient;
 
 trait VideoRepo
 {
+    public function autoPublishContentWhenAboutMovie()
+    {
+        $video = $this;
+        $user  = $video->user;
+        //剪辑电影的视频
+        if ($movie = $video->movie) {
+
+            // 创建用户合集
+            $collection = Collection::firstOrNew([
+                'name'    => "{$movie->name}的剪辑",
+                'type'    => 'post',
+                'user_id' => $user->id,
+            ]);
+            $collection->logo = $movie->cover_url;
+            $collection->save();
+
+            // 创建用户专题
+            $category = Category::firstOrNew([
+                'name' => "{$movie->name}",
+                'type' => 'movie',
+            ]);
+            // 第一个剪辑同名电影的自动成为专题创建者
+            if (!$category->user_id) {
+                $category->user_id = $user->id;
+            } else {
+                //后面剪辑的自动成为专题编辑用户
+                $category->addAuthor($user);
+            }
+
+            // 默认专题通过审核
+            $category->status = Category::STATUS_PUBLIC;
+            $category->save();
+
+            // 发布动态
+            $post = Post::firstOrNew([
+                'user_id'  => $user->id,
+                'video_id' => $video->id,
+                'movie_id' => $movie->id,
+                'status'   => Post::PUBLISH_STATUS,
+            ]);
+            $post->description   = $video->title; //视频剪辑的配文
+            $post->collection_id = $collection->id; //主合集
+            $post->category_id   = $category->id; //主专题
+            $post->save();
+
+            //自动收入合集
+            if ($post->collection_id) {
+                $post->addCollections([$post->collection_id]);
+            }
+
+            //自动收入专题
+            if ($post->category_id) {
+                $post->addCategories([$post->category_id]);
+            }
+
+            //剪辑的视频，自动生成视频类文章
+            $article = Article::firstOrNew([
+                'video_id' => $post->video_id,
+                'type'     => 'video',
+                'movie_id' => $post->movie_id,
+            ]);
+            $article->title   = $post->description; //标题来自剪辑，配文字数都不多
+            $article->body    = $post->description;
+            $article->user_id = $post->user_id;
+
+            //直接发布，投稿成功
+            $article->status = Article::STATUS_ONLINE;
+            $article->submit = Article::SUBMITTED_SUBMIT;
+
+            $article->save();
+
+            // 投稿到专题 - SEO目的
+            if ($post->category_id) {
+                //投稿到电影专题下
+                $article->addCategories([$post->category_id]);
+                //维护主专题，查询性能优化
+                $article->category_id = $post->category_id;
+                $article->save();
+            }
+        }
+    }
 
     public function fillForJs()
     {
@@ -37,6 +122,7 @@ trait VideoRepo
 
         return $video;
     }
+
     public function getPath()
     {
         //TODO: save this->extension, 但是目前基本都是mp4格式

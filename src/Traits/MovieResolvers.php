@@ -119,7 +119,8 @@ trait MovieResolvers
         $user       = Auth::user();
         $movie      = Movie::findOrFail($args['movie_id']);
         $seiresName = MovieRepo::findSeriesName($args['targetM3u8'], $movie);
-        return MovieRepo::storeClipMovieByApi($user, $movie, $args['targetM3u8'], $args['startTime'], $args['endTime'], $args['postTitle'], $seiresName);
+        $video      = MovieRepo::storeClipMovieByApi($user, $movie, $args['targetM3u8'], $args['startTime'], $args['endTime'], $args['postTitle'], $seiresName);
+        return $video->post;
     }
 
     public function resolversCategoryMovie($root, $args, $content, $info)

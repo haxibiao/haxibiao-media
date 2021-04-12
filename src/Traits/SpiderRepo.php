@@ -176,7 +176,7 @@ trait SpiderRepo
         $coverUrl = Arr::get($data, 'cover');
         $video    = Video::firstOrNew(['hash' => $hash]);
 
-        if (!isset($video->id) || ($video->disk == 'tj') ) {
+        if (!isset($video->id) || ($video->disk == 'tj')) {
             $video->user_id = $this->user_id;
             //更改VOD地址
             $video->disk = 'vod';
@@ -252,36 +252,6 @@ trait SpiderRepo
         return $video;
     }
 
-    // public function savePost()
-    // {
-    //     $spider = $this;
-    //     $data   = $spider->data;
-    //     $post   = Post::firstOrNew(['video_id' => $spider->spider_id]);
-
-    //     //创建动态..
-    //     if (!isset($post->id)) {
-    //         $post->user_id    = $spider->user_id;
-    //         $post->content    = Arr::get($data, 'title', '');
-    //         $post->status     = Post::PUBLISH_STATUS; //发布动态
-    //         $post->created_at = now();
-    //         $post->updated_at = $spider->updated_at;
-    //         // $post->review_id  = Post::makeNewReviewId(); //定时发布时决定
-    //         // $post->review_day = Post::makeNewReviewDay();
-    //         $post->save();
-
-    //         //FIXME: 这个逻辑要放到 content 系统里，PostObserver updated ...
-    //         //超过100个动态或者1个小时前,自动发布.
-    //         // $canPublished = Post::where('review_day', 0)
-    //         //     ->where('created_at', '<=', now()->subHour())->exists()
-    //         // || Post::where('review_day', 0)->count() >= 100;
-
-    //         // if ($canPublished) {
-    //         //     dispatch_now(new PublishNewPosts);
-    //         // }
-    //     }
-
-    // }
-
     public function setTitle($title)
     {
         $data          = Arr::get($this, 'data', []);
@@ -291,40 +261,41 @@ trait SpiderRepo
         return $this;
     }
 
-    protected function getVideoByDyShareLink($shareLink){
-		try {
-			$shareLink = static::extractURL($shareLink);
-			$url        = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $shareLink);
-			$data 		    = data_get( json_decode(@file_get_contents($url), true),'data');
-			$cover       	= data_get($data, 'raw.item_list.0.video.origin_cover.url_list.0');
-			$width    		= data_get($data, 'raw.item_list.0.video.width');
-			$height    		= data_get($data, 'raw.item_list.0.video.height');
-			$duration    	= data_get($data, 'raw.item_list.0.duration');
-			$dynamicCover   = data_get($data, 'raw.item_list.0.video.dynamic_cover.url_list.0');
-			$play_url    	= data_get($data, 'video.play_url');
-			$title       	= data_get($data, 'video.info.0.desc');
+    protected function getVideoByDyShareLink($shareLink)
+    {
+        try {
+            $shareLink    = static::extractURL($shareLink);
+            $url          = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $shareLink);
+            $data         = data_get(json_decode(@file_get_contents($url), true), 'data');
+            $cover        = data_get($data, 'raw.item_list.0.video.origin_cover.url_list.0');
+            $width        = data_get($data, 'raw.item_list.0.video.width');
+            $height       = data_get($data, 'raw.item_list.0.video.height');
+            $duration     = data_get($data, 'raw.item_list.0.duration');
+            $dynamicCover = data_get($data, 'raw.item_list.0.video.dynamic_cover.url_list.0');
+            $play_url     = data_get($data, 'video.play_url');
+            $title        = data_get($data, 'video.info.0.desc');
 
-			$hash = hash_file('md5', $play_url);
-			$video = \App\Video::firstOrNew(['hash' => $hash]);
-			if (!isset($video->id)) {
-				$video->setJsonData('cover', $cover);
-				$video->setJsonData('sourceVideoUrl', $play_url);
-				$video->setJsonData('duration', $duration);
-				$video->setJsonData('width', $width);
-				$video->setJsonData('height', $height);
-				$video->setJsonData('dynamic_cover', $dynamicCover);
-				$videoData = [
-					'title'      => $title,
-					'path'      => $play_url,
-					'disk'      => 'tj',
-					'duration'  => $duration,
-				];
-				$video->fill($videoData);
-				$video->saveDataOnly();
-			}
-			return $video;
-		} catch (\Exception $e){
-			return null;
-		}
-	}
+            $hash  = hash_file('md5', $play_url);
+            $video = \App\Video::firstOrNew(['hash' => $hash]);
+            if (!isset($video->id)) {
+                $video->setJsonData('cover', $cover);
+                $video->setJsonData('sourceVideoUrl', $play_url);
+                $video->setJsonData('duration', $duration);
+                $video->setJsonData('width', $width);
+                $video->setJsonData('height', $height);
+                $video->setJsonData('dynamic_cover', $dynamicCover);
+                $videoData = [
+                    'title'    => $title,
+                    'path'     => $play_url,
+                    'disk'     => 'tj',
+                    'duration' => $duration,
+                ];
+                $video->fill($videoData);
+                $video->saveDataOnly();
+            }
+            return $video;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
 }
