@@ -97,8 +97,8 @@ class MovieSync extends Command
         $returnCount = 0;
         do {
             data_set($args, 'page', $page);
-            $args        = http_build_query($args);
-            $url         = "https://mediachain.info/api/resource/list/" . '?' . $args;
+            $requestArgs = http_build_query($args);
+            $url         = "https://mediachain.info/api/resource/list/" . '?' . $requestArgs;
             $result      = json_decode(file_get_contents($url), true);
             $returnCount = count($result['data']);
             if ($result['status'] == 200) {
@@ -145,7 +145,6 @@ class MovieSync extends Command
                         ]))->save();
                         DB::commit();
                         $success++;
-                        $page++;
                         $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
                     } catch (\Throwable $th) {
                         DB::rollback();
@@ -153,6 +152,7 @@ class MovieSync extends Command
                         $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
                     }
                 }
+                $page++;
             }
         } while ($returnCount >= 300);
         $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部');
