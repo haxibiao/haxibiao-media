@@ -95,6 +95,13 @@ class MovieSync extends Command
         }
 
         $returnCount = 0;
+
+        //随机movie id差异化seo
+        //如果没有电影数据，第一次同步随机首个movie的id，后面的movie id++
+        $hasMovie = false;
+        if (Movie::first()) {
+            $hasMovie = true;
+        }
         do {
             data_set($args, 'page', $page);
             $requestArgs = http_build_query($args);
@@ -113,6 +120,12 @@ class MovieSync extends Command
                             'source'     => $this->option('source'),
                             'source_key' => $movie['source_key'],
                         ]);
+
+                        if (!$hasMovie) {
+                            $model->id = substr(time(), 6);
+                            $hasMovie  = true;
+                        }
+
                         $movie['producer'] = str_limit($movie['producer'], 97);
                         $movie['actors']   = str_limit($movie['actors'], 97);
                         //修复count_series null引起sync出错
