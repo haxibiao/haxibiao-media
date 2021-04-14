@@ -80,9 +80,12 @@ class PostSync extends Command
                         'hash' => $post->hash,
                     ]);
 
-                    //关联电影信息
-                    $movie    = Movie::where('source_key', $post->movie_key)->first();
-                    $movie_id = empty($movie) ? null : $movie->id;
+                    $movie_id = null;
+                    if($post->movie_key){
+                        //关联电影信息
+                        $movie    = Movie::where('source_key', $post->movie_key)->first();
+                        $movie_id = data_get($movie,'id');
+                    }
                     // $collection_id = str_after($post->collection_key, "_") ?? null;
 
                     //不存在创建，存在直接修改数据
