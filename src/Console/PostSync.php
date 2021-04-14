@@ -53,6 +53,7 @@ class PostSync extends Command
                 'videos.duration', 'videos.disk', 'videos.hash',
                 'videos.json', 'videos.collection_key', 'videos.movie_key'])
             ->where('posts.id', '>', $maxid)
+            ->whereNotNull('posts.cover_id')
             ->orderBy('posts.id', 'desc');
 
         if ($this->option('hasMovie') ?? null) {
@@ -64,7 +65,6 @@ class PostSync extends Command
         $this->info("开始同步数据");
         $qb->chunk(100, function ($posts) use (&$count, $user_id) {
             foreach ($posts as $post) {
-                // dd($post);
                 DB::beginTransaction();
                 try {
                     if (!isset($post->hash)) {
@@ -84,12 +84,17 @@ class PostSync extends Command
 
                     //不存在创建，存在直接修改数据
                     if (!$localVideo->exists()) {
+
+                        $cos_url     = "http://hashvod-1251052432.file.myqcloud.com/";
+                        $video_cover = $cos_url . (DB::connection('media')->table('images')->find($post->cover_id)->path);
+
                         $this->info("没有该视频");
-                        $localVideo = Video::create([
+                        $localVideo = Video::firstOrNew([
                             'path'           => $post->path,
                             'title'          => $post->description,
                             'user_id'        => $user_id,
                             'duration'       => $post->duration,
+                            'path'           => $video_cover,
                             'disk'           => $post->disk,
                             'hash'           => $post->hash,
                             'json'           => json_encode($post->json),
@@ -100,8 +105,9 @@ class PostSync extends Command
                             'updated_at'     => now(),
                         ]);
 
+                        $localVideo->saveDataOnly();
                         $this->info("视频创建成功...");
-                        Post::create([
+                        $localPost = Post::firstOrNew([
                             'description' => $post->description,
                             'user_id'     => $user_id,
                             'video_id'    => $localVideo->id,
@@ -112,6 +118,9 @@ class PostSync extends Command
                             'created_at'  => now(),
                             'updated_at'  => now(),
                         ]);
+
+                        $localVideo->saveDataOnly();
+
                         $this->info("动态创建成功...");
                         Cache::put(self::CACHE_KEY, $post->id);
                         DB::commit();
