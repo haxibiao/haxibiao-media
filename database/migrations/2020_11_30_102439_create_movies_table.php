@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateMoviesTable extends Migration
@@ -45,6 +46,15 @@ class CreateMoviesTable extends Migration
             $table->string('type_name', 50)->nullable()->comment('类型名');
             $table->timestamps();
         });
+
+        /**
+         * 错位MOVIE ID
+         * https://pm.haxifang.com/browse/GC-174
+         */
+        $movieStartId = config('media.movie_auto_increment__start_id');
+        if(is_numeric($movieStartId)){
+            DB::statement("ALTER TABLE movies AUTO_INCREMENT = {$movieStartId};");
+        }
     }
     /**
      * Reverse the migrations.

@@ -33,4 +33,10 @@ return [
     'image'                          => [
         'auto_cut' => false,
     ],
+
+    /**
+     * Movie表自增ID的起始位置
+     * https://pm.haxifang.com/browse/GC-174
+     */
+    'movie_auto_increment__start_id' => env('MOVIE_AUTO_INCREMENT_START_ID',null),
 ];
