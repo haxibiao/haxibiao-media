@@ -122,7 +122,7 @@ class PostSync extends Command
                             'updated_at'  => now(),
                         ]);
 
-                        $localVideo->saveDataOnly();
+                        $localPost->saveDataOnly();
 
                         $this->info("动态创建成功...");
                         Cache::put(self::CACHE_KEY, $post->id);
