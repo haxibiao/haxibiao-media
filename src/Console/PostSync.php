@@ -18,7 +18,7 @@ class PostSync extends Command
      *
      * @var string
      */
-    protected $signature   = 'post:sync {--hasMovie=:已关联电影} {--hasQuestin=:已关联题目}';
+    protected $signature   = 'post:sync {--hasMovie=false} {--hasQuestin=false}';
     public const CACHE_KEY = "post_sync_last_id";
 
     /**
@@ -49,22 +49,26 @@ class PostSync extends Command
         $count = 0;
         $qb    = DB::connection('media')
             ->table('posts')
-            ->select(['posts.*', 'videos.id', 'videos.path',
+            ->select(['posts.*', 'videos.path',
                 'videos.duration', 'videos.disk', 'videos.hash',
                 'videos.json', 'videos.collection_key', 'videos.movie_key'])
             ->where('posts.id', '>', $maxid)
             ->whereNotNull('posts.cover_id')
             ->orderBy('posts.id', 'desc');
-
-        if ($this->option('hasMovie') ?? null) {
-            $qb = $qb->join("videos", "videos.id", "=", "posts.video_id")
-                ->where('videos.movie_key', '>', 0);
+        $qb = $qb->join("videos", function ($join) {
+            return $join->on("videos.id", "posts.video_id");
+        });
+        if ($this->option('hasMovie') == "true") {
+            $qb = $qb->where('videos.movie_key', '>', 0);
+        } else {
+            $qb = $qb->whereNull('videos.movie_key');
         }
 
         $user_id = User::first()->id;
         $this->info("开始同步数据");
         $qb->chunk(100, function ($posts) use (&$count, $user_id) {
             foreach ($posts as $post) {
+                dd($post);
                 DB::beginTransaction();
                 try {
                     if (!isset($post->hash)) {
