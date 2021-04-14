@@ -94,7 +94,7 @@ class PostSync extends Command
                             'title'          => $post->description,
                             'user_id'        => $user_id,
                             'duration'       => $post->duration,
-                            'path'           => $video_cover,
+                            'cover'          => $video_cover,
                             'disk'           => $post->disk,
                             'hash'           => $post->hash,
                             'json'           => json_encode($post->json),
