@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title') {{ seo_site_name() }} - 内涵电影</title>
+    <title>@yield('title') 长视频分享 - {{ seo_site_name() }}</title>
     <meta name="keywords" content="@yield('keywords')" />
     <meta name="description" content="@yield('description')" />
 

@@ -23,7 +23,6 @@ use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 use TencentCloud\Vod\V20180717\VodClient;
 use Vod\Model\VodUploadRequest;
-use Vod\VodUploadClient;
 
 trait VideoRepo
 {
@@ -102,8 +101,9 @@ trait VideoRepo
             if ($post->category_id) {
                 //投稿到电影专题下
                 $article->addCategories([$post->category_id]);
-                //维护主专题，查询性能优化
-                $article->category_id = $post->category_id;
+                //维护主专题/合集，查询性能优化
+                $article->category_id   = $post->category_id;
+                $article->collection_id = $post->collection_id;
                 $article->save();
             }
         }
@@ -434,7 +434,7 @@ trait VideoRepo
             // 删除本地视频
             Storage::delete($localPath);
             return $video->id;
-        } catch (\Exception $e) {
+        } catch (\Exception$e) {
             // 处理上传异常
             Log::error($e);
             return;

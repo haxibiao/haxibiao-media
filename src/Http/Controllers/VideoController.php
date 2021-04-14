@@ -166,21 +166,11 @@ class VideoController extends Controller
      */
     public function show($id)
     {
-        $video                = Video::findOrFail($id);
+        $video                = Video::has('post')->findOrFail($id);
         $data['related_page'] = request()->get('related_page') ?? 0;
 
-        //默认端视频动态时代
-        $view = 'video.show';
-
-        //传统视频文章 + article
-        if (!$video->post || $video->article  ) {
-            $view = 'video.article';
-        }
-
-        //记录用户浏览记录
-        // $article->recordBrowserHistory();
-
-        return view($view)
+        return view('video.show')
+            ->with('post', $video->post)
             ->with('video', $video)
             ->with('data', $data);
     }
