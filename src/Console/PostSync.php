@@ -68,7 +68,6 @@ class PostSync extends Command
         $this->info("开始同步数据");
         $qb->chunk(100, function ($posts) use (&$count, $user_id) {
             foreach ($posts as $post) {
-                dd($post);
                 DB::beginTransaction();
                 try {
                     if (!isset($post->hash)) {
