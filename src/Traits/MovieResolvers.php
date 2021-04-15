@@ -245,7 +245,7 @@ trait MovieResolvers
         }
         $log->save();
 
-        return static::search($keyword);
+        return static::publish()->search($keyword);
     }
 
     public function getFilters()
