@@ -232,7 +232,7 @@ trait MovieResolvers
             'keyword' => $keyword,
         ]);
         // 如果有完全匹配的作品名字
-        if ($movie = Movie::where('name', $keyword)->orderBy('id')->first()) {
+        if ($movie = Movie::publish()->where('name', $keyword)->orderBy('id')->first()) {
             $log->movie_type   = $movie->type_name;
             $log->movie_reigon = $movie->country;
             //记录用户，作为展示的历史搜索数据
