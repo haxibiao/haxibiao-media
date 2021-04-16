@@ -8,6 +8,7 @@ use App\Movie;
 use App\MovieHistory;
 use App\User;
 use Haxibiao\Media\Http\Controller;
+use Haxibiao\Media\Scopes\MovieStatusScope;
 use Haxibiao\Media\SearchLog;
 use Illuminate\Http\Request;
 
@@ -227,8 +228,8 @@ class MovieController extends Controller
         $more = $qb->take(6)->get();
         //FIXME: 用sns 实现是否已收藏...
         $movie->favorited = false;
-        $recommend        = Movie::enable()->withoutGlobalScopes()->latest('rank')->inRandomOrder()->take(6)->get();
-        $more             = Movie::enable()->withoutGlobalScopes()->latest('rank')->inRandomOrder()->take(6)->get();
+        $recommend        = Movie::enable()->withoutGlobalScopes(new MovieStatusScope)->latest('rank')->inRandomOrder()->take(6)->get();
+        $more             = Movie::enable()->withoutGlobalScopes(new MovieStatusScope)->latest('rank')->inRandomOrder()->take(6)->get();
 
         // 兼容内涵电影vue用的series属性
         $movie->series = $movie->data;
