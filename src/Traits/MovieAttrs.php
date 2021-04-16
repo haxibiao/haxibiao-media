@@ -199,16 +199,18 @@ trait MovieAttrs
     //伪装用户发布该电影，缓存三天为该用户发布
     public function getUserAttribute()
     {
-        $cache    = Cache::store('redis');
-        $cacheKey = sprintf('movie:id:%s', $this->id);
-        if ($cache->has($cacheKey)) {
-            $user_id = $cache->get($cacheKey);
-            return User::find($user_id);
-        } else {
-            $user = User::where('role_id', User::VEST_STATUS)->inRandomOrder()->first();
-            if ($user) {
-                $cache->put($cacheKey, $user->id, today()->addDays(3));
-                return $user;
+        if (class_exists('Redis')) {
+            $cache    = Cache::store('redis');
+            $cacheKey = sprintf('movie:id:%s', $this->id);
+            if ($cache->has($cacheKey)) {
+                $user_id = $cache->get($cacheKey);
+                return User::find($user_id);
+            } else {
+                $user = User::where('role_id', User::VEST_STATUS)->inRandomOrder()->first();
+                if ($user) {
+                    $cache->put($cacheKey, $user->id, today()->addDays(3));
+                    return $user;
+                }
             }
         }
         return null;
