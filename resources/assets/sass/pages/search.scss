@@ -2,17 +2,16 @@
 
 .search_container {
     margin: 20px;
-}
-
-.side {
-    @media (min-width: $col-lg-width) {
-        width: 260px;
-        float: right;
+    .side {
+        @media (min-width: $col-lg-width) {
+            width: 260px;
+            float: right;
+        }
     }
-}
-.main {
-    @media (min-width: $col-lg-width) {
-        margin-right: 320px;
+    .main {
+        @media (min-width: $col-lg-width) {
+            margin-right: 320px;
+        }
     }
 }
 

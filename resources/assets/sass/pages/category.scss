@@ -50,24 +50,26 @@
     }
 }
 
-.main {
-    margin-bottom: 20px;
-    border-radius: 5px;
-    padding: 15px;
-    .movie-list {
-        .movie_item_wrap {
-            padding: 15px;
-        }
-    }
-    @media (max-width: $col-sm-width - 1) {
-        padding: 0 15px;
+.movie_category {
+    .main {
+        margin-bottom: 20px;
+        border-radius: 5px;
+        padding: 15px;
         .movie-list {
-            margin-right: -5px;
             .movie_item_wrap {
-                padding: 10px 5px 10px 0;
-                .movie-item {
-                    .movie-thumb {
-                        border-radius: 1px;
+                padding: 15px;
+            }
+        }
+        @media (max-width: $col-sm-width - 1) {
+            padding: 0 15px;
+            .movie-list {
+                margin-right: -5px;
+                .movie_item_wrap {
+                    padding: 10px 5px 10px 0;
+                    .movie-item {
+                        .movie-thumb {
+                            border-radius: 1px;
+                        }
                     }
                 }
             }
