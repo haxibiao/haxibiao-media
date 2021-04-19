@@ -71,6 +71,7 @@
         }
     }
     .movie-detail {
+        white-space: -3px;
         .title {
             margin: 10px 0 0;
             font-size: 1rem;
@@ -86,6 +87,19 @@
             font-size: 0.8rem;
             margin-top: 6px;
             color: #999;
+        }
+        .uploader {
+            display: block;
+            font-size: 0.8rem;
+            line-height: 18px;
+            margin-top: 6px;
+            color: #999;
+            word-spacing: -4px;
+            i {
+                font-size: 1.2rem;
+                vertical-align: bottom;
+                margin-right: 5px;
+            }
         }
     }
 }
