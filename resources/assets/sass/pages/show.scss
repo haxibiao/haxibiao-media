@@ -103,6 +103,43 @@
                 line-height: 16px;
                 margin-right: 10px;
             }
+            .up-info-wrapper {
+                display: block;
+                float: left;
+                height: 16px;
+                line-height: 16px;
+                margin-right: 16px;
+                margin-left: 6px;
+                .split-line {
+                    display: inline-block;
+                    height: 16px;
+                    width: 1px;
+                    background-color: silver;
+                    margin-right: 10px;
+                }
+                .common-lazy-img {
+                    width: 18px;
+                    height: 18px;
+                    margin-right: 4px;
+                    border-radius: 50%;
+                    overflow: hidden;
+                    display: inline-block;
+                    vertical-align: top;
+                    margin-top: -1px;
+                    img {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+                .up-name {
+                    display: inline-block;
+                    vertical-align: top;
+                    height: 16px;
+                    font-size: 12px;
+                    color: #fb7299;
+                }
+            }
         }
         .video-desc {
             position: relative;

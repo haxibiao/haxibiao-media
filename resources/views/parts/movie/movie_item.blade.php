@@ -1,5 +1,5 @@
 @php
-$isSeries = $movie->count_series > 1
+$isSeries = $movie->count_series > 1;
 @endphp
 
 <div class="movie-item">
@@ -17,5 +17,9 @@ $isSeries = $movie->count_series > 1
             <a href="/movie/{{ $movie->id }}" target="_blank" title="{{ $movie->name }}">{{ $movie->name }}</a>
         </h4>
         <p class="text text-ellipsis hidden-xs">{{ $movie->actors ?? '主演： ' . $movie->actors }}</p>
+        <a href="/user/1" class="uploader text-ellipsis">
+            <i class="iconfont icon-usercenter1"></i>
+            大表哥
+        </a>
     </div>
 </div>

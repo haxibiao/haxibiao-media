@@ -7,12 +7,8 @@
 @section('content')
     <div class="app-player">
         <div class="container-xl">
-            <movie-player
-                :movie-data='{{ $movie }}'
-                qrcode={{ app_qrcode_url() }}
-                init-episode={{ 0 }}
-                apk_url="{{ getApkUrl() }}"
-            />
+            <movie-player :movie-data='{{ $movie }}' qrcode={{ app_qrcode_url() }} init-episode={{ 0 }}
+                apk_url="{{ getApkUrl() }}" />
             <span class="movie_loading"></span>
         </div>
     </div>
@@ -36,6 +32,18 @@
                                     class="home-link">{{ $movie->count_series > 1 ? '电视剧' : '电影' }}</a>
                                 <span class="pub-info">{{ $movie->finished ? '已完结' : '更新中' }},
                                     {{ $movie->count_series }}话</span>
+                                <span class="up-info-wrapper">
+                                    <i class="split-line"></i>
+                                    <span class="up-info">
+                                        <a href="/user/1" target="_blank">
+                                            <div class="common-lazy-img">
+                                                <img alt="avatar" src="/images/movie/noavatar.png" lazy="loaded">
+                                            </div>
+                                            <span class="up-name">迷影社</span>
+                                        </a>
+                                    </span>
+
+                                </span>
                             </div>
                             <a target="_blank" class="video-desc webkit-ellipsis">
                                 <span>{!! $movie->introduction !!}</span>
@@ -63,7 +71,8 @@
                     </div>
                 </div>
                 <div class="video-comment">
-                    <comment-module movie-id="{{ $movie->id }}" count-comment="{{ $movie->comment_count }}" page-offset="{{ 10 }}" />
+                    <comment-module movie-id="{{ $movie->id }}" count-comment="{{ $movie->comment_count }}"
+                        page-offset="{{ 10 }}" />
                 </div>
             </div>
             <div class="side-right col-lg-3 hide-md">
