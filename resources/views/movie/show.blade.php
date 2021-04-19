@@ -27,7 +27,7 @@
                             <div class="video-count text-ellipsis">
                                 {{ mt_rand(30, 120) }}.5万播放&nbsp;&nbsp;·&nbsp;&nbsp;{{ mt_rand(1000, 10000) }}人收藏&nbsp;&nbsp;·&nbsp;&nbsp;{{ $movie->comment_count }}评论
                             </div>
-                            <div class="pub-wrapper clearfix">
+                            <div class="pub-wrapper">
                                 <a href="/" target="_blank"
                                     class="home-link">{{ $movie->count_series > 1 ? '电视剧' : '电影' }}</a>
                                 <span class="pub-info">{{ $movie->finished ? '已完结' : '更新中' }},
