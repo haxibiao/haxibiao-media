@@ -95,9 +95,20 @@ $header-height: 62px;
                 color: $theme-color !important;
             }
         }
+        .download-app {
+            .icon-mobile {
+                font-size: 1.5rem;
+                vertical-align: middle;
+                margin-top: -0.2rem;
+                margin-right: -0.4rem;
+            }
+        }
         @media (max-width: $col-md-width - 1px) {
             font-size: 14px;
             margin-left: 15px;
+            .download-app {
+                color: $theme-color;
+            }
         }
     }
     .category-menu {
