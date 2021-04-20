@@ -24,5 +24,5 @@ $cateogries = [
     @else
         <li class="hide-xs"><a href={{ $key }}>{{ $category }}</a></li>
     @endif
-    <li><a href='/app' class="download-app"><i class="iconfont icon-mobile"></i> 下载App</a></li>
 @endforeach
+<li><a href='/app' class="download-app"><i class="iconfont icon-mobile"></i> 下载App</a></li>
