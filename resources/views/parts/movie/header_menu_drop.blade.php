@@ -4,7 +4,6 @@
     '/movie/riju' => '日剧',
     '/movie/meiju' => '美剧',
     '/movie/hanju' => '韩剧',
-    '/movie/gangju' => '港剧',
     // '/movie/category/8' => '解说',
     // '/collection' => '合集',
     ];

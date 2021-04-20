@@ -263,7 +263,7 @@ trait MovieResolvers
                 'id'            => 'region',
                 'filterName'    => '剧种',
                 'filterOptions' =>
-                ['全部', '韩剧', '日剧', '美剧', '港剧'],
+                ['全部', '韩剧', '日剧', '美剧'],
                 'filterValue'   =>
                 ['ALL', 'HAN', 'RI', 'MEI', 'GANG'],
             ],
