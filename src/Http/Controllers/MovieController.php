@@ -231,12 +231,12 @@ class MovieController extends Controller
         // 推荐同导演（性能考虑）
         $qb          = Movie::latest('id');
         $qb_producer = $qb->where('producer', $movie->producer)->where('id', '<>', $movie->id);
-        $recommend   = $qb_producer->where('cover', 'like', 'https://cdn-%')->latest('rank')->inRandomOrder()->take(6)->get();
+        $recommend   = $qb_producer->where('cover', 'like', 'https://image-cdn%')->latest('rank')->inRandomOrder()->take(6)->get();
 
         //更多同地区
         $qb         = Movie::latest('id');
         $qb_country = $qb->where('country', $movie->country)->where('type', $movie->type)->where('id', '<>', $movie->id);
-        $more       = $qb_country->where('cover', 'like', 'https://cdn-%')->latest('rank')->inRandomOrder()->take(6)->get();
+        $more       = $qb_country->where('cover', 'like', 'https://image-cdn%')->latest('rank')->inRandomOrder()->take(6)->get();
 
         // 兼容内涵电影vue用的series属性
         $movie->series = $movie->data;
