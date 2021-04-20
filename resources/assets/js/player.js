@@ -1,11 +1,8 @@
 import Vue from 'vue';
 import Echo from 'laravel-echo';
 
+// 弹幕需要
 window.io = require('socket.io-client');
-window.Echo = new Echo({
-    broadcaster: 'socket.io',
-    host: 'https://neihandianying.com' + ':6001',
-});
 
 // movie
 Vue.component('video-player', require('./components/player/VideoPlayer.vue').default);

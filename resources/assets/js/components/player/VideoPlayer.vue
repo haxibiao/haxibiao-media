@@ -91,6 +91,11 @@ export default {
             //校验弹幕发送规则
             this.bindDanmuSend();
 
+            window.Echo = new Echo({
+                broadcaster: 'socket.io',
+                host: 'https://neihandianying.com' + ':6001',
+            });
+
             //绘制scoket弹幕
             let danmuPrefix = this.apiDanmu ? this.apiDanmu : 'danmu_';
             var channel = danmuPrefix + this.movie_id + '_' + this.episode;
