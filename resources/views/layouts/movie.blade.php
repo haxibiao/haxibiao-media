@@ -57,7 +57,7 @@
 
     @include('parts.movie.footer')
     @yield('bottom')
-
+    {!! cms_seo_js() !!}
 </body>
 
 </html>
