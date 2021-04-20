@@ -157,17 +157,36 @@ trait MovieResolvers
         });
     }
 
-    public function resolversMovie($root, $args, $content, $info)
+    public function resolveMovie($root, $args, $content, $info)
     {
-        $movie = Movie::withoutGlobalScopes()->find(data_get($args, 'movie_id'));
+        $movie_id = data_get($args, 'movie_id');
+        app_track_event('长视频', '电影详情', $movie_id);
+
+        $movie = Movie::withoutGlobalScopes()->find();
         if (isset($movie)) {
             $movie->hits = $movie->hits + 1;
             $movie->save();
-            // app_track_event('长视频', '电影详情', data_get($args, 'movie_id'));
-            //可播放资源或者收藏夹资源
+
+            //可播放资源或用户收藏过的资源
             if ($movie->status == Movie::PUBLISH || $movie->favorited) {
                 return $movie;
             }
+        }
+        return null;
+    }
+
+    /**
+     * 工厂包任意播放电影
+     */
+    public function resolveAnyMovie($root, $args, $content, $info)
+    {
+        $movie_id = data_get($args, 'movie_id');
+        app_track_event('长视频', '电影详情', $movie_id);
+        $movie = Movie::withoutGlobalScopes()->find();
+        if (isset($movie)) {
+            $movie->hits = $movie->hits + 1;
+            $movie->save();
+            return $movie;
         }
         return null;
     }
