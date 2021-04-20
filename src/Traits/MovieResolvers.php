@@ -160,9 +160,9 @@ trait MovieResolvers
     public function resolveMovie($root, $args, $content, $info)
     {
         $movie_id = data_get($args, 'movie_id');
-        app_track_event('长视频', '电影详情', $movie_id);
+        // app_track_event('长视频', '电影详情', $movie_id);
 
-        $movie = Movie::withoutGlobalScopes()->find();
+        $movie = Movie::withoutGlobalScopes()->find($movie_id);
         if (isset($movie)) {
             $movie->hits = $movie->hits + 1;
             $movie->save();
@@ -171,22 +171,6 @@ trait MovieResolvers
             if ($movie->status == Movie::PUBLISH || $movie->favorited) {
                 return $movie;
             }
-        }
-        return null;
-    }
-
-    /**
-     * 工厂包任意播放电影
-     */
-    public function resolveAnyMovie($root, $args, $content, $info)
-    {
-        $movie_id = data_get($args, 'movie_id');
-        app_track_event('长视频', '电影详情', $movie_id);
-        $movie = Movie::withoutGlobalScopes()->find();
-        if (isset($movie)) {
-            $movie->hits = $movie->hits + 1;
-            $movie->save();
-            return $movie;
         }
         return null;
     }
