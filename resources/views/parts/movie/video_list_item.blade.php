@@ -7,7 +7,7 @@ $movies = $movies->forget(0);
 <div class="video-list-item">
     <div class="panel_head clearfix">
         <h3 class="title">{{ $categoryTitle }}</h3>
-        <a class="more" href="/movie/category/{{ $movies->get(1)->category_id }}">更多<i
+        <a class="more" href="/movie/{{ $movies->get(1)->region }}">更多<i
                 class="iconfont icon-arrow-right"></i></a>
     </div>
     <div class="panel_body">

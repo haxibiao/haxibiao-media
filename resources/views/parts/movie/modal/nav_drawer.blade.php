@@ -1,12 +1,12 @@
 @php
 $cateogriesMenu = [
-'/' => '首页',
-'/movie/category/1' => '日剧',
-'/movie/category/2' => '美剧',
-'/movie/category/3' => '韩剧',
-'/movie/category/4' => '港剧',
-'/movie/category/8' => '解说',
-// '/collection' => '合集',
+    '/' => '首页',
+    '/movie/riju' => '日剧',
+    '/movie/meiju' => '美剧',
+    '/movie/hanju' => '韩剧',
+    '/movie/gangju' => '港剧',
+    // '/movie/category/8' => '解说',
+    // '/collection' => '合集',
 ];
 @endphp
 
