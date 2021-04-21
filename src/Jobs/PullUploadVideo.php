@@ -10,6 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Str;
 
 class PullUploadVideo implements ShouldQueue
 {
@@ -50,8 +51,8 @@ class PullUploadVideo implements ShouldQueue
                 $status   = trim($taskInfo['status']);
                 $fileID   = data_get($taskInfo, 'data.fileId');
                 $path     = data_get($taskInfo, 'data.fileUrl');
-            } while (\Str::contains($status, 'PROCESSING'));
-            if (!\Str::contains($status, 'FINISH')) {
+            } while (Str::contains($status, 'PROCESSING'));
+            if (!Str::contains($status, 'FINISH')) {
                 throw new \Exception('处理异常');
             }
             VodUtils::makeCoverAndSnapshots($fileID);
