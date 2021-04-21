@@ -72,20 +72,42 @@ class MovieController extends Controller
 
     public function category($id)
     {
-        $qb      = Movie::enable()->where('category_id', $id)->latest('rank');
-        $orderBy = 'like_count';
-        if ($order = request()->get('order')) {
-            $qb->latest($order);
-            $orderBy = $order;
+        //此电影分类已不用，但还是有地方在调此路由，故做一下跳转
+        $order = request()->get('order');
+        $method = 'index';
+        switch ($id) {
+            case 1:
+                $method = 'riju';
+                break;
+            case 2:
+                $method = 'meiju';
+                break;
+            case 3:
+                $method = 'hanju';
+                break;
+            case 4:
+                $method = 'gangju';
+                break;
         }
-        $data = [
-            'cate'        => Movie::getCategories()[$id],
-            'movies'      => $qb->paginate(30),
-            'category_id' => $id,
-            'orderBy'     => $orderBy,
-        ];
-
-        return view('movie.category', $data);
+        if($order){
+            return redirect()->action('\Haxibiao\Media\Http\Controllers\MovieController@'.$method,['order' => $order]);
+        }else{
+            return redirect()->action('\Haxibiao\Media\Http\Controllers\MovieController@'.$method);
+        }
+        
+        // $qb      = Movie::enable()->where('category_id', $id)->latest('rank');
+        // $orderBy = 'like_count';
+        // if ($order = request()->get('order')) {
+        //     $qb->latest($order);
+        //     $orderBy = $order;
+        // }
+        // $data = [
+        //     'cate'        => Movie::getCategories()[$id],
+        //     'movies'      => $qb->paginate(30),
+        //     'category_id' => $id,
+        //     'orderBy'     => $orderBy,
+        // ];
+        // return view('movie.category', $data);
     }
 
     /**
