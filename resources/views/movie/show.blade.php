@@ -1,7 +1,13 @@
 @extends('layouts.movie')
 
 @section('title')
-    {{ $movie->name }} -
+    {{ $movie->name }}
+@endsection
+@section('keywords')
+    {{ $movie->name }}
+@endsection
+@section('description')
+    {{ $movie->introduction }}
 @endsection
 
 @section('content')
