@@ -15,18 +15,15 @@ class VideoObserver
      */
     public function created(Video $video)
     {
-        \info('VideoObserver created');
-
-        $user = $video->user;
-
         $video->autoPublishContentWhenAboutMovie();
 
         //启动截取图片job
         // MakeVideoCovers::dispatch($video);
 
-        //更新用户任务状态
-        $user->reviewTasksByClass(get_class($video));
-
+        if ($user = $video->user) {
+            //更新采集相关的任务状态？应该选择 PostObserver来处理，video创建不需要作者，可以是系统创建
+            // $user->reviewTasksByClass(get_class($video));
+        }
     }
 
     /**
