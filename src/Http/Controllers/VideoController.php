@@ -166,9 +166,8 @@ class VideoController extends Controller
      */
     public function show($id)
     {
-        $video                = Video::has('post')->findOrFail($id);
+        $video                = Video::findOrFail($id);
         $data['related_page'] = request()->get('related_page') ?? 0;
-
         return view('video.show')
             ->with('post', $video->post)
             ->with('video', $video)
