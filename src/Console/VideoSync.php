@@ -72,6 +72,8 @@ class VideoSync extends Command
             $qb = $qb->whereNotNull('collection');
         }
 
+        $this->info("待拉取数据:" . $qb->count());
+
         $count = 0;
         $qb->chunk(100, function ($videos) use (&$count) {
             $this->info("拉取media上的数据成功....");
