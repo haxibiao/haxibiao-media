@@ -3,8 +3,8 @@
 namespace Haxibiao\Media\Console;
 
 use App\Article;
+use App\User;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 
 class ArticleSync extends Command
 {
@@ -13,7 +13,7 @@ class ArticleSync extends Command
      *
      * @var string
      */
-    protected $signature = 'article:sync {--domain= : 来源网站} {--category= : 指定分类} {--start= : 开始ID} {--num= : 拉取数量}';
+    protected $signature = 'article:sync {--domain= : 来源网站} {--type= : 类型｜article|diagrams} {--start_page= : 起始页} {--count_page= : 每页数量}';
 
     /**
      * The console command description.
@@ -40,76 +40,45 @@ class ArticleSync extends Command
     public function handle()
     {
 
-        $site     = $this->option('domain') ?? null;
-        $category = $this->option('category') ?? null;
-        $num      = $this->option('num') ?? null;
+        $domain     = $this->option('domain') ?? "diudie.com";
+        $type       = $this->option('type') ?? "diagrams";
+        $start_page = $this->option('start_page') ?? 1;
+        $count_page = $this->option('count_page') ?? 100;
+        $userIds    = \App\User::where('role_id', '>', User::STATUS_ONLINE)->take(50)->inRandomOrder()->pluck('id')->toArray() ?? [User::first()->id];
 
-        $cache_key = env('APP_NAME') . 'article_sync';
+        for ($start_page; $start_page < 1000; $start_page++) {
+            $url    = "http://media.haxibiao.com/api/articles?domain={$domain}&type={$type}&start_page={$start_page}&count_page={$count_page}";
+            $result = json_decode(file_get_contents($url), true);
+            $count  = 0;
+            if (count($result)) {
+                foreach ($result as $article) {
+                    \DB::beginTransaction();
+                    try {
 
-        //记住最后同步的id
-        $current_article_id = 0;
-        $qb                 = \DB::connection('media')->table('articles');
-        if ($site) {
-            $qb = $qb->where('source', $site);
-        }
-        if ($category ?? null) {
-            $category = \DB::connection('media')->table('categories')->where('name', $category)->first();
-            if ($category) {
-                $qb = $qb->where('category_id', $category->id);
-            }
-        }
-
-        //指定从哪个id开始同步数据，不指定读缓存id
-        $start_id = $this->option('start') ?? null;
-        if (empty($start_id)) {
-            $start_id = Cache::get($cache_key);
-            if (empty($start_id)) {
-                $start_id = 1;
-                Cache::put($cache_key, $start_id);
-            }
-        }
-        $qb = $qb->where('id', '>', $start_id);
-
-        echo "开始同步\n";
-        $count = 0;
-        $qb->chunkById(100, function ($articles) use (&$count, &$num, &$cache_key, &$current_article_id) {
-            foreach ($articles as $article) {
-                echo "\n同步文章:" . $article->title;
-                $current_article_id = $article->id;
-                //缓存最后一次id
-                Cache::put($cache_key, $current_article_id);
-
-                //只处理纯文章，视频article不处理
-                $result = Article::firstOrNew([
-                    'title' => $article->title,
-                ], [
-                    'description' => $article->description,
-                    'body'        => $article->body,
-                    'user_id'     => 1,
-                    'category_id' => $article->category_id,
-                    'cover_path'  => $article->cover_path,
-                    'status'      => $article->status,
-                    'source'      => $article->source,
-                    'json'        => $article->json,
-                ]);
-                if ($result->id) {
-                    echo "\n该文章已存在跳过:" . $article->title;
-                    continue;
-                }
-                $result->save();
-                $count++;
-
-                //达到指定同步数量退出
-                if ($num) {
-                    if ($count >= $num) {
-                        echo "退出";
-                        return false;
+                        $model = Article::firstOrNew([
+                            'title' => $article['title'],
+                        ]);
+                        $model->forceFill(array_only($article, [
+                            'description',
+                            'body',
+                            'type',
+                            'cover_path',
+                            'status',
+                            'json',
+                        ]));
+                        $model->user_id = array_random($userIds);
+                        $model->save();
+                        $this->info($model->title . "   保存成功");
+                        $count++;
+                        \DB::commit();
+                    } catch (\Exception $e) {
+                        \DB::rollback();
+                        $this->info($model->title . "   保存失败！！！");
                     }
                 }
             }
-        });
+        }
+        $this->info("保存成功{$count}条数据");
 
-        echo "\n导入成功" . $count . "条文章数据";
-        echo "\n最后导入的article ID为：" . $current_article_id;
     }
 }
