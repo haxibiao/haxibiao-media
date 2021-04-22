@@ -13,12 +13,12 @@
                         </div>
                     </dd>
                 </dl>
-                <section class="sec_item company-prod">
+                <!-- <section class="sec_item company-prod">
                     <div><span class="section_title">网站地图</span></div>
                     @foreach (sitemap() as $word => $path)
                         <p><a href="{{ $path }}" class="text-a">{{ $word }}</a></p>
                     @endforeach
-                </section>
+                </section> -->
                 <section class="sec_item friendly-links">
                     <div><span class="section_title">友情链接</span></div>
                     @foreach (friend_links() as $linkInfo)
