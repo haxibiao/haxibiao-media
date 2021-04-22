@@ -3,8 +3,8 @@ return [
     'mediachain' => [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),
-        'host'           => env('DB_HOST_MEDIACHAIN') ?? 'hk008.haxibiao.com',
-        'port'           => '3306',
+        'host'           => env('DB_HOST_MEDIACHAIN'),
+        'port'           => env('DB_PORT', 3306),
         'database'       => 'mediachain',
         'username'       => 'root',
         'password'       => env('DB_PASSWORD_MEDIA', env('DB_PASSWORD')),
@@ -22,8 +22,8 @@ return [
     'media'      => [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),
-        'host'           => env('DB_HOST_MEDIA') ?? 'media.haxibiao.com',
-        'port'           => '3366',
+        'host'           => env('DB_HOST_MEDIA'),
+        'port'           => env('DB_PORT_MEDIA', 3306),
         'database'       => 'media',
         'username'       => 'root',
         'password'       => env('DB_PASSWORD_MEDIA', env('DB_PASSWORD')),
