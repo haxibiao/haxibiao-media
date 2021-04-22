@@ -13,7 +13,7 @@
 @section('content')
     <div class="app-player">
         <div class="container-xl">
-            <movie-player :movie-data='{{ $movie }}' qrcode={{ app_qrcode_url() }} init-episode={{ 0 }}
+            <movie-player :movie-data='{{ $movie }}' qrcode={{ app_qrcode_url() }} init-episode={{ 0 }} api-save-progress="/api/movie/save-watch_progress"
                 apk_url="{{ getApkUrl() }}" />
             <span class="movie_loading"></span>
         </div>

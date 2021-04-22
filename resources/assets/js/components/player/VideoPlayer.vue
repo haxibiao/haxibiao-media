@@ -144,15 +144,14 @@ export default {
         //保存历史观看时长
         saveUserHistory() {
             var that = this;
-            if (!this.apiSaveProgress) {
-                return;
-            }
             window.axios
                 .post(
                     this.apiSaveProgress ? this.apiSaveProgress : `/api/movie/save-watch_progress`,
                     {
                         movie_id: this.movie_id,
-                        series_id: this.series[this.episode - 1].id,
+                        //原this.series[this.episode - 1].id写法只适用与neihandiany
+                        //在工厂项目中series表是和movie分开的
+                        series_index: this.episode,
                         progress: this.player.video.currentTime,
                     },
                     {
@@ -170,10 +169,8 @@ export default {
         },
         //获取历史观看时长
         jumpUserHistory() {
+            console.log("获取历史观看时长");
             var that = this;
-            if (!this.apiGetProgress) {
-                return;
-            }
             window.axios
                 .post(
                     this.apiGetProgress ? this.apiGetProgress : `/api/movie/get-watch_progress`,
@@ -190,12 +187,14 @@ export default {
                     if (response.data.status_code == 200) {
                         //返回历史观看时长
                         const history = response.data.data;
-                        console.log(history);
+                        console.log("history",history);
                         // 跳转上次观看的集数
                         that.$emit('update:source', history.source);
                         that.$emit('update:episode', history.episode);
                         // 跳转到上次观看的时间
-                        that.player.seek(history.time);
+                        setTimeout(()=>{
+                             that.player.seek(history.time);
+                        },1000)
                         that.player.notice('上次观看到:' + that.secondToDate(history.time), '5000');
                     }
                 });

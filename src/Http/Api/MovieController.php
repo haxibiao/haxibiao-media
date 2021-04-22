@@ -14,7 +14,6 @@ use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
 use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class MovieController extends Controller
 {
@@ -264,18 +263,50 @@ class MovieController extends Controller
 
     public function saveWatchProgress()
     {
-        $user     = Auth::user();
-        $movieid  = request()->get('movie_id');
-        $seriesid = request()->get('series_id');
-        $progress = request()->get('progress');
+        $token = request()->header('token');
+        //获得用户身份
+        if (empty($token)) {
+            return;
+        }
+        $user         = User::where('api_token', $token)->first();
+        $movieid      = request()->get('movie_id');
+        $series_index = request()->get('series_index') ?? 1;
+        $progress     = request()->get('progress');
         // 保存观看历史
         MovieHistory::updateOrCreate([
             'user_id'  => $user->id,
             'movie_id' => $movieid,
         ], [
-            'series_id' => $seriesid,
+            'series_id' => $series_index,
             'progress'  => $progress,
         ]);
         return returnData(true, '保存观影数据成功', 200);
     }
+
+    public function getWatchProgress()
+    {
+        $token = request()->header('token');
+        //获得用户身份
+        if (empty($token)) {
+            return;
+        }
+        $user = User::where('api_token', $token)->first();
+
+        $movieid      = request()->get('movie_id');
+        $movieHistory = MovieHistory::query()
+            ->with('series')
+            ->with('movie')
+            ->where('user_id', $user->id)->where('movie_id', $movieid)->latest()->first();
+
+        $result = [];
+        if ($movieHistory) {
+            $result['time']    = $movieHistory->progress;
+            $result['source']  = $movieHistory->movie->series[$movieHistory->series_index ?? 1]['url'];
+            $result['episode'] = $movieHistory->series_index ?? 1;
+            return returnData($result, '返回观影数据成功', 200);
+        } else {
+            return returnData([], '返回观影数据失败', 500);
+        }
+    }
+
 }
