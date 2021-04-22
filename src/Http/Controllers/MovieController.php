@@ -26,9 +26,11 @@ class MovieController extends Controller
         $language   = data_get($parameters, '4'); // lang
         $order      = data_get($parameters, '5', 'latest'); // order
 
-        $category = data_get(Movie::getCategories(), $categoryId);
+        $category = data_get(Movie::publish()->getCategories(), $categoryId);
 
-        $query = \App\Movie::where('status', '!=', Movie::DISABLED)
+        //原来 这里是status!=-1显示数据，还有一些项目因为历史原因status=-2，-6...
+        //这里换成publish会导致一些web首页movie数据出不来，注意去修改movie数据status为1
+        $query = \App\Movie::publish()
             ->when($category, function ($q) use ($category) {
                 return $q->where('region', $category);
             })->when($year, function ($q) use ($year) {
@@ -57,10 +59,10 @@ class MovieController extends Controller
     public function search()
     {
         $query  = request()->get('q');
-        $result = Movie::orderBy('id')->where('name', 'like', '%' . $query . '%')->paginate(10);
+        $result = Movie::publish()->orderBy('id')->where('name', 'like', '%' . $query . '%')->paginate(10);
         $result->appends(['q' => $query]);
-        $hot       = Movie::orderBy('id')->paginate(10);
-        $recommend = Movie::enable()->where('rank', 30)->inRandomOrder()->take(4)->get();
+        $hot       = Movie::publish()->orderBy('id')->paginate(10);
+        $recommend = Movie::publish()->where('rank', 30)->take(4)->inRandomOrder()->get();
         SearchLog::saveSearchLog($query);
         return view('movie.search', [
             'hot'          => $hot,
@@ -73,7 +75,7 @@ class MovieController extends Controller
     public function category($id)
     {
         //此电影分类已不用，但还是有地方在调此路由，故做一下跳转
-        $order = request()->get('order');
+        $order  = request()->get('order');
         $method = 'index';
         switch ($id) {
             case 1:
@@ -89,12 +91,12 @@ class MovieController extends Controller
                 $method = 'gangju';
                 break;
         }
-        if($order){
-            return redirect()->action('\Haxibiao\Media\Http\Controllers\MovieController@'.$method,['order' => $order]);
-        }else{
-            return redirect()->action('\Haxibiao\Media\Http\Controllers\MovieController@'.$method);
+        if ($order) {
+            return redirect()->action('\Haxibiao\Media\Http\Controllers\MovieController@' . $method, ['order' => $order]);
+        } else {
+            return redirect()->action('\Haxibiao\Media\Http\Controllers\MovieController@' . $method);
         }
-        
+
         // $qb      = Movie::enable()->where('category_id', $id)->latest('rank');
         // $orderBy = 'like_count';
         // if ($order = request()->get('order')) {
@@ -116,7 +118,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $qb             = Movie::latest('id')->where('status', '!=', Movie::DISABLED);
+        $qb             = Movie::publish()->latest('id');
         $hotMovies      = (clone $qb)->take(15)->get();
         $categoryMovies = [
             '热门美剧' => [
@@ -179,9 +181,9 @@ class MovieController extends Controller
     {
         $order = request()->get('order');
         if ($order) {
-            $qb = Movie::orderByDesc($order);
+            $qb = Movie::publish()->orderByDesc($order);
         } else {
-            $qb = Movie::orderBy('id');
+            $qb = Movie::publish()->orderBy('id');
         }
         $movies = (clone $qb)->where('region', "日剧")->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("日剧")->with('cate_id', 1);
@@ -209,9 +211,9 @@ class MovieController extends Controller
     {
         $order = request()->get('order');
         if ($order) {
-            $qb = Movie::orderByDesc($order);
+            $qb = Movie::publish()->orderByDesc($order);
         } else {
-            $qb = Movie::orderBy('id');
+            $qb = Movie::publish()->orderBy('id');
         }
         $movies = (clone $qb)->where('region', "美剧")->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("美剧")->with('cate_id', 2);
@@ -221,9 +223,9 @@ class MovieController extends Controller
     {
         $order = request()->get('order');
         if ($order) {
-            $qb = Movie::orderByDesc($order);
+            $qb = Movie::publish()->orderByDesc($order);
         } else {
-            $qb = Movie::orderBy('id');
+            $qb = Movie::publish()->orderBy('id');
         }
         $movies = (clone $qb)->where('region', "韩剧")->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("韩剧")->with('cate_id', 3);
@@ -233,9 +235,9 @@ class MovieController extends Controller
     {
         $order = request()->get('order');
         if ($order) {
-            $qb = Movie::orderByDesc($order);
+            $qb = Movie::publish()->orderByDesc($order);
         } else {
-            $qb = Movie::orderBy('id');
+            $qb = Movie::publish()->orderBy('id');
         }
         $movies = (clone $qb)->where('region', "港剧")->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("港剧")->with('cate_id', 4);
@@ -245,18 +247,18 @@ class MovieController extends Controller
     {
         $movie->hits = $movie->hits + 1;
         $movie->save();
-        $qb   = Movie::latest('updated_at');
+        $qb   = Movie::publish()->latest('updated_at');
         $more = $qb->take(6)->get();
         //FIXME: 用sns 实现是否已收藏...
         $movie->favorited = false;
 
         // 推荐同导演（性能考虑）
-        $qb          = Movie::latest('id');
+        $qb          = Movie::publish()->latest('id');
         $qb_producer = $qb->where('producer', $movie->producer)->where('id', '<>', $movie->id);
         $recommend   = $qb_producer->where('cover', 'like', 'https://image-cdn%')->latest('rank')->inRandomOrder()->take(6)->get();
 
         //更多同地区
-        $qb         = Movie::latest('id');
+        $qb         = Movie::publish()->latest('id');
         $qb_country = $qb->where('country', $movie->country)->where('type', $movie->type)->where('id', '<>', $movie->id);
         $more       = $qb_country->where('cover', 'like', 'https://image-cdn%')->latest('rank')->inRandomOrder()->take(6)->get();
 
@@ -312,7 +314,7 @@ class MovieController extends Controller
             $cate = "足迹";
         }
 
-        $movies = Movie::withoutGlobalScopes()->whereIn('id', $movieID)->paginate(18);
+        $movies = Movie::publish()->withoutGlobalScopes()->whereIn('id', $movieID)->paginate(18);
         return view('movie.favorites', [
             'cate'   => $cate,
             'movies' => $movies,
