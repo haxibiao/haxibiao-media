@@ -102,8 +102,7 @@ class MediaServiceProvider extends ServiceProvider
             ], 'media-graphql');
 
             $this->publishes([
-                __DIR__ . '/../public/images' => base_path('public/images'),
-                __DIR__ . '/../public/fonts'  => base_path('public/fonts'),
+                __DIR__ . '/../public/fonts' => base_path('public/fonts'),
             ], 'media-assets');
 
             //注册 migrations paths
