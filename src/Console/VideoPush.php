@@ -19,8 +19,6 @@ class VideoPush extends Command
     protected $signature   = 'video:push';
     public const CACHE_KEY = "video_sync_max_id";
 
-    public const DEFAULT_CATE_NAME = "有趣短视频";
-
     protected $appName;
     protected $defaultCategory;
 
@@ -40,9 +38,6 @@ class VideoPush extends Command
     {
         parent::__construct();
         $this->appName = config('app.name');
-        //获取根据APP划分视频分类名
-        $categoryName          = data_get(config('applist'), $this->appName . '.category_name');
-        $this->defaultCategory = $categoryName ?: self::DEFAULT_CATE_NAME;
 
     }
 
@@ -53,9 +48,10 @@ class VideoPush extends Command
      */
     public function handle()
     {
+        dd(data_get(config('database'), 'connections.media'));
 
         // 从小到大push数据
-        $qb = Video::query()->oldest('id')->whereStatus(Video::CDN_VIDEO_STATUS);
+        $qb = Video::query()->oldest('id')->whereStatus(Video::COVER_VIDEO_STATUS);
 
         $maxid = Cache::rememberForever($this->appName . self::CACHE_KEY, function () use ($qb) {
             return $qb->min('id');
@@ -102,7 +98,7 @@ class VideoPush extends Command
 
                 //media中心只维护videos和他的meta字段，不维护posts categories关系表
 
-                //同步media中videos数据的 collection 和 category 字段（如果多个，逗号分开）
+                //同步media中videos数据的 collection 和 category 字段（取一个作为主要的）
                 if ($videoOnMedia = $qbMediaVideo->first()) {
 
                     $videoOnMedia->collection     = $post->collection->name;

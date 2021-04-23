@@ -48,7 +48,6 @@ class MediaServiceProvider extends ServiceProvider
                 Console\ComicSync::class,
                 Console\ComicPush::class,
                 Console\VideoSync::class,
-                Console\PublishConfig::class,
                 Console\CrawlDouyinVideos::class,
             ]);
         }
@@ -92,10 +91,6 @@ class MediaServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/media.php' => config_path('media.php'),
                 __DIR__ . '/../config/vod.php'   => config_path('vod.php'),
             ], 'media-config');
-
-            $this->publishes([
-                __DIR__ . '/../config/applist.php' => config_path('applist.php'),
-            ], 'media-applist');
 
             $this->publishes([
                 __DIR__ . '/../graphql' => base_path('graphql/media'),

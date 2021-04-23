@@ -2,12 +2,10 @@
 
 namespace Haxibiao\Media\Console;
 
-use App\Collection;
 use App\Post;
 use App\Video;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class VideoSync extends Command
 {
@@ -21,15 +19,15 @@ class VideoSync extends Command
      *
      * @var string
      */
-    protected $signature = 'video:sync {--tag=: 视频标签} {--category=: 视频分类} {--source= : 来源，如印象视频} {--author= : 作者} {--endpoint= : 哈希云接口位置} {--collectable : 只取有合集的视频}';
+    protected $signature = 'video:sync  {--category=: 视频分类} {--collection=: 视频合集:如：影视剪辑} {--source= : 来源，如yinxiangshipin} {--categorized : 只取有分类的视频}{--collectable : 只取有合集的视频}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description           = '按分类同步视频数据';
-    protected const HAXIYUN_ENDPOINT = 'http://media.haxibiao.com/';
+    protected $description           = '按要求同步视频数据';
+    protected const HAXIYUN_ENDPOINT = 'http://media.haxibiao.com/api/video/list';
     protected const COSV5_CDN        = 'http://hashvod-1251052432.file.myqcloud.com';
 
     protected $client;
@@ -60,23 +58,21 @@ class VideoSync extends Command
                 $this->confirm("已设置media的db密码，继续吗? ");
             }
         }
-        $qb = DB::connection('media')->table('videos')->orderBy('id');
 
-        if ($source = $this->option('source')) {
-            $qb = $qb->where('source', $source);
-        }
-        if ($author = $this->option('author')) {
-            $qb = $qb->where('author', $author);
-        }
-        if ($this->option('collectable')) {
-            $qb = $qb->whereNotNull('collection');
-        }
+        $this->info("拉取media上的数据成功....");
+        $results = $this->getUrlResponse($this->getArgs());
+        if (data_get($results, 'success')) {
+            $this->info("待拉取数据:" . data_get($results, 'meta.total') . '正在导入第' . data_get($results, 'meta.current_page'));
 
-        $this->info("待拉取数据:" . $qb->count());
+        } else {
+            $this->error("media数据查询失败");
+            return;
+        }
+        $videos       = data_get($results, 'data');
+        $last_page    = data_get($results, 'meta.last_page');
+        $current_page = data_get($results, 'meta.current_page');
 
-        $count = 0;
-        $qb->chunk(100, function ($videos) use (&$count) {
-            $this->info("拉取media上的数据成功....");
+        for (; $current_page < $last_page;) {
 
             foreach ($videos as $video) {
 
@@ -84,7 +80,7 @@ class VideoSync extends Command
 
                 //排重
                 if (Video::where('hash', $video->hash)->exists()) {
-                    $this->warn("$video->id $video->description 该video已存在，跳过");
+                    $this->warn('source_id' . $video->id . $video->description . '该video已存在，跳过');
                     continue;
                 }
 
@@ -104,50 +100,47 @@ class VideoSync extends Command
                     'disk'     => $video->disk,
                 ]
                 );
-
-                //post创建
-                $post = Post::create([
-                    "user_id"     => 1,
-                    "video_id"    => $newVideo->id,
-                    "description" => $video->description,
-                    "status"      => 1,
-                ]);
-
-                //合集创建
-                $collection = Collection::firstOrCreate([
-                    "name"    => $video->collection,
-                    "user_id" => 1,
-                    "type"    => "posts",
-                ], [
-                    'status'    => 1,
-                    'logo'      => $video->cover,
-                    'sort_rank' => random_int(1, 5),
-                ]);
-
-                //关联post和合集关系
-                $post->addCollections([$collection->id]);
-
-                ++$count;
-                $this->info("成功导入 $newVideo->id $newVideo->description $newVideo->path $newVideo->cover");
+                $this->info('成功导入视频' . $newVideo->id);
             }
-        });
-        $this->info('成功导入：' . $count . '条');
+
+        }
     }
 
-    public function getUrlResponse($tag, $category, $endpiont = self::HAXIYUN_ENDPOINT, $page = 1, $count = 100)
+    public function getUrlResponse($args, $url = self::HAXIYUN_ENDPOINT)
     {
-        $url      = $endpiont . 'api/post/list';
         $response = $this->client->request('GET', $url, [
             'http_errors' => false,
-            'query'       => [
-                'page'     => $page,
-                'count'    => $count,
-                'tag'      => $tag,
-                'category' => $category,
-            ],
+            'query'       => $args,
         ]);
         $contents = $response->getBody()->getContents();
         return $contents;
 
+    }
+
+    public function getArgs()
+    {
+        $collectable = $this->option('collectable');
+        $categorized = $this->option('categorized');
+        $source      = $this->option('source');
+        $collection  = $this->option('collection');
+        $category    = $this->option('category');
+        $args        = [];
+        $page        = 1;
+        if ($collectable) {
+            $args['collectable'] = $collectable;
+        }
+        if ($categorized) {
+            $args['categorized'] = $categorized;
+        }
+        if ($source) {
+            $args['source'] = $source;
+        }
+        if ($collection) {
+            $args['collection'] = $collection;
+        }
+        if ($category) {
+            $args['category'] = $category;
+        }
+        return $args;
     }
 }
