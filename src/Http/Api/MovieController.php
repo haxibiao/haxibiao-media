@@ -10,6 +10,7 @@ use App\MovieHistory;
 use App\Report;
 use App\User;
 use App\Video;
+use Haxibiao\Helpers\utils\BadWordUtils;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
 use Haxibiao\Media\Traits\MovieRepo;
@@ -35,6 +36,9 @@ class MovieController extends Controller
 
     public function comment()
     {
+        if (BadWordUtils::check(request()->get('content'))) {
+            return failed_response("发布的内容中含有包含非法内容,请删除后再试!", 500);
+        }
         $user                      = getUser();
         $content                   = request()->get('content');
         $movie_id                  = request()->get('movie_id');
@@ -46,6 +50,7 @@ class MovieController extends Controller
         $comment->save();
         // 兼容前端结构，并且需要多包一个 collect
         $comment = Comment::find($comment->id);
+
         return returnData(collect($comment->toArray()), '发布评论成功', 200);
     }
 
