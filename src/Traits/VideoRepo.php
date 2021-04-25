@@ -130,6 +130,12 @@ trait VideoRepo
         return '/storage/video/' . $this->id . '.' . $extension;
     }
 
+    /**
+     * 旧的本项目上传视频文件，目前不支持，请前端都用云里的vod sdk方式
+     *
+     * @param UploadedFile $file
+     * @return void
+     */
     public function saveFile(UploadedFile $file)
     {
         throw new UserException("请升级版本用vod上传视频");
@@ -434,7 +440,7 @@ trait VideoRepo
             // 删除本地视频
             Storage::delete($localPath);
             return $video->id;
-        } catch (\Exception$e) {
+        } catch (\Exception $e) {
             // 处理上传异常
             Log::error($e);
             return;

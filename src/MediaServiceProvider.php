@@ -78,10 +78,11 @@ class MediaServiceProvider extends ServiceProvider
             $this->mergeConfigFrom(__DIR__ . '/../config/database.php', 'database.connections');
             $this->mergeConfigFrom(__DIR__ . '/../config/disks.php', 'filesystems.disks');
 
-            //media 默认cloud用cos
-            config([
-                'filesystems.default' => 'cos',
-            ]);
+            // 兼容以前使用Storage::cloud() 习惯的代码
+            // config('filesystems.cloud') laravel会默认设置为s3
+            // breeze 默认设置为cos,并尊重安装设置的env
+            config(['filesystems.cloud' => env("FILESYSTEM_DRIVER", 'cos')]);
+
         }
 
         //安装时需要
