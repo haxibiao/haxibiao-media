@@ -1,7 +1,7 @@
 @extends('layouts.movie')
 
 @section('title')
-    {{ $movie->name }}
+    《{{ $movie->name }}》-
 @endsection
 @section('keywords')
     {{ $movie->name }}
