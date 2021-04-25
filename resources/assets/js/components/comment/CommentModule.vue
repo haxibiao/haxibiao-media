@@ -96,7 +96,11 @@ export default {
                         }
                     }
                 })
-                .catch(e => {})
+                .catch(e => {
+                    if(e.response.status = 500){
+                        alert(e.response.data.message);
+                    }
+                })
                 .then(function submitted() {
                     that.$refs.commentSend.submitted();
                 });
