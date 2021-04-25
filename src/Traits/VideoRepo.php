@@ -39,6 +39,7 @@ trait VideoRepo
                 'type'    => 'post',
                 'user_id' => $user->id,
             ]);
+            //合集封面
             $collection->logo = $movie->cover_url;
             $collection->save();
 
@@ -54,7 +55,8 @@ trait VideoRepo
                 //后面剪辑的自动成为专题编辑用户
                 $category->addAuthor($user);
             }
-
+            //专题封面
+            $category->logo = $movie->cover_url;
             // 默认专题通过审核
             $category->status = Category::STATUS_PUBLIC;
             $category->save();
