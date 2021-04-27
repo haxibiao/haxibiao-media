@@ -28,7 +28,7 @@ class VideoSync extends Command
      */
     protected $description           = '按要求同步视频数据';
     protected const HAXIYUN_ENDPOINT = 'http://media.haxibiao.com/api/video/list';
-    protected const COSV5_CDN        = 'http://hashvod-1251052432.file.myqcloud.com';
+    protected const CDN_ROOT         = 'http://hashvod-1251052432.file.myqcloud.com';
 
     protected $client;
     /**

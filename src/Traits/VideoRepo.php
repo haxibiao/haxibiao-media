@@ -39,6 +39,7 @@ trait VideoRepo
                 'type'    => 'post',
                 'user_id' => $user->id,
             ]);
+            //合集封面
             $collection->logo = $movie->cover_url;
             $collection->save();
 
@@ -54,7 +55,8 @@ trait VideoRepo
                 //后面剪辑的自动成为专题编辑用户
                 $category->addAuthor($user);
             }
-
+            //专题封面
+            $category->logo = $movie->cover_url;
             // 默认专题通过审核
             $category->status = Category::STATUS_PUBLIC;
             $category->save();
@@ -130,6 +132,12 @@ trait VideoRepo
         return '/storage/video/' . $this->id . '.' . $extension;
     }
 
+    /**
+     * 旧的本项目上传视频文件，目前不支持，请前端都用云里的vod sdk方式
+     *
+     * @param UploadedFile $file
+     * @return void
+     */
     public function saveFile(UploadedFile $file)
     {
         throw new UserException("请升级版本用vod上传视频");
@@ -434,7 +442,7 @@ trait VideoRepo
             // 删除本地视频
             Storage::delete($localPath);
             return $video->id;
-        } catch (\Exception$e) {
+        } catch (\Exception $e) {
             // 处理上传异常
             Log::error($e);
             return;

@@ -76,17 +76,17 @@ trait MovieRepo
     }
 
     /**
-     * 存储剪辑影片到动态
+     * 存储剪辑影片到动态 - 用api方式了
+     * @deprecated
      */
     public static function storeClipMovie($user, $movie, $m3u8, $postTitle, $seriseName)
     {
         // 文件名 = source_key + 当前时间戳.m3u8
         $filename    = $movie->source_key . '-' . time() . ".m3u8";
         $cdn         = rand_pick_ucdn_domain();
-        $newM3u8Path = '/clip/' . $filename;
-        // 影片剪辑都存储到 othermovie bucket 里面
-        $playUrl = "{$cdn}m3u8/othermovie{$newM3u8Path}";
-        Storage::disk('othermovie')->put($newM3u8Path, $m3u8, 'public');
+        $newM3u8Path = 'storage/app-' . env('APP_NAME') . '/clip/' . $filename;
+        $playUrl     = Storage::url($newM3u8Path);
+        Storage::cloud()->put($newM3u8Path, $m3u8, 'public');
         // 计算视频时长
         preg_match_all('/\d+[.]\d+/', $m3u8, $arr);
         $duration = array_sum($arr[0]);
@@ -95,8 +95,8 @@ trait MovieRepo
         $video = new Video([
             'user_id'  => $user->id,
             'duration' => $duration,
-            'disk'     => 'othermovie',
-            'path'     => $playUrl,
+            'disk'     => config('filesystems.cloud'),
+            'path'     => $newM3u8Path,
             'title'    => $postTitle,
         ]);
         //触发 VideoObserver 维护内容关系

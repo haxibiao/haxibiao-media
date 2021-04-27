@@ -16,20 +16,23 @@ return [
             'web',
         ],
     ],
-	/**
-	 * 视频模块配置
-	 */
-	'video'                          => [
-		'middleware' => [
-			'web',
-		],
-	],
+    /**
+     * 视频模块配置
+     */
+    'video'                          => [
+        'middleware' => [
+            'web',
+        ],
+    ],
 
     /**
      * 是否统计视频的播放量
      */
     'enabled_statistics_video_views' => false,
 
+    /**
+     * 是否自动裁剪图片（需要imagick）
+     */
     'image'                          => [
         'auto_cut' => false,
     ],
@@ -38,5 +41,5 @@ return [
      * Movie表自增ID的起始位置
      * https://pm.haxifang.com/browse/GC-174
      */
-    'movie_auto_increment__start_id' => env('MOVIE_AUTO_INCREMENT_START_ID',null),
+    'movie_auto_increment__start_id' => env('MOVIE_AUTO_INCREMENT_START_ID', null),
 ];

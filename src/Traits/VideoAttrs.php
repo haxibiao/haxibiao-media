@@ -78,10 +78,12 @@ trait VideoAttrs
 
     public function getUrlAttribute()
     {
+        // 云同步的cdn url
         if (Str::startsWith($this->path, 'http')) {
             return $this->path;
         }
 
+        // VOD 方式上传的
         if ('vod' == $this->disk) {
             $json     = $this->json;
             $isString = is_string($json);
@@ -95,13 +97,13 @@ trait VideoAttrs
             return $url;
         }
 
-        if (!Storage::disk('public')->exists($this->path)) {
-            //自己项目cos上?
-            return cdnurl($this->path);
+        // 还在存本地的情况
+        if (Storage::disk('public')->exists($this->path)) {
+            return url($this->path);
         }
 
-        //还存本地?
-        return url('/storage/' . $this->path);
+        // 默认云存储的cdn
+        return cdnurl($this->path);
     }
 
     /**
@@ -115,7 +117,7 @@ trait VideoAttrs
     //         $json = $this->json;
     //         //存着转码高清视频
     //         $path = isset($json->transcode_hd_mp4) ? $json->transcode_hd_mp4 : $this->path;
-    //         $url  = Storage::disk('cosv5')->url($path);
+    //         $url  = Storage::cloud()->url($path);
     //     } else if ($this->isDZVideo()) {
     //         $url = 'http://cosdtzq.haxibiao.com/' . $this->path;
     //     } else {

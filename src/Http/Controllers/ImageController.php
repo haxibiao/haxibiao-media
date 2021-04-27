@@ -102,7 +102,7 @@ class ImageController extends Controller
         return $data;
     }
 
-    public function jsonStore($request)
+    public function jsonStore(Request $request)
     {
         $user   = $request->user();
         $images = $request->file('files');
@@ -111,7 +111,7 @@ class ImageController extends Controller
             $image          = new Image();
             $image->user_id = $user->id;
             $image->save();
-            $image->save_file($file);
+            $image->saveImageFile($file);
 
             //for jquery multiple uplpad plugin...
             $files[] = [

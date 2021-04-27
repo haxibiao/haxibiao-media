@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Nova\Action;
 
-use App\Post;
 use App\Video;
 use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Bus\Queueable;
@@ -41,9 +40,9 @@ class ClipMovie extends Action
         $filename    = $movie->source_key . '-' . time() . ".m3u8";
         $cdn         = rand_pick_ucdn_domain();
         $newM3u8Path = '/clip/' . $filename;
-        // 影片剪辑都存储到 othermovie bucket 里面
-        $playUrl = "{$cdn}m3u8/othermovie{$newM3u8Path}";
-        Storage::disk('othermovie')->put($newM3u8Path, $newM3u8, 'public');
+        // 影片剪辑都存储到 storage(local|cloud)
+        $playUrl = Storage::url("m3u8/clip/" . env('APP_NAME') . "/{$newM3u8Path}");
+        Storage::put($newM3u8Path, $newM3u8, 'public');
         // 计算视频时长
         preg_match_all('/\d+[.]\d+/', $newM3u8, $arr);
         $duration = array_sum($arr[0]);
@@ -52,14 +51,8 @@ class ClipMovie extends Action
         $video = Video::create([
             'user_id'  => $user->id,
             'duration' => $duration,
-            'disk'     => 'othermovie',
+            'disk'     => config('filesystems.cloud'),
             'path'     => $playUrl,
-        ]);
-        $post = Post::create([
-            'user_id'     => $user->id,
-            'video_id'    => $video->id,
-            'description' => $fields->postTitle,
-            'movie_id'    => $movie->id,
         ]);
     }
 

@@ -105,9 +105,8 @@ class UploadVideo implements ShouldQueue
             $cosPath = 'temp/' . $cosPath;
         }
 
-        $cosDisk = Storage::cloud();
         //上传成功
-        if ($cosDisk->put($cosPath, $this->publicDisk->get($videoPath))) {
+        if (Storage::cloud()->put($cosPath, $this->publicDisk->get($videoPath))) {
             return $cosPath;
         }
     }
