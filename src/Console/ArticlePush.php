@@ -66,6 +66,8 @@ class ArticlePush extends Command
                 $content_article = \DB::connection('media')
                     ->table('articles')
                     ->where('title', $article->title)
+                    ->where('source_id', $article->id)
+                    ->where('source', config('app.domain'))
                     ->first();
                 if ($article->category) {
                     $content_category = self::getContentCategory($article->category);
