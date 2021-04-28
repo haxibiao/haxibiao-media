@@ -60,7 +60,7 @@ class CrawlDouyinVideos extends Command
             $spider->spider_type = 'videos';
             $spider->saveDataOnly();
             //创建对应的动态
-            $post              = Post::firstOrNew(['spider_id' => $spider->id]);
+            $post              = \Haxibiao\Content\Post::firstOrNew(['spider_id' => $spider->id]);
             $post->status      = Post::PRIVARY_STATUS;
             $post->user_id     = $user_id;
             $post->description = str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', 'dou', 'Dou', 'DOU', '抖音助手'], '', $title);
