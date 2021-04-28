@@ -14,7 +14,7 @@ class CreateMoviesTable extends Migration
      */
     public function up()
     {
-        if(Schema::hasTable('movies')){
+        if (Schema::hasTable('movies')) {
             return;
         }
         Schema::create('movies', function (Blueprint $table) {
@@ -39,12 +39,19 @@ class CreateMoviesTable extends Migration
             $table->string('subname', 255)->nullable()->comment('别名');
             $table->string('tags', 255)->nullable()->comment('标签');
             $table->string('lang', 255)->nullable()->comment('语言');
-            $table->unsignedInteger('hits')->nullable()->comment('点击次数');
             $table->string('source', 20)->nullable()->index()->comment('资源来源');
             $table->string('source_key', 50)->nullable()->index()->comment('资源UID');
             $table->string('miner', 20)->nullable()->index()->comment('资源矿工');
             $table->string('type_name', 50)->nullable()->comment('类型名');
+
+            $table->unsignedInteger('hits')->nullable()->comment('点击次数');
+            $table->unsignedInteger('count_likes')->default(0)->comment('点赞数');
+            $table->unsignedInteger('count_comments')->default(0)->comment('评论数');
+            $table->unsignedInteger('count_favorites')->default(0)->comment('收藏数');
+            $table->unsignedInteger('count_clips')->default(0)->comment('剪辑数');
+
             $table->timestamps();
+            $table->index('updated_at');
         });
 
         /**
@@ -52,7 +59,7 @@ class CreateMoviesTable extends Migration
          * https://pm.haxifang.com/browse/GC-174
          */
         $movieStartId = config('media.movie_auto_increment__start_id');
-        if(is_numeric($movieStartId)){
+        if (is_numeric($movieStartId)) {
             DB::statement("ALTER TABLE movies AUTO_INCREMENT = {$movieStartId};");
         }
     }

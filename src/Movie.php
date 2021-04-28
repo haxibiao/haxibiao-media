@@ -14,6 +14,7 @@ use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
+use Haxibiao\Sns\Favorite;
 use Haxibiao\Sns\Traits\WithSns;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -160,5 +161,15 @@ class Movie extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function videos()
+    {
+        return $this->hasMany(Video::class);
+    }
+
+    public function favorites()
+    {
+        return $this->morphMany(Favorite::class, 'favorable');
     }
 }

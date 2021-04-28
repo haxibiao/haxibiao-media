@@ -160,6 +160,9 @@ trait MovieRepo
             $video->json = $clipInfo;
             $video->save();
 
+            //movie计数剪辑数count_clip
+            $movie->count_clips = $movie->videos()->count();
+
             //此处代码已重构 到VideoObserver触发自动发布内容
 
             return $video;

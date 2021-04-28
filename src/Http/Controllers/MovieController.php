@@ -122,18 +122,18 @@ class MovieController extends Controller
         $hotMovies      = (clone $qb)->take(15)->get();
         $categoryMovies = [
             '热门美剧' => [
-                (clone $qb)->where('region', '美剧')->take(6)->get(),
-                (clone $qb)->where('region', '美剧')->take(12)->get(),
+                (clone $qb)->where('region', '美剧')->orderBy('updated_at')->take(6)->get(),
+                (clone $qb)->where('region', '美剧')->orderBy('updated_at')->take(12)->get(),
                 'meiju',
             ],
             '热门日剧' => [
-                (clone $qb)->where('region', '日剧')->latest('id')->take(6)->get(),
-                (clone $qb)->where('region', '日剧')->latest('id')->take(12)->get(),
+                (clone $qb)->where('region', '日剧')->orderBy('updated_at')->latest('id')->take(6)->get(),
+                (clone $qb)->where('region', '日剧')->orderBy('updated_at')->latest('id')->take(12)->get(),
                 'riju',
             ],
             '热门韩剧' => [
-                (clone $qb)->where('region', '韩剧')->latest('id')->take(6)->get(),
-                (clone $qb)->where('region', '韩剧')->take(12)->get(),
+                (clone $qb)->where('region', '韩剧')->orderBy('updated_at')->latest('id')->take(6)->get(),
+                (clone $qb)->where('region', '韩剧')->orderBy('updated_at')->take(12)->get(),
                 'hanju',
             ],
         ];
@@ -150,15 +150,15 @@ class MovieController extends Controller
         $cate_ranks = [
             '美剧' => [
                 'cate'   => 'meiju',
-                'movies' => (clone $qb)->where('region', '美剧')->offset(18)->take(8)->get(),
+                'movies' => (clone $qb)->where('region', '美剧')->orderBy('updated_at')->offset(18)->take(8)->get(),
             ],
             '日剧' => [
                 'cate'   => 'riju',
-                'movies' => (clone $qb)->where('region', '日剧')->offset(36)->take(8)->get(),
+                'movies' => (clone $qb)->where('region', '日剧')->orderBy('updated_at')->offset(36)->take(8)->get(),
             ],
             '韩剧' => [
                 'cate'   => 'hanju',
-                'movies' => (clone $qb)->where('region', '韩剧')->offset(18)->take(8)->get(),
+                'movies' => (clone $qb)->where('region', '韩剧')->orderBy('updated_at')->offset(18)->take(8)->get(),
             ],
         ];
 //        注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
