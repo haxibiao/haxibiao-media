@@ -51,7 +51,7 @@
                         v-on:click="likeHandler"
                     >
                         <i class="iconfont icon-good-fill"></i>
-                        <span class="num">{{ movie.like_count || 0 }}</span>
+                        <span class="num">{{ movie.count_likes || 0 }}</span>
                     </a>
                 </li>
                 <li class="fl operation" data-toggle="modal" data-target="#report-modal">
