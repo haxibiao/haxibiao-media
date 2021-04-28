@@ -143,7 +143,7 @@ extend type Query {
         lang: String
         year: String
         scopes: ScopesType
-    ): [Movie] @paginate(defaultCount: 10, builder: "App\\Movie@resolversCategoryMovie")
+    ): [Movie] @paginate(defaultCount: 10, builder: "App\\Movie@resolveCategoryMovie")
 
     """
     作品相关短视频

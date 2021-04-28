@@ -123,21 +123,24 @@ trait MovieResolvers
         return $video->post;
     }
 
-    public function resolversCategoryMovie($root, $args, $content, $info)
+    public function resolveCategoryMovie($root, $args, $content, $info)
     {
+
         $region = data_get($args, 'region');
         //类型
         $type = data_get($args, 'type');
         //风格
-        $style   = data_get($args, 'style');
+        $style = data_get($args, 'style');
+        //国家
         $country = data_get($args, 'country');
         //语言
         $lang = data_get($args, 'lang');
+        //年份
         $year = data_get($args, 'year');
         //排序规则
         $scopes = data_get($args, 'scopes');
 
-        return Movie::when($region && $region != 'ALL', function ($qb) use ($region, $scopes) {
+        $query = Movie::when($region && $region != 'ALL', function ($qb) use ($region, $scopes) {
             if ($scopes && $scopes != 'ALL') {
                 return $qb->where('region', $region);
             }
@@ -155,10 +158,14 @@ trait MovieResolvers
         })->when($scopes && $scopes != 'ALL', function ($qb) use ($scopes) {
             return $qb->orderbyDesc($scopes);
         });
+        return $query;
     }
 
     public function resolveMovie($root, $args, $content, $info)
     {
+        //标记获取详情数据信息模式
+        request()->request->add(['fetch_sns_detail' => true]);
+
         $movie_id = data_get($args, 'movie_id');
         // app_track_event('长视频', '电影详情', $movie_id);
 

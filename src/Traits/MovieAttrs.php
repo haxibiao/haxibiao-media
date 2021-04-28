@@ -154,46 +154,54 @@ trait MovieAttrs
 
     public function getFavoritedAttribute()
     {
-        //借用favorable的特性属性
+        //复用favorable的特性属性
         return $this->is_favorited;
     }
 
     public function getLastWatchSeriesAttribute()
     {
-        if (checkUser()) {
-            $user    = getUser();
-            $history = MovieHistory::where([
-                'user_id'  => $user->id,
-                'movie_id' => $this->id,
-            ])->latest()->first();
-            if (isset($history)) {
-                return $history->series_id;
+        //性能优化: 仅查询详情页sns状态信息时执行
+        if (request('fetch_sns_detail')) {
+            if (checkUser()) {
+                $user    = getUser();
+                $history = MovieHistory::where([
+                    'user_id'  => $user->id,
+                    'movie_id' => $this->id,
+                ])->latest()->first();
+                if (isset($history)) {
+                    return $history->series_id;
+                }
             }
         }
+        return null;
     }
 
     public function getLastWatchProgressAttribute()
     {
-        if (checkUser()) {
-            $user    = getUser();
-            $history = MovieHistory::where([
-                'user_id'  => $user->id,
-                'movie_id' => $this->id,
-            ])->latest()->first();
-            if (isset($history)) {
-                return $history->progress;
+        //性能优化: 仅查询详情页sns状态信息时执行
+        if (request('fetch_sns_detail')) {
+            if (checkUser()) {
+                $user    = getUser();
+                $history = MovieHistory::where([
+                    'user_id'  => $user->id,
+                    'movie_id' => $this->id,
+                ])->latest()->first();
+                if (isset($history)) {
+                    return $history->progress;
+                }
             }
         }
+        return null;
     }
 
     public function getCountFavoritesAttribute()
     {
-        return $this->favorites()->count();
+        return $this->getRawOriginal('count_favorites');
     }
 
     public function getCountCommentsAttribute()
     {
-        return $this->comments()->count();
+        return $this->getRawOriginal('count_comments');
     }
 
     //伪装用户发布该电影，缓存三天为该用户发布
