@@ -167,6 +167,9 @@ class VideoController extends Controller
     public function show($id)
     {
         $video                = Video::findOrFail($id);
+        if (empty($video->post)) {
+            abort(404, '视频对应的文章不见了');
+        }
         $data['related_page'] = request()->get('related_page') ?? 0;
         return view('video.show')
             ->with('post', $video->post)
