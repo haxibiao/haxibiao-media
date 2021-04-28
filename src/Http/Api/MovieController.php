@@ -98,6 +98,7 @@ class MovieController extends Controller
         $post       = $video->post;
         //movie计数剪辑数count_clip
         $movie->count_clips = $movie->videos()->count();
+        $movie->save();
         return returnData($post->toArray(), '剪辑成功', 200);
     }
 

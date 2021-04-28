@@ -162,6 +162,7 @@ trait MovieRepo
 
             //movie计数剪辑数count_clip
             $movie->count_clips = $movie->videos()->count();
+            $movie->save();
 
             //此处代码已重构 到VideoObserver触发自动发布内容
 
