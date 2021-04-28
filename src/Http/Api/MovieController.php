@@ -22,7 +22,7 @@ class MovieController extends Controller
 
     public function getComment($id)
     {
-        $movie = Movie::find($id);
+        $movie = Movie::findOrFail($id);
         $page  = request()->get('page');
         // $order = request()->get('order', 'id');
         $qb = Comment::where([
