@@ -60,13 +60,12 @@ class CrawlDouyinVideos extends Command
             $spider->spider_type = 'videos';
             $spider->saveDataOnly();
             //创建对应的动态
-            $post              = Post::firstOrNew(['spider_id' => $spider->id]);
+            $post              = \Haxibiao\Content\Post::firstOrNew(['spider_id' => $spider->id]);
             $post->status      = Post::PRIVARY_STATUS;
             $post->user_id     = $user_id;
             $post->description = str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', 'dou', 'Dou', 'DOU', '抖音助手'], '', $title);
 
-            $post->review_id  = Post::makeNewReviewId();
-            $post->review_day = Post::makeNewReviewDay();
+            //触发PostObserver更新快速推荐review_id
             $post->save();
             //将视频归入合集中
             $postIds[$post->id] = ['sort_rank' => data_get($video, 'mix_info.statis.current_episode')];
