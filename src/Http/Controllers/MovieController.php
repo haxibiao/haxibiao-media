@@ -118,7 +118,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $qb             = Movie::publish()->latest('id');
+        $qb             = Movie::publish();
         $hotMovies      = (clone $qb)->take(15)->get();
         $categoryMovies = [
             '热门美剧' => [
@@ -127,12 +127,12 @@ class MovieController extends Controller
                 'meiju',
             ],
             '热门日剧' => [
-                (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->latest('id')->take(6)->get(),
-                (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->latest('id')->take(12)->get(),
+                (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->take(6)->get(),
+                (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->take(12)->get(),
                 'riju',
             ],
             '热门韩剧' => [
-                (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->latest('id')->take(6)->get(),
+                (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->take(6)->get(),
                 (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->take(12)->get(),
                 'hanju',
             ],
