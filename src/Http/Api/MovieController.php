@@ -2,9 +2,7 @@
 
 namespace Haxibiao\Media\Http\Api;
 
-use App\Comment;
 use App\Http\Controllers\Controller;
-use App\Like;
 use App\Movie;
 use App\MovieHistory;
 use App\Report;
@@ -14,6 +12,9 @@ use Haxibiao\Helpers\utils\BadWordUtils;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
 use Haxibiao\Media\Traits\MovieRepo;
+use Haxibiao\Sns\comment;
+use Haxibiao\Sns\Favorite;
+use Haxibiao\Sns\Like;
 use Illuminate\Http\Request;
 
 class MovieController extends Controller
@@ -167,7 +168,7 @@ class MovieController extends Controller
         if (checkUser()) {
             $user     = getUser();
             $movie_id = request()->get('movie_id');
-            $fan      = \App\Favorite::firstOrNew([
+            $fan      = Favorite::firstOrNew([
                 'user_id'        => $user->id,
                 'favorable_id'   => $movie_id,
                 'favorable_type' => 'movies',

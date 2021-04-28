@@ -21,7 +21,6 @@ Route::group(['prefix' => 'movie'], function ($api) {
     Route::any('/update_video_cover', 'MovieController@updateClipVideoCover');
     Route::post('/danmu/v3', 'MovieController@sendDanmu');
     Route::get('/danmu/v3', 'MovieController@danmu');
-    Route::post('/comment/store', 'MovieController@comment');
     Route::get('/{id}/comment', 'MovieController@getComment');
     Route::post('/comment/store', 'MovieController@comment');
     Route::any('/toggle-like', 'MovieController@toggoleLike');
