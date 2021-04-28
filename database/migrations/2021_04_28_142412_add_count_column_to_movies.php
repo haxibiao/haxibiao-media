@@ -27,7 +27,6 @@ class AddCountColumnToMovies extends Migration
             if (!Schema::hasColumn('movies', 'count_clips')) {
                 $table->unsignedInteger('count_clips')->default(0)->comment('剪辑数');
             }
-            $table->index('updated_at');
 
         });
     }
