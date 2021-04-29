@@ -9,7 +9,6 @@ trait DanmuResolvers
 {
     public function sendDanmu($rootValue, array $args, $context, $resolveInfo)
     {
-        request()->bearerToken();
         if ($user = getUser()) {
             $danmu = Danmu::create([
                 'user_id'     => $user->id,
@@ -19,6 +18,7 @@ trait DanmuResolvers
                 'time'        => $args['time'] ?? null,
             ]);
             broadcast(new DanmuEvent($danmu, $args['movie_id'], $args['series_name']));
+            Danmu::syncToMedia($danmu);
             return $danmu;
         }
     }
