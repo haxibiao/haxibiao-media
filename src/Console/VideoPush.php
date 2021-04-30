@@ -15,8 +15,10 @@ class VideoPush extends Command
      *
      * @var string
      */
-    protected $signature   = 'video:push';
-    public const CACHE_KEY = "video_sync_max_id";
+    protected $signature                  = 'video:push {--way= : sql  or api}';
+    public const CACHE_KEY                = "video_sync_max_id";
+    protected const HAXIYUN_VIDEO         = 'http://media.haxibiao.com/api/v1/hashvod/videos/';
+    protected const HAXIYUN_UPDATED_VIDEO = 'http://l.media.haxibiao.com/api/video/update';
 
     protected $appName;
     protected $defaultCategory;
@@ -47,6 +49,10 @@ class VideoPush extends Command
      */
     public function handle()
     {
+        //push采用的方法。默认sql方式
+        $way    = $this->option('way') ?: 'sql';
+        $method = $way . 'Push';
+
         // dd(data_get(config('database'), 'connections.media'));
 
         // 从小到大push数据
@@ -63,7 +69,7 @@ class VideoPush extends Command
         $this->info("起步video id = " . $maxid);
         $this->info("总计本次需同步视频数 = " . $qb->count());
 
-        $qb->chunk(500, function ($videos) {
+        $qb->chunk(500, function ($videos) use ($method) {
             foreach ($videos as $video) {
                 Cache::put($this->appName . self::CACHE_KEY, $video->id);
 
@@ -85,40 +91,90 @@ class VideoPush extends Command
                     $this->info('该视频没有合集和分类信息，跳过同步');
                     continue;
                 }
-                //根据video hash判断是否已存在
-                $qbMediaVideoId = Video::on('media')->where([
-                    'hash' => $video->hash,
-                ])->pluck('id')->first();
+                //excute push video
+                $this->$method($video);
 
-                //不存在则不需要同步 meta信息
-                if (!$qbMediaVideoId) {
-                    $this->info('该视频在media中不存在，跳过同步');
-                    continue;
-                }
-                //不搞默认分类了，等于没分类，没意义
-
-                //media中心只维护videos和他的meta字段，不维护posts categories关系表
-
-                //同步media中videos数据的 collection 和 category 字段（取一个作为主要的）
-                $videoOnMedia = Video::on('media')->find($qbMediaVideoId);
-                if ($videoOnMedia) {
-
-                    if (isset($post->collection)) {
-                        $videoOnMedia->collection     = $post->collection->name;
-                        $videoOnMedia->collection_key = $this->appName . "_" . $post->collection_id;
-                    }
-                    if (isset($post->category)) {
-                        // 哈希云中的videos还没增加category字段
-                        $videoOnMedia->category = $post->category->name;
-                    }
-                    $videoOnMedia->source = $this->appName;
-                    $videoOnMedia->save();
-
-                }
-
-                $this->info("同步视频{$video->id}数据到 media.haxibiao.com 成功");
             }
 
         });
+    }
+
+    /**
+     * api方式push
+     */
+    public function apiPush($video)
+    {
+
+        // API方式查询是否video已存在
+        $queryUrl       = self::HAXIYUN_VIDEO . $video->hash;
+        $queryResult    = json_decode(file_get_contents($queryUrl), true);
+        $qbMediaVideoId = isset($queryResult['data']) ?: data_get($queryResult, 'data.id', 0);
+
+        //不存在则不需要同步 meta信息
+        if (!$qbMediaVideoId) {
+            $this->info('该视频在media中不存在，跳过同步');
+            return;
+        }
+
+        //api方式更新media中的video信息
+        $args = [];
+        if (isset($video->post->collection)) {
+            $args['collection']     = $video->post->collection->name;
+            $args['collection_key'] = $this->appName . "_" . $video->post->collection_id;
+        }
+        if (isset($video->post->category)) {
+            // 哈希云中的videos还没增加category字段
+            $args['category'] = $video->post->category->name;
+        }
+        $args['source'] = $this->appName;
+        $args['hash']   = $video->hash;
+        $requestArgs    = http_build_query($args);
+
+        $updateUrl      = self::HAXIYUN_UPDATED_VIDEO . '?' . $requestArgs;
+        $queryResult    = json_decode(file_get_contents($updateUrl), true);
+        $qbMediaVideoId = isset($queryResult->data) ? $queryResult->data->id : 0;
+
+        $this->info("同步视频{$video->id}数据到 media.haxibiao.com 成功");
+
+    }
+
+    /**
+     * sql方式push 需要先配置好media的数据库配置
+     *
+     */
+    public function sqlPush($video)
+    {
+        //根据video hash判断是否已存在
+        $qbMediaVideoId = Video::on('media')->where([
+            'hash' => $video->hash,
+        ])->pluck('id')->first();
+
+        $post = $video->post;
+        //不存在则不需要同步 meta信息
+        if (!$qbMediaVideoId) {
+            info($qbMediaVideoId);
+            $this->info('该视频在media中不存在，跳过同步');
+            return;
+        }
+
+        //media中心只维护videos和他的meta字段，不维护posts categories关系表
+        //同步media中videos数据的 collection 和 category 字段（取一个作为主要的）
+        $videoOnMedia = Video::on('media')->find($qbMediaVideoId);
+        if ($videoOnMedia) {
+
+            if (isset($post->collection)) {
+                $videoOnMedia->collection     = $post->collection->name;
+                $videoOnMedia->collection_key = $this->appName . "_" . $post->collection_id;
+            }
+            if (isset($post->category)) {
+                // 哈希云中的videos还没增加category字段
+                $videoOnMedia->category = $post->category->name;
+            }
+            $videoOnMedia->source = $this->appName;
+            $videoOnMedia->save();
+
+        }
+
+        $this->info("同步视频{$video->id}数据到 media.haxibiao.com 成功");
     }
 }

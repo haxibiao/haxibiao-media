@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Console;
 
 use App\Post;
 use App\Video;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
@@ -19,7 +20,7 @@ class VideoSync extends Command
      *
      * @var string
      */
-    protected $signature = 'video:sync  {--category=: 视频分类} {--collection=: 视频合集:如：影视剪辑} {--source= : 来源，如yinxiangshipin} {--categorized : 只取有分类的视频}{--collectable : 只取有合集的视频}';
+    protected $signature = 'video:sync  {--category= : 视频分类} {--collection= : 视频合集:如：影视剪辑} {--source= : 来源，如yinxiangshipin} {--categorized= : 只取有分类的视频}{--collectable= : 只取有合集的视频}';
 
     /**
      * The console command description.
@@ -51,58 +52,62 @@ class VideoSync extends Command
     public function handle()
     {
 
-        if (env('DB_PASSWORD_MEDIA') == null) {
-            $db_password_media = $this->ask("请注意 env('DB_PASSWORD_MEDIA') 未设置，正在用env('DB_PASSWORD'), 如果需要不同密码请输入或者[enter]跳过");
-            if ($db_password_media) {
-                config(['database.connections.media.password' => $db_password_media]);
-                $this->confirm("已设置media的db密码，继续吗? ");
-            }
-        }
+        $firstData = $this->getUrlResponse($this->getArgs());
 
-        $this->info("拉取media上的数据成功....");
-        $results = $this->getUrlResponse($this->getArgs());
-        if (data_get($results, 'success')) {
-            $this->info("待拉取数据:" . data_get($results, 'meta.total') . '正在导入第' . data_get($results, 'meta.current_page'));
-
+        $total = $firstData->meta->total;
+        if ($firstData->success && $total > 1) {
+            $this->info("拉取media上的数据成功....");
+            $this->info("待拉取数据:" . $total . '条');
         } else {
             $this->error("media数据查询失败");
             return;
         }
-        $videos       = data_get($results, 'data');
-        $last_page    = data_get($results, 'meta.last_page');
-        $current_page = data_get($results, 'meta.current_page');
 
-        for (; $current_page < $last_page;) {
+        $videos = $firstData->data;
+
+        $last_page    = $firstData->meta->last_page;
+        $current_page = $firstData->meta->current_page;
+
+        for ($page = $current_page; $current_page < $last_page; $page++) {
+
+            $this->info("拉取第页" . $page . '的数据....');
+            $results = $this->getUrlResponse($this->getArgs($page));
+
+            $videos = $results->data;
 
             foreach ($videos as $video) {
+                try {
 
-                $this->comment("开始导入 $video->id $video->author : $video->description $video->path $video->cover");
+                    $this->comment("开始导入 $video->id $video->author : $video->description $video->path $video->cover");
 
-                //排重
-                if (Video::where('hash', $video->hash)->exists()) {
-                    $this->warn('source_id' . $video->id . $video->description . '该video已存在，跳过');
-                    continue;
+                    //排重
+                    if (Video::where('hash', $video->hash)->exists()) {
+                        $this->warn('source_id' . $video->id . $video->description . '该video已存在，跳过');
+                        continue;
+                    }
+
+                    $duration = $video->duration ?: intval(@json_decode($video->json)->duration ?? 0); //时长 秒
+                    $newVideo = Video::create([
+                        'user_id'  => 1, //视频的作者id不重要
+                        'title'    => $video->name, //视频配文
+                        'path'     => $video->path,
+                        'duration' => $duration,
+                        'hash'     => $video->hash,
+                        'cover'    => $video->cover,
+                        'status'   => $video->status,
+                        'json'     => $video->json,
+                        'disk'     => $video->disk,
+                    ]
+                    );
+                    $this->info('成功导入视频' . $newVideo->id);
+
+                } catch (Exception $e) {
+
+                    $this->warn('source_id' . $video->id . $video->path . '该video导入失败，跳过');
+                    info($e->getMessage());
+
                 }
-
-                $duration = null;
-                if ($json = @json_decode($video->json)) {
-                    $duration = intval($json->duration ?? 0); //时长 秒
-                }
-                $newVideo = Video::create([
-                    'user_id'  => 1, //视频的作者id不重要
-                    'title'    => $video->description, //视频配文
-                    'path'     => $video->path,
-                    'duration' => $duration,
-                    'hash'     => $video->hash,
-                    'cover'    => $video->cover,
-                    'status'   => $video->status,
-                    'json'     => $video->json,
-                    'disk'     => $video->disk,
-                ]
-                );
-                $this->info('成功导入视频' . $newVideo->id);
             }
-
         }
     }
 
@@ -113,11 +118,11 @@ class VideoSync extends Command
             'query'       => $args,
         ]);
         $contents = $response->getBody()->getContents();
-        return $contents;
+        return @json_decode($contents);
 
     }
 
-    public function getArgs()
+    public function getArgs($page = 1)
     {
         $collectable = $this->option('collectable');
         $categorized = $this->option('categorized');
@@ -125,7 +130,6 @@ class VideoSync extends Command
         $collection  = $this->option('collection');
         $category    = $this->option('category');
         $args        = [];
-        $page        = 1;
         if ($collectable) {
             $args['collectable'] = $collectable;
         }
@@ -141,6 +145,7 @@ class VideoSync extends Command
         if ($category) {
             $args['category'] = $category;
         }
+        $args['page'] = $page;
         return $args;
     }
 }
