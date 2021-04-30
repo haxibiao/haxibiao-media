@@ -14,10 +14,10 @@ class VideoPush extends Command
      *
      * @var string
      */
-    protected $signature                  = 'video:push {--way= : sql  or api}';
+    protected $signature                  = 'video:push {--db} {--api}';
     public const CACHE_KEY                = "video_sync_max_id";
     protected const HAXIYUN_VIDEO         = 'http://media.haxibiao.com/api/v1/hashvod/videos/';
-    protected const HAXIYUN_UPDATED_VIDEO = 'http://l.media.haxibiao.com/api/video/update';
+    protected const HAXIYUN_UPDATED_VIDEO = 'http://media.haxibiao.com/api/video/update';
 
     protected $appName;
     protected $defaultCategory;
@@ -49,8 +49,11 @@ class VideoPush extends Command
     public function handle()
     {
         //push采用的方法。默认sql方式
-        $way    = $this->option('way') ?: 'api';
-        $method = $way . 'Push';
+        if ($this->option('api')) {
+            $method = 'apiPush';
+        } else {
+            $method = 'dbPush';
+        }
 
         // 从小到大push数据
         $qb = Video::query()->oldest('id')->whereStatus(Video::COVER_VIDEO_STATUS);
@@ -139,7 +142,7 @@ class VideoPush extends Command
      * sql方式push 需要先配置好media的数据库配置
      *
      */
-    public function sqlPush($video)
+    public function dbPush($video)
     {
         //根据video hash判断是否已存在
         $qbMediaVideoId = Video::on('media')->where([
