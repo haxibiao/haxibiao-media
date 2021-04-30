@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Cache;
 class VideoPush extends Command
 {
     /**
-     * FIXME: 暂时没空测试，video:publish 应该是这样写，只专注Push videos的元数据信息回来哈希云，方便后面的 video:sync 指定条件同步数，做单个APP的posts, category, collection更新策略
      *
      * @var string
      */
@@ -50,10 +49,8 @@ class VideoPush extends Command
     public function handle()
     {
         //push采用的方法。默认sql方式
-        $way    = $this->option('way') ?: 'sql';
+        $way    = $this->option('way') ?: 'api';
         $method = $way . 'Push';
-
-        // dd(data_get(config('database'), 'connections.media'));
 
         // 从小到大push数据
         $qb = Video::query()->oldest('id')->whereStatus(Video::COVER_VIDEO_STATUS);
