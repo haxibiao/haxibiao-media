@@ -85,7 +85,9 @@ class PullUploadVideo implements ShouldQueue
             Spider::where([
                 'spider_id'   => $this->post->id,
                 'spider_type' => 'posts',
-            ])->update('status', Spider::PROCESSED_STATUS);
+            ])->update([
+                'status' => Spider::PROCESSED_STATUS,
+            ]);
         } catch (\Throwable $th) {
             $this->post->update([
                 'status' => Post::DELETED_STATUS,

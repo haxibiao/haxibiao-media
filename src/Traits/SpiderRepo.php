@@ -111,6 +111,7 @@ trait SpiderRepo
             'raw'         => $data,
             'source_url'  => $dyUrl,
         ]);
+        //FIXME: 重构这个jobs到vod的专属架构位置 哈希云的media
         dispatch(new PullUploadVideo($video, $post));
         return $post;
     }
