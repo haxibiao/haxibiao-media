@@ -3,9 +3,9 @@
 namespace Haxibiao\Media\Jobs;
 
 use App\Post;
-use App\Spider;
 use App\Video;
 use Haxibiao\Helpers\utils\VodUtils;
+use Haxibiao\Media\Spider;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -41,7 +41,8 @@ class PullUploadVideo implements ShouldQueue
     {
         $video = $this->video;
         try {
-            // 使用vod拉取上传
+
+            //FIXME: 重构 使用vod拉取上传 到 哈希云
             $taskID = json_decode(VodUtils::PullUpload($video->url), true)['TaskId'];
             $fileID = null;
             $path   = null;
@@ -56,6 +57,8 @@ class PullUploadVideo implements ShouldQueue
                 throw new \Exception('处理异常');
             }
             VodUtils::makeCoverAndSnapshots($fileID);
+
+            //哈希云处理成功的回调 web hook
             $videoInfo = null;
             $cover     = null;
             do {
@@ -67,6 +70,8 @@ class PullUploadVideo implements ShouldQueue
             $width    = data_get($videoInfo, 'metaData.width');
             $height   = data_get($videoInfo, 'metaData.height');
             $duration = data_get($videoInfo, 'metaData.duration');
+
+            //通过video Observer维护 post 和 spider
             $video->update([
                 'width'        => $width,
                 'height'       => $height,
@@ -78,23 +83,29 @@ class PullUploadVideo implements ShouldQueue
                 'status'       => Video::CDN_VIDEO_STATUS,
                 'json'         => data_get($videoInfo, 'metaData'),
             ]);
+
+            //cdn预热
             VodUtils::pushUrlCacheWithVODUrl($path);
-            $this->post->update([
-                'status' => Post::PUBLISH_STATUS,
-            ]);
-            Spider::where([
-                'spider_id'   => $this->post->id,
-                'spider_type' => 'posts',
-            ])->update([
-                'status' => Spider::PROCESSED_STATUS,
-            ]);
+            //更新spider 的任务状态
+            if ($spider = Spider::where('spider_id', $video->id)->first()) {
+                $spider->status = Spider::FAILED_STATUS;
+                $spider->saveQuietly();
+            }
+
         } catch (\Throwable $th) {
-            $this->post->update([
-                'status' => Post::DELETED_STATUS,
-            ]);
+
+            //FIXME: 哈希云处理失败回调 web hook
+            // 标记失败视频
             $this->video->update([
                 'status' => Video::UNPROCESS_STATUS,
             ]);
+            // 下架视频动态
+            if ($post = $this->video->post) {
+                $post->update([
+                    'status' => Post::DELETED_STATUS,
+                ]);
+            }
+
             throw $th;
         }
     }

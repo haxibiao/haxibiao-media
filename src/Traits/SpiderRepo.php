@@ -6,9 +6,8 @@ use App\Post;
 use GuzzleHttp\Client;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Breeze\Exceptions\UserException;
+use Haxibiao\Breeze\User;
 use Haxibiao\Helpers\utils\QcloudUtils;
-use Haxibiao\Media\Jobs\MediaProcess;
-use Haxibiao\Media\Jobs\PullUploadVideo;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
@@ -17,22 +16,12 @@ use Illuminate\Support\Facades\Storage;
 
 trait SpiderRepo
 {
-    public static function resolveDouyinVideo($user, $shareLink)
+    public static function resolveDouyinVideo($user, $shareLink, $content = null, $tagNames = [])
     {
         // 通过config来控制接口开关 && 动态配置控制每用户日最大解析数
         throw_if(config('media.spider.enable') === false, UserException::class, '解析失败,功能维护中,请稍后再试!');
-        if (!in_array(config('app.name'), [
-            'yinxiangshipin', 'ainicheng', 'ablm',
-            'youjianqi', 'nashipin', 'dongdianhai',
-            'jinlinle', 'damei', 'haxibiao', 'dongwaimao',
-        ])) {
-            $limitCount = config('media.spider.user_daily_spider_parse_limit_count');
-            //-1不限制次数
-            if ($limitCount >= 0) {
-                $isLimited = $user->spiders()->today()->count() >= $limitCount;
-                throw_if($isLimited, UserException::class, '解析失败,今日分享已达上限,请明日再试哦!');
-            }
-        }
+
+        // 解释限制次数问题，统一到哈希云
 
         $title = static::extractTitle($shareLink);
         //提取URL
@@ -43,9 +32,6 @@ trait SpiderRepo
             Spider::DOUYIN_VIDEO_DOMAINS
         );
         throw_if(!$isDyUrl, UserException::class, '解析失败,请提供有效的抖音URL!');
-        if (!in_array(config('app.name'), ['yinxiangshipin', 'ainicheng', 'dongwaimao', 'ablm', 'nashipin', 'caohan', 'dongwaimao'])) {
-            throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
-        }
 
         //判断是否404(跳过tiktok)
         if (!strpos($dyUrl, 'tiktok.com')) {
@@ -54,34 +40,31 @@ trait SpiderRepo
             throw_if($client->getStatusCode() == 404, UserException::class, '解析失败,URL无法访问！');
         }
 
-        //写入DB
-        $spider        = static::firstOrNew(['source_url' => $dyUrl]);
-        $spiderExisted = isset($spider->id);
-        $isSelf        = $spider->user_id == $user->id;
-        if ($spiderExisted && !$isSelf) {
-            throw_if(!is_testing_env(), UserException::class, '该视频链接已被他人分享过了哦!');
-        }
+        $post = Spider::fastProcessDouyinVideo($user, $shareLink, $content);
+        // 维护标签
+        $post->tagByNames($tagNames);
+        $post->saveQuietly();
 
-        if ($spiderExisted) {
-            $spider->count++; //粘贴次数
-            $spider->status = Spider::WATING_STATUS; //重试进入队列
-        } else {
-            $spider->user_id     = $user->id;
-            $spider->spider_type = 'videos';
-            $spider->setTitle($title);
-        }
-        $spider->save();
-
-        //放入队列，交给media服务
-        dispatch(new MediaProcess($spider->id));
-
-        if ($spiderExisted && $isSelf) {
-            throw_if(!is_testing_env(), UserException::class, '正在重新采集中,请稍后再看!');
-        }
-
-        return $spider;
+        return $post->spider;
     }
 
+    public static function getFastDouyinVideoInfo($dyUrl)
+    {
+        $url      = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $dyUrl);
+        $data     = json_decode(file_get_contents($url), true)['data'];
+        $videoUrl = $data['video']['play_url'];
+        $title    = $data['video']['info']['0']['desc'];
+        return [$title, $videoUrl, $data];
+    }
+
+    /**
+     * 快速魔法粘贴
+     *
+     * @param User $user
+     * @param string $shareLink
+     * @param string $content
+     * @return Post
+     */
     public static function fastProcessDouyinVideo($user, $shareLink, $content)
     {
         $content = static::extractTitle($content);
@@ -91,29 +74,41 @@ trait SpiderRepo
         if (Spider::where('source_url', $dyUrl)->exists()) {
             throw new GQLException('该视频已被采集，请再换一个！');
         }
+        //秒粘贴获取video info
+        list($title, $videoUrl, $data) = Spider::getFastDouyinVideoInfo($dyUrl);
+        //视频
+        $video       = Video::create(['disk' => 'vod', 'title' => $title]);
+        $video->json = ['douyin' => [
+            'play_url' => $videoUrl,
+        ]];
+        $video->saveQuietly();
+        if (filter_var($videoUrl, FILTER_VALIDATE_URL)) {
+            //爬虫 = vod job
+            $spider = new Spider([
+                'spider_id'   => $video->id,
+                'spider_type' => 'videos',
+                'user_id'     => $user->id,
+                'raw'         => $data,
+                'source_url'  => $dyUrl,
+            ]);
+            $spider->saveQuietly();
 
-        //标签
-        $url        = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $dyUrl);
-        $data       = json_decode(file_get_contents($url), true)['data'];
-        $videoPath  = $data['video']['play_url'];
-        $title      = $data['video']['info']['0']['desc'];
-        $video      = Video::create(['path' => $videoPath, 'title' => $title]);
-        $createData = [
-            'user_id'     => $user->id,
-            'description' => $content ?? $title,
-            'video_id'    => $video->id,
-        ];
-        $post = Post::create($createData);
-        Spider::firstOrCreate([
-            'spider_id'   => $post->id,
-            'user_id'     => $user->id,
-            'spider_type' => 'posts',
-            'raw'         => $data,
-            'source_url'  => $dyUrl,
-        ]);
-        //FIXME: 重构这个jobs到vod的专属架构位置 哈希云的media
-        dispatch(new PullUploadVideo($video, $post));
-        return $post;
+            //动态 - 秒粘贴可行，直接秒发布
+            $postData = [
+                'user_id'   => $user->id,
+                'video_id'  => $video->id,
+                'spider_id' => $spider->id,
+                'status'    => Post::PUBLISH_STATUS,
+            ];
+            $post              = Post::firstOrNew($postData);
+            $post->description = $content ?? $title;
+            $post->saveQuietly();
+
+            //FIXME: 重构这个jobs到vod的专属架构位置 哈希云的media
+            // dispatch(new PullUploadVideo($video, $post));
+            return $post;
+        }
+        return null;
     }
 
     public static function extractURL($str)
@@ -262,7 +257,7 @@ trait SpiderRepo
         return $this;
     }
 
-    protected function getVideoByDyShareLink($shareLink)
+    public static function getVideoByDyShareLink($shareLink)
     {
         try {
             $shareLink    = static::extractURL($shareLink);

@@ -94,6 +94,11 @@ trait VideoAttrs
             if (empty($url)) {
                 $url = data_get($json, 'vod.MediaUrl');
             }
+            //兼容抖音秒粘贴
+            if (empty($url)) {
+                $url = data_get($json, 'douyin.play_url');
+            }
+
             return $url;
         }
 

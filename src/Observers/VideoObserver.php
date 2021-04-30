@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Observers;
 
-use App\Post;
 use Haxibiao\Media\Video;
 
 class VideoObserver
@@ -16,14 +15,6 @@ class VideoObserver
     public function created(Video $video)
     {
         $video->autoPublishContentWhenAboutMovie();
-
-        //启动截取图片job
-        // MakeVideoCovers::dispatch($video);
-
-        if ($user = $video->user) {
-            //更新采集相关的任务状态？应该选择 PostObserver来处理，video创建不需要作者，可以是系统创建
-            // $user->reviewTasksByClass(get_class($video));
-        }
     }
 
     /**
@@ -34,23 +25,7 @@ class VideoObserver
      */
     public function updated(Video $video)
     {
-        //处理完封面时
-        if ($video->cover) {
-            if ($post = $video->post) {
-                Post::publishPost($post);
-            } else {
-                //秀儿：试图修复采集的视频 发布后的视频动态缺少文本等信息（爱你城项目层面已修复，需要重构在breeze层面修复）
-                // $spider = Spider::where('spider_type', 'videos')->where('spider_id', $video->id)->first();
-                // if ($spider) {
-                //     if ($post = Post::where('spider_id', $spider->id)->first()) {
-                //         $post->status      = Post::PUBLISH_STATUS; //发布成功动态
-                //         $post->description = $spider->data['title'] ?? '';
-                //         $post->video_id    = $video->id;
-                //         $post->save();
-                //     }
-                // }
-            }
-        }
+
     }
 
     /**

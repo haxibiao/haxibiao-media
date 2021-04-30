@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Post;
 use Haxibiao\Media\Jobs\CrawlCollection;
 use Haxibiao\Media\Spider;
 use Illuminate\Support\Arr;
@@ -18,34 +17,15 @@ trait SpiderResolvers
 
     public function resolveShareLink($root, $args, $context, $info)
     {
-
-        $spider        = static::resolveDouyinVideo(getUser(false), $args['share_link']);
-        $post          = Post::with('video')->firstOrNew(['spider_id' => $spider->id]);
-        $post->user_id = $spider->user_id;
-
-        $content = data_get($args, 'content');
-        if ($content) {
-            $post->description = $content;
+        $user = getUser();
+        //FIXME: 修复到自己的app层的 resolve methods 覆盖项目逻辑
+        if (!in_array(config('app.name'), ['yinxiangshipin', 'ainicheng', 'dongwaimao', 'ablm', 'nashipin', 'caohan', 'dongwaimao'])) {
+            throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
         }
 
-        $description = data_get($args, 'description');
-        if ($description) {
-            $post->description = $description;
-        }
-        // 标签
+        $content  = data_get($args, 'description') ?? data_get($args, 'content');
         $tagNames = data_get($args, 'tag_names', []);
-        $post->tagByNames($tagNames);
-        $post->save();
-
-        // 乐观更新
-        $video = static::getVideoByDyShareLink($args['share_link']);
-        if ($video) {
-            $post->video_id    = $video->id;
-            $post->status      = Post::PUBLISH_STATUS;
-            $post->description = data_get($post, 'description', data_get($video, 'title'));
-            $post->save();
-        }
-
+        $spider   = Spider::resolveDouyinVideo($user, $args['share_link'], $content, $tagNames);
         return $spider;
     }
 
