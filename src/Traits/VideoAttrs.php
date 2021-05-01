@@ -32,34 +32,42 @@ trait VideoAttrs
         return data_get($this, 'json.height', 1024);
     }
 
+    /**
+     * 自己上传视频文件截图时存json信息（vod时代主要json是vod返回的videoinfo）
+     */
     public function getCoversAttribute()
     {
         return $this->jsonData('covers');
     }
 
-    public function getCoverUrlAttribute()
+    /**
+     * 获取视频封面
+     */
+    public function getCoverAttribute()
     {
-        $cover_path = $this->cover;
-
-        //前端需要null,不要空字符串
-        if (empty($cover_path)) {
-            return null;
+        //已存好vod或者cdn的封面图片
+        $cover = $this->getRawOriginal('cover');
+        if (filter_var($cover, FILTER_VALIDATE_URL)) {
+            return $cover;
         }
-
-        //标准的 vod cover url, 抖音粘贴的爬虫处理结果...
-        if (Str::contains($cover_path, 'http')) {
-            return $cover_path;
+        //临时处理中的粘贴外部cdn/动态封面封面
+        if (isset($this->json) && isset($this->json->cover)) {
+            $cover = $this->json->cover ?? $this->json->dynamic_cover;
         }
 
         //media中心自己上传的视频，封面同步到 hasvod 的
         // && Str::startsWith($cover_path, 'images/')
         if ('vod' == $this->disk) {
-            return hash_vod_url($cover_path);
+            return hash_vod_url($cover);
         }
 
-        //最后检查本地或者默认cdn cos的文件，返回FULL URL
-        $coverPath = parse_url($cover_path, PHP_URL_PATH);
-        return cdnurl($coverPath);
+        //存留在cloud存储storage里的
+        return cdnurl($cover);
+    }
+
+    public function getCoverUrlAttribute()
+    {
+        return $this->getCoverAttribute();
     }
 
     public function getInfoAttribute()
@@ -110,27 +118,6 @@ trait VideoAttrs
         // 默认云存储的cdn
         return cdnurl($this->path);
     }
-
-    /**
-     * 获取视频地址
-     */
-    // public function getUrlAttribute(): string
-    // {
-    //     if ($this->isDameiVideo()) {
-    //         $url = Storage::disk('public')->url($this->path);
-    //     } else if ($this->isCosVideo()) {
-    //         $json = $this->json;
-    //         //存着转码高清视频
-    //         $path = isset($json->transcode_hd_mp4) ? $json->transcode_hd_mp4 : $this->path;
-    //         $url  = Storage::cloud()->url($path);
-    //     } else if ($this->isDZVideo()) {
-    //         $url = 'http://cosdtzq.haxibiao.com/' . $this->path;
-    //     } else {
-    //         //VOD视频流处理的视频
-    //         $url = $this->path;
-    //     }
-    //     return $url;
-    // }
 
     /**
      * @deprecated 命名不精准,建议使用 isStoredDamei() 进行替换
@@ -205,18 +192,6 @@ trait VideoAttrs
             return $duration;
         }
         return $this->json->duration ?? 0;
-    }
-
-    /**
-     * 获取视频封面
-     */
-    public function getCoverAttribute()
-    {
-        $cover = $this->getRawOriginal('cover');
-        if (isset($this->json) && isset($this->json->cover)) {
-            $cover = $this->json->cover;
-        }
-        return $cover;
     }
 
     /**

@@ -18,17 +18,16 @@ class PullUploadVideo implements ShouldQueue
 
     public $timeout = 300;
 
-    protected $video, $post;
+    protected $video;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($video, $post)
+    public function __construct($video)
     {
         $this->video = $video;
-        $this->post  = $post;
         $this->onQueue('douyin');
     }
 
@@ -70,8 +69,7 @@ class PullUploadVideo implements ShouldQueue
             $width    = data_get($videoInfo, 'metaData.width');
             $height   = data_get($videoInfo, 'metaData.height');
             $duration = data_get($videoInfo, 'metaData.duration');
-
-            //通过video Observer维护 post 和 spider
+            //更新video
             $video->update([
                 'width'        => $width,
                 'height'       => $height,
@@ -86,7 +84,7 @@ class PullUploadVideo implements ShouldQueue
 
             //cdn预热
             VodUtils::pushUrlCacheWithVODUrl($path);
-            //更新spider 的任务状态
+            //更新spider
             if ($spider = Spider::where('spider_id', $video->id)->first()) {
                 $spider->status = Spider::FAILED_STATUS;
                 $spider->saveQuietly();
@@ -95,11 +93,12 @@ class PullUploadVideo implements ShouldQueue
         } catch (\Throwable $th) {
 
             //FIXME: 哈希云处理失败回调 web hook
-            // 标记失败视频
+
+            // 更新video
             $this->video->update([
                 'status' => Video::UNPROCESS_STATUS,
             ]);
-            // 下架视频动态
+            // 更新post
             if ($post = $this->video->post) {
                 $post->update([
                     'status' => Post::DELETED_STATUS,

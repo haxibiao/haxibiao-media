@@ -8,6 +8,7 @@ use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Breeze\User;
 use Haxibiao\Helpers\utils\QcloudUtils;
+use Haxibiao\Media\Jobs\PullUploadVideo;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
@@ -105,7 +106,7 @@ trait SpiderRepo
             $post->saveQuietly();
 
             //FIXME: 重构这个jobs到vod的专属架构位置 哈希云的media
-            // dispatch(new PullUploadVideo($video, $post));
+            dispatch(new PullUploadVideo($video));
             return $post;
         }
         return null;
@@ -207,7 +208,7 @@ trait SpiderRepo
             if ($douyinDynamicCover) {
                 $stream = @file_get_contents($douyinDynamicCover);
                 if ($stream) {
-                    $dynamicCoverPath = 'images/' . genrate_uuid('webp');
+                    $dynamicCoverPath = 'images/' . generate_uuid('webp');
                     $result           = Storage::cloud()->put($dynamicCoverPath, $stream);
                     if ($result) {
                         $video->setJsonData('dynamic_cover', cdnurl($dynamicCoverPath));
