@@ -131,12 +131,12 @@ trait VideoResolvers
             ->setUserId($user->id)
             ->build();
 
-        // 请求处理media.haxibiao.com进行MetaData处理
+        // 请求处理哈希云进行MetaData处理
         $uuid           = $share->uuid;
         $title2MetaData = sprintf('uuid:%s', $uuid);
         $curl           = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL            => "http://media.haxibiao.com/api/video/modifyMetadata",
+            CURLOPT_URL            => \Haxibiao\Media\Video::getMediaBaseUri() . "api/video/modifyMetadata",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING       => "",
             CURLOPT_MAXREDIRS      => 10,

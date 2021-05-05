@@ -11,18 +11,14 @@ use Haxibiao\Content\Article;
 use Haxibiao\Content\Category;
 use Haxibiao\Content\Collection;
 use Haxibiao\Content\Post;
-use Haxibiao\Helpers\utils\QcloudUtils;
-use Haxibiao\Helpers\utils\VodUtils;
+use Haxibiao\Media\Spider;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use TencentCloud\Common\Credential;
 use TencentCloud\Common\Profile\ClientProfile;
 use TencentCloud\Common\Profile\HttpProfile;
 use TencentCloud\Vod\V20180717\Models\PushUrlCacheRequest;
 use TencentCloud\Vod\V20180717\VodClient;
-use Vod\Model\VodUploadRequest;
 
 trait VideoRepo
 {
@@ -134,44 +130,11 @@ trait VideoRepo
 
     /**
      * 旧的本项目上传视频文件，目前不支持，请前端都用云里的vod sdk方式
-     *
-     * @param UploadedFile $file
-     * @return void
+     * @deprecated
      */
     public function saveFile(UploadedFile $file)
     {
         throw new UserException("请升级版本用vod上传视频");
-
-        // $this->user_id = getUserId();
-        // $this->save(); //拿到video->id
-
-        // $cosPath     = 'video/' . $this->id . '.mp4';
-        // $this->path  = $cosPath;
-        // $this->hash  = md5_file($file->path());
-        // $this->title = $file->getClientOriginalName();
-        // $this->save();
-
-        // try {
-        //     //本地存一份用于截图
-        //     $file->storeAs(
-        //         'video', $this->id . '.mp4'
-        //     );
-        //     $this->disk = 'local'; //先标记为成功保存到本地
-        //     $this->save();
-
-        //     //同步上传到cos
-        //     $cosDisk = Storage::cloud();
-        //     $cosDisk->put($cosPath, Storage::disk('public')->get('video/' . $this->id . '.mp4'));
-        //     $this->disk = 'cos';
-        //     $this->save();
-
-        //     // dispatch((new MakeVideoCovers($this)))->delay(now()->addMinute(1));
-        //     return true;
-
-        // } catch (\Exception $ex) {
-        //     Log::error("video save exception" . $ex->getMessage());
-        // }
-        // return false;
     }
 
     public function saveWidthHeight($path)
@@ -205,37 +168,11 @@ trait VideoRepo
 
     /**
      * 从vod拿到视频的截图
+     * @deprecated
      */
     public function processVod()
     {
-        //呼叫vod截图任务流
-        $videoInfo = QcloudUtils::processVodFile($this->qcvod_fileid);
-
-        //获取截图结果
-        sleep(15);
-        $videoInfo      = QcloudUtils::getVideoInfo($this->qcvod_fileid);
-        $coverUrl       = Arr::get($videoInfo, 'basicInfo.coverUrl');
-        $sourceVideoUrl = Arr::get($videoInfo, 'basicInfo.sourceVideoUrl');
-        if (is_null($coverUrl)) {
-            sleep(15);
-            $videoInfo = QcloudUtils::getVideoInfo($this->qcvod_fileid);
-            $coverUrl  = Arr::get($videoInfo, 'basicInfo.coverUrl');
-        }
-        $this->duration = data_get($videoInfo, 'basicInfo.duration', 0);
-        $this->cover    = $coverUrl;
-        $this->path     = $sourceVideoUrl;
-        $this->hash     = hash_file('md5', $sourceVideoUrl);
-
-        //TODO::这里重复给值，可能需要重构
-        $this->setJsonData('cover', $coverUrl);
-        $this->setJsonData('duration', data_get($videoInfo, 'basicInfo.duration', 0));
-        $this->setJsonData('width', data_get($videoInfo, 'metaData.width'));
-        $this->setJsonData('height', data_get($videoInfo, 'metaData.height'));
-        $this->disk   = "vod";
-        $this->status = Video::TRANSCODE_STATUS;
-        $this->save();
-        //触发截图操作
-        // MakeVideoCovers::dispatchNow($this);
+        dd('processVod 已重构去哈希云');
     }
 
     /**
@@ -296,73 +233,24 @@ trait VideoRepo
     public static function saveVideoFile(UploadedFile $videoFile, array $inputs, $user)
     {
         throw new UserException("请升级版本用vod上传视频");
-
-        // $publicStorage = Storage::disk('public');
-
-        // if (!$publicStorage->exists('videos')) {
-        //     $publicStorage->makeDirectory('videos');
-        // }
-
-        // $videoName = $videoFile->getFilename();
-        // //example video/SDV_QSVV.mp4
-        // $videoPath = 'videos/' . $videoName . '.' . $videoFile->getClientOriginalExtension();
-        // $hash      = hash_file('md5', $videoFile->getRealPath());
-
-        // $video = Video::firstOrNew(['hash' => $hash]);
-        // if (!isset($video->id)) {
-        //     $isMoveSuccess = $publicStorage->put($videoPath, $videoFile->get());
-        //     if ($isMoveSuccess) {
-        //         $video->fill([
-        //             'user_id'  => $user->id ?? null,
-        //             'path'     => $videoPath,
-        //             'disk'     => 'damei',
-        //             'filename' => $inputs['videoName'] ?? null,
-        //             'app'      => $inputs['app'] ?? null,
-        //             'type'     => $inputs['type'] ?? null,
-        //         ])->save();
-        //         //队列去处理视频上传
-        //         dispatch(new UploadVideo($video->id))->onQueue('videos');
-        //     } else {
-        //         return null;
-        //     }
-        // }
-
-        //答题以前视图维护VideoKit系统，目前已有media系统
-        // if (isset($inputs['uuid'])) {
-        //     $videokitUser = VideokitUser::firstOrNew([
-        //         'uuid'     => $inputs['uuid'],
-        //         'video_id' => $video->id,
-        //     ]);
-        //     if (!isset($videokitUser->id)) {
-        //         $videokitUser->save();
-        //     }
-        // }
-
-        // return $video;
     }
 
-    // 从答题兼容过来的repo, 带vod方法
-
-    // 通过 VOD file_id 保存信息至 videos table
+    /**
+     * fileid 获取vod信息至video(兼容答赚老项目也许在用)
+     */
     public static function saveByVodFileId($fileId, User $user)
     {
-        VodUtils::makeCoverAndSnapshots($fileId);
-        $vodVideoInfo = VodUtils::getVideoInfo($fileId);
-        return self::saveVodFile($user, $fileId, $vodVideoInfo);
-    }
-
-    // 根据 VODUtils 返回的信息创建 Video
-    public static function saveVodFile(User $user, $fileId, array $videoFileInfo)
-    {
-        $url      = data_get($videoFileInfo, 'basicInfo.sourceVideoUrl');
-        $cover    = data_get($videoFileInfo, 'basicInfo.coverUrl');
-        $duration = data_get($videoFileInfo, 'basicInfo.duration');
-        $height   = data_get($videoFileInfo, 'metaData.height');
-        $width    = data_get($videoFileInfo, 'metaData.width');
+        $vodJson  = Video::getVodJson($fileId);
+        $url      = data_get($vodJson, 'basicInfo.sourceVideoUrl');
+        $cover    = data_get($vodJson, 'basicInfo.coverUrl');
+        $duration = data_get($vodJson, 'basicInfo.duration');
+        $height   = data_get($vodJson, 'metaData.height');
+        $width    = data_get($vodJson, 'metaData.width');
         $hash     = md5_file($url);
 
-        $video = new Video();
-
+        $video = Video::firstOrNew([
+            'fileid' => $fileId,
+        ]);
         $video->user_id  = $user->id;
         $video->disk     = 'vod';
         $video->hash     = $hash;
@@ -372,80 +260,101 @@ trait VideoRepo
         $video->height   = $height;
         $video->duration = $duration;
         $video->cover    = $cover;
-        $video->json     = json_encode($videoFileInfo);
+        $video->json     = json_encode($vodJson);
         $video->save();
-
         return $video;
     }
 
     /**
+     * 处理哈希云hook
+     *
+     * @param array $videoArr
+     * @return Video
+     */
+    public static function hook(array $videoArr)
+    {
+        //media hook 返回整个video对象
+        $data = $videoArr;
+        $json = Arr::get($data, 'json');
+        $hash = Arr::get($data, 'hash');
+
+        //新增2个字段，替代hash做回调用
+        $fileid    = Arr::get($data, 'fileid');
+        $sharelink = Arr::get($data, 'sharelink');
+
+        $mediaUrl      = Arr::get($data, 'url');
+        $vid           = Arr::get($data, 'vid');
+        $cover         = Arr::get($data, 'cover');
+        $dynamic_cover = Arr::get($data, 'dynamic_cover');
+
+        //主动上传的
+        if ($fileid) {
+            $video = Video::firstOrNew(['fileid' => $fileid]);
+        } else if ($sharelink) {
+            //秒粘贴的
+            $video = Video::firstOrNew(['sharelink' => $sharelink]);
+        }
+        //hash是哈希云上传vod处理后才有的
+        $video->hash = $hash;
+
+        if (!isset($video->id)) {
+            $video->disk = 'vod';
+
+            if (blank($fileid)) {
+                //提取fileid
+                $fileId = Arr::get($json, 'vod.FileId');
+                if (empty($fileId)) {
+                    $mediaUrl = Arr::get($json, 'vod.MediaUrl');
+                    if ($mediaUrl) {
+                        $fileId = Spider::extractFileId($mediaUrl);
+                    }
+                }
+            }
+            //保存fileid
+            $video->fileid = $fileId;
+
+            $video->path = $mediaUrl;
+            //保存视频截图 && 同步填充信息
+            $video->status = Video::CDN_VIDEO_STATUS;
+
+            $video->setJsonData('sourceVideoUrl', $mediaUrl);
+            $video->setJsonData('duration', Arr::get($data, 'duration', 0));
+            $video->setJsonData('width', data_get($json, 'width'));
+            $video->setJsonData('height', data_get($json, 'height'));
+
+            // 哈希云统一处理封面 回调回来
+            $video->setJsonData('cover', $cover);
+            $video->setJsonData('dynamic_cover', $dynamic_cover);
+
+            // 哈希云通过分享链接通知存储vid
+            $video->vid = $vid;
+            $video->saveQuietly();
+        }
+
+    }
+
+    public static function getVodJson($fileid)
+    {
+        return @file_get_contents(Video::getMediaBaseUri() . 'api/vod/' . $fileid);
+    }
+
+    /**
+     * 根据fileid返回视频
+     *
+     * @param string $fileid
+     * @return Video
+     */
+    public static function findByFileId($fileid)
+    {
+        return Video::where('fileid', $fileid)->first();
+    }
+
+    /**
      * nova上传视频
-     * 需要引入依赖：
-     * "qcloud/vod-sdk-v5": "^2.4"
-     * "qcloud/cos-sdk-v5": "*",
-     * 删除"tencentcloud/tencentcloud-sdk-php": "3.0.94",
+     * @deprecated
      */
     public static function uploadNovaVod($file)
     {
-        $hash  = md5_file($file->getRealPath());
-        $video = Video::firstOrNew([
-            'hash' => $hash,
-        ]);
-
-        // 秒传
-        if (isset($video->id) && isset($video->qcvod_fileid)) {
-            return $video->id;
-        }
-        $video->save();
-
-        $cosPath        = 'video/' . $video->id . '.mp4';
-        $video->path    = $cosPath;
-        $video->user_id = getUserId();
-        $video->hash    = $hash;
-        $video->title   = $file->getClientOriginalName();
-
-        $video->disk = 'local'; //先标记为成功保存到本地
-        $video->save();
-        //  本地存一份用于上传
-        $file->storeAs(
-            'video',
-            $video->id . '.mp4'
-        );
-
-        //vod上传配置
-        $client = new \Vod\VodUploadClient(
-            config("vod." . env('APP_NAME') . ".secret_id"),
-            config("vod." . env('APP_NAME') . ".secret_key")
-        );
-
-        $client->setLogPath(storage_path('/logs/vod_upload.log'));
-        try {
-            $req = new VodUploadRequest();
-
-            $req->MediaFilePath = storage_path('app/public/' . $video->path);
-
-            $req->ClassId = config("vod." . env('APP_NAME') . ".class_id");
-
-            $rsp = $client->upload("ap-guangzhou", $req);
-
-            $localPath = $video->path;
-            //上传成功
-            echo "MediaUrl -> " . $rsp->MediaUrl . "\n";
-            $video->disk         = 'vod';
-            $video->qcvod_fileid = $rsp->FileId;
-            $video->path         = $rsp->MediaUrl;
-            $video->save(['timestamps' => false]);
-
-            //获取截图
-            $video->processVod();
-
-            // 删除本地视频
-            Storage::delete($localPath);
-            return $video->id;
-        } catch (\Exception $e) {
-            // 处理上传异常
-            Log::error($e);
-            return;
-        }
+        dd('需要Nova上传视频到vod的，联系 ivan@haxibiao.com 开发nova-tools前端集成vod sdk获取哈希云的vod token');
     }
 }

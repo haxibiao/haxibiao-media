@@ -24,6 +24,7 @@ class CreateVideosTable extends Migration
             $table->string('path')->nullable();
             $table->integer('duration')->default(0)->comment('时长秒');
             $table->integer('status')->default(0)->index()->comment('-1删除 0隐藏 1发布');
+            //内部push sync同步尊重哈希云处理过的hash
             $table->string('hash')->nullable()->unique()->comment('避免重复上传文件');
 
             $table->string('cover')->nullable()->comment('截图封面,disk同video的disk');
@@ -35,25 +36,16 @@ class CreateVideosTable extends Migration
             $table->string('collection', 100)->nullable()->index()->comment('合集');
             $table->string('collection_key', 50)->nullable()->index()->comment('合集的唯一key: ainicheng_1122');
 
-            $table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
-            $table->string('vid')->nullable()->index()->comment('视频的VID');
+            //分享粘贴视频靠sharelink回调hook
+            $table->string('sharelink')->nullable()->index()->comment('秒粘贴地址');
+            //自己上传视频靠fileid回调hook
+            $table->string('fileid')->nullable()->index()->comment('vod的fileid');
+            $table->string('vid')->nullable()->index()->comment('字节系视频标识的VID');
+
             $table->unsignedInteger('push_url_cache_day')->default(0)->comment('预热URL日');
 
             $table->boolean('is_hd')->default(true)->comment("有无高清无水印");
 
-            //FIXME: 答妹里的字段多的
-
-            // $table->string('fileid')->nullable()->comment('外部文件系统标识=vod fileid');
-            // $table->string('filename')->nullable()->comment('外部文件系统文件名');
-            // $table->string('app')->nullable()->comment("某个APP的？");
-            // $table->string('type', 30)->nullable()->comment('类型');
-            // $table->unsignedInteger('count_likes')->default(0)->comment('点赞数');
-            // $table->unsignedInteger('duration')->nullable()->comment('视频时长');
-            // $table->unsignedInteger('width')->nullable()->comment('宽');
-            // $table->unsignedInteger('height')->nullable()->comment('高');
-
-            //FIXME: 答妹里少的..
-            //$table->string('qcvod_fileid')->nullable()->index()->comment('disk在vod的时候有用');
             $table->timestamps();
             $table->softDeletes();
         });

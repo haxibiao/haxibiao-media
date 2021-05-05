@@ -64,25 +64,8 @@ class Spider extends Model
     {
         parent::boot();
 
-        self::saving(function ($spider) {
+        self::saving(function (Spider $spider) {
             $spider->replaceTitleBadWord();
-        });
-
-        self::created(function ($spider) {
-            //创建爬虫的时候，自动发布一个动态
-            Post::saveSpiderVideoPost($spider);
-        });
-
-        self::updated(function ($spider) {
-            if ($spider->status == Spider::PROCESSED_STATUS) {
-                Post::publishSpiderVideoPost($spider);
-                $post = Post::where(['spider_id' => $spider->id])->first();
-                if ($post) {
-                    $user = $post->user;
-                    //更新任务状态
-                    $user->reviewTasksByClass(get_class($spider));
-                }
-            }
         });
     }
 
@@ -121,10 +104,10 @@ class Spider extends Model
         return $this->morphTo('spider');
     }
 
-	public function post(): HasOne
-	{
-		return $this->hasOne(\App\Post::class);
-	}
+    public function post(): HasOne
+    {
+        return $this->hasOne(\App\Post::class);
+    }
 
     public static function getStatuses()
     {

@@ -58,7 +58,7 @@ Route::middleware('auth:api')->post('/image', 'ImageController@store'); //主要
 Route::middleware('auth:api')->post('/image/save', 'ImageController@store'); //兼容1.0 or vue上传视频接口
 
 /**
- * Vod
+ * FIXME: Vod签名获取是统一的，不同站点的唯一差异是classid, 需要重构到哈希云去
  */
 
 //获取VOD上传签名
@@ -69,10 +69,16 @@ Route::get('/signature/vod', 'VodController@mySignature');
  * Spider
  */
 
-//导入接口现在只保留gql的粘贴抖音
-// Route::post('/media/import', 'SpiderController@importDouyinSpider');
-//media服务抖音采集成功回调
-Route::any('/media/hook', 'SpiderController@hook');
+//导入接口处理粘贴的抖音？
+Route::post('/douyin/import', 'SpiderController@importDouYin');
+Route::post('/media/import', 'SpiderController@importDouyinSpider');
+
+Route::any('/media/oldHook', 'HookController@hookSpider');
+
+//抖音采集成功回调
+Route::any('/media/hook', 'HookController@hookSpider');
+//上传vod视频的回调
+Route::any('/video/hook', 'HookController@hookVideo');
 
 /**
  * Movie

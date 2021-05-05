@@ -7,13 +7,10 @@ use GuzzleHttp\Client;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Breeze\User;
-use Haxibiao\Helpers\utils\QcloudUtils;
-use Haxibiao\Media\Jobs\PullUploadVideo;
+use Haxibiao\Media\Jobs\SpiderProcess;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
 
 trait SpiderRepo
 {
@@ -24,7 +21,6 @@ trait SpiderRepo
 
         // 解释限制次数问题，统一到哈希云
 
-        $title = static::extractTitle($shareLink);
         //提取URL
         $dyUrl = static::extractURL($shareLink);
 
@@ -49,15 +45,6 @@ trait SpiderRepo
         return $post->spider;
     }
 
-    public static function getFastDouyinVideoInfo($dyUrl)
-    {
-        $url      = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $dyUrl);
-        $data     = json_decode(file_get_contents($url), true)['data'];
-        $videoUrl = $data['video']['play_url'];
-        $title    = $data['video']['info']['0']['desc'];
-        return [$title, $videoUrl, $data];
-    }
-
     /**
      * 快速魔法粘贴
      *
@@ -72,44 +59,54 @@ trait SpiderRepo
         $title   = static::extractTitle($shareLink);
         //提取URL
         $dyUrl = static::extractURL($shareLink);
-        if (Spider::where('source_url', $dyUrl)->exists()) {
-            throw new GQLException('该视频已被采集，请再换一个！');
-        }
+
+        // if (Spider::where('source_url', $dyUrl)->exists()) {
+        //     throw new GQLException('该视频已被采集，请再换一个！');
+        // }
+
         //秒粘贴获取video info
-        list($title, $videoUrl, $data) = Spider::getFastDouyinVideoInfo($dyUrl);
+        $fastVideoInfo = Spider::getFastDouyinVideoInfo($dyUrl);
         //视频
-        $video       = Video::create(['disk' => 'vod', 'title' => $title]);
-        $video->json = ['douyin' => [
-            'play_url' => $videoUrl,
-        ]];
+        $video        = Video::firstOrNew(['sharelink' => $dyUrl]);
+        $video->title = $title;
+        //秒粘贴尊中sharelink排重，乐观更新fastJson的meta到json
+        $video->json = $fastVideoInfo;
         $video->saveQuietly();
-        if (filter_var($videoUrl, FILTER_VALIDATE_URL)) {
+
+        if (filter_var(data_get($fastVideoInfo, 'play_url'), FILTER_VALIDATE_URL)) {
             //爬虫 = vod job
-            $spider = new Spider([
+            $spider = Spider::firstOrNew([
+                'source_url' => $dyUrl,
+            ]);
+            $spider->fill([
                 'spider_id'   => $video->id,
                 'spider_type' => 'videos',
                 'user_id'     => $user->id,
-                'raw'         => $data,
-                'source_url'  => $dyUrl,
+                'raw'         => data_get($fastVideoInfo, 'data'),
             ]);
-            $spider->saveQuietly();
+            $spider->save();
+            dispatch(new SpiderProcess($spider));
 
-            //动态 - 秒粘贴可行，直接秒发布
-            $postData = [
-                'user_id'   => $user->id,
-                'video_id'  => $video->id,
+            //动态
+            $post = Post::firstOrNew([
                 'spider_id' => $spider->id,
-                'status'    => Post::PUBLISH_STATUS,
-            ];
-            $post              = Post::firstOrNew($postData);
+            ]);
+            $post->video_id = $video->id;
+            $post->user_id  = $user->id;
+            //秒粘贴可直接秒发布 补刀更新observer自动创建的Post
+            $post->status      = Post::PUBLISH_STATUS;
             $post->description = $content ?? $title;
             $post->saveQuietly();
 
-            //FIXME: 重构这个jobs到vod的专属架构位置 哈希云的media
-            dispatch(new PullUploadVideo($video));
             return $post;
         }
         return null;
+    }
+
+    public static function extractFileId($mediaUrl)
+    {
+        $fileId = substr(preg_split("~/~", $mediaUrl)[4], -19);
+        return $fileId;
     }
 
     public static function extractURL($str)
@@ -163,87 +160,34 @@ trait SpiderRepo
     }
 
     /**
-     * media hook回调要走这里保存视频信息，发布动态，处理快速排查推荐..
+     * 内涵云 media hook回调要走这里保存视频信息，发布动态，处理快速排查推荐..
+     *
+     * @param array $videoArr
+     * @return Video
      */
-    public function saveVideo($data)
+    public function hook(array $videoArr)
     {
-        $hash     = Arr::get($data, 'hash');
-        $json     = Arr::get($data, 'json');
-        $mediaUrl = Arr::get($data, 'url');
-        $coverUrl = Arr::get($data, 'cover');
-        $video    = Video::firstOrNew(['hash' => $hash]);
-
-        if (!isset($video->id) || ($video->disk == 'tj')) {
-            $video->user_id = $this->user_id;
-            //更改VOD地址
-            $video->disk = 'vod';
-
-            //获取fileId
-            $fileId = Arr::get($json, 'vod.FileId');
-            if (empty($fileId)) {
-                $mediaUrl = Arr::get($json, 'vod.MediaUrl');
-                if ($mediaUrl) {
-                    $fileId = substr(preg_split("~/~", $mediaUrl)[4], -19);
-                }
-            }
-
-            //兼容答赚、工厂等项目
-            if (in_array(env("APP_NAME"), ["datizhuanqian", "damei", "yyjieyou", "ablm"])) {
-                $video->fileid = $fileId;
-            } else {
-                $video->qcvod_fileid = $fileId;
-            }
-
-            $video->path = $mediaUrl;
-            //保存视频截图 && 同步填充信息
-            $video->status = empty($coverUrl) ? Video::CDN_VIDEO_STATUS : Video::COVER_VIDEO_STATUS;
-            $video->setJsonData('cover', $coverUrl);
-            $video->setJsonData('sourceVideoUrl', $mediaUrl);
-            $video->setJsonData('duration', Arr::get($data, 'duration', 0));
-            $videoInfo = QcloudUtils::getVideoInfo($video->fileid ?? $video->qcvod_fileid);
-            $video->setJsonData('width', data_get($videoInfo, 'metaData.width'));
-            $video->setJsonData('height', data_get($videoInfo, 'metaData.height'));
-
-            $douyinDynamicCover = data_get($this, 'data.raw.item_list.0.video.dynamic_cover.url_list.0');
-            if ($douyinDynamicCover) {
-                $stream = @file_get_contents($douyinDynamicCover);
-                if ($stream) {
-                    $dynamicCoverPath = 'images/' . generate_uuid('webp');
-                    $result           = Storage::cloud()->put($dynamicCoverPath, $stream);
-                    if ($result) {
-                        $video->setJsonData('dynamic_cover', cdnurl($dynamicCoverPath));
-                    }
-                }
-            }
-            // 保存vid信息
-            $vid = data_get($this, 'data.raw.item_list.0.video.vid');
-            if ($vid && Schema::hasColumn('videos', 'vid')) {
-                $video->vid = $vid;
-            }
-
-            $video->save();
+        $video = $this->hookedVideo();
+        //爬虫都应该创建了一个video
+        if (is_null($video)) {
+            return null;
         }
+        $video->hook($videoArr);
 
-        //FIXME: 更新爬虫和视频关系（crawlable?）
-        $reward            = Spider::SPIDER_GOLD_REWARD;
-        $this->spider_type = 'videos';
-        $this->spider_id   = $video->id;
-        $this->status      = Spider::PROCESSED_STATUS;
+        //更新爬虫状态
+        $this->status = Spider::PROCESSED_STATUS;
+        //Observer处理media hook回调剩余的更新维护逻辑
         $this->save();
 
-        //FIXME: 发布成动态这个需要 haxibiao-content的 post部分逻辑observer spider...
-        // $this->savePost();
+        //FIXME: 发布动态的奖励逻辑也不在这里处理...
 
-        //FIXME: content系统部分，发布成功动态的observer里奖励，这里只负责处理media相关业务
+        //触发奖励逻辑也不在这里处理
+        // $reward = Spider::SPIDER_GOLD_REWARD;
 
-        // $user = $this->user;
-        // if (!is_null($user)) {
-        //     //触发奖励
-        //     Gold::makeIncome($user, $reward, '分享视频奖励');
-        //     //扣除精力
-        //     if ($user->ticket > 0) {
-        //         $user->decrement('ticket');
-        //     }
+        // Gold::makeIncome($user, $reward, '分享视频奖励');
+        //扣除精力逻辑也不在这里处理
+        // if ($user->ticket > 0) {
+        //     $user->decrement('ticket');
         // }
 
         return $video;
@@ -258,41 +202,65 @@ trait SpiderRepo
         return $this;
     }
 
-    public static function getVideoByDyShareLink($shareLink)
+    /**
+     * 新版本秒解释，未配置media/hook回调
+     *
+     * @param [type] $dyUrl
+     * @return array
+     */
+    public static function getFastDouyinVideoInfo($dyUrl): array
     {
-        try {
-            $shareLink    = static::extractURL($shareLink);
-            $url          = sprintf('http://gz0%u.haxibiao.com/simple-spider/parse.php?url=%s', mt_rand(12, 18), $shareLink);
-            $data         = data_get(json_decode(@file_get_contents($url), true), 'data');
-            $cover        = data_get($data, 'raw.item_list.0.video.origin_cover.url_list.0');
-            $width        = data_get($data, 'raw.item_list.0.video.width');
-            $height       = data_get($data, 'raw.item_list.0.video.height');
-            $duration     = data_get($data, 'raw.item_list.0.duration');
-            $dynamicCover = data_get($data, 'raw.item_list.0.video.dynamic_cover.url_list.0');
-            $play_url     = data_get($data, 'video.play_url');
-            $title        = data_get($data, 'video.info.0.desc');
+        $result = @file_get_contents(Video::getMediaBaseUri() . 'api/v1/spider/parse?share_link=' . $dyUrl);
+        $data   = data_get(json_decode($result, true), 'raw');
+        return [
+            'play_url'      => data_get($data, 'video.play_url'),
+            'title'         => data_get($data, 'video.info.0.desc'),
+            'cover'         => data_get($data, 'raw.item_list.0.video.origin_cover.url_list.0'),
+            'width'         => data_get($data, 'raw.item_list.0.video.width'),
+            'height'        => data_get($data, 'raw.item_list.0.video.height'),
+            'duration'      => ceil(data_get($data, 'raw.item_list.0.duration') / 1000), //参考createPost逻辑
+            'dynamic_cover' => data_get($data, 'raw.item_list.0.video.dynamic_cover.url_list.0'),
+            'share_link'    => $dyUrl, //参考createPost逻辑
+        ];
+    }
 
-            $hash  = hash_file('md5', $play_url);
-            $video = \App\Video::firstOrNew(['hash' => $hash]);
-            if (!isset($video->id)) {
-                $video->setJsonData('cover', $cover);
-                $video->setJsonData('sourceVideoUrl', $play_url);
-                $video->setJsonData('duration', $duration);
-                $video->setJsonData('width', $width);
-                $video->setJsonData('height', $height);
-                $video->setJsonData('dynamic_cover', $dynamicCover);
-                $videoData = [
-                    'title'    => $title,
-                    'path'     => $play_url,
-                    'disk'     => 'tj',
-                    'duration' => $duration,
-                ];
-                $video->fill($videoData);
-                $video->saveDataOnly();
-            }
-            return $video;
-        } catch (\Exception $e) {
-            return null;
+    /**
+     * 哈希云队列解释,media/hook 回调
+     */
+    public static function parse($url)
+    {
+        $hookUrl  = url('api/media/hook');
+        $data     = [];
+        $client   = new Client();
+        $response = $client->request('GET', \Haxibiao\Media\Video::getMediaBaseUri() . 'api/v1/spider/store', [
+            'http_errors' => false,
+            'query'       => [
+                'source_url' => trim($url),
+                'hook_url'   => $hookUrl,
+            ],
+        ]);
+        throw_if($response->getStatusCode() == 404, GQLException::class, '您分享的链接不存在,请稍后再试!');
+        $contents = $response->getBody()->getContents();
+        if (!empty($contents)) {
+            $contents = json_decode($contents, true);
+            $data     = Arr::get($contents, 'data');
         }
+
+        return $data;
+    }
+
+    public static function findByUrl($sharelink): Spider
+    {
+        return Spider::where('source_url', $sharelink)->first();
+    }
+
+    public function hookedVideo(): Video
+    {
+        if ($video = $this->video) {
+            return $video;
+        }
+        $video = Video::firstOrNew(['sharelink' => $this->source_url]);
+        $video->saveQuietly();
+        return $video;
     }
 }

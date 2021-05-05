@@ -2,20 +2,21 @@
 
 namespace Haxibiao\Media\Jobs;
 
-use App\Gold;
+use GuzzleHttp\Client;
 use Haxibiao\Media\Spider;
-use Haxibiao\Media\UploadVideo;
-use Haxibiao\Media\Video;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 
+/**
+ * 原MediaProcess, 主要处理爬虫粘贴回调
+ */
 class SpiderProcess implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $spider;
 
@@ -24,9 +25,15 @@ class SpiderProcess implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($spiderId)
+    public function __construct($spider)
     {
-        $this->spider = Spider::wating()->find($spiderId);
+        $this->spider = $spider;
+        $url          = $this->spider->source_url;
+        if (strpos($url, 'tiktok.com')) {
+            $this->onQueue('tiktoks');
+        } else {
+            $this->onQueue('spiders');
+        }
     }
 
     /**
@@ -38,95 +45,44 @@ class SpiderProcess implements ShouldQueue
     {
         $spider = $this->spider;
         if (!is_null($spider)) {
-            //处理视频上传
+            // 爬虫粘贴回调
+            $hookUrl = url('api/media/hook');
+            $data    = [];
+            $client  = new Client();
 
-            $spiderServer = $this->getSpiderServer($spider->source_url);
-            try {
-                $contens = file_get_contents($spiderServer);
-                $contens = json_decode($contens, true);
-            } catch (\Exception $ex) {
-                $spider->status = Spider::FAILED_STATUS;
-                $spider->save();
-                return;
-            }
+            //提交或者重试爬虫
+            $api      = \Haxibiao\Media\Video::getMediaBaseUri() . 'api/spider/paste';
+            $response = $client->request('GET', $api, [
+                'http_errors' => false,
+                'query'       => [
+                    'source_url' => urlencode(trim($spider->source_url)),
+                    'hook_url'   => $hookUrl,
+                ],
+            ]);
+            $contents = $response->getBody()->getContents();
+            if (!empty($contents)) {
+                $contents   = json_decode($contents, true);
+                $data       = Arr::get($contents, 'data');
+                $status     = Arr::get($data, 'status');
+                $shareTitle = data_get($data, 'raw.raw.item_list.0.share_info.share_title');
 
-            //json响应格式
-            if (is_array($contens)) {
-                $data = $contens['data'];
-                if ($contens['code'] == 200) {
-                    $videoUrl = $data['video'];
-                    $raw      = $data['raw'];
-
-                    //更新spider
-                    $spider->raw    = $raw;
-                    $spider->status = Spider::FAILED_STATUS;
-
-                    //下载视频到本地磁盘
-                    $publicStorage = Storage::disk('public');
-                    $videoName     = basename($videoUrl);
-                    $videoPath     = sprintf('videos/%s', $videoName);
-                    $saveSuccess   = $publicStorage->put($videoPath, file_get_contents($videoUrl));
-                    if ($saveSuccess) {
-                        $videoDiskPath = $publicStorage->path($videoPath);
-
-                        //计算hash,数据不存在,`写入DB
-                        $hash  = hash_file('md5', $videoDiskPath);
-                        $video = Video::firstOrNew(['hash' => $hash]);
-                        if (!isset($video->id)) {
-                            $video->fill([
-                                'user_id'  => $spider->user_id,
-                                'path'     => $videoPath,
-                                'disk'     => 'damei',
-                                'filename' => $videoName,
-                                'type'     => 'videos',
-                            ])->save();
-
-                            $spiderdata = $spider->data;
-                            $goldReward = Spider::SPIDER_GOLD_REWARD;
-
-                            //更新spider data
-                            $spiderdata['video_id'] = $video->id;
-                            $spiderdata['reward']   = $goldReward;
-                            $spider->data           = $spiderdata;
-                            $spider->status         = Spider::PROCESSED_STATUS;
-                            $spider->spider_type    = 'videos';
-                            $spider->spider_id      = $video->id;
-
-                            //队列去处理视频上传
-                            dispatch(new UploadVideo($video->id))->onQueue('videos');
-
-                            $user = $spider->user;
-                            //触发奖励
-                            Gold::makeIncome($user, $goldReward, '分享视频奖励');
-                            //扣除精力
-                            if ($user->ticket > 0) {
-                                $user->decrement('ticket');
-                            }
-                        } else {
-                            $spider->data = ['job_failed' => ['msg' => '该视频已存在!', 'video_id' => $video->id]];
-                        }
-                    }
-
-                    $spider->save();
+                // 404 not found video
+                $isFailed = $status == 'INVALID_STATUS';
+                if ($isFailed) {
+                    return $spider->delete();
                 }
             }
+
+            //已经被处理过的，重试的话秒返回...
+            $video = Arr::get($data, 'video');
+            if (is_array($video) && $spider->isWating()) {
+                $spider->hook($video);
+            }
+
+            // 修复乱码标题
+            if ($spider->isDirty()) {
+                $spider->saveQuietly();
+            }
         }
-    }
-
-    public function getSpiderServer($url)
-    {
-        $servers = [
-            'gz01.haxibiao.com',
-            'gz02.haxibiao.com',
-            'gz03.haxibiao.com',
-            'gz04.haxibiao.com',
-            'gz05.haxibiao.com',
-            'gz06.haxibiao.com',
-            'gz07.haxibiao.com',
-            'gz08.haxibiao.com',
-        ];
-        $spiderServer = sprintf('http://%s', Arr::random($servers) . '/simple-spider/index.php?url=' . $url);
-
-        return $spiderServer;
     }
 }

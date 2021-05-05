@@ -5,7 +5,7 @@ namespace Haxibiao\Media\Jobs;
 use GuzzleHttp\Client;
 use Haxibiao\Content\Collection;
 use Haxibiao\Content\Post;
-use Haxibiao\Media\Jobs\MediaProcess;
+use Haxibiao\Media\Jobs\SpiderProcess;
 use Haxibiao\Media\Spider;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -113,7 +113,7 @@ class CrawlCollection implements ShouldQueue
                     // Auth::login($vestUser);
                     try {
                         //爬取对应的数据
-                        dispatch(new MediaProcess($spider->id));
+                        dispatch(new SpiderProcess($spider->id));
                     } catch (\Exception $ex) {
                         $info = $ex->getMessage();
                         info("异常信息" . $info);

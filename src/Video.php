@@ -36,6 +36,15 @@ class Video extends Model
 
     protected $guarded = [];
 
+    /**
+     * 哈希云baseUri
+     */
+    public static function getMediaBaseUri()
+    {
+        return 'http://l.haxiyun.cn/';
+        // return 'http://media.haxibiao.com/';
+    }
+
     protected static function boot()
     {
         parent::boot();

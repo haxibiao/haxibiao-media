@@ -8,7 +8,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Vod\Model\VodUploadRequest;
 use Vod\VodUploadClient;
@@ -46,11 +45,7 @@ class VideoAddMetadata implements ShouldQueue
                 return false;
             }
 
-            if (Schema::hasColumn('videos', 'qcvod_fileid')) {
-                $video->qcvod_fileid = data_get($result, 'fileid');
-            } else {
-                $video->fileid = data_get($result, 'fileid');
-            }
+            $video->fileid = data_get($result, 'fileid');
 
             $video->path = data_get($result, 'path');
         }

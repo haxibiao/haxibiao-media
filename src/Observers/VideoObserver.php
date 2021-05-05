@@ -14,7 +14,13 @@ class VideoObserver
      */
     public function created(Video $video)
     {
+        //长视频剪辑时
         $video->autoPublishContentWhenAboutMovie();
+
+        //上传的视频处理队列，等回调
+        if ($video->fileid) {
+            dispatch(new VodProcess($video));
+        }
     }
 
     /**

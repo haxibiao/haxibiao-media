@@ -14,10 +14,8 @@ class VideoPush extends Command
      *
      * @var string
      */
-    protected $signature                  = 'video:push {--db} {--api}';
-    public const CACHE_KEY                = "video_sync_max_id";
-    protected const HAXIYUN_VIDEO         = 'http://media.haxibiao.com/api/v1/hashvod/videos/';
-    protected const HAXIYUN_UPDATED_VIDEO = 'http://media.haxibiao.com/api/video/update';
+    protected $signature   = 'video:push {--db} {--api}';
+    public const CACHE_KEY = "video_sync_max_id";
 
     protected $appName;
     protected $defaultCategory;
@@ -106,7 +104,7 @@ class VideoPush extends Command
     {
 
         // API方式查询是否video已存在
-        $queryUrl       = self::HAXIYUN_VIDEO . $video->hash;
+        $queryUrl       = Video::getMediaBaseUri() . 'api/v1/hashvod/videos/' . $video->hash;
         $queryResult    = json_decode(file_get_contents($queryUrl), true);
         $qbMediaVideoId = isset($queryResult['data']) ?: data_get($queryResult, 'data.id', 0);
 
@@ -130,11 +128,11 @@ class VideoPush extends Command
         $args['hash']   = $video->hash;
         $requestArgs    = http_build_query($args);
 
-        $updateUrl      = self::HAXIYUN_UPDATED_VIDEO . '?' . $requestArgs;
+        $updateUrl      = Video::getMediaBaseUri() . 'api/video/update?' . $requestArgs;
         $queryResult    = json_decode(file_get_contents($updateUrl), true);
         $qbMediaVideoId = isset($queryResult->data) ? $queryResult->data->id : 0;
 
-        $this->info("同步视频{$video->id}数据到 media.haxibiao.com 成功");
+        $this->info("同步视频{$video->id}数据到 哈希云 成功");
 
     }
 
@@ -175,6 +173,6 @@ class VideoPush extends Command
 
         }
 
-        $this->info("同步视频{$video->id}数据到 media.haxibiao.com 成功");
+        $this->info("同步视频{$video->id}数据到 哈希云 成功");
     }
 }

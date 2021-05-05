@@ -27,9 +27,8 @@ class VideoSync extends Command
      *
      * @var string
      */
-    protected $description           = '按要求同步视频数据';
-    protected const HAXIYUN_ENDPOINT = 'http://media.haxibiao.com/api/video/list';
-    protected const CDN_ROOT         = 'http://hashvod-1251052432.file.myqcloud.com';
+    protected $description   = '按要求同步视频数据';
+    protected const CDN_ROOT = 'http://hashvod-1251052432.file.myqcloud.com';
 
     protected $client;
     /**
@@ -111,15 +110,15 @@ class VideoSync extends Command
         }
     }
 
-    public function getUrlResponse($args, $url = self::HAXIYUN_ENDPOINT)
+    public function getUrlResponse($args)
     {
+        $url      = Video::getMediaBaseUri() . 'api/video/list';
         $response = $this->client->request('GET', $url, [
             'http_errors' => false,
             'query'       => $args,
         ]);
         $contents = $response->getBody()->getContents();
         return @json_decode($contents);
-
     }
 
     public function getArgs($page = 1)

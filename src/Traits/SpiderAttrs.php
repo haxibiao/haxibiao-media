@@ -2,9 +2,9 @@
 
 namespace Haxibiao\Media\Traits;
 
+use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Media\Spider;
 use Illuminate\Support\Arr;
-use Haxibiao\Breeze\Exceptions\GQLException;
 
 trait SpiderAttrs
 {
@@ -15,13 +15,12 @@ trait SpiderAttrs
         $this->attributes['source_url'] = $value;
     }
 
-//    public function getSourceUrlAttribute($value)
-//    {
-//        return trim($value);
-//    }
-
     public function getTitleAttribute()
     {
+        $shareTitle = data_get($this->raw, 'raw.item_list.0.share_info.share_title');
+        if ($shareTitle) {
+            return $shareTitle;
+        }
         return Arr::get($this->data, 'title', '此人很懒什么也没说!');
     }
 

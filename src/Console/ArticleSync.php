@@ -47,7 +47,7 @@ class ArticleSync extends Command
         $userIds    = \App\User::where('role_id', '>', User::STATUS_ONLINE)->take(50)->inRandomOrder()->pluck('id')->toArray() ?? [User::first()->id];
 
         for ($start_page; $start_page < 1000; $start_page++) {
-            $url    = "http://media.haxibiao.com/api/articles?domain={$domain}&type={$type}&start_page={$start_page}&count_page={$count_page}";
+            $url    = \Haxibiao\Media\Video::getMediaBaseUri() . "api/articles?domain={$domain}&type={$type}&start_page={$start_page}&count_page={$count_page}";
             $result = json_decode(file_get_contents($url), true);
             $count  = 0;
             if (count($result)) {

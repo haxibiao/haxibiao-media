@@ -2,6 +2,11 @@ type Video {
     id: ID!
 
     """
+    视频标题
+    """
+    title: String
+
+    """
     视频播放地址(兼容老版本,新版本请使用url字段)
     """
     path: String

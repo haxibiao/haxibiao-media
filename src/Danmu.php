@@ -21,7 +21,7 @@ class Danmu extends Model
 
     public static function syncToMedia(Danmu $danmu)
     {
-        $client = new Client(['base_uri' => 'http://media.haxibiao.com/']);
+        $client = new Client(['base_uri' => Video::getMediaBaseUri()]);
         $client->request('POST', 'api/danmu/store', [
             'http_errors' => false,
             'form_params' => [

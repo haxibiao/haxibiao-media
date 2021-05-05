@@ -3,7 +3,6 @@
 namespace Haxibiao\Media\Traits;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 trait VideoAttrs
 {
@@ -53,10 +52,12 @@ trait VideoAttrs
         //临时处理中的粘贴外部cdn/动态封面封面
         if (isset($this->json) && isset($this->json->cover)) {
             $cover = $this->json->cover ?? $this->json->dynamic_cover;
+            if (filter_var($cover, FILTER_VALIDATE_URL)) {
+                return $cover;
+            }
         }
 
-        //media中心自己上传的视频，封面同步到 hasvod 的
-        // && Str::startsWith($cover_path, 'images/')
+        //其实标记vod处理过的视频，path应该是URL返回了，这里补刀逻辑暂时保留
         if ('vod' == $this->disk) {
             return hash_vod_url($cover);
         }
@@ -72,46 +73,44 @@ trait VideoAttrs
 
     public function getInfoAttribute()
     {
-        $json = json_encode($this->json, true);
-
-        // 相对路径 转 绝对路径
-        $data = [
-            'cover'  => cdnurl($json['cover'] ?? '/images/cover.png'),
-            'width'  => $json['width'] ?? null,
-            'height' => $json['height'] ?? null,
-        ];
-
-        return $data;
+        //json里就是videoInfo 融合 fastVideoInfo 和vodVideoInfo 的属性
+        return $this->json;
     }
 
     public function getUrlAttribute()
     {
-        // 云同步的cdn url
-        if (Str::startsWith($this->path, 'http')) {
+        // path已处理为靠谱url
+        if (filter_var($this->path, FILTER_VALIDATE_URL)) {
             return $this->path;
         }
 
+        //依靠json对象解释播放地址
+        $json = $this->json;
+
         // VOD 方式上传的
         if ('vod' == $this->disk) {
-            $json     = $this->json;
-            $isString = is_string($json);
-            if ($isString) {
-                $json = json_decode($json, true);
-            }
+            //爱你城？格式不对...
             $url = data_get($json, 'json.vod.MediaUrl');
             if (empty($url)) {
                 $url = data_get($json, 'vod.MediaUrl');
             }
-            //兼容抖音秒粘贴
+            //兼容答赚视频json
             if (empty($url)) {
-                $url = data_get($json, 'douyin.play_url');
+                $url = data_get($json, 'vod.sourceVideoUrl');
             }
-
             return $url;
         }
 
+        //兼容秒粘贴乐观更新
+        if (empty($url)) {
+            $url = data_get($json, 'play_url');
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                return $url;
+            }
+        }
+
         // 还在存本地的情况
-        if (Storage::disk('public')->exists($this->path)) {
+        if (!blank($this->path) && Storage::disk('public')->exists($this->path)) {
             return url($this->path);
         }
 

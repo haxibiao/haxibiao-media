@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 //过期的一些VOD 函数
 use Haxibiao\Helpers\utils\QcloudUtils;
+use Haxibiao\Media\Video;
 
 /**
  * 从工厂APP里过来的trait 处理vod相关
@@ -17,7 +18,7 @@ trait VideoRepoVod
         //简单顾虑，视频地址确实是上传到了vod的
         $res = [];
         if (str_contains($this->path, 'vod')) {
-            $res = QcloudUtils::getVideoInfo($this->qcvod_fileid);
+            $res = Video::getVodJson($this->fileid);
             if (!empty($res['basicInfo']) && !empty($res['basicInfo']['duration'])) {
                 $this->duration = $res['basicInfo']['duration'];
             }
@@ -112,12 +113,12 @@ trait VideoRepoVod
 
     public function makeCover()
     {
-        QcloudUtils::makeCoverAndSnapshots($this->qcvod_fileid, $this->duration);
+        QcloudUtils::makeCoverAndSnapshots($this->fileid, $this->duration);
     }
 
     public function transCode()
     {
-        QcloudUtils::convertVodFile($this->qcvod_fileid, $this->duration);
+        QcloudUtils::convertVodFile($this->fileid, $this->duration);
     }
 
     public function startProcess()

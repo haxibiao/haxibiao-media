@@ -169,8 +169,8 @@ class VideoController extends Controller
         $posts = $qb->paginate(9);
         //兼容vue读取 article.cover 的
         foreach ($posts as $post) {
-            $post->cover        = $post->cover;
-            data_set($post,'user.avatar',data_get($post,'user.avatar'));
+            $post->cover = $post->cover;
+            data_set($post, 'user.avatar', data_get($post, 'user.avatar'));
         }
         return $posts;
     }
@@ -178,7 +178,7 @@ class VideoController extends Controller
     public function showByVideoHash($hash)
     {
         $video       = Video::where('hash', $hash)->first();
-        $qcvodFileid = data_get($video, 'qcvod_fileid');
+        $qcvodFileid = data_get($video, 'fileid');
         if ($qcvodFileid) {
             return $qcvodFileid;
         }

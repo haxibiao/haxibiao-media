@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Observers;
 
 use App\Post;
+use Haxibiao\Media\Jobs\SpiderProcess;
 use Haxibiao\Media\Spider;
 
 class SpiderObserver
@@ -15,8 +16,12 @@ class SpiderObserver
      */
     public function created($spider)
     {
-        //创建爬虫的时候，自动发布一个动态
-        Post::saveSpiderVideoPost($spider);
+        if (!blank($spider->source_url)) {
+            //自动创建一个草稿动态
+            Post::saveSpiderVideoPost($spider);
+            //新爬虫，提交任务给哈希云,等回调
+            dispatch(new SpiderProcess($spider));
+        }
     }
 
     /**
@@ -32,6 +37,8 @@ class SpiderObserver
                 //更新任务状态
                 $user->reviewTasksByClass(get_class($spider));
             }
+            //media hook 回调更新成功结果过，自动发布动态
+            Post::publishSpiderVideoPost($spider);
         }
     }
 
