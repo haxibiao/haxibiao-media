@@ -5,7 +5,6 @@ namespace Haxibiao\Media\Jobs;
 use GuzzleHttp\Client;
 use Haxibiao\Content\Collection;
 use Haxibiao\Content\Post;
-use Haxibiao\Media\Jobs\SpiderProcess;
 use Haxibiao\Media\Spider;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -92,7 +91,7 @@ class CrawlCollection implements ShouldQueue
                     $spider              = Spider::has('video')->firstOrNew(['source_url' => $shareUrl]);
                     $spider->user_id     = $this->user->id;
                     $spider->spider_type = 'videos';
-                    $spider->saveDataOnly();
+                    $spider->save();
                     //创建对应的动态
                     $post              = Post::firstOrNew(['spider_id' => $spider->id]);
                     $post->status      = Post::PRIVARY_STATUS;
@@ -113,7 +112,7 @@ class CrawlCollection implements ShouldQueue
                     // Auth::login($vestUser);
                     try {
                         //爬取对应的数据
-                        dispatch(new SpiderProcess($spider->id));
+                        $spider->process();
                     } catch (\Exception $ex) {
                         $info = $ex->getMessage();
                         info("异常信息" . $info);

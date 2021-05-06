@@ -6,7 +6,6 @@ use App\Post;
 use App\Spider;
 use App\User;
 use GuzzleHttp\Client;
-use Haxibiao\Media\Jobs\SpiderProcess;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 
@@ -74,7 +73,7 @@ class CrawlDouyinVideos extends Command
             Auth::login(User::find($user_id));
             try {
                 //爬取对应的数据
-                dispatch(new SpiderProcess($spider->id));
+                $spider->process();
                 $count++;
             } catch (\Exception $ex) {
                 $info = $ex->getMessage();

@@ -7,7 +7,6 @@ use GuzzleHttp\Client;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Breeze\User;
-use Haxibiao\Media\Jobs\SpiderProcess;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
@@ -85,7 +84,7 @@ trait SpiderRepo
                 'raw'         => data_get($fastVideoInfo, 'data'),
             ]);
             $spider->save();
-            dispatch(new SpiderProcess($spider));
+            $spider->process();
 
             //动态
             $post = Post::firstOrNew([
@@ -262,5 +261,53 @@ trait SpiderRepo
         $video = Video::firstOrNew(['sharelink' => $this->source_url]);
         $video->saveQuietly();
         return $video;
+    }
+
+    /**
+     * 调用哈希云处理爬虫，等hook回调
+     */
+    public function process()
+    {
+        $spider = $this->spider;
+        if (!is_null($spider)) {
+            // 爬虫粘贴回调
+            $hookUrl = url('api/media/hook');
+            $data    = [];
+            $client  = new Client();
+
+            //提交或者重试爬虫
+            $api      = \Haxibiao\Media\Video::getMediaBaseUri() . 'api/spider/paste';
+            $response = $client->request('GET', $api, [
+                'http_errors' => false,
+                'query'       => [
+                    'source_url' => urlencode(trim($spider->source_url)),
+                    'hook_url'   => $hookUrl,
+                ],
+            ]);
+            $contents = $response->getBody()->getContents();
+            // if (!empty($contents)) {
+            //     $contents   = json_decode($contents, true);
+            //     $data       = Arr::get($contents, 'data');
+            //     $status     = Arr::get($data, 'status');
+            //     $shareTitle = data_get($data, 'raw.raw.item_list.0.share_info.share_title');
+
+            //     // 404 not found video
+            //     $isFailed = $status == 'INVALID_STATUS';
+            //     if ($isFailed) {
+            //         return $spider->delete();
+            //     }
+            // }
+
+            //已经被处理过的，重试的话秒返回...
+            // $video = Arr::get($data, 'video');
+            // if (is_array($video) && $spider->isWating()) {
+            //     $spider->hook($video);
+            // }
+
+            // 修复乱码标题
+            // if ($spider->isDirty()) {
+            //     $spider->saveQuietly();
+            // }
+        }
     }
 }

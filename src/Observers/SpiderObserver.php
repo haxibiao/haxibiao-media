@@ -3,7 +3,6 @@
 namespace Haxibiao\Media\Observers;
 
 use App\Post;
-use Haxibiao\Media\Jobs\SpiderProcess;
 use Haxibiao\Media\Spider;
 
 class SpiderObserver
@@ -20,7 +19,7 @@ class SpiderObserver
             //自动创建一个草稿动态
             Post::saveSpiderVideoPost($spider);
             //新爬虫，提交任务给哈希云,等回调
-            dispatch(new SpiderProcess($spider));
+            $spider->process();
         }
     }
 

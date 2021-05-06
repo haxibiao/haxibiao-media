@@ -221,7 +221,7 @@ trait VideoRepo
 
         //暂时保存假的视频浏览记录
         if ($hasUser) {
-            Visit::saveVisits($user, $videos, Visit::FAKE_VISITED);
+            // Visit::saveVisits($user, $videos, Visit::FAKE_VISITED);
         }
 
         return $mixVideos;
@@ -356,5 +356,52 @@ trait VideoRepo
     public static function uploadNovaVod($file)
     {
         dd('需要Nova上传视频到vod的，联系 ivan@haxibiao.com 开发nova-tools前端集成vod sdk获取哈希云的vod token');
+    }
+
+    /**
+     * api调用哈希云去处理vod，等回调
+     */
+    public function process()
+    {
+        $video = $this->video;
+        if (blank($video->fileid)) {
+            return;
+        }
+
+        //处理 video 的 vod 信息和封面，并hook回来
+        $hookUrl = url('api/video/hook');
+        $data    = [];
+        $client  = new \GuzzleHttp\Client();
+
+        //提交 哈希云处理vod信息来hook结果
+        $apiPath = 'api/video/store';
+        if ($video->sharelink) {
+            $apiPath = 'api/video/paste';
+        }
+        $api      = \Haxibiao\Media\Video::getMediaBaseUri() . $apiPath;
+        $response = $client->request('GET', $api, [
+            'http_errors' => false,
+            'query'       => [
+                'fileid'     => urlencode(trim($video->fileid)), //上传视频必须有
+                'share_link' => urlencode(trim($video->sharelink)), //粘贴视频必须有
+                'hook_url'   => $hookUrl,
+            ],
+        ]);
+
+        $contents = $response->getBody()->getContents();
+
+        // if (!empty($contents)) {
+        //     $contents = json_decode($contents, true);
+        //     $data     = Arr::get($contents, 'data');
+        //     $status   = Arr::get($data, 'status');
+
+        //     // vod如果不存在fileid
+        //     $isFailed = $status < 1;
+        //     if ($isFailed) {
+        //         //标记删除
+        //         return $video->delete();
+        //     }
+        // }
+
     }
 }
