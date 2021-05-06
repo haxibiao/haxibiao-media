@@ -51,7 +51,6 @@ class CreateMoviesTable extends Migration
             $table->unsignedInteger('count_clips')->default(0)->comment('剪辑数');
 
             $table->timestamps();
-            $table->index('updated_at');
         });
 
         /**
