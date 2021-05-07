@@ -36,7 +36,7 @@ trait SpiderRepo
             throw_if($client->getStatusCode() == 404, UserException::class, '解析失败,URL无法访问！');
         }
 
-        $post = Spider::fastProcessDouyinVideo($user, $shareLink, $content);
+        $post = Spider::pasteDouyinVideo($user, $shareLink, $content);
         // 维护标签
         $post->tagByNames($tagNames);
         $post->saveQuietly();
@@ -52,10 +52,10 @@ trait SpiderRepo
      * @param string $content
      * @return Post
      */
-    public static function fastProcessDouyinVideo($user, $shareLink, $content)
+    public static function pasteDouyinVideo($user, $shareLink, $content)
     {
         $content = static::extractTitle($content);
-        $title   = static::extractTitle($shareLink);
+        $title   = !blank($content) ? $content : static::extractTitle($shareLink);
         //提取URL
         $dyUrl = static::extractURL($shareLink);
 
@@ -63,17 +63,18 @@ trait SpiderRepo
         //     throw new GQLException('该视频已被采集，请再换一个！');
         // }
 
-        //秒粘贴获取video info
-        $fastVideoInfo = Spider::getFastDouyinVideoInfo($dyUrl);
-        //视频
+        //粘贴视频的信息
+        $raw            = SpiderRepo::getPasteRaw($dyUrl);
+        $pasteVideoInfo = SpiderRepo::extractPastVideoInfo($raw);
+        //乐观创建视频
         $video        = Video::firstOrNew(['sharelink' => $dyUrl]);
         $video->title = $title;
-        //秒粘贴尊中sharelink排重，乐观更新fastJson的meta到json
-        $video->json = $fastVideoInfo;
+        //播放地址+封面 乐观存json,避免path cover字段溢出
+        $video->json = $pasteVideoInfo;
         $video->saveQuietly();
 
-        if (filter_var(data_get($fastVideoInfo, 'play_url'), FILTER_VALIDATE_URL)) {
-            //爬虫 = vod job
+        if (filter_var(data_get($pasteVideoInfo, 'play_url'), FILTER_VALIDATE_URL)) {
+            //爬虫
             $spider = Spider::firstOrNew([
                 'source_url' => $dyUrl,
             ]);
@@ -81,8 +82,9 @@ trait SpiderRepo
                 'spider_id'   => $video->id,
                 'spider_type' => 'videos',
                 'user_id'     => $user->id,
-                'raw'         => data_get($fastVideoInfo, 'data'),
+                'raw'         => $raw,
             ]);
+            $spider->setTitle($title);
             $spider->save();
             $spider->process();
 
@@ -92,9 +94,9 @@ trait SpiderRepo
             ]);
             $post->video_id = $video->id;
             $post->user_id  = $user->id;
-            //秒粘贴可直接秒发布 补刀更新observer自动创建的Post
+            //乐观发布动态
             $post->status      = Post::PUBLISH_STATUS;
-            $post->description = $content ?? $title;
+            $post->description = $title;
             $post->saveQuietly();
 
             return $post;
@@ -164,31 +166,19 @@ trait SpiderRepo
      * @param array $videoArr
      * @return Video
      */
-    public function hook(array $videoArr)
+    public function hookVideo(array $videoArr)
     {
         $video = $this->hookedVideo();
         //爬虫都应该创建了一个video
         if (is_null($video)) {
             return null;
         }
+
         $video->hook($videoArr);
 
         //更新爬虫状态
         $this->status = Spider::PROCESSED_STATUS;
-        //Observer处理media hook回调剩余的更新维护逻辑
         $this->save();
-
-        //FIXME: 发布动态的奖励逻辑也不在这里处理...
-
-        //触发奖励逻辑也不在这里处理
-        // $reward = Spider::SPIDER_GOLD_REWARD;
-
-        // Gold::makeIncome($user, $reward, '分享视频奖励');
-        //扣除精力逻辑也不在这里处理
-        // if ($user->ticket > 0) {
-        //     $user->decrement('ticket');
-        // }
-
         return $video;
     }
 
@@ -197,41 +187,51 @@ trait SpiderRepo
         $data          = Arr::get($this, 'data', []);
         $data['title'] = $title;
         $this->data    = $data;
-
         return $this;
     }
 
     /**
-     * 新版本秒解释，未配置media/hook回调
+     * 粘贴解释
      *
-     * @param [type] $dyUrl
+     * @param string $dyUrl
      * @return array
      */
-    public static function getFastDouyinVideoInfo($dyUrl): array
+    public static function getPasteVideoInfo($dyUrl): array
     {
-        $result = @file_get_contents(Video::getMediaBaseUri() . 'api/v1/spider/parse?share_link=' . $dyUrl);
-        $data   = data_get(json_decode($result, true), 'raw');
+        $raw = SpiderRepo::getPasteRaw($dyUrl);
+        return SpiderRepo::extractPastVideoInfo($raw);
+    }
+
+    public static function extractPastVideoInfo($raw)
+    {
         return [
-            'play_url'      => data_get($data, 'video.play_url'),
-            'title'         => data_get($data, 'video.info.0.desc'),
-            'cover'         => data_get($data, 'raw.item_list.0.video.origin_cover.url_list.0'),
-            'width'         => data_get($data, 'raw.item_list.0.video.width'),
-            'height'        => data_get($data, 'raw.item_list.0.video.height'),
-            'duration'      => ceil(data_get($data, 'raw.item_list.0.duration') / 1000), //参考createPost逻辑
-            'dynamic_cover' => data_get($data, 'raw.item_list.0.video.dynamic_cover.url_list.0'),
-            'share_link'    => $dyUrl, //参考createPost逻辑
+            'play_url'      => data_get($raw, 'video.play_url'),
+            'title'         => data_get($raw, 'video.info.0.desc'),
+            'cover'         => data_get($raw, 'raw.item_list.0.video.origin_cover.url_list.0'),
+            'width'         => data_get($raw, 'raw.item_list.0.video.width'),
+            'height'        => data_get($raw, 'raw.item_list.0.video.height'),
+            'duration'      => ceil(data_get($raw, 'raw.item_list.0.duration') / 1000), //参考createPost逻辑
+            'dynamic_cover' => data_get($raw, 'raw.item_list.0.video.dynamic_cover.url_list.0'),
         ];
     }
 
+    public static function getPasteRaw($dyUrl)
+    {
+        $result = @file_get_contents(Video::getMediaBaseUri() . 'api/spider/parse?share_link=' . $dyUrl);
+        $raw    = data_get(json_decode($result, true), 'raw');
+        return $raw;
+    }
+
     /**
-     * 哈希云队列解释,media/hook 回调
+     * 视频文章+爬虫时代代码
+     * @deprecated
      */
     public static function parse($url)
     {
         $hookUrl  = url('api/media/hook');
         $data     = [];
         $client   = new Client();
-        $response = $client->request('GET', \Haxibiao\Media\Video::getMediaBaseUri() . 'api/v1/spider/store', [
+        $response = $client->request('GET', \Haxibiao\Media\Video::getMediaBaseUri() . 'api/spider/store', [
             'http_errors' => false,
             'query'       => [
                 'source_url' => trim($url),
@@ -268,46 +268,45 @@ trait SpiderRepo
      */
     public function process()
     {
-        $spider = $this->spider;
-        if (!is_null($spider)) {
+        \info('spider process ==== ');
+        $spider     = $this;
+        $source_url = $this->source_url;
+        if (!empty($source_url)) {
             // 爬虫粘贴回调
             $hookUrl = url('api/media/hook');
             $data    = [];
             $client  = new Client();
 
-            //提交或者重试爬虫
+            // 提交或者重试爬虫
             $api      = \Haxibiao\Media\Video::getMediaBaseUri() . 'api/spider/paste';
             $response = $client->request('GET', $api, [
                 'http_errors' => false,
                 'query'       => [
-                    'source_url' => urlencode(trim($spider->source_url)),
+                    'source_url' => urlencode(trim($source_url)),
                     'hook_url'   => $hookUrl,
                 ],
             ]);
             $contents = $response->getBody()->getContents();
-            // if (!empty($contents)) {
-            //     $contents   = json_decode($contents, true);
-            //     $data       = Arr::get($contents, 'data');
-            //     $status     = Arr::get($data, 'status');
-            //     $shareTitle = data_get($data, 'raw.raw.item_list.0.share_info.share_title');
+            if (!empty($contents)) {
+                $contents = json_decode($contents, true);
+                $data     = Arr::get($contents, 'data');
+                $status   = Arr::get($data, 'status');
 
-            //     // 404 not found video
-            //     $isFailed = $status == 'INVALID_STATUS';
-            //     if ($isFailed) {
-            //         return $spider->delete();
-            //     }
-            // }
+                // 同步哈希云爬虫状态
+                $isSuccess = $status == 'PROCESSED_STATUS';
+                if ($isSuccess) {
+                    $spider->status = Spider::PROCESSED_STATUS;
+                    $spider->saveQuietly();
+                }
+            }
 
             //已经被处理过的，重试的话秒返回...
-            // $video = Arr::get($data, 'video');
-            // if (is_array($video) && $spider->isWating()) {
-            //     $spider->hook($video);
-            // }
-
-            // 修复乱码标题
-            // if ($spider->isDirty()) {
-            //     $spider->saveQuietly();
-            // }
+            $videoArr = Arr::get($data, 'video');
+            \info(" ==== 已处理过的 video");
+            \info($videoArr);
+            if (is_array($videoArr)) {
+                $spider->hookVideo($videoArr);
+            }
         }
     }
 }

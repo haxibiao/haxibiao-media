@@ -16,9 +16,7 @@ class SpiderObserver
     public function created($spider)
     {
         if (!blank($spider->source_url)) {
-            //自动创建一个草稿动态
-            Post::saveSpiderVideoPost($spider);
-            //新爬虫，提交任务给哈希云,等回调
+            //粘贴的爬虫处理
             $spider->process();
         }
     }

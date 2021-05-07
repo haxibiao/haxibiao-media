@@ -33,7 +33,7 @@ trait SpiderResolvers
     {
         $user    = getUser();
         $content = data_get($args, 'content');
-        return SpiderRepo::fastProcessDouyinVideo($user, $args['share_link'], $content);
+        return SpiderRepo::pasteDouyinVideo($user, $args['share_link'], $content);
     }
 
     public function crawlCollection($root, $args, $context, $info)

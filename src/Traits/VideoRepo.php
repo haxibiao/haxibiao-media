@@ -167,15 +167,6 @@ trait VideoRepo
     }
 
     /**
-     * 从vod拿到视频的截图
-     * @deprecated
-     */
-    public function processVod()
-    {
-        dd('processVod 已重构去哈希云');
-    }
-
-    /**
      * @deprecated 答题废弃的视频刷接口，新版本gql需要用新的FastRecommend
      */
     public static function getVideos($user, $type, $limit = 10, $offset = 0)
@@ -271,66 +262,58 @@ trait VideoRepo
      * @param array $videoArr
      * @return Video
      */
-    public static function hook(array $videoArr)
+    public function hook(array $videoArr)
     {
+        $video = $this;
         //media hook 返回整个video对象
-        $data = $videoArr;
-        $json = Arr::get($data, 'json');
-        $hash = Arr::get($data, 'hash');
+        $data     = $videoArr;
+        $json     = Arr::get($data, 'json');
+        $hash     = Arr::get($data, 'hash');
+        $mediaUrl = Arr::get($data, 'url');
 
-        //新增2个字段，替代hash做回调用
-        $fileid    = Arr::get($data, 'fileid');
-        $sharelink = Arr::get($data, 'sharelink');
+        $cover = Arr::get($data, 'cover');
 
-        $mediaUrl      = Arr::get($data, 'url');
+        //新增字段
+        $fileid        = Arr::get($data, 'fileid');
+        $sharelink     = Arr::get($data, 'sharelink');
         $vid           = Arr::get($data, 'vid');
-        $cover         = Arr::get($data, 'cover');
         $dynamic_cover = Arr::get($data, 'dynamic_cover');
 
         //主动上传的
-        if ($fileid) {
-            $video = Video::firstOrNew(['fileid' => $fileid]);
-        } else if ($sharelink) {
-            //秒粘贴的
-            $video = Video::firstOrNew(['sharelink' => $sharelink]);
-        }
-        //hash是哈希云上传vod处理后才有的
-        $video->hash = $hash;
-
-        if (!isset($video->id)) {
-            $video->disk = 'vod';
-
-            if (blank($fileid)) {
-                //提取fileid
-                $fileId = Arr::get($json, 'vod.FileId');
-                if (empty($fileId)) {
-                    $mediaUrl = Arr::get($json, 'vod.MediaUrl');
-                    if ($mediaUrl) {
-                        $fileId = Spider::extractFileId($mediaUrl);
-                    }
-                }
+        //提取fileid
+        if (blank($fileid)) {
+            $fileId = Arr::get($json, 'vod.FileId');
+            if (empty($fileId)) {
+                $fileId = Spider::extractFileId($mediaUrl);
             }
-            //保存fileid
-            $video->fileid = $fileId;
-
-            $video->path = $mediaUrl;
-            //保存视频截图 && 同步填充信息
-            $video->status = Video::CDN_VIDEO_STATUS;
-
-            $video->setJsonData('sourceVideoUrl', $mediaUrl);
-            $video->setJsonData('duration', Arr::get($data, 'duration', 0));
-            $video->setJsonData('width', data_get($json, 'width'));
-            $video->setJsonData('height', data_get($json, 'height'));
-
-            // 哈希云统一处理封面 回调回来
-            $video->setJsonData('cover', $cover);
-            $video->setJsonData('dynamic_cover', $dynamic_cover);
-
-            // 哈希云通过分享链接通知存储vid
-            $video->vid = $vid;
-            $video->saveQuietly();
+        }
+        if ($fileid) {
+            $video->fileid = $fileid;
+        }
+        if ($sharelink) {
+            //粘贴的
+            $video->sharelink = $sharelink;
         }
 
+        //hook就是vod已处理好
+        $video->hash = $hash;
+        $video->disk = 'vod';
+        // 哈希云通过分享链接通知存储vid
+        $video->vid = $vid;
+
+        $video->fileid = $fileid;
+        // 播放地址
+        $video->path = $mediaUrl;
+        // 保存vod视频截图
+        if ($cover) {
+            $video->cover = $cover;
+        }
+
+        // 同步哈希云json信息
+        $video->json   = $json;
+        $video->status = Video::CDN_VIDEO_STATUS;
+
+        $video->saveQuietly();
     }
 
     public static function getVodJson($fileid)
@@ -359,14 +342,37 @@ trait VideoRepo
     }
 
     /**
-     * api调用哈希云去处理vod，等回调
+     * 上传视频处理到vod
      */
-    public function process()
+    public function processVod()
     {
         $video = $this->video;
-        if (blank($video->fileid)) {
-            return;
-        }
+
+        //处理 video 的 vod 信息和封面，并hook回来
+        $hookUrl = url('api/video/hook');
+        $client  = new \GuzzleHttp\Client();
+
+        //提交 哈希云处理vod信息来hook结果
+        $apiPath  = 'api/video/store';
+        $api      = \Haxibiao\Media\Video::getMediaBaseUri() . $apiPath;
+        $response = $client->request('GET', $api, [
+            'http_errors' => false,
+            'query'       => [
+                'fileid'   => urlencode(trim($video->fileid)), //上传视频必须有
+                'hook_url' => $hookUrl,
+            ],
+        ]);
+
+        $response->getBody()->getContents();
+        //等hook
+    }
+
+    /**
+     * 粘贴视频处理到vod
+     */
+    public function pasteVod()
+    {
+        $video = $this->video;
 
         //处理 video 的 vod 信息和封面，并hook回来
         $hookUrl = url('api/video/hook');
@@ -374,34 +380,17 @@ trait VideoRepo
         $client  = new \GuzzleHttp\Client();
 
         //提交 哈希云处理vod信息来hook结果
-        $apiPath = 'api/video/store';
-        if ($video->sharelink) {
-            $apiPath = 'api/video/paste';
-        }
+        $apiPath  = 'api/video/paste';
         $api      = \Haxibiao\Media\Video::getMediaBaseUri() . $apiPath;
         $response = $client->request('GET', $api, [
             'http_errors' => false,
             'query'       => [
-                'fileid'     => urlencode(trim($video->fileid)), //上传视频必须有
                 'share_link' => urlencode(trim($video->sharelink)), //粘贴视频必须有
                 'hook_url'   => $hookUrl,
             ],
         ]);
 
-        $contents = $response->getBody()->getContents();
-
-        // if (!empty($contents)) {
-        //     $contents = json_decode($contents, true);
-        //     $data     = Arr::get($contents, 'data');
-        //     $status   = Arr::get($data, 'status');
-
-        //     // vod如果不存在fileid
-        //     $isFailed = $status < 1;
-        //     if ($isFailed) {
-        //         //标记删除
-        //         return $video->delete();
-        //     }
-        // }
-
+        $response->getBody()->getContents();
+        //等hook
     }
 }

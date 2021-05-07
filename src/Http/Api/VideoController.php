@@ -10,7 +10,6 @@ use Haxibiao\Helpers\utils\VodUtils;
 use Haxibiao\Media\Http\Controller;
 use Haxibiao\Media\Video;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class VideoController extends Controller
@@ -93,8 +92,6 @@ class VideoController extends Controller
         $playUrl  = array_get($inputs, 'playurl');
         $cosAppId = env('COS_APP_ID');
         $bucket   = env('COS_BUCKET');
-
-        Log::channel('cos_video_hook')->info($inputs);
 
         //COS配置
         if (!is_null($cosAppId) && !is_null($bucket) && !is_null($playUrl)) {

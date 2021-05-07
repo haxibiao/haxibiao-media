@@ -17,9 +17,13 @@ class VideoObserver
         //长视频剪辑时
         $video->autoPublishContentWhenAboutMovie();
 
-        //未处理好vod的
+        //上传视频
         if ($video->fileid) {
-            $video->process();
+            $video->processVod();
+        }
+        //粘贴视频
+        if (is_null($video->spider)) {
+            $video->pasteVod();
         }
     }
 
