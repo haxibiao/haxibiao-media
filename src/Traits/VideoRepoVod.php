@@ -4,7 +4,6 @@ namespace Haxibiao\Media\Traits;
 
 //过期的一些VOD 函数
 use Haxibiao\Helpers\utils\QcloudUtils;
-use Haxibiao\Media\Video;
 
 /**
  * 从工厂APP里过来的trait 处理vod相关
@@ -14,85 +13,7 @@ trait VideoRepoVod
 
     public function syncVodProcessResult()
     {
-        $flag = 0;
-        //简单顾虑，视频地址确实是上传到了vod的
-        $res = [];
-        if (str_contains($this->path, 'vod')) {
-            $res = Video::getVodJson($this->fileid);
-            if (!empty($res['basicInfo']) && !empty($res['basicInfo']['duration'])) {
-                $this->duration = $res['basicInfo']['duration'];
-            }
-            if (!empty($res['basicInfo']) && !empty($res['basicInfo']['coverUrl'])) {
-                $this->cover = $res['basicInfo']['coverUrl'];
-                $flag        = 1;
-            }
-
-            $covers = [];
-            if (
-                !empty($res['snapshotByTimeOffsetInfo']) &&
-                !empty($res['snapshotByTimeOffsetInfo']['snapshotByTimeOffsetList'])
-            ) {
-                foreach ($res['snapshotByTimeOffsetInfo']['snapshotByTimeOffsetList'] as $snapInfo) {
-                    if ($snapInfo['definition'] == 10) {
-                        foreach ($snapInfo['picInfoList'] as $urlArr) {
-                            $url      = $urlArr["url"];
-                            $covers[] = ssl_url($url);
-                        }
-                    }
-                }
-            }
-            if (empty($covers)) {
-                $covers = [$this->cover];
-                //没有封面数据，提交截图任务，下次编辑也许就能选截图了
-                $this->makeCover();
-            }
-            $this->setJsonData('covers', $covers);
-
-            if (!empty($res['transcodeInfo']) && !empty($res['transcodeInfo']['transcodeList'])) {
-                $video_urls = [];
-                foreach ($res['transcodeInfo']['transcodeList'] as $codeInfo) {
-                    //同步其他码率的url
-                    if (!empty($codeInfo['templateName'])) {
-                        if (str_contains($codeInfo['templateName'], '流畅')) {
-                            $video_urls['流畅'] = ssl_url($codeInfo['url']);
-                        }
-                        if (str_contains($codeInfo['templateName'], '标清')) {
-                            $video_urls['标清'] = ssl_url($codeInfo['url']);
-                        }
-                        if (str_contains($codeInfo['templateName'], '高清')) {
-                            $video_urls['高清'] = ssl_url($codeInfo['url']);
-                            //默认播放url 用1280*
-                            $this->path = ssl_url($codeInfo['url']);
-                            $flag       = 2;
-                        }
-                        if (str_contains($codeInfo['templateName'], '全高清')) {
-                            $video_urls['全高清'] = ssl_url($codeInfo['url']);
-                        }
-                    }
-                }
-                $this->setJsonData('video_urls', $video_urls);
-            }
-            //视频的宽和高
-            if (!empty($res['metaData'])) {
-                //duration
-                $this->duration = $res['metaData']['duration'];
-                //旋转率
-                $this->setJsonData('rotate', $res['metaData']['rotate']);
-                if (!empty($res['metaData']['videoStreamList'])) {
-                    $videoStreamList = $res['metaData']['videoStreamList'][0];
-                    $height          = $videoStreamList['height'];
-                    $width           = $videoStreamList['width'];
-                    $this->setJsonData('height', $height);
-                    $this->setJsonData('width', $width);
-                }
-            }
-            $this->save();
-        }
-        //如果res为空 或duration = 0 表示该视频有问题
-        if (empty($res) || empty($res['basicInfo']['duration'])) {
-            $flag = -1;
-        }
-        return $flag; //-1:有异常的文件, 0: 还没截图，1：有截图，2：有转码结果
+        //FIXME: 注意 vod 相关的代码，统一维护到haxiyun
     }
 
     public function publishPost()

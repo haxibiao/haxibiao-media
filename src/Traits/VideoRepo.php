@@ -227,36 +227,6 @@ trait VideoRepo
     }
 
     /**
-     * fileid 获取vod信息至video(兼容答赚老项目也许在用)
-     */
-    public static function saveByVodFileId($fileId, User $user)
-    {
-        $vodJson  = Video::getVodJson($fileId);
-        $url      = data_get($vodJson, 'basicInfo.sourceVideoUrl');
-        $cover    = data_get($vodJson, 'basicInfo.coverUrl');
-        $duration = data_get($vodJson, 'basicInfo.duration');
-        $height   = data_get($vodJson, 'metaData.height');
-        $width    = data_get($vodJson, 'metaData.width');
-        $hash     = md5_file($url);
-
-        $video = Video::firstOrNew([
-            'fileid' => $fileId,
-        ]);
-        $video->user_id  = $user->id;
-        $video->disk     = 'vod';
-        $video->hash     = $hash;
-        $video->fileid   = $fileId;
-        $video->path     = $url;
-        $video->width    = $width;
-        $video->height   = $height;
-        $video->duration = $duration;
-        $video->cover    = $cover;
-        $video->json     = json_encode($vodJson);
-        $video->save();
-        return $video;
-    }
-
-    /**
      * 处理哈希云hook
      *
      * @param array $videoArr
@@ -316,9 +286,17 @@ trait VideoRepo
         $video->saveQuietly();
     }
 
-    public static function getVodJson($fileid)
+    /**
+     * 获取哈希云的video信息
+     *
+     * @param string $fileid
+     * @return array
+     */
+    public static function getCloudVideoInfo($fileid)
     {
-        return @file_get_contents(Video::getMediaBaseUri() . 'api/vod/' . $fileid);
+        $json = @file_get_contents(Video::getMediaBaseUri() . 'api/video/info/' . $fileid);
+        $data = @json_decode($json, true);
+        return $data;
     }
 
     /**
