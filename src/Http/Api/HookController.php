@@ -31,22 +31,14 @@ class HookController extends Controller
             // FIXME: 粘贴视频的可以解释出评论？
             // $comment  = data_get($data, 'raw.comment');
 
-            if (!is_null($spider)) {
-                // 同步已处理成功的爬虫状态
-                if ($status == 'PROCESSED_STATUS') {
-                    // 处理好的视频
-                    if (is_array($videoArr)) {
-                        $spider->hookVideo($videoArr);
-                    }
-                    $spider->status = Spider::PROCESSED_STATUS;
-                    $spider->saveQuietly();
-                    return ['status' => 'SUCCESS'];
-                } else {
-                    return [
-                        'status' => 'error',
-                        'reason' => 'hook spider not finished',
-                    ];
+            if (!is_null(data_get($videoArr, 'cover'))) {
+                // 有封面，就算处理好的视频
+                if (is_array($videoArr)) {
+                    $spider->hookVideo($videoArr);
                 }
+                $spider->status = Spider::PROCESSED_STATUS;
+                $spider->saveQuietly();
+                return ['status' => 'SUCCESS'];
             }
         }
         return [
