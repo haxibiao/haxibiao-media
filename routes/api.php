@@ -62,7 +62,13 @@ Route::middleware('auth:api')->post('/image/save', 'ImageController@store'); //�
  */
 
 //获取VOD上传签名
+/**
+ * @deprecated 已废用，请使用哈希云获取VOD签名
+ */
 Route::get('/signature/vod-{site}', 'VodController@signature');
+/**
+ * @deprecated 已废用，请使用哈希云获取VOD签名
+ */
 Route::get('/signature/vod', 'VodController@mySignature');
 
 /**

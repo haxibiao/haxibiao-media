@@ -4,6 +4,9 @@ namespace Haxibiao\Media\Http\Api;
 
 use Haxibiao\Media\Http\Controller;
 
+/**
+ * @deprecated 已废用，请使用哈希云获取VOD签名
+ */
 class VodController extends Controller
 {
     public $secret_id;
