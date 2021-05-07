@@ -162,7 +162,9 @@ class MovieSync extends Command
                             'type',
                             'data',
                             'data_source',
-                        ]))->save();
+                        ]));
+                        $model->status = Movie::PUBLISH;
+                        $model->save();
                         DB::commit();
                         $success++;
                         $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
