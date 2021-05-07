@@ -29,10 +29,10 @@ class HookController extends Controller
             $videoArr = Arr::get($data, 'video');
             $comment  = data_get($data, 'raw.comment');
             if (!is_null($spider)) {
-                //重试n次仍然失败
-                if ($status == 'INVALID_STATUS') {
-                    $spider->status = Spider::INVALID_STATUS;
-                    return $spider->save(); //不删除这个爬虫信息，保留！
+                // 同步已处理成功的爬虫状态
+                if ($status == 'PROCESSED_STATUS') {
+                    $spider->status = Spider::PROCESSED_STATUS;
+                    return $spider->save();
                 }
 
                 $dataArr = $spider->data;
@@ -41,7 +41,7 @@ class HookController extends Controller
                 $spider->data       = $dataArr;
                 $spider->save();
 
-                //处理好的视频
+                // 处理好的视频
                 if (is_array($videoArr)) {
                     return $spider->hookVideo($videoArr);
                 }

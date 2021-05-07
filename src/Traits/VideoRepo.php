@@ -227,32 +227,30 @@ trait VideoRepo
     }
 
     /**
-     * 处理哈希云hook
+     * 处理哈希云hook同步视频信息
      *
-     * @param array $videoArr
+     * @param array $videoArr 视频在哈希云的数据
      * @return Video
      */
     public function hook(array $videoArr)
     {
-        $video = $this;
-        //media hook 返回整个video对象
+        $video    = $this;
         $data     = $videoArr;
-        $json     = Arr::get($data, 'json');
-        $hash     = Arr::get($data, 'hash');
-        $mediaUrl = Arr::get($data, 'url');
-
-        $cover = Arr::get($data, 'cover');
+        $json     = data_get($data, 'json');
+        $hash     = data_get($data, 'hash');
+        $mediaUrl = data_get($data, 'url');
+        $cover    = data_get($data, 'cover');
 
         //新增字段
-        $fileid        = Arr::get($data, 'fileid');
-        $sharelink     = Arr::get($data, 'sharelink');
-        $vid           = Arr::get($data, 'vid');
-        $dynamic_cover = Arr::get($data, 'dynamic_cover');
+        $fileid    = data_get($data, 'fileid');
+        $sharelink = data_get($data, 'sharelink');
+        $vid       = data_get($data, 'vid');
+        // $dynamic_cover = data_get($data, 'dynamic_cover');
 
         //主动上传的
         //提取fileid
         if (blank($fileid)) {
-            $fileId = Arr::get($json, 'vod.FileId');
+            $fileId = data_get($json, 'vod.FileId');
             if (empty($fileId)) {
                 $fileId = Spider::extractFileId($mediaUrl);
             }
@@ -265,7 +263,6 @@ trait VideoRepo
             $video->sharelink = $sharelink;
         }
 
-        //hook就是vod已处理好
         $video->hash = $hash;
         $video->disk = 'vod';
         // 哈希云通过分享链接通知存储vid
@@ -278,11 +275,9 @@ trait VideoRepo
         if ($cover) {
             $video->cover = $cover;
         }
-
-        // 同步哈希云json信息
-        $video->json   = $json;
-        $video->status = Video::CDN_VIDEO_STATUS;
-
+        $video->json = $json;
+        // 同步哈希云视频视频状态
+        $video->status = data_get($videoArr, 'status') == 'PROCESSED_STATUS' ? Video::COVER_VIDEO_STATUS : Video::CDN_VIDEO_STATUS;
         $video->saveQuietly();
     }
 

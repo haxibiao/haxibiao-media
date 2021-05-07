@@ -268,7 +268,6 @@ trait SpiderRepo
      */
     public function process()
     {
-        \info('spider process ==== ');
         $spider     = $this;
         $source_url = $this->source_url;
         if (!empty($source_url)) {
@@ -288,24 +287,25 @@ trait SpiderRepo
             ]);
             $contents = $response->getBody()->getContents();
             if (!empty($contents)) {
-                $contents = json_decode($contents, true);
-                $data     = Arr::get($contents, 'data');
-                $status   = Arr::get($data, 'status');
+                $contents      = json_decode($contents, true);
+                $data          = Arr::get($contents, 'data');
+                $spider_status = Arr::get($data, 'status');
 
-                // 同步哈希云爬虫状态
-                $isSuccess = $status == 'PROCESSED_STATUS';
-                if ($isSuccess) {
+                // 同步哈希云爬虫已成功状态
+                if ($spider_status == 'PROCESSED_STATUS') {
                     $spider->status = Spider::PROCESSED_STATUS;
                     $spider->saveQuietly();
                 }
             }
 
-            //已经被处理过的，重试的话秒返回...
             $videoArr = Arr::get($data, 'video');
-            \info(" ==== 已处理过的 video");
-            \info($videoArr);
-            if (is_array($videoArr)) {
-                $spider->hookVideo($videoArr);
+            $status   = Arr::get($videoArr, 'status');
+
+            // 已经被处理过的粘贴，重试的话秒返回hook...
+            if ($status == "PROCESSED_STATUS") {
+                if (is_array($videoArr)) {
+                    $spider->hookVideo($videoArr);
+                }
             }
         }
     }
