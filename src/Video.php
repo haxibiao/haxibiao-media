@@ -41,8 +41,7 @@ class Video extends Model
      */
     public static function getMediaBaseUri()
     {
-        return 'http://l.haxiyun.cn/';
-        // return 'http://media.haxibiao.com/';
+        return 'http://media.haxibiao.com/';
     }
 
     protected static function boot()
