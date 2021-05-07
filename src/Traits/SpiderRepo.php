@@ -248,7 +248,7 @@ trait SpiderRepo
         return $data;
     }
 
-    public static function findByUrl($sharelink): Spider
+    public static function findByUrl($sharelink)
     {
         return Spider::where('source_url', $sharelink)->first();
     }

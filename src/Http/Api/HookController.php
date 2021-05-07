@@ -27,27 +27,32 @@ class HookController extends Controller
         if ($spider = Spider::findByUrl($sourceUrl)) {
             $status   = Arr::get($data, 'status');
             $videoArr = Arr::get($data, 'video');
-            $comment  = data_get($data, 'raw.comment');
+
+            // FIXME: 粘贴视频的可以解释出评论？
+            // $comment  = data_get($data, 'raw.comment');
+
             if (!is_null($spider)) {
                 // 同步已处理成功的爬虫状态
                 if ($status == 'PROCESSED_STATUS') {
+                    // 处理好的视频
+                    if (is_array($videoArr)) {
+                        $spider->hookVideo($videoArr);
+                    }
                     $spider->status = Spider::PROCESSED_STATUS;
-                    return $spider->save();
-                }
-
-                $dataArr = $spider->data;
-                // 粘贴视频的评论？
-                $dataArr['comment'] = $comment;
-                $spider->data       = $dataArr;
-                $spider->save();
-
-                // 处理好的视频
-                if (is_array($videoArr)) {
-                    return $spider->hookVideo($videoArr);
+                    $spider->saveQuietly();
+                    return ['status' => 'SUCCESS'];
+                } else {
+                    return [
+                        'status' => 'error',
+                        'reason' => 'hook spider not finished',
+                    ];
                 }
             }
         }
-        return ['error' => 'hook spider failed'];
+        return [
+            'status' => 'error',
+            'reason' => 'hook spider not exist',
+        ];
     }
 
     /**
@@ -58,16 +63,20 @@ class HookController extends Controller
      */
     public function hookVideo(Request $request)
     {
-
         $fileid = $request->get('fileid');
-        $data   = $request->get('data'); //返回video json 和 vod json
-
-        $data = is_array($data) ? $data : json_decode($data, true);
-
+        $data   = $request->get('data');
+        //返回的video json 含 vod结果信息在 json
+        $videoArr = is_array($data) ? $data : json_decode($data, true);
         if ($video = Video::findByFileId($fileid)) {
             //处理好的视频
-            return $video->hook($data);
+            $video->hook($videoArr);
+            return [
+                'status' => 'SUCCESS',
+            ];
         }
-        return ['error' => 'hook video failed'];
+        return [
+            'status' => 'error',
+            'reason' => 'hook video not exist',
+        ];
     }
 }
