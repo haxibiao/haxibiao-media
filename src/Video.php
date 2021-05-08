@@ -37,11 +37,11 @@ class Video extends Model
     protected $guarded = [];
 
     /**
-     * 哈希云baseUri
+     * 哈希云endpoint
      */
     public static function getMediaBaseUri()
     {
-        return 'http://media.haxibiao.com/';
+        return env('HAXIYUN_ENDPOINT', 'http://media.haxibiao.com/');
     }
 
     protected static function boot()
