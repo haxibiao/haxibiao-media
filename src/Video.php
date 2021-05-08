@@ -41,7 +41,9 @@ class Video extends Model
      */
     public static function getMediaBaseUri()
     {
-        return env('HAXIYUN_ENDPOINT', 'http://media.haxibiao.com/');
+        $endpiont_url = env('HAXIYUN_ENDPOINT', 'http://media.haxibiao.com/');
+        $endpiont_url = ends_with($endpiont_url, '/') ? $endpiont_url : $endpiont_url . '/';
+        return $endpiont_url;
     }
 
     protected static function boot()

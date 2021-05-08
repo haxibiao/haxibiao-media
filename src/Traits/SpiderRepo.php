@@ -66,6 +66,7 @@ trait SpiderRepo
         //粘贴视频的信息
         $raw            = SpiderRepo::getPasteRaw($dyUrl);
         $pasteVideoInfo = SpiderRepo::extractPastVideoInfo($raw);
+
         //乐观创建视频
         $video        = Video::firstOrNew(['sharelink' => $dyUrl]);
         $video->title = $title;
@@ -86,7 +87,6 @@ trait SpiderRepo
             ]);
             $spider->setTitle($title);
             $spider->save();
-            $spider->process();
 
             //动态
             $post = Post::firstOrNew([
@@ -217,8 +217,9 @@ trait SpiderRepo
 
     public static function getPasteRaw($dyUrl)
     {
-        $result = @file_get_contents(Video::getMediaBaseUri() . 'api/spider/parse?share_link=' . $dyUrl);
-        $raw    = data_get(json_decode($result, true), 'raw');
+        $parse_api = Video::getMediaBaseUri() . 'api/spider/parse?share_link=' . $dyUrl;
+        $result    = @file_get_contents($parse_api);
+        $raw       = data_get(json_decode($result, true), 'raw');
         return $raw;
     }
 
