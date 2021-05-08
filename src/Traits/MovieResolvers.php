@@ -126,6 +126,8 @@ trait MovieResolvers
     public function resolveCategoryMovie($root, $args, $content, $info)
     {
 
+        request()->request->add(['fetch_sns_detail' => true]);
+
         $region = data_get($args, 'region');
         //类型
         $type = data_get($args, 'type');
@@ -236,6 +238,10 @@ trait MovieResolvers
     {
         $keyword = data_get($args, 'keyword');
         app_track_event('长视频', '搜索电影', $keyword);
+
+        //标记获取详情数据信息模式
+        request()->request->add(['fetch_sns_detail' => true]);
+
         //记录搜索历史
         // 保存搜索记录
         $log = SearchLog::firstOrNew([
