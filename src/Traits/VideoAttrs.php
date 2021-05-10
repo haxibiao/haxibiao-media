@@ -49,6 +49,12 @@ trait VideoAttrs
         if (filter_var($cover, FILTER_VALIDATE_URL)) {
             return $cover;
         }
+
+        //cloud存储只留path  - 现在我们没有自己处理video，都vod，只有URL
+        // if (!blank($cover)) {
+        //     return cdnurl($cover);
+        // }
+
         //临时处理中的粘贴外部cdn/动态封面封面
         if (isset($this->json) && isset($this->json->cover)) {
             $cover = $this->json->cover ?? $this->json->dynamic_cover;
@@ -56,14 +62,7 @@ trait VideoAttrs
                 return $cover;
             }
         }
-
-        //其实标记vod处理过的视频，path应该是URL返回了，这里补刀逻辑暂时保留
-        if ('vod' == $this->disk) {
-            return hash_vod_url($cover);
-        }
-
-        //存留在cloud存储storage里的
-        return cdnurl($cover);
+        return null;
     }
 
     public function getCoverUrlAttribute()

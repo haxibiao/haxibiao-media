@@ -22,7 +22,7 @@ class VideoObserver
             $video->processVod();
         }
         //粘贴视频
-        if (is_null($video->spider)) {
+        if ($video->spider) {
             $video->pasteVod();
         }
     }

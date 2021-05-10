@@ -319,7 +319,7 @@ trait VideoRepo
      */
     public function processVod()
     {
-        $video = $this->video;
+        $video = $this;
 
         //处理 video 的 vod 信息和封面，并hook回来
         $hookUrl = url('api/video/hook');
@@ -345,7 +345,7 @@ trait VideoRepo
      */
     public function pasteVod()
     {
-        $video = $this->video;
+        $video = $this;
 
         //处理 video 的 vod 信息和封面，并hook回来
         $hookUrl = url('api/video/hook');

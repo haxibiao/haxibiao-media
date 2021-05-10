@@ -6,7 +6,6 @@ use App\Article;
 use App\Category;
 use App\User;
 use Haxibiao\Helpers\utils\FFMpegUtils;
-use Haxibiao\Helpers\utils\VodUtils;
 use Haxibiao\Media\Http\Controller;
 use Haxibiao\Media\Video;
 use Illuminate\Http\Request;
@@ -25,22 +24,10 @@ class VideoController extends Controller
             $video = Video::firstOrNew([
                 'fileid' => $request->fileId,
             ]);
-
             $video->user_id = $user->id;
             $video->path    = $request->videoUrl;
-            //$video->filename = $request->videoName;
-            $video->disk = 'vod';
+            $video->disk    = 'vod';
             $video->save();
-
-            //处理视频封面
-            VodUtils::makeCover($request->fileId);
-
-            // if (env('APP_NAME_CN') == "答妹") {
-            //     $metadata = ['"userId"' => $user->id, '"app' => '"答妹"'];
-            //     dispatch_now(new \App\Jobs\AddMetadata($video->path, $video->fileid, $metadata));
-            //     $video  = Video::find($video->id);
-            //     return $video;
-            // }
             return $video;
         }
 
