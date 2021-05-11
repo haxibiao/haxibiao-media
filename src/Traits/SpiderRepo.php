@@ -199,7 +199,8 @@ trait SpiderRepo
     {
         $parse_api = Video::getMediaBaseUri() . 'api/spider/paste?source_url=' . $dyUrl;
         $result    = @file_get_contents($parse_api);
-        return $result;
+        $data      = data_get($result, 'data');
+        return $data;
     }
 
     /**
