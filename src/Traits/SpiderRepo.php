@@ -64,8 +64,7 @@ trait SpiderRepo
         // }
 
         //粘贴视频的信息
-        $raw            = SpiderRepo::getPasteRaw($dyUrl);
-        $pasteVideoInfo = SpiderRepo::extractPastVideoInfo($raw);
+        $pasteVideoInfo = SpiderRepo::getPasteVideoInfo($dyUrl);
 
         //乐观创建视频
         $video        = Video::firstOrNew(['sharelink' => $dyUrl]);
@@ -83,7 +82,7 @@ trait SpiderRepo
                 'spider_id'   => $video->id,
                 'spider_type' => 'videos',
                 'user_id'     => $user->id,
-                'raw'         => $raw,
+                'raw'         => $pasteVideoInfo, //以前的spider raw 格式是抖音json,不过哈希云之外的spider 只有source_url有价值
             ]);
             $spider->setTitle($title);
             $spider->save();
@@ -196,31 +195,11 @@ trait SpiderRepo
      * @param string $dyUrl
      * @return array
      */
-    public static function getPasteVideoInfo($dyUrl): array
+    public static function getPasteVideoInfo($dyUrl)
     {
-        $raw = SpiderRepo::getPasteRaw($dyUrl);
-        return SpiderRepo::extractPastVideoInfo($raw);
-    }
-
-    public static function extractPastVideoInfo($raw)
-    {
-        return [
-            'play_url'      => data_get($raw, 'video.play_url'),
-            'title'         => data_get($raw, 'video.info.0.desc'),
-            'cover'         => data_get($raw, 'raw.item_list.0.video.origin_cover.url_list.0'),
-            'width'         => data_get($raw, 'raw.item_list.0.video.width'),
-            'height'        => data_get($raw, 'raw.item_list.0.video.height'),
-            'duration'      => ceil(data_get($raw, 'raw.item_list.0.duration') / 1000), //参考createPost逻辑
-            'dynamic_cover' => data_get($raw, 'raw.item_list.0.video.dynamic_cover.url_list.0'),
-        ];
-    }
-
-    public static function getPasteRaw($dyUrl)
-    {
-        $parse_api = Video::getMediaBaseUri() . 'api/spider/parse?share_link=' . $dyUrl;
+        $parse_api = Video::getMediaBaseUri() . 'api/spider/paste?source_url=' . $dyUrl;
         $result    = @file_get_contents($parse_api);
-        $raw       = data_get(json_decode($result, true), 'raw');
-        return $raw;
+        return $result;
     }
 
     /**
@@ -272,13 +251,13 @@ trait SpiderRepo
         $spider     = $this;
         $source_url = $this->source_url;
         if (!empty($source_url)) {
-            // 爬虫粘贴回调
+            // 爬虫回调
             $hookUrl = url('api/media/hook');
             $data    = [];
             $client  = new Client();
 
-            // 提交或者重试爬虫
-            $api      = \Haxibiao\Media\Video::getMediaBaseUri() . 'api/spider/paste';
+            // 提交爬虫
+            $api      = \Haxibiao\Media\Video::getMediaBaseUri() . 'api/spider/store';
             $response = $client->request('GET', $api, [
                 'http_errors' => false,
                 'query'       => [
