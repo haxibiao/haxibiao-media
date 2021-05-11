@@ -21,10 +21,6 @@ class VideoObserver
         if ($video->fileid) {
             $video->processVod();
         }
-        //粘贴视频
-        if ($video->spider) {
-            $video->pasteVod();
-        }
     }
 
     /**

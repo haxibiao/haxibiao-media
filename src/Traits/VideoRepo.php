@@ -340,30 +340,4 @@ trait VideoRepo
         //等hook
     }
 
-    /**
-     * 粘贴视频处理到vod
-     */
-    public function pasteVod()
-    {
-        $video = $this;
-
-        //处理 video 的 vod 信息和封面，并hook回来
-        $hookUrl = url('api/video/hook');
-        $data    = [];
-        $client  = new \GuzzleHttp\Client();
-
-        //提交 哈希云处理vod信息来hook结果
-        $apiPath  = 'api/video/paste';
-        $api      = \Haxibiao\Media\Video::getMediaBaseUri() . $apiPath;
-        $response = $client->request('GET', $api, [
-            'http_errors' => false,
-            'query'       => [
-                'share_link' => urlencode(trim($video->sharelink)), //粘贴视频必须有
-                'hook_url'   => $hookUrl,
-            ],
-        ]);
-
-        $response->getBody()->getContents();
-        //等hook
-    }
 }

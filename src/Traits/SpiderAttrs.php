@@ -17,11 +17,28 @@ trait SpiderAttrs
 
     public function getTitleAttribute()
     {
-        $shareTitle = data_get($this->raw, 'raw.item_list.0.share_info.share_title');
-        if ($shareTitle) {
+        //raw格式
+        if ($shareTitle = data_get($this->raw, 'raw.item_list.0.share_info.share_title')) {
+            return $shareTitle;
+        }
+        //精简提取过的格式
+        if ($shareTitle = data_get($this->raw, 'title')) {
             return $shareTitle;
         }
         return Arr::get($this->data, 'title', '此人很懒什么也没说!');
+    }
+
+    /**
+     * 秒粘贴秒播放地址
+     */
+    public function getPlayUrlAttribute()
+    {
+        //精简提取过的格式
+        if ($play_url = data_get($this->raw, 'play_url')) {
+            return $play_url;
+        }
+        //FIXME: 提供一个秒粘贴教程地址
+        return Arr::get($this->data, 'play_url', env('PASTE_DEMO_URL'));
     }
 
     public function getRewardAttribute()
