@@ -73,6 +73,7 @@ trait SpiderRepo
         $video->json = $pasteVideoInfo;
         $video->saveQuietly();
 
+        //播放地址靠谱，再创建爬虫和动态...
         if (filter_var(data_get($pasteVideoInfo, 'play_url'), FILTER_VALIDATE_URL)) {
             //爬虫
             $spider = Spider::firstOrNew([
@@ -198,9 +199,11 @@ trait SpiderRepo
     public static function getPasteVideoInfo($dyUrl)
     {
         $parse_api = Video::getMediaBaseUri() . 'api/spider/paste?source_url=' . $dyUrl;
-        $result    = @file_get_contents($parse_api);
-        $data      = data_get($result, 'data');
-        return $data;
+        if ($result = @file_get_contents($parse_api)) {
+            $data = data_get(@json_decode($result, true), 'data');
+            return $data;
+        }
+        return null;
     }
 
     /**
