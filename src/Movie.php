@@ -172,4 +172,9 @@ class Movie extends Model
     {
         return $this->morphMany(Favorite::class, 'favorable');
     }
+
+    public function getPostAttribute()
+    {
+        return $this->posts()->first() ?? null;
+    }
 }

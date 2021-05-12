@@ -78,6 +78,26 @@ class Video extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function question()
+    {
+        return $this->hasOne(\App\Question::class);
+    }
+
+    public function explanation()
+    {
+        return $this->hasOne(\App\Explanation::class);
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(\App\Comment::class, 'commentable');
+    }
+
+    public function likes()
+    {
+        return $this->morphMany(\App\Like::class, 'likable');
+    }
+
     /**
      * 剪辑的电影
      */
