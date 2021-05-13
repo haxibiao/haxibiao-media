@@ -114,7 +114,7 @@ class SpiderController extends Controller
                             $post->tagByNames($tagNames ?? []);
                         }
                     }
-                    $post->user_id = getUser()->id;
+                    $post->user_id = getUserId();
                     $post->save();
                     $count++;
                     sleep(5);

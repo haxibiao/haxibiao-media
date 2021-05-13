@@ -9,11 +9,11 @@ trait ImageResolvers
     //resolvers
     public static function resolveUploadImage($root, $args, $context = null, $info = null)
     {
-        if (is_testing_env()){
+        if (is_testing_env()) {
             return [];
         }
 
-        if (checkUser()) {
+        if (currentUser()) {
             $images    = $args['image']; // [base64String]
             $imageUrls = [];
             foreach ($images as $image) {

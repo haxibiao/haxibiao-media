@@ -216,7 +216,7 @@ trait MovieResolvers
     public function resolversRecommendMovie($root, $args, $content, $info)
     {
         $count = data_get($args, 'count', 7);
-        if (checkUser()) {
+        if (currentUser()) {
             $user = getUser();
             //收藏过的电影类型
             $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
@@ -252,7 +252,7 @@ trait MovieResolvers
             $log->movie_type   = $movie->type_name;
             $log->movie_reigon = $movie->country;
             //记录用户，作为展示的历史搜索数据
-            if (checkUser()) {
+            if (currentUser()) {
                 $log->user_id = getUser()->id;
             }
             if (isset($log->id)) {
@@ -333,7 +333,7 @@ trait MovieResolvers
             app_track_event('长视频', '搜索长视频', $keyword);
             Dimension::track("长视频搜索数", 1, "长视频");
             $qb = $qb->where('name', 'like', '%' . $keyword . '%');
-            if (checkUser()) {
+            if (currentUser()) {
                 if ($qb->count() > 0) {
                     Dimension::track("长视频搜索成功数", 1, "长视频");
                 }

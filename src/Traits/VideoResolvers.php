@@ -1,11 +1,11 @@
 <?php
 namespace Haxibiao\Media\Traits;
 
-use App\Exceptions\UserException;
 use App\Gold;
 use App\Share;
 use App\Visit;
 use GraphQL\Type\Definition\ResolveInfo;
+use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Media\Video;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
@@ -16,7 +16,7 @@ trait VideoResolvers
      */
     public static function resolveRecommendVideos($root, $args, $context, $info)
     {
-        $user = checkUser();
+        $user = currentUser();
         return Video::getVideos($user, $args['limit'], $args['offset']);
     }
 

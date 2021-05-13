@@ -124,7 +124,7 @@ class MovieController extends Controller
     //FIXME: 需要把sns当做base一样的基础包依赖，重构通用sns功能
     public function toggoleLike()
     {
-        if (checkUser()) {
+        if (currentUser()) {
             $user     = getUser();
             $movie_id = request()->get('movie_id');
             $type     = request()->get('type');
@@ -150,7 +150,7 @@ class MovieController extends Controller
 
     public function report()
     {
-        if ($user = checkUser()) {
+        if ($user = currentUser()) {
             $id     = request()->get('id');
             $remark = request()->get('remark');
             $report = Report::create([
@@ -166,7 +166,7 @@ class MovieController extends Controller
     //FIXME: 需要把sns当做base一样的基础包依赖，重构通用sns功能
     public function toggoleFan()
     {
-        if (checkUser()) {
+        if (currentUser()) {
             $user     = getUser();
             $movie_id = request()->get('movie_id');
             $fan      = Favorite::firstOrNew([
