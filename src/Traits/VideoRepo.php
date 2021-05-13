@@ -54,7 +54,7 @@ trait VideoRepo
             //专题封面
             $category->logo = $movie->cover_url;
             // 默认专题通过审核
-            $category->status = Category::STATUS_PUBLIC;
+            $category->status = Category::STATUS_PUBLISH;
             $category->save();
 
             // 发布动态
