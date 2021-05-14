@@ -67,8 +67,9 @@ trait SpiderRepo
         $pasteVideoInfo = SpiderRepo::getPasteVideoInfo($dyUrl);
 
         //乐观创建视频
-        $video        = Video::firstOrNew(['sharelink' => $dyUrl]);
-        $video->title = $title;
+        $video          = Video::firstOrNew(['sharelink' => $dyUrl]);
+        $video->title   = $title;
+        $video->user_id = $user->id;
         //播放地址+封面 乐观存json,避免path cover字段溢出
         $video->json = $pasteVideoInfo;
         $video->saveQuietly();
