@@ -290,8 +290,8 @@ trait VideoRepo
     public static function getCloudVideoInfo($fileid)
     {
         $json = @file_get_contents(Video::getMediaBaseUri() . 'api/video/info/' . $fileid);
-        $data = @json_decode($json, true);
-        return $data;
+        $res  = @json_decode($json, true) ?? [];
+        return data_get($res, 'data');
     }
 
     /**
