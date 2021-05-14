@@ -6,6 +6,11 @@ use Illuminate\Support\ServiceProvider;
 
 class MediaServiceProvider extends ServiceProvider
 {
+    protected $listen = [
+        'Haxibiao\Media\Events\PostPublishSuccess' => [
+            'Haxibiao\media\Listeners\PostPublishSuccessHandler',
+        ],
+    ];
 
     public function register()
     {
