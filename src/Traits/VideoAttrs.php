@@ -23,12 +23,18 @@ trait VideoAttrs
 
     public function getWidthAttribute()
     {
-        return data_get($this, 'json.width', 576);
+        $width  = data_get($this, 'json.width', 576);
+        $height = data_get($this, 'json.height', 1024);
+        $rotate = data_get($this, 'json.rotate', 0);
+        return $rotate == 90 ? $height : $width;
     }
 
     public function getHeightAttribute()
     {
-        return data_get($this, 'json.height', 1024);
+        $width  = data_get($this, 'json.width', 576);
+        $height = data_get($this, 'json.height', 1024);
+        $rotate = data_get($this, 'json.rotate', 0);
+        return $rotate == 90 ? $width : $height;
     }
 
     /**
