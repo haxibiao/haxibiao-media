@@ -18,4 +18,13 @@ class SearchLog extends Model
     {
         return $this->belongsTo(\App\User::class);
     }
+
+    public static function getTypes()
+    {
+        return [
+            "movies"     => "电影",
+            "questions"  => "题目",
+            "categories" => "题库|分类",
+        ];
+    }
 }

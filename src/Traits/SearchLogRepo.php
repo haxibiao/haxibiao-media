@@ -13,6 +13,7 @@ trait SearchLogRepo
         $log = SearchLog::firstOrNew([
             'user_id' => $userId,
             'keyword' => $query,
+            'type'    => $type,
         ]);
         if (isset($log->id)) {
             $log->increment('count');
