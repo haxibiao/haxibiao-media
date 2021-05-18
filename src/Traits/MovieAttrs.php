@@ -26,10 +26,11 @@ trait MovieAttrs
             'data' => $movie->series_urls,
         ];
 
-        $lines[] = [
-            'name' => "北美",
-            'data' => json_decode($movie->data_source, true),
-        ];
+        //FIXME: 下线北美线路，后面补充香港线路，我们的非ucdn线路
+        // $lines[] = [
+        //     'name' => "北美",
+        //     'data' => json_decode($movie->data_source, true),
+        // ];
 
         return $lines;
     }
