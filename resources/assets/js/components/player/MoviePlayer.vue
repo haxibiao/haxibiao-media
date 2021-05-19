@@ -366,7 +366,7 @@ export default {
         handleCommand(command) {
             this.currentSourceIndex = command;
             this.series = this.playWay[this.currentSourceIndex];
-            this.source = this.series[this.currentEpisode - 1];
+            this.source = this.series[this.currentEpisode - 1].url;
         },
     },
     computed: {
