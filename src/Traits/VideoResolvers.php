@@ -2,7 +2,6 @@
 namespace Haxibiao\Media\Traits;
 
 use App\Gold;
-use App\Share;
 use App\Visit;
 use GraphQL\Type\Definition\ResolveInfo;
 use Haxibiao\Breeze\Exceptions\UserException;
@@ -108,60 +107,65 @@ trait VideoResolvers
 4.动态广场,查看广告动态得(+1*N贡献)';
     }
 
-    public function downloadVideo($rootValue, $args, $context, $resolveInfo)
+    public function resolveDownloadVideo($rootValue, $args, $context, $resolveInfo)
     {
-        $videoId   = data_get($args, 'video_id');
-        $video     = \App\Video::findOrFail($videoId);
-        $user      = getUser();
-        $originUrl = $video->path;
+        $videoId = data_get($args, 'video_id');
+        $video   = \App\Video::findOrFail($videoId);
 
-        // 之前下载过,不需要重复解析
-        $share = Share::where('user_id', $user->id)
-            ->where('shareable_id', $video->id)
-            ->where('shareable_type', 'videos')
-            ->where('active', true)
-            ->first();
-        if ($share) {
-            return $share->url;
-        }
+        //暂时不需要下载视频之前修复哈希云vod里的meta信息了，直接现在无水印即可
+        return $video->url;
 
-        $share = Share::buildFor($video)
-            ->setActive(false)
-            ->setUrl($originUrl)
-            ->setUserId($user->id)
-            ->build();
+        // $user      = getUser();
+        // $originUrl = $video->path;
 
-        // 请求处理哈希云进行MetaData处理
-        $uuid           = $share->uuid;
-        $title2MetaData = sprintf('uuid:%s', $uuid);
-        $curl           = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL            => \Haxibiao\Media\Video::getMediaBaseUri() . "api/video/modifyMetadata",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING       => "",
-            CURLOPT_MAXREDIRS      => 10,
-            CURLOPT_TIMEOUT        => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST  => "POST",
-            CURLOPT_POSTFIELDS     => [
-                'title' => $title2MetaData,
-                'url'   => $originUrl,
-            ],
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $result = json_decode($response);
+        // // 之前下载过,不需要重复解析
+        // $share = Share::where('user_id', $user->id)
+        //     ->where('shareable_id', $video->id)
+        //     ->where('shareable_type', 'videos')
+        //     ->where('active', true)
+        //     ->first();
+        // if ($share) {
+        //     return $share->url;
+        // }
 
-        $responseCode = data_get($result, 'code');
-        $modifiedUrl  = data_get($result, 'data.MediaUrl');
-        if ($responseCode == 200 && $modifiedUrl) {
-            $share->url    = $modifiedUrl;
-            $share->active = true;
-            $share->save();
+        // $share = Share::buildFor($video)
+        //     ->setActive(false)
+        //     ->setUrl($originUrl)
+        //     ->setUserId($user->id)
+        //     ->build();
 
-            return $modifiedUrl;
-        }
-        throw new UserException('下载失败');
+        // // 请求处理哈希云进行MetaData处理
+        // $uuid           = $share->uuid;
+        // $title2MetaData = sprintf('uuid:%s', $uuid);
+        // $curl           = curl_init();
+        // curl_setopt_array($curl, array(
+        //     CURLOPT_URL            => \Haxibiao\Media\Video::getMediaBaseUri() . "api/video/modifyMetadata",
+        //     CURLOPT_RETURNTRANSFER => true,
+        //     CURLOPT_ENCODING       => "",
+        //     CURLOPT_MAXREDIRS      => 10,
+        //     CURLOPT_TIMEOUT        => 0,
+        //     CURLOPT_FOLLOWLOCATION => true,
+        //     CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+        //     CURLOPT_CUSTOMREQUEST  => "POST",
+        //     CURLOPT_POSTFIELDS     => [
+        //         'title' => $title2MetaData,
+        //         'url'   => $originUrl,
+        //     ],
+        // ));
+        // $response = curl_exec($curl);
+        // curl_close($curl);
+        // $result = json_decode($response);
+
+        // $responseCode = data_get($result, 'code');
+        // $modifiedUrl  = data_get($result, 'data.MediaUrl');
+        // if ($responseCode == 200 && $modifiedUrl) {
+        //     $share->url    = $modifiedUrl;
+        //     $share->active = true;
+        //     $share->save();
+
+        //     return $modifiedUrl;
+        // }
+
+        // throw new UserException('下载失败');
     }
 }

@@ -6,8 +6,7 @@ extend type Mutation @guard {
     """
     获取视频下载链接
     """
-    downloadVideo(video_id: Int!): String
-    @field(resolver: "App\\Video@downloadVideo")
+    downloadVideo(video_id: Int!): String @field(resolver: "App\\Video@resolveDownloadVideo")
 }
 
 input videoPlayReport {
