@@ -3,6 +3,9 @@ extend type Mutation @guard {
     这就是工厂里刷视频赚金币的奖励接口（依赖gql type Gold）
     """
     videoPlayReward(input: videoPlayReport): Gold @field(resolver: "App\\Video@videoPlayReward")
+}
+
+extend type Mutation {
     """
     获取视频下载链接
     """
