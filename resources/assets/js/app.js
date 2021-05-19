@@ -1,8 +1,15 @@
+import Vue from 'vue';
+import axios from 'axios';
+import { optional } from './plugins/vue-properties';
 require('es6-promise').polyfill();
+require('./initial');
 require('./bootstrap');
-require('./global');
 require('./element');
-const Vue = require('vue');
+
+window.$bus = new Vue();
+Vue.prototype.$http = axios;
+Vue.prototype.$user = window.user || {};
+Vue.prototype.$optional = optional;
 
 // basic comment
 Vue.component('video-player', require('./components/player/VideoPlayer.vue').default);

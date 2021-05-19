@@ -21,10 +21,10 @@
 
     <!-- Styles -->
     <link href="{{ breeze_mix('css/media.css') }}" rel="stylesheet">
-
     @stack('styles')
-    <!-- Scripts -->
 
+    <!-- Scripts -->
+    <script type="text/javascript" src="{{ breeze_mix('js/media.js') }}" defer></script>
     @stack('scripts')
 
 </head>
@@ -51,7 +51,6 @@
 
         </script>
     @endif
-    <script type="text/javascript" src="{{ breeze_mix('js/media.js') }}"></script>
     @stack('css')
     @stack('js')
 

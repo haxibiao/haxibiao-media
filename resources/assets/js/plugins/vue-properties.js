@@ -1,5 +1,5 @@
 // vue2.x template暂时不支持optional chaining，因为实现一个类型作用的方法，添加到vue原型上
-export function optionalChaining(obj, chaining) {
+export function optional(obj, chaining) {
     if (obj === null || typeof obj !== 'object') return null;
     let result = { ...obj };
     const keys = chaining.split('.');
