@@ -129,6 +129,23 @@
                         </h3>
                     </div>
                     <div class="video_desc">
+                        <div class="circuitry">
+                            <el-dropdown @command="handleCommand" v-if="playWay">
+                                <span class="el-dropdown-link">
+                                    换线路<i class="el-icon-arrow-down el-icon--right"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item
+                                        v-for="(value, index) in playWay"
+                                        :key="index"
+                                        :command="index"
+                                        :disabled="index == currentSourceIndex"
+                                    >
+                                        线路{{ index + 1 }}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
                         <div class="type">
                             {{ movie.score || Math.round(Math.max(6, Math.random() * 10)) + '.' + 0 }}分&nbsp;/&nbsp;
                             <a href="javascript:void(0);">{{ movie.region || '未知' }}</a
@@ -142,12 +159,12 @@
                         <li
                             :class="{
                                 'col-xs-2': series.length > 1,
-                                'col-xs-3': !(series.length > 1),
-                                'col-sm-2': !(series.length > 1),
-                                'col-lg-6': !(series.length > 1),
+                                'col-xs-3': series.length <= 1,
+                                'col-sm-2': series.length <= 1,
+                                'col-lg-6': series.length <= 1,
                             }"
                             v-for="(media, index) in series"
-                            :key="media.id"
+                            :key="index"
                         >
                             <a
                                 href="javascript:void(0)"
@@ -191,7 +208,9 @@ export default {
         'apiLike',
         'apiFavorite',
     ],
-
+    updated() {
+        console.log('updated source', this.source);
+    },
     created() {
         if (this.initEpisode) {
             this.currentEpisode = Number(this.initEpisode) + 1;
@@ -201,9 +220,12 @@ export default {
         if (this.movieData !== null && typeof this.movieData === 'object') {
             this.movie = this.movieData;
             this.series = this.movie.series || [];
-            console.log('this.series', this.series);
+            if (Array.isArray(this.movie.play_way) && this.movie.play_way.length > 0) {
+                this.playWay = this.movie.play_way;
+            }
             this.source = this.$optional(this.series, `${this.currentEpisode - 1}.url`);
-            console.log('this.source', this.source);
+            console.log('movie', this.movieData);
+            console.log('mounted source', this.currentEpisode, this.source);
         }
 
         const that = this;
@@ -340,6 +362,12 @@ export default {
                 $('#login-modal').modal('toggle');
             }
         },
+        // 切换线路
+        handleCommand(command) {
+            this.currentSourceIndex = command;
+            this.series = this.playWay[this.currentSourceIndex];
+            this.source = this.series[this.currentEpisode - 1];
+        },
     },
     computed: {
         movieTitle() {
@@ -364,6 +392,8 @@ export default {
             editingVisible: false,
             videoDuration: '',
             currentTime: '',
+            playWay: null,
+            currentSourceIndex: 0,
         };
     },
 };

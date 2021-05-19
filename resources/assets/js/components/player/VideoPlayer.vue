@@ -80,7 +80,6 @@ export default {
                     token: this.episode, //是series 的 index
                 };
             }
-            console.log('initPlayer options', options);
             this.player = new DPlayer(options);
         },
         // 播放器事件监听
@@ -159,6 +158,7 @@ export default {
                             //返回历史观看时长
                             const history = response.data.data;
                             // 跳转上次观看的集数
+                            console.log('restoreProgress api', history.source);
                             this.$emit('update:source', history.source);
                             this.$emit('update:episode', history.episode);
                             this.seekTime = history.time;
@@ -172,6 +172,7 @@ export default {
                 }
                 history = JSON.parse(history);
                 // 跳转上次观看的集数
+                console.log('restoreProgress cookie', history.source);
                 this.$emit('update:source', history.source);
                 this.$emit('update:episode', history.episode);
                 this.seekTime = history.time;
