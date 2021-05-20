@@ -2,11 +2,11 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Post;
 use GuzzleHttp\Client;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Breeze\User;
+use Haxibiao\Content\Post;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Support\Arr;
@@ -98,7 +98,7 @@ trait SpiderRepo
             //乐观发布动态
             $post->status      = Post::PUBLISH_STATUS;
             $post->description = $title;
-            $post->saveQuietly();
+            $post->save();
 
             return $post;
         }
