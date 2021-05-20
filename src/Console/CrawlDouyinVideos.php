@@ -2,10 +2,9 @@
 
 namespace Haxibiao\Media\Console;
 
-use App\Post;
-use App\Spider;
 use App\User;
 use GuzzleHttp\Client;
+use Haxibiao\Media\Traits\SpiderRepo;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,40 +38,31 @@ class CrawlDouyinVideos extends Command
         $videos   = data_get($contents, 'billboard_data');
 
         foreach ($videos as $video) {
-
-            //随机一个取马甲号用户
-            $vestUserIds = User::where('role_id', User::VEST_STATUS)
-                ->inRandomOrder()->pluck('id')->toArray();
-            $user_id = array_random(array_values($vestUserIds));
-
-            $shareUrl = data_get($video, 'link');
-            $title    = data_get($video, 'title');
-            $spider   = Spider::has('video')->firstOrNew(['source_url' => $shareUrl]);
-            if (isset($spider->id)) {
-                $this->info("该视频已爬取过了，跳过该条 ");
-                continue;
-
-            }
-            $this->info("开始爬取视频 " . $title . $shareUrl);
-
-            $spider->user_id     = $user_id;
-            $spider->spider_type = 'videos';
-            $spider->saveDataOnly();
-            //创建对应的动态
-            $post              = \Haxibiao\Content\Post::firstOrNew(['spider_id' => $spider->id]);
-            $post->status      = Post::PRIVARY_STATUS;
-            $post->user_id     = $user_id;
-            $post->description = str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', 'dou', 'Dou', 'DOU', '抖音助手'], '', $title);
-            $post->save();
-            //将视频归入合集中
-            $postIds[$post->id] = ['sort_rank' => data_get($video, 'mix_info.statis.current_episode')];
-
-            //登录
-            Auth::login(User::find($user_id));
             try {
+                //随机一个取马甲号用户
+                $vestUserIds = User::where('role_id', User::VEST_STATUS)
+                    ->inRandomOrder()->pluck('id')->toArray();
+                $user_id = array_random(array_values($vestUserIds));
+
+                $title    = data_get($video, 'title');
+                
+                $shareUrl = data_get($video, 'link');
+                $end   = strpos($shareUrl, "?");
+                $url = substr($shareUrl,0,$end);
+
+                //创建对应的动态
+                $content = str_replace(['#在抖音，记录美好生活#', '@抖音小助手', '抖音', 'dou', 'Dou', 'DOU', '抖音助手'], '', $title);
+                
+                $this->info("开始爬取视频 " . $content . $url);
+
+                //登录
+                Auth::login(User::find($user_id));
                 //爬取对应的数据
-                $spider->process();
+
+                SpiderRepo::pasteDouyinVideo(User::find($user_id), $url, $content);
+                //登录
                 $count++;
+
             } catch (\Exception $ex) {
                 $info = $ex->getMessage();
                 info("异常信息" . $info);
