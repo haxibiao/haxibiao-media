@@ -8,3 +8,4 @@ window.io = require('socket.io-client');
 Vue.component('video-player', require('./components/player/VideoPlayer.vue').default);
 Vue.component('movie-player', require('./components/player/MoviePlayer.vue').default);
 Vue.component('movie-editing', require('./components/player/MovieEditing.vue').default);
+Vue.component('play-lines', require('./components/player/PlayLines.vue').default);

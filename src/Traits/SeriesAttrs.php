@@ -13,7 +13,7 @@ trait SeriesAttrs
         return $this->source;
     }
 
-    public function getPlayWayAttribute()
+    public function getPlayLinesAttribute()
     {
         return [
             '默认线路' => $this->play_url,

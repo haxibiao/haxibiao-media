@@ -19,3 +19,5 @@ mix.js('resources/assets/js/app.js', 'public/js/_media.js')
 
 // media.js
 mix.scripts(['public/js/_media.js', 'node_modules/hls.js/dist/hls.js'], 'public/js/media.js').version();
+
+mix.browserSync('l.neihandianying.com');

@@ -92,6 +92,19 @@
                         </a>
                     </li>
                 </el-popover>
+                <el-popover placement="bottom" trigger="manual" v-model="playLinesVisible">
+                    <play-lines
+                        :lines="[]"
+                        @onSwitchLine="switchLine"
+                        @onClose="playLinesVisible = !playLinesVisible"
+                    />
+                    <li class="fl operation" slot="reference" @click="togglePlayLines">
+                        <a href="javascript:void(0);">
+                            <i class="iconfont icon-scenes-fill"></i>
+                            <span class="mobile">线路</span>
+                        </a>
+                    </li>
+                </el-popover>
                 <li class="fr operation" style="margin: 0">
                     <a
                         :class="{ disabled: series.length <= currentEpisode }"
@@ -130,18 +143,18 @@
                     </div>
                     <div class="video_desc">
                         <div class="circuitry">
-                            <el-dropdown @command="handleCommand" v-if="playWay">
+                            <el-dropdown @command="switchLine">
                                 <span class="el-dropdown-link">
                                     换线路<i class="el-icon-arrow-down el-icon--right"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item
-                                        v-for="(value, index) in playWay"
+                                        v-for="(lineName, index) in playLines"
                                         :key="index"
-                                        :command="index"
-                                        :disabled="index == currentSourceIndex"
+                                        :command="lineName"
+                                        :disabled="lineName == playLine"
                                     >
-                                        线路{{ index + 1 }}
+                                        {{ lineName }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -220,9 +233,17 @@ export default {
         if (this.movieData !== null && typeof this.movieData === 'object') {
             this.movie = this.movieData;
             this.series = this.movie.series || [];
-            if (Array.isArray(this.movie.play_way) && this.movie.play_way.length > 0) {
-                this.playWay = this.movie.play_way;
+
+            //线路信息
+            if (this.movie.play_lines) {
+                let lines = ['内涵云'];
+                for (var lineName in this.movie.play_lines) {
+                    lines.push(lineName);
+                }
+                this.playLines = lines;
+                console.log('this.playLines', this.playLines);
             }
+
             this.source = this.$optional(this.series, `${this.currentEpisode - 1}.url`);
             console.log('movie', this.movieData);
             console.log('mounted source', this.currentEpisode, this.source);
@@ -362,11 +383,21 @@ export default {
                 $('#login-modal').modal('toggle');
             }
         },
-        // 切换线路
-        handleCommand(command) {
-            this.currentSourceIndex = command;
-            this.series = this.playWay[this.currentSourceIndex];
-            this.source = this.series[this.currentEpisode - 1].url;
+
+        switchLine(playLine) {
+            this.playLine = playLine;
+            this.currentEpisode = 1;
+
+            //ivan：切换资源才是目前的实情
+            if (playLine !== '内涵云') {
+                this.series = this.movieData.play_lines[playLine];
+            } else {
+                this.series = this.movie.series;
+            }
+        },
+
+        togglePlayLines() {
+            this.playLinesVisible = !this.playLinesVisible;
         },
     },
     computed: {
@@ -374,7 +405,8 @@ export default {
             return `${this.movie.name}${this.series.length > 1 ? ' 第' + this.currentEpisode + '集' : ''}`;
         },
         seriesName() {
-            return this.series[this.currentEpisode - 1].name;
+            let serie = this.series[this.currentEpisode - 1];
+            return serie ? serie.name : '';
         },
         downloadPageUrl() {
             // return !this.appDownload ? '/app' : this.appDownload;
@@ -390,10 +422,11 @@ export default {
             noticeInfo: '',
             wideSwitch: false,
             editingVisible: false,
+            playLinesVisible: false,
             videoDuration: '',
             currentTime: '',
-            playWay: null,
-            currentSourceIndex: 0,
+            playLines: null,
+            playLine: null,
         };
     },
 };
