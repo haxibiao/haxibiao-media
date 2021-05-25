@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use Haxibiao\Media\AudioBook as BaseAudioBook;
+
+class AudioBook extends BaseAudioBook
+{
+
+}

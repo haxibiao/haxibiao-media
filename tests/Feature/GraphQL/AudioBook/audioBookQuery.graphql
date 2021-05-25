@@ -1,0 +1,15 @@
+# 听书详情
+query audioBookQuery($id:Int!){
+    audioBook(id:$id){
+        id
+        name
+        introduction
+        announcer
+        cover
+        type_name
+        count_series
+        is_over
+        data
+        updated_at
+    }
+}

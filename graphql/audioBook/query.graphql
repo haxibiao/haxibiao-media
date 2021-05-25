@@ -1,0 +1,69 @@
+type AudioBook {
+    id: Int!
+
+    """
+    音频名
+    """
+    name: String
+
+    """
+    简介
+    """
+    introduction: String
+
+    """
+    讲述人
+    """
+    announcer: String
+
+    """
+    封面
+    """
+    cover: String
+
+    """
+    类别
+    """
+    type_name: String
+
+    """
+    集数
+    """
+    count_series: Int
+
+    """
+    是否更新完
+    """
+    is_over: Boolean
+
+    """
+    集数列表
+    """
+    data: JsonType
+
+    """
+    创建时间
+    """
+    created_at: DateTime!
+
+    """
+    更新时间
+    """
+    updated_at: DateTime!
+}
+
+extend type Query  {
+    """
+    说书详情
+    """
+    audioBook(id: Int! @eq): AudioBook @find(model: "App\\AudioBook")
+
+    """
+    说书列表
+    """
+    filterAudioBooks(
+    announcer: String
+    type_name: String
+    ): [AudioBook] @paginate(defaultCount: 10, builder: "App\\AudioBook@resolveFilterAudioBook")
+
+}

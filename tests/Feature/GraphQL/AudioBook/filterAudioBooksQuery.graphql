@@ -1,0 +1,25 @@
+# 听书列表
+query audioBooksQuery(
+    $announcer:String,
+    $type_name:String,
+    $page: Int
+){
+    filterAudioBooks(
+        announcer:$announcer,
+        type_name:$type_name,
+        page: $page
+    ){
+        data{
+            id
+            name
+            introduction
+            announcer
+            cover
+            type_name
+            count_series
+            is_over
+            data
+            updated_at
+        }
+    }
+}
