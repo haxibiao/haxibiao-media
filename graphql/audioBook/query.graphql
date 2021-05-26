@@ -39,7 +39,7 @@ type AudioBook {
     """
     集数列表
     """
-    data: JsonType
+    chapters(sortOrderOfChapters: ChapterSortOrderForAudiobooks=ASC, first: Int=15, page: Int=1) : ChaptersPaginatorForAudiobooks @field(resolver: "App\\AudioBook@chaptersOfAudioBookResolver")
 
     """
     创建时间
@@ -52,11 +52,30 @@ type AudioBook {
     updated_at: DateTime!
 }
 
+type ChaptersPaginatorForAudiobooks {
+    data: [ChapterInfoForAudioBooks!]!
+    paginatorInfo: PaginatorInfo!
+}
+
+type ChapterInfoForAudioBooks{
+    name: String
+    url: String
+}
+
+enum ChapterSortOrderForAudiobooks {
+    "正序"
+    ASC
+    "倒序"
+    DESC
+}
+
+
+
 extend type Query  {
     """
     说书详情
     """
-    audioBook(id: Int! @eq): AudioBook @find(model: "App\\AudioBook")
+    audioBook(id: ID!): AudioBook @field(resolver: "App\\AudioBook@resolveAudioBook")
 
     """
     说书列表

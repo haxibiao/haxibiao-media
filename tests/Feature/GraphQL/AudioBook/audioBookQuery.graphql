@@ -1,5 +1,5 @@
 # 听书详情
-query audioBookQuery($id:Int!){
+query audioBookQuery($id:ID!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
     audioBook(id:$id){
         id
         name
@@ -9,7 +9,17 @@ query audioBookQuery($id:Int!){
         type_name
         count_series
         is_over
-        data
+        chapters(sortOrderOfChapters:DESC,page:$pageOfChapters,first:$firstOfChapters){
+            paginatorInfo{
+                count
+                total
+                hasMorePages
+            }
+            data{
+                name
+                url
+            }
+        }
         updated_at
     }
 }

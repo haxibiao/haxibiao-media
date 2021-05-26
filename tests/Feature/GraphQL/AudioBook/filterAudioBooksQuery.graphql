@@ -1,14 +1,6 @@
 # 听书列表
-query audioBooksQuery(
-    $announcer:String,
-    $type_name:String,
-    $page: Int
-){
-    filterAudioBooks(
-        announcer:$announcer,
-        type_name:$type_name,
-        page: $page
-    ){
+query audioBooksQuery($announcer:String,$type_name:String, $page: Int,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
+    filterAudioBooks(announcer:$announcer,type_name:$type_name,page: $page){
         data{
             id
             name
@@ -18,8 +10,29 @@ query audioBooksQuery(
             type_name
             count_series
             is_over
-            data
+            chapters(sortOrderOfChapters:ASC,page:$pageOfChapters,first:$firstOfChapters){
+                paginatorInfo{
+                    count
+                    total
+                    hasMorePages
+                }
+                data{
+                    name
+                    url
+                }
+            }
             updated_at
+        }
+        paginatorInfo{
+            hasMorePages
+            count
+            currentPage
+            firstItem
+            hasMorePages
+            lastItem
+            lastPage
+            perPage
+            total
         }
     }
 }

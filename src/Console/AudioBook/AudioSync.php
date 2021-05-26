@@ -31,7 +31,7 @@ class AudioSync extends Command
 
         $this->info('开始同步音频数据。。');
 		$count = 0;
-        DB::connection(self::DB_CONNECTION)->table(self::DB_TABLE)->select('id', 'extra' , 'name', 'announcer', 'introduction','cover','type_name','data')
+        DB::connection(self::DB_CONNECTION)->table(self::DB_TABLE)->select('id', 'extra' , 'name', 'announcer', 'introduction','cover','type_name','data' ,'status')
 			->where('status',1)->chunkById(100,function($audioes)use(&$count){
 				foreach($audioes as $audio){
 					try {
