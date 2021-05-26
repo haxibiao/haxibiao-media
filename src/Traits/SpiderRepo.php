@@ -37,11 +37,15 @@ trait SpiderRepo
         }
 
         $post = Spider::pasteDouyinVideo($user, $shareLink, $content);
-        // 维护标签
-        $post->tagByNames($tagNames);
-        $post->saveQuietly();
+        //维护标签
+        if ($post) {
+            $post->tagByNames($tagNames);
+            $post->saveQuietly();
+            return $post->spider;
+        } else {
+            return null;
+        }
 
-        return $post->spider;
     }
 
     /**
