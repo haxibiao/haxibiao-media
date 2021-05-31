@@ -1,0 +1,8 @@
+<?php
+
+namespace App;
+
+class Novel extends \Haxibiao\Media\Novel
+{
+
+}

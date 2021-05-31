@@ -29,7 +29,7 @@ class CreateAudioBooksTable extends Migration
 			$table->json('data')->nullable()->comment('章节信息');
 			$table->tinyInteger('status')->nullable()->default(AudioBook::STATUS_OF_PUBLISH)->comment('-1为下架状态，-2资源损坏 , 0未标示，1正常影片,');
 			$table->boolean('is_over')->default(false)->comment('是否完结');
-			$table->string('source_key', 50)->nullable()->index()->comment('资源UID');
+			$table->string('source_key', 50)->unique()->comment('资源UID');
 
             $table->timestamps();
         });

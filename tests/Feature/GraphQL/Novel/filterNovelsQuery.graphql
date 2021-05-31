@@ -1,0 +1,35 @@
+# 小说列表
+query filterNovelsQuery($author:String, $page: Int,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
+    filterNovels(author:$author,page: $page){
+        data{
+            id
+            name
+            introduction
+            type_names
+            cover
+            author
+            is_over
+            count_words
+            count_chapters
+            chapters(page:$pageOfChapters,count:$firstOfChapters){
+                data{
+                    id
+                    url
+                    title
+                    index
+                }
+            }
+        }
+        paginatorInfo{
+            hasMorePages
+            count
+            currentPage
+            firstItem
+            hasMorePages
+            lastItem
+            lastPage
+            perPage
+            total
+        }
+    }
+}
