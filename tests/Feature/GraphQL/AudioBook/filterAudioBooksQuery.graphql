@@ -7,10 +7,10 @@ query audioBooksQuery($announcer:String,$type_name:String, $page: Int,$pageOfCha
             introduction
             announcer
             cover
-            type_name
-            count_series
+            type_names
+            count_chapters
             is_over
-            chapters(sortOrderOfChapters:ASC,page:$pageOfChapters,first:$firstOfChapters){
+            chapters(sortOrderOfChapters:DESC,page:$pageOfChapters,first:$firstOfChapters){
                 paginatorInfo{
                     count
                     total

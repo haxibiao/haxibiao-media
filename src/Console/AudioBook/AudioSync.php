@@ -51,9 +51,9 @@ class AudioSync extends Command
 						$audioBook->introduction= $audio->introduction;
 						$audioBook->announcer	= $audio->announcer;
 						$audioBook->cover       = $audio->cover;
-						$audioBook->type_name   = $audio->type_name;
-						$audioBook->data        = $data;
-						$audioBook->count_series= count($data);
+						$audioBook->type_names  = $audio->type_name;
+						$audioBook->data          = $data;
+						$audioBook->count_chapters= count($data);
 						$audioBook->updated_at  = $updatedAt;
 						$audioBook->created_at  = $updatedAt;
 						$audioBook->is_over	    = $isOver;

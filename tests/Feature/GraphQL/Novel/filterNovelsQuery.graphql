@@ -1,7 +1,12 @@
 # 小说列表
-query filterNovelsQuery($author:String, $page: Int,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
-    filterNovels(author:$author,page: $page){
-        data{
+query filterNovelsQuery(
+    $author: String
+    $page: Int
+    $pageOfChapters: Int = 1
+    $firstOfChapters: Int = 15
+) {
+    filterNovels(author: $author, page: $page) {
+        data {
             id
             name
             introduction
@@ -11,8 +16,8 @@ query filterNovelsQuery($author:String, $page: Int,$pageOfChapters:Int=1,$firstO
             is_over
             count_words
             count_chapters
-            chapters(page:$pageOfChapters,count:$firstOfChapters){
-                data{
+            chapters(page: $pageOfChapters, first: $firstOfChapters) {
+                data {
                     id
                     url
                     title
@@ -20,7 +25,7 @@ query filterNovelsQuery($author:String, $page: Int,$pageOfChapters:Int=1,$firstO
                 }
             }
         }
-        paginatorInfo{
+        paginatorInfo {
             hasMorePages
             count
             currentPage

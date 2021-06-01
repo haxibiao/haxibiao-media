@@ -6,8 +6,8 @@ query audioBookQuery($id:ID!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
         introduction
         announcer
         cover
-        type_name
-        count_series
+        type_names
+        count_chapters
         is_over
         chapters(sortOrderOfChapters:DESC,page:$pageOfChapters,first:$firstOfChapters){
             paginatorInfo{

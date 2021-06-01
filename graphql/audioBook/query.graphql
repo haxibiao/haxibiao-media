@@ -24,12 +24,12 @@ type AudioBook {
     """
     类别
     """
-    type_name: String
+    type_names: String
 
     """
     集数
     """
-    count_series: Int
+    count_chapters: String
 
     """
     是否更新完

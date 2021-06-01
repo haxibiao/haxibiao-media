@@ -1,6 +1,10 @@
 # 小说详情
-query novelQuery($id:ID!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
-    novel(id:$id){
+query novelQuery(
+    $id: ID!
+    $pageOfChapters: Int = 1
+    $firstOfChapters: Int = 15
+) {
+    novel(id: $id) {
         id
         name
         introduction
@@ -10,8 +14,8 @@ query novelQuery($id:ID!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
         is_over
         count_words
         count_chapters
-        chapters(page:$pageOfChapters,count:$firstOfChapters){
-            data{
+        chapters(page: $pageOfChapters, first: $firstOfChapters) {
+            data {
                 id
                 url
                 title
@@ -20,3 +24,4 @@ query novelQuery($id:ID!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
         }
     }
 }
+

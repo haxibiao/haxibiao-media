@@ -24,8 +24,8 @@ class CreateAudioBooksTable extends Migration
 			$table->string('introduction')->nullable()->comment('简介');
 			$table->string('announcer')->nullable()->comment('播音人');
 			$table->string('cover')->nullable()->comment('封面');
-			$table->string('type_name')->nullable()->comment('类别');
-			$table->integer('count_series')->default(0)->comment("总集数");
+			$table->string('type_names')->nullable()->comment('类别');
+			$table->integer('count_chapters')->default(0)->comment("总集数");
 			$table->json('data')->nullable()->comment('章节信息');
 			$table->tinyInteger('status')->nullable()->default(AudioBook::STATUS_OF_PUBLISH)->comment('-1为下架状态，-2资源损坏 , 0未标示，1正常影片,');
 			$table->boolean('is_over')->default(false)->comment('是否完结');
