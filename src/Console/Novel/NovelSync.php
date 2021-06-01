@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Console\Novel;
 
+use Carbon\Carbon;
 use Haxibiao\Media\Novel;
 use Haxibiao\Media\NovelChapter;
 use Illuminate\Console\Command;
@@ -13,7 +14,7 @@ class NovelSync extends Command
 {
     protected $signature = 'novel:sync';
 
-    protected $description = '同步内涵云小说';
+    protected $description = '同步内涵云小说资源';
 
     private $total 		= 0;
     private $failure	= 0;
@@ -32,12 +33,14 @@ class NovelSync extends Command
 
 		$this->validateDBSchema();
 		$this->prepareDBConfig();
+		// 上方是打印日志，以及数据校验，阅读时可跳过
 
-		// status 为1 代表该数据已经被清洗过
+
         \DB::connection('mediachain')->table('novels')
-			->where('status',1)
-			->chunkById(10, $this->importNovelsFunc());
+			->where('status',1) // status 为1 代表该数据已经在内涵云被检查过
+			->chunkById(10, $this->importNeihanCloudNovelsFunc());
 
+        // 下方是打印日志，Review时可跳过
 		list($usec, $sec) = explode(" ", microtime());
 		$dtEnd =  ((float)$usec + (float)$sec);
 
@@ -50,54 +53,86 @@ class NovelSync extends Command
 		Log::info("----- {$this->successful}部小说同步已处理,耗时".($dtEnd-$dtStart)."秒");
 		Log::info('----- FINISHED THE PROCESS FOR SYNC SOURCE -----');
     }
-    private function importNovelsFunc(){
+
+	/**
+	 * @return \Closure
+	 */
+    private function importNeihanCloudNovelsFunc(){
 		return function ($novels){
+
 			foreach ($novels as $novel) {
 				$this->total++;
-				\DB::beginTransaction();
+				$value_array = [];
 				try {
-					$model = Novel::firstOrNew([
-						'source_key' => $novel->id, // 内涵云的小说资源ID
-					]);
-					$model->fill([
-						'name'  		=> $novel->name,
-						'cover'         => $novel->cover,
-						'introduction'  => $novel->introduction,
-						'type_names'  	=> $novel->type_names,
-						'author'        => $novel->author,
-						'count_words'   => $novel->count_words,
-						'count_chapters'=> $novel->count_chapters,
-						'source'        => $novel->source,
-						'is_over'       => $novel->is_over,
-						'created_at'    => $novel->created_at,
-					])->save(['timestamps'=>false]);
-
+					// 插入小说
+					$model = $this->novelFromCloudInsertToCurrentDB($novel);
 					$chaptersFromCloud = @json_decode($novel->data);
 					if(blank($chaptersFromCloud)){
 						continue;
 					}
-
-					collect($chaptersFromCloud)->sortBy('index')->each(function ($item)use($model){
-						NovelChapter::updateOrCreate([
-							'novel_id'  => $model->id,
-							'index'		=> $item->index,
-						],[
-							'title' => $item->name,
-							'url'   => $item->url,
-						]);
-					});
+					// 批量插入章节
+					$value_array = $this->novelChaptersFromCloudConvertToArray($chaptersFromCloud,$model->id);
+					NovelChapter::insert($value_array);
 				} catch (\Exception $e){
-					info($e->getMessage());
-					$this->failure++;
-					\DB::rollBack();
-					continue;
+					$this->error("小说[$novel->id]批量插入失败，正在逐条插入");
+					try{
+						foreach ($value_array as $v) {
+							// [novel_id,index] 是唯一索引
+							NovelChapter::updateOrCreate([
+								'novel_id' => $v['novel_id'],
+								'index'    => $v['index']
+							], $v);
+						}
+					} catch (\Exception $e) {
+						// 逐条插入也失败，回滚数据
+						$this->info("清空小说[$novel->id]所有章节，并重新获取");
+						NovelChapter::where('novel_id', $novel->id)->delete();
+						Novel::where('id', $novel->id)->delete();
+						$this->failure++;
+						continue;
+					}
 				}
-				\DB::commit();
 				$this->successful++;
 			}
 		};
-
 	}
+
+	private function novelChaptersFromCloudConvertToArray($chaptersFromCloud,$novelId){
+		$value_array = [];
+    	// 批量插入章节
+		collect($chaptersFromCloud)->sortBy('index')->each(function ($item)use(&$value_array,$novelId){
+			$now = Carbon::now();
+			$value_array[] = [
+				'title' 		=> $item->name,
+				'index'			=> $item->index,
+				'url' 			=> $item->url,
+				'novel_id' 		=> $novelId,
+				'created_at' 	=> $now,
+				'updated_at' 	=> $now
+			];
+		});
+		return $value_array;
+	}
+
+	private function novelFromCloudInsertToCurrentDB($novel){
+		$model = Novel::firstOrNew([
+			'source_key' => $novel->id, // 内涵云的小说资源ID
+		]);
+		$model->fill([
+			'name'  		=> $novel->name,
+			'cover'         => $novel->cover,
+			'introduction'  => $novel->introduction,
+			'type_names'  	=> $novel->type_names,
+			'author'        => $novel->author,
+			'count_words'   => $novel->count_words,
+			'count_chapters'=> $novel->count_chapters,
+			'source'        => $novel->source,
+			'is_over'       => $novel->is_over,
+			'created_at'    => $novel->created_at,
+		])->save(['timestamps'=>false]);
+		return $model;
+	}
+
 
 	private function validateDBSchema(){
 		if(

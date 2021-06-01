@@ -21,10 +21,10 @@ class CreateNovelChaptersTable extends Migration
 			$table->unsignedInteger('novel_id');
 			$table->string('title');
 			$table->string('url');
-			$table->integer('index');
+			$table->unsignedInteger('index');
 			$table->timestamps();
 
-			$table->unique('novel_id','index');
+			$table->unique(['novel_id','index']);
 			$table->index('index');
 		});
     }
