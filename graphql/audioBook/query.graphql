@@ -39,7 +39,7 @@ type AudioBook {
     """
     集数列表
     """
-    chapters(sortOrderOfChapters: ChapterSortOrderForAudiobooks=ASC, first: Int=15, page: Int=1) : ChaptersPaginatorForAudiobooks @field(resolver: "App\\AudioBook@chaptersOfAudioBookResolver")
+    chapters(sortOrderOfChapters: ChapterSortOrderForAudiobooks=ASC, count: Int=15, page: Int=1) : ChaptersPaginatorForAudiobooks @field(resolver: "App\\AudioBook@chaptersOfAudioBookResolver")
 
     """
     创建时间

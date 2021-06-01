@@ -24,7 +24,7 @@ class AudioBook extends Model
 	public function  chaptersOfAudioBookResolver($root, $args, $content, $info){
 
 
-		$perPage 		= data_get($args,'first',15);
+		$perPage 		= data_get($args,'count',15);
 		$currentPage 	= data_get($args,'page',1);
 		$sortOrder 		= data_get($args,'sortOrderOfChapters','ASC');
 		$chapters 		= $root->data;
