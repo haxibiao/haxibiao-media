@@ -15,10 +15,14 @@ use Illuminate\Support\Facades\Storage;
 trait MovieResolvers
 {
 
-    public function resolveMovieExists($root, $args, $content, $info)
+    /**
+     * 粘贴片名查询电影列表
+     */
+    public function resolveFindMovies($root, $args, $content, $info)
     {
-        $name = $args['input'];
-        return Movie::withoutGlobalScopes()->where('name', 'like', "%{$name}%")->first();
+        $name = $args['name'] ?? '';
+        $qb   = Movie::withoutGlobalScopes()->where('name', 'like', "%{$name}%")->latest('id');
+        return $qb->take(20)->get();
     }
 
     /**
@@ -112,6 +116,31 @@ trait MovieResolvers
         }
 
         return $movies;
+    }
+
+    /**
+     * 当前影片的相关推荐
+     */
+    public function resolveRelatedMovies($root, $args, $content, $info)
+    {
+        $count = data_get($args, 'count', 7);
+        if (currentUser()) {
+            $user = getUser();
+            //收藏过的电影类型
+            $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
+            $regions    = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
+            $movies     = Movie::inRandomOrder()
+                ->whereIn('region', $regions)
+                ->take($count)->get();
+            $moviesCount = count($movies);
+            if ($moviesCount < $count) {
+                $random_movies = Movie::inRandomOrder()->take($count - $moviesCount)->get();
+                $movies        = array_merge($movies->toArray(), $random_movies->toArray());
+            }
+            return $movies;
+        } else {
+            return Movie::inRandomOrder()->take($count)->get();
+        }
     }
 
     public function resolveClipMovie($root, $args, $content, $info)
@@ -213,28 +242,10 @@ trait MovieResolvers
         return Post::where('description', 'like', "%$movie->name%")->take(10)->get();
     }
 
-    public function resolversRecommendMovie($root, $args, $content, $info)
-    {
-        $count = data_get($args, 'count', 7);
-        if (currentUser()) {
-            $user = getUser();
-            //收藏过的电影类型
-            $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
-            $regions    = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
-            $movies     = Movie::inRandomOrder()
-                ->whereIn('region', $regions)
-                ->take($count)->get();
-            $moviesCount = count($movies);
-            if ($moviesCount < $count) {
-                $random_movies = Movie::inRandomOrder()->take($count - $moviesCount)->get();
-                $movies        = array_merge($movies->toArray(), $random_movies->toArray());
-            }
-            return $movies;
-        } else {
-            return Movie::inRandomOrder()->take($count)->get();
-        }
-    }
-    public function resolversSearchMovie($root, $args, $content, $info)
+    /**
+     * 搜索的影片(仅公开片源)
+     */
+    public function resolveSearchMovies($root, $args, $content, $info)
     {
         $keyword = data_get($args, 'keyword');
         app_track_event('长视频', '搜索电影', $keyword);

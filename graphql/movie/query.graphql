@@ -163,12 +163,17 @@ extend type Query {
     """
     电影推荐
     """
-    recommendMovie(count: Int = 7): [Movie] @field(resolver: "App\\Movie@resolversRecommendMovie")
+    recommendMovies(count: Int = 7): [Movie] @field(resolver: "App\\Movie@resolveRecommendMovies")
+
+    """
+    影片的相关推荐
+    """
+    relatedMovies(movie_id: Int!, limit: Int = 6): [Movie!] @field(resolver: "App\\Movie@resolveRelatedMovies")
 
     """
     搜索电影
     """
-    searchMovie(keyword: String!): [Movie] @paginate(defaultCount: 10, builder: "App\\Movie@resolversSearchMovie")
+    searchMovies(keyword: String!): [Movie] @paginate(defaultCount: 10, builder: "App\\Movie@resolveSearchMovies")
 
     """
     热门长视频
@@ -195,14 +200,11 @@ extend type Query {
     影视解说列表
     """
     explainMovieList: [Movie!] @paginate(builder: "App\\Movie@explainMovieList", defaultCount: 10)
+
     """
-    影片的相关推荐
+    根据粘贴输入片名 查询电影列表
     """
-    recommendMovies(movie_id: Int!, limit: Int = 6): [Movie!] @field(resolver: "App\\Movie@resolveRecommendMovies")
-    """
-    根据名字查询电影是否存在
-    """
-    movieExists(input: String!): Movie @field(resolver: "App\\Movie@resolveMovieExists")
+    findMovies(name: String!): [Movie!] @field(resolver: "App\\Movie@resolveFindMovies")
 }
 
 type MovieShareData {
