@@ -1,5 +1,5 @@
 type AudioBook {
-    id: Int!
+    id: Int
 
     """
     音频名
@@ -75,7 +75,7 @@ extend type Query  {
     """
     说书详情
     """
-    audioBook(id: ID!): AudioBook @field(resolver: "App\\AudioBook@resolveAudioBook")
+    audioBook(id: Int!): AudioBook @field(resolver: "App\\AudioBook@resolveAudioBook")
 
     """
     说书列表

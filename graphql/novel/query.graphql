@@ -1,5 +1,5 @@
 type Novel {
-    id: ID
+    id: Int
 
     """
     小说名
@@ -52,7 +52,7 @@ type Novel {
 }
 
 type NovelChapter {
-    id: ID
+    id: Int
     title: String
     url  : String
     index: Int
@@ -62,7 +62,7 @@ extend type Query  {
     """
     小说的详情
     """
-    novel(id: ID! @eq): Novel @find
+    novel(id: Int! @eq): Novel @find
 
     """
     小说列表
