@@ -141,7 +141,7 @@ class CrawlCollection implements ShouldQueue
                 'description' => $description,
                 'type'        => 'posts',
                 'logo'        => $newImagePath,
-                'status'      => Collection::STATUS_ONLINE,
+                'status'      => Collection::STATUS_UNSIGN,
                 'json'        => [
                     'mix_info' => $mixInfo,
                 ]]
