@@ -44,18 +44,31 @@ class Movie extends Model
     public const CATEGORY_GANG = 4;
     public const CATEGORY_TAI  = 5;
     public const CATEGORY_YIN  = 6;
-    // boy love,girl love
-    public const CATEGORY_BLGL     = 7;
+
+    // BLGL包含内涵尺度分类剧
+    public const CATEGORY_BLGL = 7;
+
     public const CATEGORY_JIESHUO  = 8; // 解说
     public const CATEGORY_ZHONGGUO = 9; // 中国
     public const CATEGORY_HOT      = 10; // 热门
     public const CATEGORY_NEWST    = 11; // 最新
 
-    public const NOT_IDENTIFY = 0; //未识别
-    public const PUBLISH      = 1; //正常影片
-    public const NEIHAN       = 2; //“内涵”影片（尺度较大）
-    public const DISABLED     = -1; //下架处理
-    public const ERROR        = -2; //资源损坏、丢失、不完整
+    public const NOT_IDENTIFY = 0; // 未识别
+    public const PUBLISH      = 1; // 正常（内涵云存储线路）
+    public const PLAY_FIXED   = 2; // 求片已修复线路的(其他资源缓存的线路)
+    public const DISABLED     = -1; // 已下架处理
+    public const ERROR        = -2; // 求片中(资源损坏、丢失、不完整)
+
+    public static function getStatuses()
+    {
+        return [
+            Movie::NOT_IDENTIFY => "未标识",
+            Movie::PUBLISH      => "正常影片",
+            Movie::PLAY_FIXED   => "求片成功",
+            Movie::DISABLED     => "下架处理",
+            Movie::ERROR        => "求片中",
+        ];
+    }
 
     //加载data到json位series数据只给vue播放器
     protected $appends = ['data'];
@@ -130,17 +143,6 @@ class Movie extends Model
     public function scopePublish($query)
     {
         return $query->where('status', Movie::PUBLISH);
-    }
-
-    public static function getStatuses()
-    {
-        return [
-            Movie::NOT_IDENTIFY => "未标识",
-            Movie::PUBLISH      => "正常影片",
-            Movie::NEIHAN       => "尺度较大",
-            Movie::DISABLED     => "下架处理",
-            Movie::ERROR        => "资源损坏、失效、残缺",
-        ];
     }
 
     public function scopeHanju($query)

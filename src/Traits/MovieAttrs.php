@@ -2,17 +2,27 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\Movie;
 use App\User;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Facades\Cache;
 
 trait MovieAttrs
 {
+    /**
+     * 状态文本
+     */
+    public function getStateAttribute()
+    {
+        return data_get(Movie::getStatuses(), $this->status);
+    }
+
     public function getIntroductionAttribute()
     {
         $str = preg_replace("/<(\/?span.*?)>/si", "", $this->attributes["introduction"]);
         return $str;
     }
+
     /**
      * 影片线路
      */
@@ -33,31 +43,6 @@ trait MovieAttrs
         // ];
 
         return $lines;
-    }
-
-    /**
-     * 电影剧集的播放地址(HK负载均衡)
-     */
-    public function getSeriesUrlsAttribute()
-    {
-        //避免 casts appends 对 data属性的影响破坏了剧集播放源关键接口
-        $raw_data   = $this->getRawOriginal('data');
-        $raw_series = json_decode($raw_data, true) ?? [];
-
-        //旧的series URL: {加速域名}/{space}/{movie_id}/index.m3u8
-        //新的负载型的series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
-        $series = [];
-        foreach ($raw_series as $item) {
-            $ucdn_domain = parse_url($item['url'], PHP_URL_HOST);
-            $ucdn_root   = "https://" . $ucdn_domain . "/";
-            $space       = get_space_by_ucdn($ucdn_root);
-            $space_path  = parse_url($item['url'], PHP_URL_PATH);
-            if (str_contains($space_path, ".m3u8")) {
-                $item['url'] = "https://$ucdn_domain/m3u8/$space$space_path";
-            }
-            $series[] = $item;
-        }
-        return $series;
     }
 
     public function getUrlAttribute()
@@ -97,25 +82,44 @@ trait MovieAttrs
         return $this->data[0]["url"] ?? $fallback_url;
     }
 
-    public function setDataAttribute($value)
+    /**
+     * 电影剧集+播放地址
+     */
+    public function getSeriesUrlsAttribute()
     {
-        if (is_string($value) && !app()->runningInConsole()) {
-            $this->attributes['data'] = @json_decode($value);
-        } else {
-            $this->attributes['data'] = $value;
+        //避免 casts appends 对 data属性的影响破坏了剧集播放源关键接口
+        $raw_data   = $this->getRawOriginal('data');
+        $raw_series = json_decode($raw_data, true) ?? [];
+
+        $series = [];
+        foreach ($raw_series as $item) {
+            // //基于内涵云已预热加速的URL，无需再用之前的m3u8微服务处理回源space了
+            // $ucdn_domain = parse_url($item['url'], PHP_URL_HOST);
+            // $ucdn_root   = "https://" . $ucdn_domain . "/";
+            // $space       = get_space_by_ucdn($ucdn_root);
+            // $space_path  = parse_url($item['url'], PHP_URL_PATH);
+            // if (str_contains($space_path, ".m3u8")) {
+            //     //旧的series URL: {加速域名}/{space}/{movie_id}/index.m3u8
+            //     //新的负载均衡型的HK回源的 series URL:  {加速域名}/m3u8/{space}/{movie_id}/index.m3u8
+            //     $item['url'] = "https://$ucdn_domain/m3u8/$space$space_path";
+            // }
+            $series[] = $item;
         }
+        return $series;
     }
 
     /**
-     * 兼容内涵电影代码用 series属性(serie对象的数组)写逻辑的部分
+     * 剧集信息
      *
      * @return array
      */
     public function getSeriesAttribute()
     {
+        // 兼容内涵电影代码用 series属性(serie对象的数组)写逻辑的部分
         if (isset($this->attributes['series']) && is_array($this->attributes['series'])) {
             return $this->attributes['series'];
         }
+
         //转换data的数组为serie对象数组
         $series      = [];
         $data_series = $this->getSeriesUrlsAttribute();
@@ -130,7 +134,7 @@ trait MovieAttrs
         //重用加载多线路的
         $series = $this->getSeriesUrlsAttribute();
 
-        //app 访问这里
+        //app 访问这里, 填充已观看进度信息
         if ($user = getUser(false)) {
             //获取观看进度记录
             $seriesHistories = \App\MovieHistory::where('user_id', $user->id)

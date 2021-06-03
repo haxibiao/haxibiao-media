@@ -9,11 +9,25 @@ use Haxibiao\Content\Post;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\SearchLog;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 trait MovieResolvers
 {
+    /**
+     * 发起求片订单
+     */
+    public function resolveReportMovieFix($root, $args, $content, $info)
+    {
+        $movie_id = $args['movie_id'] ?? null; //求片的影片
+        if ($movie_id && $movie = Movie::find($movie_id)) {
+            if ($user = currentUser()) {
+                $movie->user_id = $user->id; // 求片人
+                $movie->status  = Movie::ERROR; // 标记求片中
+                $movie->save();
+                return $movie;
+            }
+        }
+    }
 
     /**
      * 粘贴片名查询电影列表
@@ -145,7 +159,7 @@ trait MovieResolvers
 
     public function resolveClipMovie($root, $args, $content, $info)
     {
-        $user       = Auth::user();
+        $user       = getUser();
         $movie      = Movie::findOrFail($args['movie_id']);
         $seiresName = MovieRepo::findSeriesName($args['targetM3u8'], $movie);
         $video      = MovieRepo::storeClipMovieByApi($user, $movie, $args['targetM3u8'], $args['startTime'], $args['endTime'], $args['postTitle'], $seiresName);
@@ -223,7 +237,10 @@ trait MovieResolvers
         $user = getUser();
     }
 
-    public function resolveRelateMovie($rootValue, array $args, $context, $resolveInfo)
+    /**
+     * 关联电影
+     */
+    public function resolveHookMovie($rootValue, array $args, $context, $resolveInfo)
     {
         // TODO: 没搜到相关作品，也记录用户输入的影片名字(加个表)
         // first = null ，即没有匹配的电影

@@ -1,17 +1,17 @@
 extend type Mutation {
-  """
-  关联电影
-  """
-  relateMovie(movie_id: Int!, post_id: Int!): Movie
-    @field(resolver: "App\\Movie@resolveRelateMovie")
-  """
-  剪辑电影
-  """
-  clipMovie(
-    targetM3u8: String!
-    postTitle: String!
-    movie_id: Int!
-    startTime: Int!
-    endTime: Int!
-  ): Post @field(resolver: "App\\Movie@resolveClipMovie") @guard
+    """
+    关联电影
+    """
+    hookMovie(movie_id: Int!, post_id: Int!): Movie @field(resolver: "App\\Movie@resolveHookMovie")
+
+    """
+    剪辑电影
+    """
+    clipMovie(targetM3u8: String!, postTitle: String!, movie_id: Int!, startTime: Int!, endTime: Int!): Post
+        @field(resolver: "App\\Movie@resolveClipMovie")
+
+    """
+    发起求片
+    """
+    reportMovieFix(movie_id: Int!): Movie @field(resolver: "App\\Movie@resolveReportMovieFix")
 }

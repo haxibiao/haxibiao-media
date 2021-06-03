@@ -2,8 +2,14 @@
 
 namespace Haxibiao\Media\Nova;
 
+use Haxibiao\Content\Nova\Filters\MoviesByRegion;
+use Haxibiao\Content\Nova\Filters\MoviesByStatus;
+use Haxibiao\Content\Nova\Filters\MoviesByStyle;
+use Haxibiao\Content\Nova\Filters\MoviesByType;
 use Haxibiao\Content\Nova\Post;
+use Haxibiao\Media\Nova\Action\FixMovie;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
@@ -57,13 +63,7 @@ class Movie extends Resource
             Text::make('年份', 'year')->hideWhenCreating(),
             Text::make('分类', 'type')->hideWhenCreating(),
             Text::make('风格', 'style')->hideWhenCreating(),
-            HasMany::make('关联动态', 'posts', Post::class),
-            Select::make('状态', 'status')->options([
-                1  => '公开',
-                0  => '草稿',
-                -1 => '下架',
-            ])->displayUsingLabels(),
-            // Text::make('添加时间', 'created_at')->sortable()->onlyOnIndex(),
+            Select::make('状态', 'status')->options(\Haxibiao\Media\Movie::getStatuses())->displayUsingLabels(),
             Image::make('封面', 'movie.cover')->thumbnail(
                 function () {
                     return $this->cover;
@@ -73,6 +73,10 @@ class Movie extends Resource
                     return $this->cover;
                 }
             ),
+
+            Code::make('剧集', 'data')->json(JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE)->rules('required', 'max:4000'),
+
+            HasMany::make('关联动态', 'posts', Post::class),
         ];
     }
 
@@ -95,7 +99,14 @@ class Movie extends Resource
      */
     public function filters(Request $request)
     {
-        return [];
+
+        return [
+            new MoviesByStatus,
+            new MoviesByRegion,
+            new MoviesByType,
+            new MoviesByStyle,
+        ];
+
     }
 
     /**
@@ -118,6 +129,7 @@ class Movie extends Resource
     public function actions(Request $request)
     {
         return [
+            new FixMovie,
         ];
     }
 }

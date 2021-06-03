@@ -25,15 +25,6 @@ trait MovieRepo
         ]);
     }
 
-    public static function getStatus()
-    {
-        return [
-            Movie::PUBLISH  => '可播放',
-            Movie::DISABLED => '禁用',
-            Movie::ERROR    => '资源错误',
-        ];
-    }
-
     /**
      * 影片剪辑，返回新m3u8内容
      * $targetM3u8 目标影片
@@ -183,6 +174,42 @@ trait MovieRepo
                 return $item['name'];
             }
         }
+    }
+
+    /**
+     * 更新剧集的播放地址
+     *
+     * @param Movie $movie 影片
+     * @param string $name 剧集名
+     * @param string $url 播放地址
+     * @return void
+     */
+    public static function updateSeries($movie, $name, $url)
+    {
+        if (!blank($name)) {
+            $series_raw = $movie->getSeriesUrlsAttribute();
+            $series     = [];
+            $updated    = false;
+            foreach ($series_raw as $item) {
+                $serie_name = $item['name'] ?? '';
+                if ($serie_name == $name) {
+                    //更新
+                    $item['url'] = $url;
+                    $updated     = true;
+                }
+                $series[] = $item;
+            }
+            if (!$updated) {
+                //增加
+                $series[] = [
+                    'name' => $name,
+                    'url'  => $url,
+                ];
+            }
+            //保存data
+            $movie->data = $series;
+        }
+        $movie->saveQuietly();
     }
 
     public static function getCategories()

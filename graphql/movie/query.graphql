@@ -17,9 +17,9 @@ type Movie {
     """
     description: String @rename(attribute: "introduction")
     """
-    伪装user发布者
+    影片状态
     """
-    user: User
+    state: String
     """
     封面
     """
