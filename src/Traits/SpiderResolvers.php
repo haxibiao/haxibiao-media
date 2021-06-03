@@ -18,10 +18,8 @@ trait SpiderResolvers
     public function resolveShareLink($root, $args, $context, $info)
     {
         $user = getUser();
-        //FIXME: 修复到自己的app层的 resolve methods 覆盖项目逻辑
-        if (!in_array(config('app.name'), ['yinxiangshipin', 'ainicheng', 'dongwaimao', 'ablm', 'nashipin', 'caohan', 'dongwaimao'])) {
-            throw_if($user->ticket < 1, UserException::class, '分享失败,精力点不足,请补充精力点!');
-        }
+
+        //暂时不控制粘贴视频需要精力点的检查，现在粘贴的太少了
 
         $content  = data_get($args, 'description') ?? data_get($args, 'content');
         $tagNames = data_get($args, 'tag_names', []);
