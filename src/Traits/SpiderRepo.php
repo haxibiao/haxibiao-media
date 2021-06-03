@@ -262,7 +262,7 @@ trait SpiderRepo
         $source_url = $this->source_url;
         if (!empty($source_url)) {
             // 爬虫回调
-            $hookUrl = url('api/media/hook');
+            $hookUrl = env('APP_URL') . '/api/media/hook';
             $data    = [];
             $client  = new Client();
 
