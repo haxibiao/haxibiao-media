@@ -77,6 +77,11 @@ enum SpiderTypeEnum {
     失败的
     """
     FAILED_STATUS @enum(value: -1)
+
+    """
+    无效的
+    """
+    INVALID_STATUS @enum(value: -2)
 }
 
 extend type Query {
