@@ -1,6 +1,6 @@
 # 听书详情
-query audioBookQuery($id:ID!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
-    audioBook(id:$id){
+query audibleQuery($id:Int!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
+    audible(id:$id){
         id
         name
         introduction

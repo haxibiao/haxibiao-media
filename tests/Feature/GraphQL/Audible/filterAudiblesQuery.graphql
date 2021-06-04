@@ -1,6 +1,6 @@
 # 听书列表
-query audioBooksQuery($announcer:String,$type_name:String, $page: Int,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
-    filterAudioBooks(announcer:$announcer,type_name:$type_name,page: $page){
+query audiblesQuery($announcer:String,$type_names:String, $page: Int,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
+    filterAudibles(announcer:$announcer,type_names:$type_names,page: $page){
         data{
             id
             name

@@ -1,4 +1,4 @@
-type AudioBook {
+type Audible {
     id: Int
 
     """
@@ -39,7 +39,7 @@ type AudioBook {
     """
     集数列表
     """
-    chapters(sortOrderOfChapters: ChapterSortOrderForAudiobooks=ASC, count: Int=15, page: Int=1) : ChaptersPaginatorForAudiobooks @field(resolver: "App\\AudioBook@chaptersOfAudioBookResolver")
+    chapters(sortOrderOfChapters: ChapterSortOrderForAudibles=ASC, count: Int=15, page: Int=1) : ChaptersPaginatorForAudibles @field(resolver: "App\\Audible@chaptersOfAudibleResolver")
 
     """
     创建时间
@@ -52,17 +52,17 @@ type AudioBook {
     updated_at: DateTime!
 }
 
-type ChaptersPaginatorForAudiobooks {
-    data: [ChapterInfoForAudioBooks!]!
+type ChaptersPaginatorForAudibles {
+    data: [ChapterInfoForAudibles!]!
     paginatorInfo: PaginatorInfo!
 }
 
-type ChapterInfoForAudioBooks{
+type ChapterInfoForAudibles{
     name: String
     url: String
 }
 
-enum ChapterSortOrderForAudiobooks {
+enum ChapterSortOrderForAudibles {
     "正序"
     ASC
     "倒序"
@@ -75,14 +75,14 @@ extend type Query  {
     """
     说书详情
     """
-    audioBook(id: Int!): AudioBook @field(resolver: "App\\AudioBook@resolveAudioBook")
+    audible(id: Int!): Audible @field(resolver: "App\\Audible@resolveAudible")
 
     """
     说书列表
     """
-    filterAudioBooks(
+    filterAudibles(
     announcer: String
-    type_name: String
-    ): [AudioBook] @paginate(defaultCount: 10, builder: "App\\AudioBook@resolveFilterAudioBook")
+    type_names: String
+    ): [Audible] @paginate(defaultCount: 10, builder: "App\\Audible@resolveFilterAudibles")
 
 }

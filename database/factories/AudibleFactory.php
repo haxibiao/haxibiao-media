@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\AudioBook;
+use App\Audible;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class AudioBookFactory extends Factory
+class AudibleFactory extends Factory
 {
 
-    protected $model = AudioBook::class;
+    protected $model = Audible::class;
 
     public function definition()
     {

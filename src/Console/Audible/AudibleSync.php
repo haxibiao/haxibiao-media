@@ -1,17 +1,17 @@
 <?php
 
-namespace Haxibiao\Media\Console\AudioBook;
+namespace Haxibiao\Media\Console\Audible;
 
-use Haxibiao\Media\AudioBook;
+use App\Audible;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Mockery\Exception;
 
-class AudioSync extends Command
+class AudibleSync extends Command
 {
-    protected $signature = 'audiobook:sync';
+    protected $signature = 'audible:sync';
 
 	const DB_CONNECTION = 'mediachain';
 	const DB_TABLE 		= 'audio';
@@ -44,23 +44,23 @@ class AudioSync extends Command
 
 						$data = json_decode($audio->data);
 
-						$audioBook = AudioBook::firstOrNew([
+						$audible = Audible::firstOrNew([
 							'source_key'      => $audio->id,
 						]);
-						$audioBook->name        = $audio->name;
-						$audioBook->introduction= $audio->introduction;
-						$audioBook->announcer	= $audio->announcer;
-						$audioBook->cover       = $audio->cover;
-						$audioBook->type_names  = $audio->type_name;
-						$audioBook->data          = $data;
-						$audioBook->count_chapters= count($data);
-						$audioBook->updated_at  = $updatedAt;
-						$audioBook->created_at  = $updatedAt;
-						$audioBook->is_over	    = $isOver;
-						$audioBook->save(['timestamps'=>false]);
+						$audible->name        = $audio->name;
+						$audible->introduction= $audio->introduction;
+						$audible->announcer	= $audio->announcer;
+						$audible->cover       = $audio->cover;
+						$audible->type_names  = $audio->type_name;
+						$audible->data          = $data;
+						$audible->count_chapters= count($data);
+						$audible->updated_at  = $updatedAt;
+						$audible->created_at  = $updatedAt;
+						$audible->is_over	    = $isOver;
+						$audible->save(['timestamps'=>false]);
 
 						$count++;
-						$this->info('同步《' .$audioBook->name. '》音频资源成功。。这是第' . $count . '个');
+						$this->info('同步《' .$audible->name. '》音频资源成功。。这是第' . $count . '个');
 					} catch (\Exception $exception) {
 						$this->error('同步音频失败。。' .$exception->getMessage());
 						continue;
@@ -71,8 +71,8 @@ class AudioSync extends Command
     }
 
     private function validateDBSchema(){
-		if (!Schema::hasTable('audio_books')) {
-			throw new Exception('当前数据库 没有audio_books表!');
+		if (!Schema::hasTable('audibles')) {
+			throw new Exception('当前数据库 没有audibles表!');
 		}
 	}
 

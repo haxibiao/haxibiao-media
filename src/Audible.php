@@ -4,11 +4,10 @@ namespace Haxibiao\Media;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Haxibiao\Breeze\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Arr;
 
-class AudioBook extends Model
+class Audible extends Model
 {
-    use HasFactory;
+	use HasFactory;
 
 	const STATUS_OF_DISABLED 		= -1; // 下架处理
 	const STATUS_OF_ERROR 			= -2; // 资源损坏、丢失、不完整
@@ -21,7 +20,7 @@ class AudioBook extends Model
 
 	protected $guarded = [];
 
-	public function  chaptersOfAudioBookResolver($root, $args, $content, $info){
+	public function  chaptersOfAudibleResolver($root, $args, $content, $info){
 
 
 		$perPage 		= data_get($args,'count',15);
@@ -75,19 +74,19 @@ class AudioBook extends Model
 		];
 	}
 
-	public function resolveAudioBook($root, $args, $content, $info){
+	public function resolveAudible($root, $args, $content, $info){
 		$audioId = data_get($args, 'id');
 		return static::find($audioId);
 	}
 
-	public function resolveFilterAudioBook($root, $args, $content, $info){
+	public function resolveFilterAudibles($root, $args, $content, $info){
 
 		$announcer = data_get($args, 'announcer');
-		$type_name = data_get($args, 'type_name');
+		$type_names = data_get($args, 'type_names');
 
 		return static::whereStatus(static::STATUS_OF_PUBLISH)
-			->when($type_name, function ($qb) use ($type_name) {
-				return $qb->where('type_name', $type_name);
+			->when($type_names, function ($qb) use ($type_names) {
+				return $qb->where('type_names', $type_name);
 			})->when($announcer, function ($qb) use ($announcer) {
 				return $qb->where('announcer', $announcer);
 			});

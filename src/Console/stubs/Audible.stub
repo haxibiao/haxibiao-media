@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use Haxibiao\Media\Audible as BaseAudible;
+
+class Audible extends BaseAudible
+{
+
+}
