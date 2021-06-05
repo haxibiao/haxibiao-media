@@ -34,7 +34,7 @@ class FixMovie extends Action
 
         //求片已解决
         if ($fields->fixed) {
-            $movie->status = Movie::ERROR;
+            $movie->status = Movie::PLAY_FIXED;
         }
 
         // 获取求片修复提供的 name, url
