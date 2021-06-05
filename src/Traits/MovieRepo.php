@@ -191,12 +191,18 @@ trait MovieRepo
             $series     = [];
             $updated    = false;
             foreach ($series_raw as $item) {
-                $serie_name = $item['name'] ?? '';
-                if ($serie_name == $name) {
+                $raw_name = $item['name'] ?? '';
+                if ($raw_name == $name) {
                     //更新
                     $item['url'] = $url;
                     $updated     = true;
                 }
+
+                //剔除以前的混乱的剧集名
+                if (!preg_match("/第\d集/", $raw_name)) {
+                    continue;
+                }
+
                 $series[] = $item;
             }
             if (!$updated) {

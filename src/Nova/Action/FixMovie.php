@@ -33,7 +33,9 @@ class FixMovie extends Action
         $movie = $models->first();
 
         //求片已解决
-        $movie->status = $fields->fixed ? Movie::PLAY_FIXED : Movie::ERROR;
+        if ($fields->fixed) {
+            $movie->status = Movie::ERROR;
+        }
 
         // 获取求片修复提供的 name, url
         $name = $fields->name;
@@ -49,13 +51,28 @@ class FixMovie extends Action
      */
     public function fields()
     {
+        $series = [];
+        for ($i = 1; $i <= 110; $i++) {
+            $name          = "第${i}集";
+            $series[$name] = $name;
+        }
         return [
-            Text::make('剧集名', 'name'),
-            Text::make("m3u8播放地址", 'url'),
+            Select::make('剧集', 'name')
+                ->options($series)
+                ->withMeta([
+                    'value'           => '第1集',
+                    'extraAttributes' => [
+                        'placeholder' => '第几集...'],
+                ]),
+            Text::make("播放地址", 'url', )->withMeta(['extraAttributes' => [
+                'placeholder' => '目前仅支持m3u8播放地址'],
+            ]),
             Select::make("是否完成求片处理", 'fixed')->options([
                 0 => '否',
                 1 => '是',
-            ])->displayUsingLabels(),
+            ])
+                ->withMeta(['value' => '1'])
+                ->displayUsingLabels(),
         ];
     }
 }
