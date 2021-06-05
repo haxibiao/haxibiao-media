@@ -220,7 +220,7 @@ trait MovieResolvers
             $movie->save();
 
             //可播放资源或用户收藏过的资源
-            if ($movie->status == Movie::PUBLISH || $movie->favorited) {
+            if ($movie->status >= Movie::PUBLISH || $movie->favorited) {
                 return $movie;
             }
         }
