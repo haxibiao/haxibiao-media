@@ -35,7 +35,7 @@ trait MovieResolvers
     public function resolveFindMovies($root, $args, $content, $info)
     {
         $name = $args['name'] ?? '';
-        $qb   = Movie::withoutGlobalScopes()->where('name', 'like', "%{$name}%")->latest('id');
+        $qb   = Movie::withoutGlobalScopes()->where('name', 'like', "{$name}%")->latest('id');
         return $qb->take(20)->get();
     }
 
