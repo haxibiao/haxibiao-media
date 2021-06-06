@@ -37,7 +37,7 @@ class CreateVideosTable extends Migration
             $table->string('collection_key', 50)->nullable()->index()->comment('合集的唯一key: ainicheng_1122');
 
             //分享粘贴视频靠sharelink回调hook
-            $table->string('sharelink')->nullable()->index()->comment('秒粘贴地址');
+            $table->string('sharelink', 500)->nullable()->index()->comment('秒粘贴地址');
             //自己上传视频靠fileid回调hook
             $table->string('fileid')->nullable()->index()->comment('vod的fileid');
             $table->string('vid')->nullable()->index()->comment('字节系视频标识的VID');

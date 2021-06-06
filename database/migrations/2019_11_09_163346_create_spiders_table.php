@@ -21,7 +21,7 @@ class CreateSpidersTable extends Migration
         Schema::create('spiders', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id')->index()->comment('用户ID');
-            $table->string('source_url')->index()->comment('源URL');
+            $table->string('source_url', 500)->index()->comment('源URL');
             $table->json('raw')->nullable()->comment('源信息');
             $table->json('data')->nullable();
             $table->tinyInteger('status')->default(Spider::WATING_STATUS);
