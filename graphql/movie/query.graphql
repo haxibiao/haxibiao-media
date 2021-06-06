@@ -161,7 +161,7 @@ extend type Query {
     movie(movie_id: ID!): Movie @field(resolver: "App\\Movie@resolveMovie")
 
     """
-    电影推荐
+    电影推荐(暂时仅电影图解用)
     """
     recommendMovies(count: Int = 7): [Movie] @field(resolver: "App\\Movie@resolveRecommendMovies")
 

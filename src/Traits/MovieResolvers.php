@@ -42,7 +42,7 @@ trait MovieResolvers
     /**
      * 影片的相关推荐
      */
-    public function resolveRecommendMovies($root, $args, $content, $info)
+    public function resolveRelatedMovies($root, $args, $content, $info)
     {
         $first = $args['limit'] ?? 6;
         //不同类型的权重（名称,导演，演员）
@@ -133,27 +133,31 @@ trait MovieResolvers
     }
 
     /**
-     * 当前影片的相关推荐
+     * 个性推荐？(ivan: 仅电影图解)
      */
-    public function resolveRelatedMovies($root, $args, $content, $info)
+    public function resolveRecommendMovies($root, $args, $content, $info)
     {
-        $count = data_get($args, 'count', 7);
+        $limit = data_get($args, 'limit', 7);
         if (currentUser()) {
             $user = getUser();
             //收藏过的电影类型
             $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
             $regions    = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
-            $movies     = Movie::inRandomOrder()
+            //推算喜欢的区域
+            $movies = Movie::inRandomOrder()
                 ->whereIn('region', $regions)
-                ->take($count)->get();
+                ->take($limit)
+                ->get();
             $moviesCount = count($movies);
-            if ($moviesCount < $count) {
-                $random_movies = Movie::inRandomOrder()->take($count - $moviesCount)->get();
+
+            //推算区域不够数，随机补充？
+            if ($moviesCount < $limit) {
+                $random_movies = Movie::inRandomOrder()->take($limit - $moviesCount)->get();
                 $movies        = array_merge($movies->toArray(), $random_movies->toArray());
             }
             return $movies;
         } else {
-            return Movie::inRandomOrder()->take($count)->get();
+            return Movie::inRandomOrder()->take($limit)->get();
         }
     }
 
