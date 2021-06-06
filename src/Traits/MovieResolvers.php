@@ -221,14 +221,10 @@ trait MovieResolvers
         $movie = Movie::withoutGlobalScopes()->find($movie_id);
         if (isset($movie)) {
             $movie->hits = $movie->hits + 1;
-            $movie->save();
-
-            //可播放资源或用户收藏过的资源
-            if ($movie->status >= Movie::PUBLISH || $movie->favorited) {
-                return $movie;
-            }
+            $movie->saveQuietly();
         }
-        return null;
+        //影片详情页真实返回影片信息和状态
+        return $movie;
     }
 
     public function explainMovieList($root, $args, $content, $info)
