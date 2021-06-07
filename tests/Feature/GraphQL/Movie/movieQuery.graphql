@@ -1,5 +1,5 @@
 # 电影详情
-query movieQuery($movie_id: ID!) {
+query movieQuery($movie_id: Int!) {
     movie(movie_id: $movie_id) {
         id
         name

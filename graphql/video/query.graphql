@@ -1,5 +1,5 @@
 type Video {
-    id: ID!
+    id: Int!
 
     """
     视频标题

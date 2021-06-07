@@ -158,7 +158,7 @@ extend type Query {
     """
     电影详情
     """
-    movie(movie_id: ID!): Movie @field(resolver: "App\\Movie@resolveMovie")
+    movie(movie_id: Int!): Movie @field(resolver: "App\\Movie@resolveMovie")
 
     """
     电影推荐(暂时仅电影图解用)
@@ -184,7 +184,7 @@ extend type Query {
     """
     分享长视频
     """
-    shareMovie(id: ID!): MovieShareData @field(resolver: "App\\Movie@getSharePciture")
+    shareMovie(id: Int): MovieShareData @field(resolver: "App\\Movie@getSharePciture")
 
     """
     韩剧星球，高甜榜单接口

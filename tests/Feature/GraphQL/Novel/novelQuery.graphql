@@ -1,9 +1,5 @@
 # 小说详情
-query novelQuery(
-    $id: ID!
-    $pageOfChapters: Int = 1
-    $firstOfChapters: Int = 15
-) {
+query novelQuery($id: Int!, $pageOfChapters: Int = 1, $firstOfChapters: Int = 15) {
     novel(id: $id) {
         id
         name
@@ -24,4 +20,3 @@ query novelQuery(
         }
     }
 }
-
