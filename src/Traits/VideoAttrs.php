@@ -2,6 +2,8 @@
 
 namespace Haxibiao\Media\Traits;
 
+use Haxibiao\Content\Post;
+use Haxibiao\Media\Video;
 use Illuminate\Support\Facades\Storage;
 
 trait VideoAttrs
@@ -50,6 +52,9 @@ trait VideoAttrs
      */
     public function getCoverAttribute()
     {
+        if ($this->post && $this->post->status == Post::PRIVARY_STATUS) {
+            return Video::REVIEW_COVER;
+        }
         //已存好vod或者cdn的封面图片
         $cover = $this->getRawOriginal('cover');
         if (filter_var($cover, FILTER_VALIDATE_URL)) {

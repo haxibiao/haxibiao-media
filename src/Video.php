@@ -35,6 +35,7 @@ class Video extends Model
     ];
 
     protected $guarded = [];
+    const REVIEW_COVER = "https://yinxiangshipin-1254284941.file.myqcloud.com/file/review_cover.png";
 
     /**
      * 哈希云endpoint
