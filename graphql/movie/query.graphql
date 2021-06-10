@@ -61,17 +61,9 @@ type Movie {
     """
     country: String
     """
-    语言
-    """
-    lang: String
-    """
     点击次数
     """
     hits: Int
-    """
-    评分
-    """
-    score: String
     """
     语言
     """
@@ -100,7 +92,7 @@ type Movie {
     """
     评论
     """
-    comments: [Comment] @MorphMany
+    comments: [Comment]
     """
     评论数
     """
