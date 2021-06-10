@@ -1,5 +1,5 @@
 type MovieHistory {
-    id: ID
+    id: Int
     """
     观看进度
     """

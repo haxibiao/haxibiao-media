@@ -1,5 +1,5 @@
 type Activity {
-    id: ID
+    id: Int
 
     """
     电影/电视剧
