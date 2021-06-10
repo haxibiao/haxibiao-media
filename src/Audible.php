@@ -20,7 +20,7 @@ class Audible extends Model
 
 	protected $guarded = [];
 
-	public function  chaptersOfAudibleResolver($root, $args, $content, $info){
+	public function  resolveChaptersOfAudible($root, $args, $content, $info){
 
 
 		$perPage 		= data_get($args,'count',15);
