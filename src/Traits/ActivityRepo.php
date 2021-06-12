@@ -3,7 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 use Haxibiao\Media\Activity;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 
 trait ActivityRepo
 {
@@ -19,14 +19,18 @@ trait ActivityRepo
             ->enable()
             ->orderByDesc('sort');
     }
-    public function saveDownloadImage($file)
-    {
-        if ($file) {
-            $cover   = '/movies' . $this->id . '_' . time() . '.png';
-            $cosDisk = Storage::cloud();
-            $cosDisk->put($cover, \file_get_contents($file->path()));
 
-            return cdnurl($cover);
-        }
+    /**
+     * 保存活动轮播图
+     */
+    public function saveActivityImage(UploadedFile $file)
+    {
+        //置顶用的封面文件名
+        $filename = sprintf("%s.%s", $this->id . "_top_movie_" . time(), 'png');
+        $folder   = storage_folder('activities');
+        $file->storeAs($folder, $filename);
+        $cloud_path = sprintf("%s/%s", $folder, $filename);
+        $cdnurl     = cdnurl($cloud_path);
+        return $cdnurl;
     }
 }

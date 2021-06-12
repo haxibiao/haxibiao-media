@@ -5,11 +5,26 @@ namespace Haxibiao\Media\Traits;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Video;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 trait MovieRepo
 {
+    /**
+     * 保存影片封面
+     */
+    public function saveCover(UploadedFile $file)
+    {
+        //影片封面文件名
+        $filename = sprintf("%s.%s", $this->id . "_" . time(), 'png');
+        $folder   = storage_folder('movies');
+        $file->storeAs($folder, $filename);
+        $cloud_path = sprintf("%s/%s", $folder, $filename);
+        $cdnurl     = cdnurl($cloud_path);
+        return $cdnurl;
+    }
+
     public static function getCDNDomain($bucket)
     {
         return data_get(space_ucdn_map(), $bucket);

@@ -15,6 +15,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Resource;
 
 class Movie extends Resource
@@ -30,7 +31,7 @@ class Movie extends Resource
      *
      * @var string
      */
-    public static $model = 'Haxibiao\Media\Movie';
+    public static $model = \Haxibiao\Media\Movie::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -58,21 +59,23 @@ class Movie extends Resource
     {
         return [
             ID::make()->sortable(),
-            Text::make('电影名', 'name')->hideWhenCreating(),
-            Text::make('地区', 'region')->hideWhenCreating(),
-            Text::make('年份', 'year')->hideWhenCreating(),
-            Text::make('分类', 'type')->hideWhenCreating(),
-            Text::make('风格', 'style')->hideWhenCreating(),
+            Text::make('电影名', 'name'),
+            Textarea::make('简介', 'introduction'),
+            Text::make('地区', 'region'),
+            Text::make('年份', 'year'),
+            Text::make('导演', 'producer'),
+            Text::make('演员', 'actors'),
+            Text::make('分类', 'type'),
+            Text::make('风格', 'style'),
             Select::make('状态', 'status')->options(\Haxibiao\Media\Movie::getStatuses())->displayUsingLabels(),
-            Image::make('封面', 'movie.cover')->thumbnail(
-                function () {
-                    return $this->cover;
-                }
-            )->preview(
-                function () {
-                    return $this->cover;
-                }
-            ),
+            Image::make('封面', 'cover')->thumbnail(function () {
+                return $this->cover;
+            })->preview(function () {
+                return $this->cover;
+            })->store(function (Request $request, \Haxibiao\Media\Movie $model) {
+                $file = $request->file('cover');
+                return $model->saveCover($file);
+            }),
 
             Code::make('剧集', 'data')->json(JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE)->rules('required', 'max:4000'),
 

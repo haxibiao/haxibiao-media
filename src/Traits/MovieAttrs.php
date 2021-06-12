@@ -19,7 +19,8 @@ trait MovieAttrs
 
     public function getIntroductionAttribute()
     {
-        $str = preg_replace("/<(\/?span.*?)>/si", "", $this->attributes["introduction"]);
+        $attr = $this->attributes["introduction"] ?? '';
+        $str  = preg_replace("/<(\/?span.*?)>/si", "", $attr);
         return $str;
     }
 

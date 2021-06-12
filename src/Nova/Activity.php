@@ -62,10 +62,9 @@ class Activity extends Resource
                 return $this->image_url;
             })->preview(function () {
                 return $this->image_url;
-            })->store(function (Request $request, $model) {
-                $file      = $request->file('image_url');
-                $image_url = $model->saveDownloadImage($file);
-                return $image_url;
+            })->store(function (Request $request, \Haxibiao\Media\Activity $model) {
+                $file = $request->file('image_url');
+                return $model->saveActivityImage($file);
             }),
         ];
     }
