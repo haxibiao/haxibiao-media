@@ -8,6 +8,7 @@ use App\Post;
 use App\Series;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
+use Haxibiao\Breeze\User;
 use Haxibiao\Content\Traits\Stickable;
 use Haxibiao\Content\Traits\WithCms;
 use Haxibiao\Helpers\Traits\Searchable;
@@ -16,6 +17,7 @@ use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
 use Haxibiao\Sns\Favorite;
 use Haxibiao\Sns\Traits\WithSns;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -160,7 +162,7 @@ class Movie extends Model
         return $this->hasOne(Collection::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

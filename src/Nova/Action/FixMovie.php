@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Nova\Action;
 
 use Haxibiao\Breeze\Notifications\MovieFixed;
+use Haxibiao\Breeze\User;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Bus\Queueable;
@@ -31,23 +32,27 @@ class FixMovie extends Action
         if ($models->count() > 1) {
             return Action::danger("每次最多修复一部作品,您选中了{$models->count()}部作品");
         }
-        $movie = $models->first();
+        foreach ($models as $model) {
+            if ($movie = Movie::find($model->id)) {
+                // 求片被修复
+                // $movie->status == Movie::ERROR &&
+                if ($fields->fixed) {
+                    // 发个通知给求片者
+                    $user = User::find($movie->user_id);
+                    if ($user) {
+                        // FIXME: 暂时不兼容多人同时求一个片，问题不大，目前站长知道要修复片才是核心
+                        $user->notify(new MovieFixed($movie));
+                    }
+                }
+                $movie->status = $fields->fixed ? Movie::PLAY_FIXED : Movie::ERROR;
 
-        //求片被修复
-        if ($movie->status == Movie::ERROR && $fields->fixed) {
-            //发个通知给求片者
-            // FIXME: 暂时不兼容多人同时求一个片，问题不大，目前站长知道要修复片才是核心
-            if ($user = $movie->user) {
-                $user->notify(new MovieFixed($movie));
+                // 获取求片修复提供的 name, url
+                $name = $fields->name;
+                $url  = $fields->url;
+                // 更新 剧集信息
+                MovieRepo::updateSeries($movie, $name, $url);
             }
         }
-        $movie->status = $fields->fixed ? Movie::PLAY_FIXED : Movie::ERROR;
-
-        // 获取求片修复提供的 name, url
-        $name = $fields->name;
-        $url  = $fields->url;
-        // 更新 剧集信息
-        MovieRepo::updateSeries($movie, $name, $url);
     }
 
     /**

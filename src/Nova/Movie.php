@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Nova;
 
+use Haxibiao\Breeze\Nova\User;
 use Haxibiao\Content\Nova\Filters\MoviesByRegion;
 use Haxibiao\Content\Nova\Filters\MoviesByStatus;
 use Haxibiao\Content\Nova\Filters\MoviesByStyle;
@@ -9,6 +10,7 @@ use Haxibiao\Content\Nova\Filters\MoviesByType;
 use Haxibiao\Content\Nova\Post;
 use Haxibiao\Media\Nova\Action\FixMovie;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
@@ -64,9 +66,10 @@ class Movie extends Resource
             Text::make('地区', 'region'),
             Text::make('年份', 'year'),
             Text::make('导演', 'producer'),
-            Text::make('演员', 'actors'),
+            Text::make('演员', 'actors')->hideFromIndex(),
             Text::make('分类', 'type'),
             Text::make('风格', 'style'),
+            BelongsTo::make('求片者', 'user', User::class),
             Select::make('状态', 'status')->options(\Haxibiao\Media\Movie::getStatuses())->displayUsingLabels(),
             Image::make('封面', 'cover')->thumbnail(function () {
                 return $this->cover;
