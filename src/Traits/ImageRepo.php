@@ -19,8 +19,8 @@ trait ImageRepo
     }
 
     /**
-     * 保存base64|path|url的图片
-     * @param string  $source
+     * 保存的图片
+     * @param mixed $source base64数据 | 图片url
      * @return Image
      */
     public static function saveImage($source)
@@ -47,7 +47,7 @@ trait ImageRepo
         // 计算原图hash
         $hash = md5_file($tmp_path);
 
-        $cloud_path = 'storage/app-' . env('APP_NAME') . '/images/' . $filename;
+        $cloud_path = storage_folder('images') . $filename;
 
         // 部分项目环境支持自动裁剪,有些简单原始图片保存,故此通过开关控制
         $auto_cut = config('media.image.auto_cut');
