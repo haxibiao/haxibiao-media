@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Nova\Action;
 
+use Haxibiao\Breeze\Notifications\MovieFixed;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Bus\Queueable;
@@ -32,10 +33,15 @@ class FixMovie extends Action
         }
         $movie = $models->first();
 
-        //求片已解决
-        if ($fields->fixed) {
-            $movie->status = Movie::PLAY_FIXED;
+        //求片被修复
+        if ($movie->status == Movie::ERROR && $fields->fixed) {
+            //发个通知给求片者
+            // FIXME: 暂时不兼容多人同时求一个片，问题不大，目前站长知道要修复片才是核心
+            if ($user = $movie->user) {
+                $user->notify(new MovieFixed($movie));
+            }
         }
+        $movie->status = $fields->fixed ? Movie::PLAY_FIXED : Movie::ERROR;
 
         // 获取求片修复提供的 name, url
         $name = $fields->name;
