@@ -251,7 +251,7 @@ trait MovieResolvers
             if ($video = $post->video) {
                 // 剪辑的视频和movie的关系才是稳定的， 粘贴先不确定影片关系
                 // $video->update(['movie_id' => $movie->id]);
-                $video->autoHookMovieCollection($post, $movie);
+                $video->autoHookMovieCollection($post, $movie, '解说');
                 $video->autoHookMovieCategory($post, $movie);
             }
         }

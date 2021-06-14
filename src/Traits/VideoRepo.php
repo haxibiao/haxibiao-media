@@ -41,19 +41,17 @@ trait VideoRepo
             //后面剪辑的自动成为专题编辑成员
             $category->addAuthor($user);
         }
-
         // 专题封面
         $category->logo = $movie->cover_url;
         // 默认专题通过审核
         $category->status = Category::STATUS_PUBLISH;
         $category->save();
+        // 主专题
+        $post->category_id = $category->id;
+        $post->saveQuietly();
 
         // 自动收入专题
-        if ($post->category_id) {
-            $post->addCategories([$post->category_id]);
-        }
-        $post->category_id = $category->id; //主专题
-        $post->saveQuietly();
+        $post->addCategories([$category->id]);
 
         return $category;
     }
@@ -61,25 +59,24 @@ trait VideoRepo
     /**
      * 影片解说和剪辑自动收入用户合集
      */
-    public function autoHookMovieCollection($post, $movie)
+    public function autoHookMovieCollection($post, $movie, $type = '剪辑')
     {
         $user = $this->user;
-        // 创建用户下影片的剪辑合集
+        // 创建用户下影片的合集
         $collection = Collection::firstOrNew([
-            'name'    => "{$movie->name}的剪辑",
+            'name'    => "{$movie->name}的" . $type,
             'type'    => 'post',
             'user_id' => $user->id,
         ]);
-        //合集封面
+        // 合集封面
         $collection->logo = $movie->cover_url;
         $collection->save();
-
-        //自动收入合集
-        if ($post->collection_id) {
-            $post->addCollections([$post->collection_id]);
-        }
-        $post->collection_id = $collection->id; //主合集
+        // 主合集
+        $post->collection_id = $collection->id;
         $post->saveQuietly();
+
+        // 自动收入合集
+        $post->addCollections([$collection->id]);
         return $collection;
     }
 
