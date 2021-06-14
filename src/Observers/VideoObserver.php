@@ -15,7 +15,7 @@ class VideoObserver
     public function created(Video $video)
     {
         //长视频剪辑时
-        $video->autoPublishContentWhenAboutMovie();
+        $video->autoHookContentWhenClipedMovie();
 
         //上传视频
         if ($video->fileid) {

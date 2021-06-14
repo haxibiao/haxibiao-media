@@ -22,41 +22,107 @@ use TencentCloud\Vod\V20180717\VodClient;
 
 trait VideoRepo
 {
-    public function autoPublishContentWhenAboutMovie()
+
+    /**
+     * 影片解说和剪辑自动关联更新专题
+     */
+    public function autoHookMovieCategory($post, $movie)
+    {
+        $user = $this->user;
+        // 创建用户专题
+        $category = Category::firstOrNew([
+            'name' => "{$movie->name}",
+            'type' => 'movie',
+        ]);
+        // 第一个剪辑同名电影的自动成为专题创建者
+        if (!$category->user_id) {
+            $category->user_id = $user->id;
+        } else {
+            //后面剪辑的自动成为专题编辑成员
+            $category->addAuthor($user);
+        }
+
+        // 专题封面
+        $category->logo = $movie->cover_url;
+        // 默认专题通过审核
+        $category->status = Category::STATUS_PUBLISH;
+        $category->save();
+
+        // 自动收入专题
+        if ($post->category_id) {
+            $post->addCategories([$post->category_id]);
+        }
+        $post->category_id = $category->id; //主专题
+        $post->saveQuietly();
+
+        return $category;
+    }
+
+    /**
+     * 影片解说和剪辑自动收入用户合集
+     */
+    public function autoHookMovieCollection($post, $movie)
+    {
+        $user = $this->user;
+        // 创建用户下影片的剪辑合集
+        $collection = Collection::firstOrNew([
+            'name'    => "{$movie->name}的剪辑",
+            'type'    => 'post',
+            'user_id' => $user->id,
+        ]);
+        //合集封面
+        $collection->logo = $movie->cover_url;
+        $collection->save();
+
+        //自动收入合集
+        if ($post->collection_id) {
+            $post->addCollections([$post->collection_id]);
+        }
+        $post->collection_id = $collection->id; //主合集
+        $post->saveQuietly();
+        return $collection;
+    }
+
+    /**
+     * SEO目的：剪辑的视频动态，自动发布文章并投稿
+     */
+    public function autoPublishPostLinkedArticle($post, $collection, $category)
+    {
+        $article = Article::firstOrNew([
+            'video_id' => $post->video_id,
+            'type'     => 'video',
+            'movie_id' => $post->movie_id,
+        ]);
+        $article->title   = $post->description; //标题来自剪辑，配文字数都不多
+        $article->body    = $post->description;
+        $article->user_id = $post->user_id;
+        //直接发布，投稿成功
+        $article->status = Article::STATUS_ONLINE;
+        $article->submit = Article::SUBMITTED_SUBMIT;
+        $article->save();
+
+        // 投稿到专题
+        if ($category) {
+            //投稿到电影专题下
+            $article->addCategories([$category->id]);
+            //主专题
+            $article->update(['category_id' => $category->id]);
+        }
+        if ($collection) {
+            //主合集
+            $article->update(['collection_id' => $collection->id]);
+        }
+    }
+
+    /**
+     * 剪辑电影产生的视频,自动关联内容系统
+     */
+    public function autoHookContentWhenClipedMovie()
     {
         $video = $this;
         $user  = $video->user;
-        //剪辑电影的视频
+        // 剪辑的才有可靠的movie_id值关联到影片
         if ($movie = $video->movie) {
-
-            // 创建用户合集
-            $collection = Collection::firstOrNew([
-                'name'    => "{$movie->name}的剪辑",
-                'type'    => 'post',
-                'user_id' => $user->id,
-            ]);
-            //合集封面
-            $collection->logo = $movie->cover_url;
-            $collection->save();
-
-            // 创建用户专题
-            $category = Category::firstOrNew([
-                'name' => "{$movie->name}",
-                'type' => 'movie',
-            ]);
-            // 第一个剪辑同名电影的自动成为专题创建者
-            if (!$category->user_id) {
-                $category->user_id = $user->id;
-            } else {
-                //后面剪辑的自动成为专题编辑用户
-                $category->addAuthor($user);
-            }
-            //专题封面
-            $category->logo = $movie->cover_url;
-            // 默认专题通过审核
-            $category->status = Category::STATUS_PUBLISH;
-            $category->save();
-
             // 发布动态
             $post = Post::firstOrNew([
                 'user_id'  => $user->id,
@@ -64,46 +130,16 @@ trait VideoRepo
                 'movie_id' => $movie->id,
                 'status'   => Post::PUBLISH_STATUS,
             ]);
-            $post->description   = $video->title; //视频剪辑的配文
-            $post->collection_id = $collection->id; //主合集
-            $post->category_id   = $category->id; //主专题
+            $post->description = $video->title; //视频剪辑的配文
             $post->save();
 
             //自动收入合集
-            if ($post->collection_id) {
-                $post->addCollections([$post->collection_id]);
-            }
-
+            $collection = $video->autoHookMovieCollection($post, $movie);
             //自动收入专题
-            if ($post->category_id) {
-                $post->addCategories([$post->category_id]);
-            }
+            $category = $video->autoHookMovieCategory($post, $movie);
 
-            //剪辑的视频，自动生成视频类文章
-            $article = Article::firstOrNew([
-                'video_id' => $post->video_id,
-                'type'     => 'video',
-                'movie_id' => $post->movie_id,
-            ]);
-            $article->title   = $post->description; //标题来自剪辑，配文字数都不多
-            $article->body    = $post->description;
-            $article->user_id = $post->user_id;
-
-            //直接发布，投稿成功
-            $article->status = Article::STATUS_ONLINE;
-            $article->submit = Article::SUBMITTED_SUBMIT;
-
-            $article->save();
-
-            // 投稿到专题 - SEO目的
-            if ($post->category_id) {
-                //投稿到电影专题下
-                $article->addCategories([$post->category_id]);
-                //维护主专题/合集，查询性能优化
-                $article->category_id   = $post->category_id;
-                $article->collection_id = $post->collection_id;
-                $article->save();
-            }
+            //自动生成视频类文章
+            $video->autoPublishPostLinkedArticle($post, $collection, $category);
         }
     }
 

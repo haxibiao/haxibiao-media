@@ -238,16 +238,22 @@ trait MovieResolvers
     }
 
     /**
-     * 关联电影
+     * 关联电影到动态
      */
     public function resolveHookMovie($rootValue, array $args, $context, $resolveInfo)
     {
-        // TODO: 没搜到相关作品，也记录用户输入的影片名字(加个表)
-        // first = null ，即没有匹配的电影
         $movie = Movie::withoutGlobalScopes()->find($args['movie_id']);
         if ($movie) {
             $post = Post::find($args['post_id']);
             optional($post)->update(['movie_id' => $movie->id]);
+
+            //相同用户对同一个电影的关联动态，自动组合成一个动态合集,动态投稿到专题
+            if ($video = $post->video) {
+                // 剪辑的视频和movie的关系才是稳定的， 粘贴先不确定影片关系
+                // $video->update(['movie_id' => $movie->id]);
+                $video->autoHookMovieCollection($post, $movie);
+                $video->autoHookMovieCategory($post, $movie);
+            }
         }
         return $movie;
     }
