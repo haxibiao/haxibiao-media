@@ -215,6 +215,9 @@ trait MovieAttrs
     {
         //优先尊重用求片者
         $user = $this->attributes['user'] ?? null;
+        if (!$user && $this->user_id) {
+            $user = User::find($this->user_id);
+        }
 
         if (!$user) {
             $cache    = cache();
@@ -229,7 +232,7 @@ trait MovieAttrs
                     return $user;
                 }
             }
-            return null;
         }
+        return $user;
     }
 }

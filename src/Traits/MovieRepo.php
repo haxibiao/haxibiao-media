@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 use Haxibiao\Breeze\Exceptions\GQLException;
+use Haxibiao\Breeze\Notifications\BreezeNotification;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Video;
 use Illuminate\Http\UploadedFile;
@@ -231,6 +232,10 @@ trait MovieRepo
             $movie->data = $series;
         }
         $movie->saveQuietly();
+        //剧集更新通知
+        if ($user = $movie->user) {
+            $user->notify(new BreezeNotification($user, $movie->id, 'movies', $movie->name . '已更新' . $name, $movie->cover));
+        }
     }
 
     public static function getCategories()

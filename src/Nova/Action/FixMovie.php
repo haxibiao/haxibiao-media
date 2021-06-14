@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media\Nova\Action;
 
-use Haxibiao\Breeze\Notifications\MovieFixed;
+use Haxibiao\Breeze\Notifications\BreezeNotification;
 use Haxibiao\Breeze\User;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Traits\MovieRepo;
@@ -41,7 +41,7 @@ class FixMovie extends Action
                     $user = User::find($movie->user_id);
                     if ($user) {
                         // FIXME: 暂时不兼容多人同时求一个片，问题不大，目前站长知道要修复片才是核心
-                        $user->notify(new MovieFixed($movie));
+                        $user->notify(new BreezeNotification($user, $movie->id, 'movies', $movie->name . '已修复', $movie->cover));
                     }
                 }
                 $movie->status = $fields->fixed ? Movie::PLAY_FIXED : Movie::ERROR;
@@ -82,7 +82,7 @@ class FixMovie extends Action
                 0 => '否',
                 1 => '是',
             ])
-                ->withMeta(['value' => '1'])
+                ->withMeta(['value' => 0])
                 ->displayUsingLabels(),
         ];
     }
