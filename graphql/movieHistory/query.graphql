@@ -3,7 +3,7 @@ type MovieHistory {
     """
     观看进度
     """
-    progress: String
+    progress: Int
     """
     最后观看时间
     """

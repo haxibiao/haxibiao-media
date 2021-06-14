@@ -1,5 +1,4 @@
 extend type Mutation {
-
-    saveWatchProgress(movie_id: Int!, series_index: Int, progress: String): Boolean
+    saveWatchProgress(movie_id: Int!, series_index: Int, progress: Int): Boolean
         @field(resolver: "App\\MovieHistory@saveWatchProgress")
 }

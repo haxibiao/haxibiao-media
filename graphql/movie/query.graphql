@@ -88,7 +88,7 @@ type Movie {
     """
     最近观看的进度
     """
-    last_watch_progress: String
+    last_watch_progress: Int
     """
     评论
     """
