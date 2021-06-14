@@ -2,7 +2,7 @@ extend type Mutation {
     """
     关联电影
     """
-    hookMovie(movie_id: Int!, post_id: Int!): Movie @field(resolver: "App\\Movie@resolveHookMovie")
+    hookMovie(movie_id: Int!, post_id: Int!): Post @field(resolver: "App\\Movie@resolveHookMovie")
 
     """
     剪辑电影

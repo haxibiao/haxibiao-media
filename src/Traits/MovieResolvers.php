@@ -254,8 +254,10 @@ trait MovieResolvers
                 $video->autoHookMovieCollection($post, $movie, '解说');
                 $video->autoHookMovieCategory($post, $movie);
             }
+
+            //返回合集，专题信息关联好的post
+            return $post;
         }
-        return $movie;
     }
 
     public function movieRelationPost($root, $args, $content, $info)
