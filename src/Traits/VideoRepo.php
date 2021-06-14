@@ -53,6 +53,9 @@ trait VideoRepo
         // 自动收入专题
         $post->addCategories([$category->id]);
 
+        // 标签
+        $post->tagByNames([$movie->name]);
+
         return $category;
     }
 
