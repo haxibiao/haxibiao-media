@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MovieHistory extends Model
 {
     use HasFactory;
-
-    use MovieHistoryResolvers, MovieHistoryAttrs;
+    use MovieHistoryAttrs;
+    use MovieHistoryResolvers;
 
     protected $guarded = [];
 

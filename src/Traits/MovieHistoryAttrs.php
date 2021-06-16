@@ -6,6 +6,16 @@ use Haxibiao\Media\Movie;
 
 trait MovieHistoryAttrs
 {
+    /**
+     * 已播放进度条数用整数
+     *
+     * @return void
+     */
+    public function getProgressAttribute()
+    {
+        return intval($this->getRawOriginal('progress') ?? 0);
+    }
+
     public function getProgressMsgAttribute()
     {
         if ($this->progess) {

@@ -30,7 +30,7 @@ trait MovieHistoryResolvers
         return true;
     }
 
-    public static function showMovieHistoryResolver($root, $args, $content, $info)
+    public static function resolveShowMovieHistory($root, $args, $content, $info)
     {
         app_track_event('长视频', '查看长视频历史记录');
         //标记获取详情数据信息模式
@@ -40,14 +40,14 @@ trait MovieHistoryResolvers
         if (currentUser()) {
             $user = getUser();
 
-            $var = MovieHistory::whereIn(DB::raw('(movie_id,updated_at)'), function ($query) use ($user) {
+            $visits = MovieHistory::whereIn(DB::raw('(movie_id,updated_at)'), function ($query) use ($user) {
                 $query->select('movie_id', DB::raw('max(updated_at)'))
                     ->from('movie_histories')
                     ->where('user_id', $user->id)
                     ->groupBy('movie_id');
             }
             )->orderByDesc('updated_at');
-            return ($var);
+            return ($visits);
         }
         return [];
     }

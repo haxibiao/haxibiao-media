@@ -16,5 +16,5 @@ type MovieHistory {
 }
 
 extend type Query @guard {
-    showMovieHistory: [MovieHistory] @paginate(defaultCount: 10, builder: "App\\MovieHistory@showMovieHistoryResolver")
+    showMovieHistory: [MovieHistory] @paginate(defaultCount: 10, builder: "App\\MovieHistory@resolveShowMovieHistory")
 }
