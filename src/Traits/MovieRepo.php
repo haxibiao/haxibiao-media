@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Breeze\Notifications\BreezeNotification;
+use Haxibiao\Breeze\User;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Video;
 use Illuminate\Http\UploadedFile;
@@ -233,8 +234,8 @@ trait MovieRepo
         }
         $movie->saveQuietly();
         //剧集更新通知
-        if ($user = $movie->user) {
-            $user->notify(new BreezeNotification($user, $movie->id, 'movies', $movie->name . '已更新' . $name, $movie->cover));
+        if ($user = User::find($movie->user_id)) {
+            $user->notify(new BreezeNotification(currentUser(), $movie->id, 'movies', '已更新' . $name, $movie->cover, $movie->name, '更新了剧集'));
         }
     }
 

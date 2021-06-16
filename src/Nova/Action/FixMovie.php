@@ -41,7 +41,7 @@ class FixMovie extends Action
                     $user = User::find($movie->user_id);
                     if ($user) {
                         // FIXME: 暂时不兼容多人同时求一个片，问题不大，目前站长知道要修复片才是核心
-                        $user->notify(new BreezeNotification($user, $movie->id, 'movies', $movie->name . '已修复', $movie->cover));
+                        $user->notify(new BreezeNotification(currentUser(), $movie->id, 'movies', '已修复', $movie->cover, $movie->name, '修复了影片'));
                     }
                 }
                 $movie->status = $fields->fixed ? Movie::PLAY_FIXED : Movie::ERROR;
