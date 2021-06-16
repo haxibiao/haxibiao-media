@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Nova;
+
+use  Haxibiao\Media\Nova\Audio as NovaAudio;
+
+class Audio extends NovaAudio
+{
+
+}

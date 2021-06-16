@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use  Haxibiao\Media\Audio as BaseAudio;
+
+class Audio extends BaseAudio
+{
+
+}
