@@ -25,6 +25,10 @@ type Movie {
     """
     cover: String
     """
+    伪装user发布者
+    """
+    user: User
+    """
     导演
     """
     producer: String
