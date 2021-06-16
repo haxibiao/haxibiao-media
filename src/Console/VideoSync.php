@@ -96,6 +96,7 @@ class VideoSync extends Command
                         'status'   => $video->status,
                         'json'     => $video->json,
                         'disk'     => $video->disk,
+                        'vid'     => $video->vid,
                     ]
                     );
                     $this->info('成功导入视频' . $newVideo->id);
