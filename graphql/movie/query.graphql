@@ -75,7 +75,7 @@ type Movie {
     """
     剧集的默认线路
     """
-    data: JsonType
+    data: [MovieData]
 
     """
     剧集的所有线路
@@ -271,4 +271,9 @@ type MovieFilterData {
     """
     filterOptions: [String]
     filterValue: [String]
+}
+
+type MovieData {
+    url: String
+    name: String
 }
