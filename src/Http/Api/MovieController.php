@@ -19,6 +19,17 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
+    //影片列表
+    public function index()
+    {
+        return Movie::latest('id')->paginate(10);
+    }
+
+    //影片信息
+    public function show(Movie $movie)
+    {
+        return $movie;
+    }
 
     public function getComment($id)
     {
@@ -189,9 +200,9 @@ class MovieController extends Controller
         }
     }
 
-/**
- * 发送弹幕
- */
+    /**
+     * 发送弹幕
+     */
     public function sendDanmu()
     {
         //发送弹幕用户 此处如果前端不传递 默认是DIYgod 正确的参数应该是user id

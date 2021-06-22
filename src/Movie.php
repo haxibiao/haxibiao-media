@@ -72,8 +72,8 @@ class Movie extends Model
         ];
     }
 
-    //加载data到json位series数据只给vue播放器
-    protected $appends = ['data'];
+    //加载剧集默认线路数据
+    protected $appends = ['series'];
     protected $casts   = [
         'data' => 'array',
     ];
@@ -81,32 +81,9 @@ class Movie extends Model
     public static function boot()
     {
         parent::boot();
-        //以下逻辑在本地项目做，限制住了其他项目了
 
-        // if (!in_array(config('app.name'), ['dianyintujie', 'diudie'])) {
-        //     static::addGlobalScope(new MovieStatusScope);
-        // }
-        // if (!in_array(config('app.name'), ['内函电影', 'yingdaquan','dianyintujie','diudie'])) {
-        //     static::addGlobalScope('avaiable', function (Builder $builder) {
-        //         /**
-        //          * 公司实名备案的域名不展示港剧，避免版权风险
-        //          * https://pm.haxifang.com/browse/NHY-380
-        //          */
-        //         //            注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
-        //         //            $unRecorded = is_null(
-        //         //                data_get(app('cms_site'), 'company', null)
-        //         //            );
-        //         //            if($unRecorded){
-        //         //                return $builder;
-        //         //            }
-        //         $builder->whereNotIn('region', ['未知分类', '港剧'])
-        //             ->where(function ($query) {
-        //                 $query->whereNotIn('country', ['中国大陆', '中国', '香港', '大陆'])->where('region', '解说')
-        //                     ->orWhereNotNull('region');
-        //             })
-        //         ;
-        //     });
-        // }
+        static::observe(\Haxibiao\Media\Observers\MovieObserver::class);
+
     }
 
     protected $searchable = [
