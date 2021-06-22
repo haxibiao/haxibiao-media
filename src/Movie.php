@@ -111,9 +111,10 @@ class Movie extends Model
 
     protected $searchable = [
         'columns' => [
-            'movies.name'         => 3,
-            'movies.introduction' => 2,
-            'movies.actors'       => 1,
+            'movies.name'     => 3,
+            // 'movies.introduction' => 2, //暂时不搜索简介了，太慢
+            'movies.producer' => 2,
+            'movies.actors'   => 1,
         ],
     ];
 
