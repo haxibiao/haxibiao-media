@@ -69,7 +69,7 @@ class Movie extends Resource
             Text::make('演员', 'actors')->hideFromIndex(),
             Text::make('分类', 'type'),
             Text::make('风格', 'style'),
-            BelongsTo::make('求片者', 'user', User::class),
+            BelongsTo::make('求片者', 'user', User::class)->hideWhenCreating(),
             Select::make('状态', 'status')->options(\Haxibiao\Media\Movie::getStatuses())->displayUsingLabels(),
             Image::make('封面', 'cover')->thumbnail(function () {
                 return $this->cover;
