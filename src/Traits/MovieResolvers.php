@@ -163,11 +163,26 @@ trait MovieResolvers
 
     public function resolveClipMovie($root, $args, $content, $info)
     {
+
         $user       = getUser();
-        $movie      = Movie::findOrFail($args['movie_id']);
-        $seiresName = MovieRepo::findSeriesName($args['targetM3u8'], $movie);
-        $video      = MovieRepo::storeClipMovieByApi($user, $movie, $args['targetM3u8'], $args['startTime'], $args['endTime'], $args['postTitle'], $seiresName);
-        return $video->post;
+        $start      = $args['startTime'];
+        $end        = $args['endTime'];
+        $postTitle  = $args['postTitle'];
+        $movie_id   = $args['movie_id'];
+        $m3u8       = $args['targetM3u8'];
+        $seriesName = $args['seriesName'];
+
+        $movie      = Movie::find($movie_id);
+        $seriesName = $seriesName ?? MovieRepo::findSeriesName($m3u8, $movie);
+        $video      = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $seriesName);
+        $post       = $video->post;
+
+        //movie计数剪辑数count_clip
+        $movie->count_clips = $movie->videos()->count();
+        $movie->save();
+        return $post;
+
+       
     }
 
     public function resolveCategoryMovie($root, $args, $content, $info)
