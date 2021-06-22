@@ -12,7 +12,7 @@ use Haxibiao\Helpers\utils\BadWordUtils;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
 use Haxibiao\Media\Traits\MovieRepo;
-use Haxibiao\Sns\comment;
+use Haxibiao\Sns\Comment;
 use Haxibiao\Sns\Favorite;
 use Haxibiao\Sns\Like;
 use Illuminate\Http\Request;
