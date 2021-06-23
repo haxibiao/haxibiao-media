@@ -72,10 +72,15 @@ type Movie {
     语言
     """
     lang: String
+
     """
-    剧集的默认线路
+    默认剧集的线路
     """
-    data: [MovieData]
+    data: [MovieData] @deprecated(reason: "请用新的剧集线路信息属性series获取播放历史")
+    """
+    默认剧集的线路
+    """
+    series: [MovieData]
 
     """
     剧集的所有线路
