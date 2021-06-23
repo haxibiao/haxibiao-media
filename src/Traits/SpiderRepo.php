@@ -61,6 +61,11 @@ trait SpiderRepo
         $content = static::extractTitle($content);
         //提取URL
         $dyUrl = static::extractURL($shareLink);
+        //截取参数前的链接，防止链接过长
+        if ($dyUrl && str_contains($dyUrl, '?')) {
+            $end   = strpos($dyUrl, "?");
+            $dyUrl = substr($dyUrl, 0, $end);
+        }
 
         // if (Spider::where('source_url', $dyUrl)->exists()) {
         //     throw new GQLException('该视频已被采集，请再换一个！');
