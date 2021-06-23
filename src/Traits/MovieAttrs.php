@@ -105,7 +105,7 @@ trait MovieAttrs
 
         //转换data的数组为serie对象数组
         $series      = [];
-        $data_series = $this->data;
+        $data_series = is_array($this->data) ? $this->data : [];
         foreach ($data_series as $data_serie) {
             $series[] = $data_serie;
             //暂时没线路修复逻辑...
@@ -114,7 +114,8 @@ trait MovieAttrs
         if ($user = currentUser()) {
             //获取APP用户观看进度记录
             $seriesHistories = \App\MovieHistory::where('user_id', $user->id)
-                ->where('movie_id', $this->id)->get();
+                ->where('movie_id', $this->id)
+                ->get();
             foreach ($seriesHistories as $seriesHistory) {
                 $index = $seriesHistory->series_id;
                 //修复观看历史数据对不上的脏数据异常

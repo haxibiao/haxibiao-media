@@ -14,7 +14,12 @@ class MovieSync extends Command
      *
      * @var string
      */
-    protected $signature = 'movie:sync {--way=api} {--is_neihan=false} {--source=内函电影 : 资源来源} {--region= : 按地区} {--type= : 按类型} {--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id} {--movie_name= : 指定电影名称} {--copyright=true}';
+    protected $signature = 'movie:sync
+	{--way=api}
+	{--is_neihan=false}
+	{--source=内函电影 : 资源来源}
+	{--region= : 按地区} {--type= : 按类型}
+	{--style= : 按风格} {--year= : 按年份} {--producer= : 按导演} {--actors= : 按演员} {--id= : 导的开始id} {--movie_name= : 指定电影名称} {--copyright=true}';
 
     /**
      * The console command description.
@@ -164,7 +169,7 @@ class MovieSync extends Command
                             'data_source',
                         ]));
                         $model->status = Movie::PUBLISH;
-                        $model->save();
+                        $model->saveQuietly();
                         DB::commit();
                         $success++;
                         $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));
@@ -270,7 +275,7 @@ class MovieSync extends Command
                         'type',
                         'data',
                         'data_source',
-                    ]))->save();
+                    ]))->saveQuietly();
                     DB::commit();
                     $success++;
                     $this->info('已成功：' . $success . '部, 当前:' . data_get($movie, 'type') . '-' . data_get($movie, 'name') . ' - ' . data_get($movie, 'id'));

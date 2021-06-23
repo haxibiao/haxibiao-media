@@ -23,7 +23,7 @@ class MovieObserver
     {
         if ($movie->isDirty('data')) {
             //统计默认线路的剧集数
-            $movie->count_series = count($movie->data ?? []);
+            $movie->count_series = count($movie->series);
             //剧集更新通知
             if ($user = User::find($movie->user_id)) {
                 $user->notify(new BreezeNotification(currentUser(), $movie->id, 'movies', '已更新' . $movie->count_series . '集', $movie->cover, $movie->name, '更新了剧集'));
