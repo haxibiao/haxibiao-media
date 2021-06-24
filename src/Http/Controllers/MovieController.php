@@ -262,9 +262,6 @@ class MovieController extends Controller
         $qb_country = $qb->where('country', $movie->country)->where('type', $movie->type)->where('id', '<>', $movie->id);
         $more       = $qb_country->where('cover', 'like', 'https://image-cdn%')->latest('rank')->inRandomOrder()->take(6)->get();
 
-        // 兼容内涵电影vue用的series属性
-        $movie->series = $movie->data;
-        $movie->data   = null;
         if ($user = currentUser()) {
             // 保存观看历史
             MovieHistory::updateOrCreate([

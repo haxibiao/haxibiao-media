@@ -73,17 +73,18 @@ class Movie extends Model
     }
 
     //加载剧集默认线路数据
-    protected $appends = ['series'];
+    protected $appends = ['series', 'play_lines'];
     protected $casts   = [
-        'data' => 'array',
+        //默认线路
+        'data'        => 'array',
+        //其他线路
+        'data_source' => 'array',
     ];
 
     public static function boot()
     {
         parent::boot();
-
         static::observe(\Haxibiao\Media\Observers\MovieObserver::class);
-
     }
 
     protected $searchable = [

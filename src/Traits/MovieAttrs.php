@@ -30,18 +30,25 @@ trait MovieAttrs
     public function getPlayLinesAttribute()
     {
         $lines = [];
-        $movie = $this;
 
-        $lines[] = [
-            'name' => "默认",
-            'data' => $movie->series_urls,
-        ];
+        //其他线路
+        if ($data_source = $this->data_source) {
+            if (is_array($data_source) && count($data_source)) {
+                foreach ($data_source as $line => $source) {
+                    $lines[] = [
+                        'name' => $line,
+                        'data' => $source,
+                    ];
+                }
+            }
+        }
 
-        //FIXME: 下线北美线路，后面补充香港线路，我们的非ucdn线路
-        // $lines[] = [
-        //     'name' => "北美",
-        //     'data' => json_decode($movie->data_source, true),
-        // ];
+        if (empty($lines)) {
+            $line[] = [
+                'name' => "默认",
+                'data' => $this->series,
+            ];
+        }
 
         return $lines;
     }
@@ -84,28 +91,20 @@ trait MovieAttrs
     }
 
     /**
-     * 电影剧集+播放地址
-     */
-    public function getSeriesUrlsAttribute()
-    {
-        return $this->series;
-    }
-
-    /**
      * 剧集信息
      *
      * @return array
      */
     public function getSeriesAttribute()
     {
-        // 兼容内涵电影代码用 series属性(serie对象的数组)写逻辑的部分
-        if (isset($this->attributes['series']) && is_array($this->attributes['series'])) {
-            return $this->attributes['series'];
-        }
+        // // 兼容内涵电影代码用 series属性(serie对象的数组)写逻辑的部分
+        // if (isset($this->attributes['series']) && is_array($this->attributes['series']) && count($this->attributes['series'])) {
+        //     return $this->attributes['series'];
+        // }
 
         //转换data的数组为serie对象数组
         $series      = [];
-        $data_series = is_array($this->data) ? $this->data : [];
+        $data_series = is_array($this->data) ? $this->data : @json_decode($this->data, true) ?? [];
         foreach ($data_series as $data_serie) {
             $series[] = $data_serie;
             //暂时没线路修复逻辑...
@@ -128,28 +127,6 @@ trait MovieAttrs
 
         return $series;
     }
-
-    // public function getDataAttribute()
-    // {
-    //     //重用加载多线路的
-    //     $series = $this->getSeriesUrlsAttribute();
-
-    //     //app 访问这里, 填充已观看进度信息
-    //     if ($user = getUser(false)) {
-    //         //获取观看进度记录
-    //         $seriesHistories = \App\MovieHistory::where('user_id', $user->id)
-    //             ->where('movie_id', $this->id)->get();
-    //         foreach ($seriesHistories as $seriesHistory) {
-    //             $index = $seriesHistory->series_id;
-    //             //修复观看历史数据对不上的脏数据异常
-    //             $serie = $series[$index] ?? null;
-    //             if ($serie && isset($serie->progress)) {
-    //                 $serie->progress = $seriesHistory->progress;
-    //             }
-    //         }
-    //     }
-    //     return $series;
-    // }
 
     public function getCreatedAtAttribute()
     {

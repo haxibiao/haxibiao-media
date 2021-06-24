@@ -202,7 +202,7 @@ trait MovieRepo
     public static function updateSeries($movie, $name, $url)
     {
         if (!blank($name)) {
-            $series_raw = $movie->getSeriesUrlsAttribute();
+            $series_raw = $movie->series;
             $series     = [];
             $updated    = false;
             foreach ($series_raw as $item) {

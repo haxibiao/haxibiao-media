@@ -92,7 +92,7 @@
                         </a>
                     </li>
                 </el-popover>
-                <el-popover placement="bottom" trigger="manual" v-model="playLinesVisible">
+                <!-- <el-popover placement="bottom" trigger="manual" v-model="playLinesVisible">
                     <play-lines
                         :lines="[]"
                         @onSwitchLine="switchLine"
@@ -104,7 +104,7 @@
                             <span class="mobile">线路</span>
                         </a>
                     </li>
-                </el-popover>
+                </el-popover> -->
                 <li class="fr operation" style="margin: 0">
                     <a
                         :class="{ disabled: series.length <= currentEpisode }"
@@ -151,8 +151,8 @@
                                     <el-dropdown-item
                                         v-for="(lineName, index) in playLines"
                                         :key="index"
-                                        :command="lineName"
-                                        :disabled="lineName == playLine"
+                                        :command="index"
+                                        :disabled="index == lineSelected"
                                     >
                                         {{ lineName }}
                                     </el-dropdown-item>
@@ -188,13 +188,7 @@
                                 ]"
                                 v-on:click="clickEpisode(index)"
                             >
-                                {{
-                                    series.length > 1
-                                        ? index + 1
-                                        : media.name.length > 2
-                                        ? media.name
-                                        : movie.name + media.name
-                                }}
+                                {{ index + 1 }}
                             </a>
                         </li>
                     </ul>
@@ -232,20 +226,22 @@ export default {
     mounted() {
         if (this.movieData !== null && typeof this.movieData === 'object') {
             this.movie = this.movieData;
+            console.log('movie', this.movieData);
+
             this.series = this.movie.series || [];
 
             //线路信息
             if (this.movie.play_lines) {
-                let lines = ['内涵云'];
-                for (var lineName in this.movie.play_lines) {
-                    lines.push(lineName);
+                let lines = [];
+                for (var lineIndex in this.movie.play_lines) {
+                    let line = this.movie.play_lines[lineIndex];
+                    lines.push(line.name);
                 }
                 this.playLines = lines;
                 console.log('this.playLines', this.playLines);
             }
 
             this.source = this.$optional(this.series, `${this.currentEpisode - 1}.url`);
-            console.log('movie', this.movieData);
             console.log('mounted source', this.currentEpisode, this.source);
         }
 
@@ -323,7 +319,7 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    },
+                    }
                 )
                 .then(function(response) {
                     if (response && response.data) {
@@ -332,7 +328,7 @@ export default {
                         that.toggleLike();
                     }
                 })
-                .catch(e => {
+                .catch((e) => {
                     that.toggleLike();
                 });
         },
@@ -359,7 +355,7 @@ export default {
                         headers: {
                             token: that.$user.token,
                         },
-                    },
+                    }
                 )
                 .then(function(response) {
                     if (response && response.data) {
@@ -368,7 +364,7 @@ export default {
                         that.toggleFavorite();
                     }
                 })
-                .catch(e => {
+                .catch((e) => {
                     that.toggleFavorite();
                 });
         },
@@ -384,16 +380,11 @@ export default {
             }
         },
 
-        switchLine(playLine) {
-            this.playLine = playLine;
-            this.currentEpisode = 1;
-
-            //ivan：切换资源才是目前的实情
-            if (playLine !== '内涵云') {
-                this.series = this.movieData.play_lines[playLine];
-            } else {
-                this.series = this.movie.series;
-            }
+        switchLine(index) {
+            this.lineSelected = index;
+            this.currentEpisode = 1; //切换后剧集数会不同，默认跳转到第一集
+            this.series = this.movieData.play_lines[index].data;
+            console.log('切换线路后 this.series', this.series);
         },
 
         togglePlayLines() {
@@ -426,7 +417,7 @@ export default {
             videoDuration: '',
             currentTime: '',
             playLines: null,
-            playLine: null,
+            lineSelected: null,
         };
     },
 };
