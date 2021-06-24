@@ -68,12 +68,13 @@ class MovieSync extends Command
         $success = 0;
         $fail    = 0;
         $total   = 0;
-        $args    = array_except($this->options(), ['way']);
         $page    = 1;
 
         $returnCount = 0;
         $nunu_count  = 0;
+        $kkw_count   = 0;
 
+        $args = array_except($this->options(), ['way']);
         do {
             data_set($args, 'page', $page);
             $requestArgs = http_build_query($args);
@@ -84,12 +85,12 @@ class MovieSync extends Command
                 $resultMovies = $result['data'];
                 foreach ($resultMovies as $movie) {
                     $total++;
-                    $this->syncMovie($movie, $success, $fail, $nunu_count);
+                    $this->syncMovie($movie, $success, $fail, $nunu_count, $kkw_count);
                 }
                 $page++;
             }
         } while ($returnCount >= 300);
-        $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部' . ' nunu:' . $nunu_count);
+        $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部' . ' nunu:' . $nunu_count . ' kkw:' . $kkw_count);
     }
 
     public function database()
@@ -102,10 +103,13 @@ class MovieSync extends Command
             }
         }
 
-        $success = 0;
-        $fail    = 0;
-        $total   = 0;
-        $qb      = DB::connection('mediachain')->table('movies')
+        $success    = 0;
+        $fail       = 0;
+        $total      = 0;
+        $nunu_count = 0;
+        $kkw_count  = 0;
+
+        $qb = DB::connection('mediachain')->table('movies')
             ->when($is_neihan = data_get($this->options(), 'is_neihan'), function ($q) use ($is_neihan) {
                 if ($is_neihan == 'false') {
                     $q->where('is_neihan', 0);
@@ -142,13 +146,13 @@ class MovieSync extends Command
         $qb->chunk(100, function ($movies) use (&$fail, &$success, &$total) {
             foreach ($movies as $movie) {
                 $total++;
-                $this->syncMovie($movie, $success, $fail, $nunu_count);
+                $this->syncMovie($movie, $success, $fail, $nunu_count, $kkw_count);
             }
         });
-        $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部');
+        $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部' . ' nunu:' . $nunu_count . ' kkw:' . $kkw_count);
     }
 
-    public function syncMovie($movie, &$success, &$fail, &$nunu_count)
+    public function syncMovie($movie, &$success, &$fail, &$nunu_count, &$kkw_count)
     {
         DB::beginTransaction();
         try {
@@ -194,18 +198,25 @@ class MovieSync extends Command
                     $other_source['麻花云'] = $series;
                 }
             }
-            $hasNunu = false;
+            $has_nunu = false;
             if (isset($movie['nunu_source'])) {
-                //有nunu的可以优先尊重做默认
                 $series = @json_decode($movie['nunu_source'], true) ?? [];
-                dd($series);
                 if (count($series)) {
-                    $movie['data'] = $series;
-                    //努努云线路
+                    //有nunu的可以优先尊重做默认
+                    $movie['data']             = $series;
                     $other_source['努努云'] = $series;
-                    $hasNunu                   = true;
+                    $has_nunu                  = true;
                 }
             }
+            $has_kkw = false;
+            if (isset($movie['kkw_source'])) {
+                $series = @json_decode($movie['kkw_source'], true) ?? [];
+                if (count($series)) {
+                    $other_source['看看屋'] = $series;
+                    $has_kkw                   = true;
+                }
+            }
+
             $movie['data_source'] = $other_source;
 
             $model->forceFill(array_only($movie, [
@@ -234,8 +245,12 @@ class MovieSync extends Command
             DB::commit();
             $success++;
             $addOrUpdate = $movieExists ? '更新' : '新增';
-            if ($hasNunu) {
+            if ($has_nunu) {
                 $addOrUpdate .= "(nunu)";
+                $nunu_count++;
+            }
+            if ($has_kkw) {
+                $addOrUpdate .= "(kkw)";
                 $nunu_count++;
             }
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'id'));
