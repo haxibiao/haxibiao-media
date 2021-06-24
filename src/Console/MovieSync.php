@@ -19,7 +19,7 @@ class MovieSync extends Command
      * @var string
      */
     protected $signature = 'movie:sync
-	{--way=api}
+	{--db : 数据库模式}
 	{--is_neihan=false}
 	{--source=内函电影 : 资源来源}
 	{--region= : 按地区}
@@ -59,8 +59,12 @@ class MovieSync extends Command
         if (!Schema::hasTable('movies')) {
             return $this->error("当前数据库 没有movies表!");
         }
-        $way = $this->option('way');
-        $this->$way();
+        if ($this->option('db')) {
+            $this->database();
+        } else {
+            $this->api();
+        }
+        return 0;
     }
 
     public function api()
@@ -95,11 +99,17 @@ class MovieSync extends Command
 
     public function database()
     {
+        if (env('DB_HOST_MEDIACHAIN') == null) {
+            $db_password_media = $this->ask("请输入内涵云DB_HOST, 或者[enter]跳过");
+            if ($db_password_media) {
+                config(['database.connections.mediachain.host' => $db_password_media]);
+            }
+        }
+
         if (env('DB_PASSWORD_MEDIA') == null) {
-            $db_password_media = $this->ask("请注意 env('DB_PASSWORD_MEDIA') 未设置，正在用env('DB_PASSWORD'), 如果需要不同密码请输入或者[enter]跳过");
+            $db_password_media = $this->ask("请输入内涵云DB_PASSOWRD, 或者[enter]跳过");
             if ($db_password_media) {
                 config(['database.connections.mediachain.password' => $db_password_media]);
-                $this->confirm("已设置media的db密码，继续吗? ");
             }
         }
 
@@ -110,10 +120,10 @@ class MovieSync extends Command
         $kkw_count  = 0;
 
         $qb = DB::connection('mediachain')->table('movies')
+            ->whereNotNull('cover') //只同步有封面的
+            ->whereNotNull('nunu_source') //快速同步nunu线路的更新
             ->when($is_neihan = data_get($this->options(), 'is_neihan'), function ($q) use ($is_neihan) {
-                if ($is_neihan == 'false') {
-                    $q->where('is_neihan', 0);
-                }
+                $q->where('is_neihan', $is_neihan !== 'false');
             })
             ->when($id = data_get($this->options(), 'id'), function ($q) use ($id) {
                 $q->where('id', '>=', $id);})
