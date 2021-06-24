@@ -31,8 +31,8 @@ class CreateMoviesTable extends Migration
             $table->string('region', 100)->nullable()->index()->comment("地区");
             $table->integer('count_series')->default(0)->comment("总集数");
             $table->string('actors', 100)->nullable()->index()->comment("演员");
-            $table->json('data')->nullable()->comment('剧集播放数据');
-            $table->json('data_source')->nullable()->comment('来源剧集详情');
+            $table->json('data')->nullable()->comment('默认剧集线路数据');
+            $table->json('data_source')->nullable()->comment('其他剧集线路数据');
 
             $table->tinyInteger('rank')->default(0)->comment('权重');
             $table->string('country', 255)->nullable()->comment('国家');
