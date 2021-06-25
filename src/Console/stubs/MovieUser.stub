@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use Haxibiao\Media\MovieUser as BaseMovieUser;
+
+class MovieUser extends BaseMovieUser
+{
+
+}
