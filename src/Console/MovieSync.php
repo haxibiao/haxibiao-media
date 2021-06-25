@@ -30,7 +30,7 @@ class MovieSync extends Command
     {--actors= : 按演员}
     {--id= : 导的开始id}
     {--movie_name= : 指定电影名称}
-    {--copyright=true}';
+    {--line= : 线路简称,如nunu,kkw}';
 
     /**
      * The console command description.
@@ -121,7 +121,14 @@ class MovieSync extends Command
 
         $qb = DB::connection('mediachain')->table('movies')
             ->whereNotNull('cover') //只同步有封面的
-            ->whereNotNull('nunu_source') //快速同步nunu线路的更新
+            ->when($line = $this->option('line'), function ($q) use ($line) {
+                //快速同步指定线路的更新
+                $q->whereNotNull($line . '_source');
+            })
+            ->when($source = $this->option('source'), function ($q) use ($source) {
+                //指定来源
+                $q->whereNotNull('source', $source);
+            })
             ->when($is_neihan = data_get($this->options(), 'is_neihan'), function ($q) use ($is_neihan) {
                 $q->where('is_neihan', $is_neihan !== 'false');
             })
