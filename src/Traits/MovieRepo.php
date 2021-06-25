@@ -148,10 +148,9 @@ trait MovieRepo
         if ($result['status'] == 200) {
             $video    = $result['data'];
             $clipInfo = (object) [
-                'series_name'  => $seriesName,
                 'start_time'   => $startTime,
                 'end_time'     => $endTime,
-                'series_index' => self::findSeriesIndexByM3u8($movie, $m3u8),
+                'series_index' => $seriesName, //就存剧集index
             ];
 
             // 创建剪辑的视频

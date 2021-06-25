@@ -194,12 +194,10 @@ trait MovieResolvers
         $movie_id    = $args['movie_id'];
         $m3u8        = $args['targetM3u8'];
         $seriesIndex = $args['seriesIndex'];
-        $playLine    = $args['playLine'];
 
-        $movie      = Movie::find($movie_id);
-        $seriesName = $seriesName ?? $movie->findSeriesName($playLine, $seriesIndex);
-        $video      = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $seriesName);
-        $post       = $video->post;
+        $movie = Movie::find($movie_id);
+        $video = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $seriesIndex);
+        $post  = $video->post;
 
         //movie计数剪辑数count_clip
         $movie->count_clips = $movie->videos()->count();
