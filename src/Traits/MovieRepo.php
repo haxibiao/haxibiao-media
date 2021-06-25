@@ -183,9 +183,9 @@ trait MovieRepo
      */
     public function findSeriesName($playLine, $seriesIndex)
     {
-        $dataSource = json_decode($this->data_source, true);
-        $data       = $dataSource[$playLine];
-        return data_get($data, "$seriesIndex.name");
+        $lines  = is_array($this->data_source) ? $this->data_source : @json_decode($this->data_source, true) ?? [];
+        $series = $lines[$playLine] ?? [];
+        return data_get($series, "$seriesIndex.name");
     }
 
     /**
