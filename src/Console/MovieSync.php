@@ -219,8 +219,9 @@ class MovieSync extends Command
             if (isset($movie['nunu_source'])) {
                 $series = @json_decode($movie['nunu_source'], true) ?? [];
                 if (count($series)) {
-                    //有nunu的可以优先尊重做默认
+                    //有nunu的可以优先尊重,覆盖默认
                     $movie['data']             = $series;
+                    $movie['count_series']     = count($series);
                     $other_source['努努云'] = $series;
                     $has_nunu                  = true;
                 }
@@ -229,6 +230,11 @@ class MovieSync extends Command
             if (isset($movie['kkw_source'])) {
                 $series = @json_decode($movie['kkw_source'], true) ?? [];
                 if (count($series)) {
+                    //默认的没有或者不全，可以用看看屋的做默认
+                    if (count($series) > count($default_sereies)) {
+                        $movie['data']         = $series;
+                        $movie['count_series'] = count($series);
+                    }
                     $other_source['看看屋'] = $series;
                     $has_kkw                   = true;
                 }
