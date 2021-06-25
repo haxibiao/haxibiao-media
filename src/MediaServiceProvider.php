@@ -55,8 +55,8 @@ class MediaServiceProvider extends ServiceProvider
                 Console\VideoSync::class,
                 Console\CrawlDouyinVideos::class,
 
-				Console\Audible\AudibleSync::class,
-				Console\Novel\NovelSync::class,
+                Console\Audible\AudibleSync::class,
+                Console\Novel\NovelSync::class,
             ]);
         }
 
@@ -98,7 +98,6 @@ class MediaServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__ . '/../config/media.php' => config_path('media.php'),
-                __DIR__ . '/../config/vod.php'   => config_path('vod.php'),
             ], 'media-config');
 
             $this->publishes([
