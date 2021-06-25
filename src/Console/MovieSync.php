@@ -21,7 +21,7 @@ class MovieSync extends Command
     protected $signature = 'movie:sync
 	{--db : 数据库模式}
 	{--is_neihan=false}
-	{--source=内函电影 : 资源来源}
+	{--source= : 资源来源,如:内函电影,nunu}
 	{--region= : 按地区}
     {--type= : 按类型}
 	{--style= : 按风格}
@@ -127,7 +127,7 @@ class MovieSync extends Command
             })
             ->when($source = $this->option('source'), function ($q) use ($source) {
                 //指定来源
-                $q->whereNotNull('source', $source);
+                $q->where('source', $source);
             })
             ->when($is_neihan = data_get($this->options(), 'is_neihan'), function ($q) use ($is_neihan) {
                 $q->where('is_neihan', $is_neihan !== 'false');
