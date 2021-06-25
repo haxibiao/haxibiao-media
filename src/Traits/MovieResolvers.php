@@ -9,12 +9,32 @@ use Haxibiao\Content\Category;
 use Haxibiao\Content\Post;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
+use Haxibiao\Media\MovieUser;
 use Haxibiao\Media\SearchLog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 trait MovieResolvers
 {
+    /**
+     * 最新求片者
+     */
+    public function resolvelatestMovieFixReporters($root, $args, $content, $info)
+    {
+        return MovieUser::orderByDesc('created_at');
+    }
+
+    /**
+     * 我发起的求片列表
+     */
+    public function resolveMyReportMovieFixs($root, $args, $content, $info)
+    {
+        if ($user = currentUser()) {
+            // dd($user->findMovies());
+            return MovieUser::where('user_id', $user->id)->orderByDesc('created_at');
+        }
+    }
+
     /**
      * 发起求片订单
      */
@@ -23,9 +43,12 @@ trait MovieResolvers
         $movie_id = $args['movie_id'] ?? null; //求片的影片
         if ($movie_id && $movie = Movie::find($movie_id)) {
             if ($user = currentUser()) {
-                $movie->user_id = $user->id; // 求片人
-                $movie->status  = Movie::ERROR; // 标记求片中
-                $movie->save();
+
+                //一个电影只能求一次，重复不处理
+                MovieUser::firstOrCreate([
+                    'user_id'  => $user->id,
+                    'movie_id' => $movie->id,
+                ]);
                 return $movie;
             }
         }

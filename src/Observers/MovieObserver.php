@@ -3,8 +3,8 @@
 namespace Haxibiao\Media\Observers;
 
 use Haxibiao\Breeze\Notifications\BreezeNotification;
-use Haxibiao\Breeze\User;
 use Haxibiao\Media\Movie;
+use Haxibiao\Media\MovieUser;
 
 class MovieObserver
 {
@@ -25,8 +25,11 @@ class MovieObserver
             //统计默认线路的剧集数
             $movie->count_series = count($movie->series);
             //剧集更新通知
-            if ($user = User::find($movie->user_id)) {
-                $user->notify(new BreezeNotification(currentUser(), $movie->id, 'movies', '已更新' . $movie->count_series . '集', $movie->cover, $movie->name, '更新了剧集'));
+            $users  = $movie->findUsers;
+            $sender = currentUser();
+            foreach ($users as $user) {
+                $user->notify(new BreezeNotification($sender, $movie->id, 'movies', '已更新' . $movie->count_series . '集', $movie->cover, $movie->name, '更新了剧集'));
+                $user->pivot->update(['report_status' => MovieUser::UPDATED]);
             }
         }
     }

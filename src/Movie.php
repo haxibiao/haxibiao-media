@@ -160,4 +160,11 @@ class Movie extends Model
     {
         return $this->posts()->first() ?? null;
     }
+
+    public function findUsers()
+    {
+        return $this->belongsToMany("App\User", "movie_user")->withTimestamps()
+            ->withPivot(['report_status']);
+    }
+
 }

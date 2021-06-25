@@ -142,6 +142,7 @@ type Movie {
     is_viewed: Boolean
 }
 
+
 extend type Query {
     """
     电影分类
@@ -216,6 +217,18 @@ extend type Query {
     根据粘贴输入片名 查询电影列表
     """
     findMovies(name: String!): [Movie!] @field(resolver: "App\\Movie@resolveFindMovies")
+
+    """
+    我的求片
+    """
+    myReportMovieFixs: [MovieUser]
+        @paginate(builder: "App\\Movie@resolveMyReportMovieFixs",defaultCount:10)
+
+    """
+    最近求片着
+    """
+    latestMovieFixReporters: [MovieUser]
+        @paginate(resolver: "App\\Movie@resolvelatestMovieFixReporters",defaultCount:10)
 }
 
 type MovieShareData {
@@ -292,3 +305,24 @@ type MovieData {
     url: String
     name: String
 }
+
+#求片记录
+type MovieUser {
+  """
+  求片者
+  """
+  user: User
+  """
+  求片电影
+  """
+  movie: Movie
+  """
+  求片时间
+  """
+  created_at: DateTime
+  """
+  求片状态
+  """
+  report_status: String
+}
+

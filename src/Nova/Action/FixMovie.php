@@ -5,6 +5,7 @@ namespace Haxibiao\Media\Nova\Action;
 use Haxibiao\Breeze\Notifications\BreezeNotification;
 use Haxibiao\Breeze\User;
 use Haxibiao\Media\Movie;
+use Haxibiao\Media\MovieUser;
 use Haxibiao\Media\Traits\MovieRepo;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -38,10 +39,14 @@ class FixMovie extends Action
                 // $movie->status == Movie::ERROR &&
                 if ($fields->fixed) {
                     // 发个通知给求片者
-                    $user = User::find($movie->user_id);
-                    if ($user) {
-                        // FIXME: 暂时不兼容多人同时求一个片，问题不大，目前站长知道要修复片才是核心
-                        $user->notify(new BreezeNotification(currentUser(), $movie->id, 'movies', '已修复', $movie->cover, $movie->name, '修复了影片'));
+                    $users = $movie->findUsers;
+                    foreach ($users as $user) {
+                        if ($user) {
+                            // 通知求片的用户
+                            $user->notify(new BreezeNotification(currentUser(), $movie->id, 'movies', '已修复', $movie->cover, $movie->name, '修复了影片'));
+                            //还是一个个修改吧，虽然慢了点。。。
+                            $user->pivot->update(['report_status' => MovieUser::FIXED]);
+                        }
                     }
                 }
                 $movie->status = $fields->fixed ? Movie::PLAY_FIXED : Movie::ERROR;
