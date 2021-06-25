@@ -296,13 +296,6 @@ trait MovieResolvers
         }
     }
 
-    public function movieRelationPost($root, $args, $content, $info)
-    {
-        $id    = $args['movie_id'];
-        $movie = Movie::find($id);
-        return Post::where('description', 'like', "%$movie->name%")->take(10)->get();
-    }
-
     /**
      * 搜索的影片(仅公开片源)
      */
