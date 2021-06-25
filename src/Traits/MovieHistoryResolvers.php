@@ -14,8 +14,7 @@ trait MovieHistoryResolvers
         $series_index = data_get($args, 'series_index');
         $progress     = data_get($args, 'progress');
         app_track_event('长视频', '保存观看记录', '电影id:' . $movie_id);
-        if (currentUser()) {
-            $user = getUser();
+        if ($user = currentUser()) {
             // 保存观看历史,存储每集的进度
             //$series_id,非series表主键，存储的值为series数组索引index
             MovieHistory::updateOrCreate([
@@ -37,9 +36,7 @@ trait MovieHistoryResolvers
         request()->request->add(['fetch_sns_detail' => true]);
 
         //取每个电影的最新一条剧集记录
-        if (currentUser()) {
-            $user = getUser();
-
+        if ($user = currentUser()) {
             $visits = MovieHistory::whereIn(DB::raw('(movie_id,updated_at)'), function ($query) use ($user) {
                 $query->select('movie_id', DB::raw('max(updated_at)'))
                     ->from('movie_histories')

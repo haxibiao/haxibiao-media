@@ -5,10 +5,12 @@ namespace Haxibiao\Media\Traits;
 use App\User;
 use Haxibiao\Breeze\Dimension;
 use Haxibiao\Breeze\Exceptions\GQLException;
+use Haxibiao\Content\Category;
 use Haxibiao\Content\Post;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\SearchLog;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 trait MovieResolvers
@@ -138,8 +140,7 @@ trait MovieResolvers
     public function resolveRecommendMovies($root, $args, $content, $info)
     {
         $limit = data_get($args, 'limit', 7);
-        if (currentUser()) {
-            $user = getUser();
+        if ($user = currentUser()) {
             //收藏过的电影类型
             $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
             $regions    = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
@@ -254,7 +255,7 @@ trait MovieResolvers
     /**
      * 关联电影到动态
      */
-    public function resolveHookMovie($rootValue, array $args, $context, $resolveInfo)
+    public function resolveHookMovie($root, array $args, $context, $resolveInfo)
     {
         $movie = Movie::withoutGlobalScopes()->find($args['movie_id']);
         if ($movie) {
@@ -302,8 +303,8 @@ trait MovieResolvers
             $log->movie_type   = $movie->type_name;
             $log->movie_reigon = $movie->country;
             //记录用户，作为展示的历史搜索数据
-            if (currentUser()) {
-                $log->user_id = getUser()->id;
+            if ($user = currentUser()) {
+                $log->user_id = $user->id;
             }
             if (isset($log->id)) {
                 $log->increment('count');
@@ -395,18 +396,18 @@ trait MovieResolvers
     }
 
     // 韩剧星球，高甜榜单接口
-    public function sweetyRankList($rootValue, array $args, $context, $resolveInfo)
+    public function sweetyRankList($root, array $args, $context, $resolveInfo)
     {
         return Movie::hanju()->latest('rank')->latest('hits');
     }
 
     // 全部影视
-    public function movieList($rootValue, array $args, $context, $resolveInfo)
+    public function movieList($root, array $args, $context, $resolveInfo)
     {
         return Movie::latest('rank')->latest('hits');
     }
 
-    public function getSharePciture($rootValue, array $args, $context, $resolveInfo)
+    public function getSharePciture($root, array $args, $context, $resolveInfo)
     {
         $movie = Movie::find($args['id']);
         throw_if(is_null($movie), GQLException::class, '该电影或电视剧不存在哦~,请换一个试试吧');
@@ -431,6 +432,31 @@ trait MovieResolvers
         }
 
         return ["title" => "我正在追,推荐你的一定要看完哦~", "covers" => $covers];
+    }
+
+    //剪辑的UGC的专题
+    public function resolveUgcCategory($root, array $args, $context, $resolveInfo)
+    {
+        $movie = $root;
+        return Category::whereName($movie->name)->whereType('movie')->first();
+    }
+
+    // 获取影片相关的剪辑
+    public function resolveClips($root, array $args, $context, $resolveInfo)
+    {
+        $top = $args['top'] ?? 3;
+        return DB::table('posts')->join('videos', 'videos.id', '=', 'posts.video_id')
+            ->where('posts.movie_id', $this->id)->whereNotNull('videos.movie_id')
+            ->latest('posts.id')->take($top)->get();
+    }
+
+    // 获取影片相关的解说
+    public function resolveJieShuo($root, array $args, $context, $resolveInfo)
+    {
+        $top = $args['top'] ?? 3;
+        return DB::table('posts')->join('videos', 'videos.id', '=', 'posts.video_id')
+            ->where('posts.movie_id', $this->id)->whereNull('videos.movie_id')
+            ->latest('posts.id')->take($top)->get();
     }
 
 }

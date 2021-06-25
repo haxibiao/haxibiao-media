@@ -109,20 +109,29 @@ type Movie {
     关联的合集
     """
     collection: Collection
+
     """
-    关联的短视频
+    关联的动态
     """
     post: Post
+
+    """
+    用户UGC动态汇总的专题
+    """
+    ugc_category: Category @field(resolver: "App\\Movie@resolveUgcCategory")
+
+    """
+    关联的短视频（解说+剪辑）
+    """
+    posts: [Post!]
     """
     相关解说
-    note: 原 posts 字段拆解
     """
-    jie_shuo: [Collection]
+    jieshuo(top: Int = 3): [Post!] @field(resolver: "App\\Movie@resolveJieShuo")
     """
     相关剪辑
-    note: 原 posts 字段拆解
     """
-    clips: [Collection]
+    clips(top: Int = 3): [Post!] @field(resolver: "App\\Movie@resolveClips")
     """
     上传用户
     """
