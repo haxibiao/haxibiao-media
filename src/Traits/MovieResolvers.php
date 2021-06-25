@@ -163,17 +163,17 @@ trait MovieResolvers
 
     public function resolveClipMovie($root, $args, $content, $info)
     {
-
-        $user       = getUser();
-        $start      = $args['startTime'];
-        $end        = $args['endTime'];
-        $postTitle  = $args['postTitle'];
-        $movie_id   = $args['movie_id'];
-        $m3u8       = $args['targetM3u8'];
-        $seriesName = $args['seriesName'];
+        $user        = getUser();
+        $start       = $args['startTime'];
+        $end         = $args['endTime'];
+        $postTitle   = $args['postTitle'];
+        $movie_id    = $args['movie_id'];
+        $m3u8        = $args['targetM3u8'];
+        $seriesIndex = $args['seriesIndex'];
+        $playLine    = $args['playLine'];
 
         $movie      = Movie::find($movie_id);
-        $seriesName = $seriesName ?? MovieRepo::findSeriesName($m3u8, $movie);
+        $seriesName = $seriesName ?? $movie->findSeriesName($playLine, $seriesIndex);
         $video      = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $seriesName);
         $post       = $video->post;
 
@@ -182,7 +182,6 @@ trait MovieResolvers
         $movie->save();
         return $post;
 
-       
     }
 
     public function resolveCategoryMovie($root, $args, $content, $info)

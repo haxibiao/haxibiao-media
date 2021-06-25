@@ -181,14 +181,11 @@ trait MovieRepo
     /**
      * 根据m3u8地址获取目标集名字
      */
-    public static function findSeriesName($m3u8, $movie)
+    public function findSeriesName($playLine, $seriesIndex)
     {
-        $series = $movie->series;
-        foreach ($series as $item) {
-            if ($item['url'] == $m3u8) {
-                return $item['name'];
-            }
-        }
+        $dataSource = json_decode($this->data_source, true);
+        $data       = $dataSource[$playLine];
+        return data_get($data, "$seriesIndex.name");
     }
 
     /**
