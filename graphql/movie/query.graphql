@@ -114,9 +114,15 @@ type Movie {
     """
     post: Post
     """
-    剪辑评说的短视频
+    相关解说
+    note: 原 posts 字段拆解
     """
-    posts: [Post]
+    jie_shuo: [Collection]
+    """
+    相关剪辑
+    note: 原 posts 字段拆解
+    """
+    clips: [Collection]
     """
     上传用户
     """

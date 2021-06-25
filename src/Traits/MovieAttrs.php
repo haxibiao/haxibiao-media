@@ -211,4 +211,35 @@ trait MovieAttrs
         }
         return $user;
     }
+
+
+    // 获取影片相关的剪辑
+    public function getClipsAttribute() 
+    {
+        return self::getPosts($this->name . '的剪辑');
+    }
+
+    // 获取影片相关的解说
+    public function getJieShuoAttribute()
+    {
+        return self::getPosts($this->name . '的解说');
+    }
+
+    // 根据关键词搜索 Post 类型的合集
+    private static function getPosts($keyword) {
+        $result = [];
+        $collections = DB::table("collections")
+            ->where("type", "post")
+            ->where('name', 'like', '%'. $keyword . '%')
+            ->orderBy('created_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        if(!empty($collections)) {
+            foreach($collections as $item) {
+                array_push($result, $item);
+            }
+        }
+        return $result;
+    }
 }
