@@ -120,7 +120,7 @@ class MovieSync extends Command
         $kkw_count  = 0;
 
         $qb = DB::connection('mediachain')->table('movies')
-            ->whereNotNull('cover') //只同步有封面的
+            ->where('status', '>=', 0) //只同步未删除的
             ->when($line = $this->option('line'), function ($q) use ($line) {
                 //快速同步指定线路的更新
                 $q->whereNotNull($line . '_source');
@@ -173,24 +173,22 @@ class MovieSync extends Command
     {
         DB::beginTransaction();
         try {
-            //按 name 和 producer 排重导入
+            //未处理好source_key之前，先按 name 和 producer 排重导入
             $movie = @json_decode(json_encode($movie), true);
             $model = Movie::firstOrNew([
                 'name'     => $movie['name'],
-                // 'source'     => $this->option('source'),
-                // 'source_key' => $movie['source_key'],
                 'name'     => $movie['name'],
                 'producer' => $movie['producer'],
             ]);
 
             $movieExists = $model->id > 0;
 
-            $movie['producer']     = str_limit($movie['producer'], 97);
-            $movie['actors']       = str_limit($movie['actors'], 97);
-            $movie['introduction'] = $movie['introduction'] ?? '';
+            $movie['producer'] = str_limit($movie['producer'], 97, '...');
+            $movie['actors']   = str_limit($movie['actors'], 97, '...');
+            //剔除简介html代码
+            $movie['introduction'] = strip_tags($movie['introduction'] ?? '');
             //同步type
-            $movie['type']   = $movie['type_name'];
-            $movie['status'] = 1;
+            $movie['type'] = $movie['type_name'];
 
             //默认线路
             $default_sereies = @json_decode($movie['data'], true) ?? [];
@@ -199,10 +197,12 @@ class MovieSync extends Command
             //修复count_series
             $movie['count_series'] = count($default_sereies);
 
-            //封面修复
+            //空的不覆盖已有的
             if (empty($movie['cover'])) {
-                //空的不覆盖已有的
                 $movie['cover'] = $model->cover;
+            }
+            if (empty($movie['source_key'])) {
+                $movie['source_key'] = $model->source_key;
             }
 
             //其他线路
@@ -244,6 +244,8 @@ class MovieSync extends Command
 
             $model->forceFill(array_only($movie, [
                 'status',
+                'source',
+                'source_key',
                 'introduction',
                 'cover',
                 'producer',
