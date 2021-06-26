@@ -285,8 +285,8 @@ trait MovieResolvers
 
             //相同用户对同一个电影的关联动态，自动组合成一个动态合集,动态投稿到专题
             if ($video = $post->video) {
-                // 剪辑的视频和movie的关系才是稳定的， 粘贴先不确定影片关系
-                // $video->update(['movie_id' => $movie->id]);
+                // 剪辑的视频和movie的关系才是稳定的， 粘贴先只记录movie_key和片名
+                $video->update(['movie_key' => $movie->source_key, 'title' => $movie->name]);
                 $video->autoHookMovieCollection($post, $movie, '解说');
                 $video->autoHookMovieCategory($post, $movie);
             }

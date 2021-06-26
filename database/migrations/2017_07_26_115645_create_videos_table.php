@@ -33,8 +33,11 @@ class CreateVideosTable extends Migration
             $table->string('disk')->nullable()->comment('存储位置 local,vod,cos等');
             $table->unsignedInteger('width')->nullable()->comment('宽');
             $table->unsignedInteger('height')->nullable()->comment('高');
+
             $table->string('collection', 100)->nullable()->index()->comment('合集');
-            $table->string('collection_key', 50)->nullable()->index()->comment('合集的唯一key: ainicheng_1122');
+            $table->string('collection_key', 50)->nullable()->index()->comment('合集的唯一key 例如: ainicheng_1122');
+            $table->integer('movie_id')->nullable()->index()->comment('关联的电影');
+            $table->string('movie_key', 50)->nullable()->index()->comment('电影的唯一key 例如: chain_1102');
 
             //分享粘贴视频靠sharelink回调hook
             $table->string('sharelink', 500)->nullable()->index()->comment('秒粘贴地址');
