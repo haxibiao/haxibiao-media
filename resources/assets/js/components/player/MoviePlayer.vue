@@ -76,10 +76,10 @@
                 </li>
                 <el-popover placement="bottom" trigger="manual" v-model="editingVisible" v-if="videoDuration">
                     <movie-editing
-                        :apiClip="apiClip"
+                        :api-clip="apiClip"
                         :movieId="movie.id"
                         :source="source"
-                        :name="seriesName"
+                        :current-episode="currentEpisode"
                         :movie-title="movieTitle"
                         :current-time="currentTime"
                         :video-duration="videoDuration"

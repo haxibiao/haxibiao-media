@@ -58,7 +58,7 @@
 import moment from '../../common/moment';
 
 export default {
-    props: ['movieId', 'source', 'name', 'movieTitle', 'currentTime', 'videoDuration'],
+    props: ['apiClip', 'movieId', 'source', 'currentEpisode', 'movieTitle', 'currentTime', 'videoDuration'],
     methods: {
         onClose() {
             this.$emit('onClose');
@@ -77,15 +77,15 @@ export default {
                         post_title: this.title,
                         m3u8: this.source,
                         movie_id: this.movieId,
-                        series_name: this.name,
+                        series_index: this.currentEpisode,
                     },
                     {
                         headers: {
                             token: this.$user.token,
                         },
-                    },
+                    }
                 )
-                .then(response => {
+                .then((response) => {
                     this.startTime = '';
                     this.$message({
                         showClose: true,
@@ -93,7 +93,7 @@ export default {
                         type: 'success',
                     });
                 })
-                .catch(e => {
+                .catch((e) => {
                     this.$message({
                         showClose: true,
                         message: '剪辑失败',

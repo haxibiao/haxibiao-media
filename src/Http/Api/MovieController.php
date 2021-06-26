@@ -96,17 +96,17 @@ class MovieController extends Controller
 
     public function clip(Request $request)
     {
-        $user       = getUser();
-        $start      = $request->get('start_time');
-        $end        = $request->get('end_time');
-        $postTitle  = $request->get('post_title');
-        $movie_id   = $request->get('movie_id');
-        $m3u8       = $request->get('m3u8');
-        $seriesName = $request->get('series_name');
-        $movie      = Movie::find($movie_id);
-        $seriesName = $seriesName ?? MovieRepo::findSeriesName($m3u8, $movie);
-        $video      = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $seriesName);
-        $post       = $video->post;
+        $user         = getUser();
+        $start        = $request->get('start_time');
+        $end          = $request->get('end_time');
+        $postTitle    = $request->get('post_title');
+        $movie_id     = $request->get('movie_id');
+        $m3u8         = $request->get('m3u8');
+        $series_index = $request->get('series_index');
+        $movie        = Movie::find($movie_id);
+
+        $video = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $series_index);
+        $post  = $video->post;
         //movie计数剪辑数count_clip
         $movie->count_clips = $movie->videos()->count();
         $movie->save();
