@@ -154,7 +154,7 @@ extend type Query {
         lang: String
         year: String
         scopes: ScopesType
-    ): [Movie] @paginate(defaultCount: 10, builder: "App\\Movie@resolveCategoryMovie")
+    ): [Movie] @paginate(defaultCount: 9, builder: "App\\Movie@resolveCategoryMovie")
 
     """
     获取过滤条件
@@ -200,7 +200,7 @@ extend type Query {
     """
     全部影视作品
     """
-    movieList: [Movie!] @paginate(builder: "App\\Movie@movieList", defaultCount: 10)
+    movieList: [Movie!] @paginate(builder: "App\\Movie@movieList", defaultCount: 9)
 
     """
     影视解说列表
