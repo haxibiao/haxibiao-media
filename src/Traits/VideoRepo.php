@@ -28,7 +28,7 @@ trait VideoRepo
      */
     public function autoHookMovieCategory($post, $movie)
     {
-        $user = $this->user;
+        $user = $this->user ?? $post->user;
         // 创建用户专题
         $category = Category::firstOrNew([
             'name' => "{$movie->name}",
@@ -64,12 +64,11 @@ trait VideoRepo
      */
     public function autoHookMovieCollection($post, $movie, $type = '剪辑')
     {
-        $user = $this->user;
         // 创建用户下影片的合集
         $collection = Collection::firstOrNew([
             'name'    => "{$movie->name}的" . $type,
             'type'    => 'post',
-            'user_id' => $user->id,
+            'user_id' => $this->user_id ?? $post->user_id,
         ]);
         // 合集封面
         $collection->logo = $movie->cover_url;

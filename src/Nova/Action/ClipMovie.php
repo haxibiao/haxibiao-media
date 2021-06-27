@@ -35,7 +35,7 @@ class ClipMovie extends Action
         // 获取剪辑目标
         $targetM3u8 = self::findTargetM3u8($fields->name, $movie);
         // 获取新m3u8
-        $newM3u8 = MovieRepo::ClipMovie($targetM3u8, $fields->startTime, $fields->endTime);
+        $newM3u8 = MovieRepo::clipM3u8($targetM3u8, $fields->startTime, $fields->endTime);
         // 文件名 = source_key + 当前时间戳.m3u8
         $filename    = $movie->source_key . '-' . time() . ".m3u8";
         $cdn         = rand_pick_ucdn_domain();

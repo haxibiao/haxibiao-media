@@ -41,12 +41,12 @@ trait MovieRepo
     }
 
     /**
-     * 影片剪辑，返回新m3u8内容
+     * 剪辑返回新m3u8内容
      * $targetM3u8 目标影片
      * $startTime 剪辑开始时间
      * $endTime 剪辑结束时间
      */
-    public static function ClipMovie($targetM3u8, $startTime, $endTime)
+    public static function clipM3u8($targetM3u8, $startTime, $endTime)
     {
         $content    = file_get_contents($targetM3u8);
         $m3u8Prefix = substr($content, 0, stripos($content, "#EXTINF"));
@@ -130,12 +130,15 @@ trait MovieRepo
         }
     }
 
-    public static function storeClipMovieByApi($user, $movie, $m3u8, $startTime, $endTime, $postTitle, $series_index)
+    /**
+     * 长剪短
+     */
+    public static function clipMovie($user, $movie, $m3u8, $startTime, $endTime, $title, $series_index)
     {
         $endPoint    = 'https://mediachain.info/api/clip?';
         $requestArgs = [
             'm3u8'        => $m3u8,
-            'video_title' => $postTitle,
+            'video_title' => $title,
             'end_time'    => $endTime,
             'start_time'  => $startTime,
             'series_name' => $series_index,
@@ -158,7 +161,7 @@ trait MovieRepo
                 'user_id'   => $user->id,
                 'movie_id'  => $movie->id,
                 'movie_key' => $movie->source_key, //关联影片云端唯一标识
-                'title'     => $postTitle, //剪辑配问
+                'title'     => $title, //剪辑配问
                 'duration'  => $video['duration'] ?? 15,
                 'disk'      => 'othermovie',
                 'path'      => $video['url'],

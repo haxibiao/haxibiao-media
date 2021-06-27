@@ -8,11 +8,11 @@ extend type Mutation {
     剪辑电影
     """
     clipMovie(
-        targetM3u8: String!
-        postTitle: String!
+        m3u8: String!
+        title: String!
         movie_id: Int!
-        startTime: Int!
-        endTime: Int!
+        startSeconds: Int!
+        endSeconds: Int!
         seriesIndex: Int!
     ): Post @field(resolver: "App\\Movie@resolveClipMovie")
 

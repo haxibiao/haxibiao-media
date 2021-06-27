@@ -188,15 +188,15 @@ trait MovieResolvers
     public function resolveClipMovie($root, $args, $content, $info)
     {
         $user        = getUser();
-        $start       = $args['startTime'];
-        $end         = $args['endTime'];
-        $postTitle   = $args['postTitle'];
+        $start       = $args['startSeconds'];
+        $end         = $args['endSeconds'];
+        $title       = $args['title'];
         $movie_id    = $args['movie_id'];
-        $m3u8        = $args['targetM3u8'];
+        $m3u8        = $args['m3u8'];
         $seriesIndex = $args['seriesIndex'];
 
         $movie = Movie::find($movie_id);
-        $video = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $seriesIndex);
+        $video = MovieRepo::clipMovie($user, $movie, $m3u8, $start, $end, $title, $seriesIndex);
         $post  = $video->post;
 
         //movie计数剪辑数count_clip
@@ -278,21 +278,24 @@ trait MovieResolvers
      */
     public function resolveHookMovie($root, array $args, $context, $resolveInfo)
     {
-        $movie = Movie::withoutGlobalScopes()->find($args['movie_id']);
+        $post_id  = data_get($args, 'post_id');
+        $movie_id = data_get($args, 'movie_id');
+        $movie    = Movie::withoutGlobalScopes()->find($movie_id);
         if ($movie) {
-            $post = Post::find($args['post_id']);
-            optional($post)->update(['movie_id' => $movie->id]);
-
-            //相同用户对同一个电影的关联动态，自动组合成一个动态合集,动态投稿到专题
-            if ($video = $post->video) {
-                // 剪辑的视频和movie的关系才是稳定的， 粘贴先只记录movie_key和片名
-                $video->update(['movie_key' => $movie->source_key, 'title' => $movie->name]);
-                $video->autoHookMovieCollection($post, $movie, '解说');
-                $video->autoHookMovieCategory($post, $movie);
+            \info($post_id);
+            if ($post = Post::find($post_id)) {
+                $post->update(['movie_id' => $movie_id]);
+                if ($video = $post->video) {
+                    // 剪辑的视频和movie的关系才是稳定的， 粘贴先只记录movie_key
+                    $video->update(['movie_key' => $movie->source_key]);
+                    //相同用户对同一个电影的关联动态，自动组合成一个动态合集
+                    $video->autoHookMovieCollection($post, $movie, '解说');
+                    // 动态投稿到电影名的专题
+                    $video->autoHookMovieCategory($post, $movie);
+                }
+                //返回合集，专题信息关联好的post
+                return $post;
             }
-
-            //返回合集，专题信息关联好的post
-            return $post;
         }
     }
 

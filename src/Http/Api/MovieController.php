@@ -105,7 +105,7 @@ class MovieController extends Controller
         $series_index = $request->get('series_index');
         $movie        = Movie::find($movie_id);
 
-        $video = MovieRepo::storeClipMovieByApi($user, $movie, $m3u8, $start, $end, $postTitle, $series_index);
+        $video = MovieRepo::clipMovie($user, $movie, $m3u8, $start, $end, $postTitle, $series_index);
         $post  = $video->post;
         //movie计数剪辑数count_clip
         $movie->count_clips = $movie->videos()->count();
