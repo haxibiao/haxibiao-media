@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Str;
 
+function get_neihancloud_api()
+{
+    return config('media.neihancloud_api', 'https://mediachain.info');
+}
+
 function hash_vod_url($path)
 {
     $path = ltrim($path, '/');

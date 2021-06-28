@@ -135,7 +135,7 @@ trait MovieRepo
      */
     public static function clipMovie($user, $movie, $m3u8, $startTime, $endTime, $title, $series_index)
     {
-        $endPoint    = 'https://mediachain.info/api/clip?';
+        $endPoint    = get_neihancloud_api() . '/api/clip?';
         $requestArgs = [
             'm3u8'        => $m3u8,
             'video_title' => $title,

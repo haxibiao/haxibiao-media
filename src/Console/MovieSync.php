@@ -82,7 +82,7 @@ class MovieSync extends Command
         do {
             data_set($args, 'page', $page);
             $requestArgs = http_build_query($args);
-            $url         = "https://mediachain.info/api/resource/list/" . '?' . $requestArgs;
+            $url         = get_neihancloud_api() . "/api/resource/list/" . '?' . $requestArgs;
             $result      = json_decode(file_get_contents($url), true);
             $returnCount = count($result['data']);
             if ($result['status'] == 200) {
