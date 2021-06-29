@@ -14,7 +14,7 @@ class AddMovieKeyToVideos extends Migration
     public function up()
     {
         Schema::table('videos', function (Blueprint $table) {
-            if (!Schema::hasColumn('movies', 'movie_key')) {
+            if (!Schema::hasColumn('videos', 'movie_key')) {
                 $table->string('movie_key', 50)->nullable()->index()->comment('电影的唯一key 例如: chain_1102');
             }
         });
