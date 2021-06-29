@@ -62,9 +62,7 @@ trait MovieResolvers
     {
         $name   = $args['name'] ?? '';
         $result = Movie::resourceSearch($name);
-        foreach ($result as $movie) {
-            $movies[] = (Object) $movie;
-        }
+        $movies = data_get($result, 'data');
         return $movies;
     }
 
