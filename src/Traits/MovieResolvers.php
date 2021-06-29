@@ -255,10 +255,15 @@ trait MovieResolvers
         //标记获取详情数据信息模式
         request()->request->add(['fetch_sns_detail' => true]);
 
-        $movie_id = data_get($args, 'movie_id');
-        // app_track_event('长视频', '电影详情', $movie_id);
+        //支持movie_key查询详情
+        if ($movie_key = data_get($args, 'movie_key')) {
+            $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
+        }
 
-        $movie = Movie::withoutGlobalScopes()->find($movie_id);
+        if ($movie_id = data_get($args, 'movie_id')) {
+            $movie = Movie::withoutGlobalScopes()->find($movie_id);
+        }
+
         if (isset($movie)) {
             $movie->hits = $movie->hits + 1;
             $movie->saveQuietly();
