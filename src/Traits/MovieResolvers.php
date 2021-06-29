@@ -60,9 +60,12 @@ trait MovieResolvers
      */
     public function resolveFindMovies($root, $args, $content, $info)
     {
-        $name = $args['name'] ?? '';
-        $qb   = Movie::withoutGlobalScopes()->where('name', 'like', "{$name}%")->latest('id');
-        return $qb->take(20)->get();
+        $name   = $args['name'] ?? '';
+        $result = Movie::resourceSearch($name);
+        foreach ($result as $movie) {
+            $movies[] = (Object) $movie;
+        }
+        return $movies;
     }
 
     /**
@@ -306,6 +309,8 @@ trait MovieResolvers
     public function resolveSearchMovies($root, $args, $content, $info)
     {
         $keyword = data_get($args, 'keyword');
+        $page    = data_get($args, 'page', 1);
+        $perPage = data_get($args, 'limit', 10);
         app_track_event('长视频', '搜索电影', $keyword);
 
         //标记获取详情数据信息模式
@@ -313,24 +318,30 @@ trait MovieResolvers
 
         //记录搜索历史
         // 保存搜索记录
-        $log = SearchLog::firstOrNew([
-            'keyword' => $keyword,
-        ]);
-        // 如果有完全匹配的作品名字
-        if ($movie = Movie::publish()->where('name', $keyword)->orderBy('id')->first()) {
-            $log->movie_type   = $movie->type_name;
-            $log->movie_reigon = $movie->country;
-            //记录用户，作为展示的历史搜索数据
-            if ($user = currentUser()) {
-                $log->user_id = $user->id;
-            }
-            if (isset($log->id)) {
-                $log->increment('count');
-            }
+
+        if ($user = currentUser()) {
+            $log = SearchLog::firstOrNew([
+                'keyword' => $keyword,
+                'user_id' => $user->id,
+            ]);
+        } else {
+            $log = SearchLog::firstOrNew([
+                'keyword' => $keyword,
+            ]);
+        }
+        if (isset($log->id)) {
+            $log->increment('count');
         }
         $log->save();
 
-        return static::publish()->search($keyword);
+        //去mediachain搜索电影
+        $result = Movie::resourceSearch($keyword, $page, $perPage);
+
+        foreach ($result as $movie) {
+            $movies[] = (Object) $movie;
+        }
+        return $movies;
+
     }
 
     public function getFilters()

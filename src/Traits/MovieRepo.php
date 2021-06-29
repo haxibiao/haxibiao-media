@@ -2,12 +2,14 @@
 
 namespace Haxibiao\Media\Traits;
 
+use GuzzleHttp\Client;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Yansongda\Supports\Arr;
 
 trait MovieRepo
 {
@@ -248,5 +250,27 @@ trait MovieRepo
             Movie::CATEGORY_HOT      => '热门/热播',
             Movie::CATEGORY_NEWST    => '最新',
         ];
+    }
+
+    public static function resourceSearch($keyword, $page = 1, $perPage = 10)
+    {
+        //去mediachain请求search电影
+        $client   = new Client();
+        $response = $client->request('GET', 'http://mediachain.info/api/resource/search', [
+            'http_errors' => false,
+            'query'       => [
+                'keyword' => $keyword,
+                'page'    => $page,
+                'perPage' => $perPage,
+            ],
+        ]);
+        throw_if($response->getStatusCode() == 404, GQLException::class, '搜索开小差啦，请稍后再试吧!');
+        $contents = $response->getBody()->getContents();
+        if (!empty($contents)) {
+            $contents = json_decode($contents, true);
+            return Arr::get($contents, 'movie');
+        }
+
+        return null;
     }
 }
