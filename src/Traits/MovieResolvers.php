@@ -49,6 +49,7 @@ trait MovieResolvers
                     'user_id'  => $user->id,
                     'movie_id' => $movie->id,
                 ]);
+                $movie->update(['status' => Movie::ERROR]);
                 return $movie;
             }
         }
