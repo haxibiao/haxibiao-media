@@ -1,320 +1,321 @@
 type Movie {
-    id: Int!
-    """
-    影片名
-    """
-    name: String!
-    """
-    简介
-    """
-    introduction: String
-    """
-    类型名
-    """
-    type_name: String
-    """
-    影片简介(兼容答赚)
-    """
-    description: String @rename(attribute: "introduction")
-    """
-    影片状态
-    """
-    state: String
-    """
-    封面
-    """
-    cover: String
-    """
-    导演
-    """
-    producer: String
-    """
-    年份
-    """
-    year: String
-    """
-    电影评分
-    """
-    score: Int
-    """
-    分类:动作科幻等
-    """
-    type: String
-    """
-    风格:武侠、玄幻
-    """
-    style: String
-    """
-    地区:美剧韩剧
-    """
-    region: String
-    """
-    演员
-    """
-    actors: String
-    """
-    总集数
-    """
-    count_series: Int
-    """
-    国家
-    """
-    country: String
-    """
-    点击次数
-    """
-    hits: Int
-    """
-    语言
-    """
-    lang: String
+  id: Int!
+  """
+  影片名
+  """
+  name: String!
+  """
+  简介
+  """
+  introduction: String
+  """
+  类型名
+  """
+  type_name: String
+  """
+  影片简介(兼容答赚)
+  """
+  description: String @rename(attribute: "introduction")
+  """
+  影片状态
+  """
+  state: String
+  """
+  封面
+  """
+  cover: String
+  """
+  导演
+  """
+  producer: String
+  """
+  年份
+  """
+  year: String
+  """
+  电影评分
+  """
+  score: Int
+  """
+  分类:动作科幻等
+  """
+  type: String
+  """
+  风格:武侠、玄幻
+  """
+  style: String
+  """
+  地区:美剧韩剧
+  """
+  region: String
+  """
+  演员
+  """
+  actors: String
+  """
+  总集数
+  """
+  count_series: Int
+  """
+  国家
+  """
+  country: String
+  """
+  点击次数
+  """
+  hits: Int
+  """
+  语言
+  """
+  lang: String
 
-    """
-    默认剧集的线路
-    """
-    data: [MovieData] @deprecated(reason: "请用新的剧集线路信息属性series获取播放历史")
-    """
-    默认剧集的线路
-    """
-    series: [MovieData]
+  """
+  默认剧集的线路
+  """
+  data: [MovieData] @deprecated(reason: "请用新的剧集线路信息属性series获取播放历史")
+  """
+  默认剧集的线路
+  """
+  series: [MovieData]
 
-    """
-    剧集的所有线路
-    """
-    play_lines: [PlayLine!]
+  """
+  剧集的所有线路
+  """
+  play_lines: [PlayLine!]
 
-    favorited: Boolean
-    created_at: DateTime
-    """
-    最近观看的集
-    """
-    last_watch_series: Int
-    """
-    最近观看的进度
-    """
-    last_watch_progress: Int
-    """
-    评论
-    """
-    comments: [Comment]
-    """
-    评论数
-    """
-    count_comments: Int
-    """
-    收藏数
-    """
-    count_favorites: Int
-    """
-    关联的合集
-    """
-    collection: Collection
+  favorited: Boolean
+  created_at: DateTime
+  """
+  最近观看的集
+  """
+  last_watch_series: Int
+  """
+  最近观看的进度
+  """
+  last_watch_progress: Int
+  """
+  评论
+  """
+  comments: [Comment]
+  """
+  评论数
+  """
+  count_comments: Int
+  """
+  收藏数
+  """
+  count_favorites: Int
+  """
+  关联的合集
+  """
+  collection: Collection
 
-    """
-    关联的动态
-    """
-    post: Post
+  """
+  关联的动态
+  """
+  post: Post
 
-    """
-    用户UGC动态汇总的专题
-    """
-    ugc_category: Category @field(resolver: "App\\Movie@resolveUgcCategory")
+  """
+  用户UGC动态汇总的专题
+  """
+  ugc_category: Category @field(resolver: "App\\Movie@resolveUgcCategory")
 
-    """
-    关联的短视频（解说+剪辑）
-    """
-    posts: [Post!]
-    """
-    相关解说
-    """
-    jieshuo(top: Int = 3): [Post!] @field(resolver: "App\\Movie@resolveJieShuo")
-    """
-    相关剪辑
-    """
-    clips(top: Int = 3): [Post!] @field(resolver: "App\\Movie@resolveClips")
-    """
-    上传用户
-    """
-    user: User
-    """
-    是否已经观看过了/正在观看
-    """
-    is_viewed: Boolean
+  """
+  关联的短视频（解说+剪辑）
+  """
+  posts: [Post!]
+  """
+  相关解说
+  """
+  jieshuo(top: Int = 3): [Post!] @field(resolver: "App\\Movie@resolveJieShuo")
+  """
+  相关剪辑
+  """
+  clips(top: Int = 3): [Post!] @field(resolver: "App\\Movie@resolveClips")
+  """
+  上传用户
+  """
+  user: User
+  """
+  是否已经观看过了/正在观看
+  """
+  is_viewed: Boolean
 }
 
 extend type Query {
-    """
-    电影分类
-    """
-    categoryMovie(
-        region: MovieCategory
-        type: String
-        style: String
-        country: String
-        lang: String
-        year: String
-        scopes: ScopesType
-    ): [Movie] @paginate(defaultCount: 9, builder: "App\\Movie@resolveCategoryMovie")
+  """
+  电影分类
+  """
+  categoryMovie(
+    region: MovieCategory
+    type: String
+    style: String
+    country: String
+    lang: String
+    year: String
+    scopes: ScopesType
+  ): [Movie] @paginate(defaultCount: 9, builder: "App\\Movie@resolveCategoryMovie")
 
-    """
-    获取过滤条件
-    """
-    getFilters: [MovieFilterData] @field(resolver: "App\\Movie@getFilters")
+  """
+  获取过滤条件
+  """
+  getFilters: [MovieFilterData] @field(resolver: "App\\Movie@getFilters")
 
-    """
-    电影详情
-    """
-    movie(movie_id: Int!): Movie @field(resolver: "App\\Movie@resolveMovie")
+  """
+  电影详情
+  """
+  movie(movie_id: Int!): Movie @field(resolver: "App\\Movie@resolveMovie")
 
-    """
-    电影推荐(暂时仅电影图解用)
-    """
-    recommendMovies(count: Int = 7): [Movie] @field(resolver: "App\\Movie@resolveRecommendMovies")
+  """
+  电影推荐(暂时仅电影图解用)
+  """
+  recommendMovies(count: Int = 7): [Movie] @field(resolver: "App\\Movie@resolveRecommendMovies")
 
-    """
-    影片的相关推荐
-    """
-    relatedMovies(movie_id: Int!, limit: Int = 6): [Movie!] @field(resolver: "App\\Movie@resolveRelatedMovies")
+  """
+  影片的相关推荐
+  """
+  relatedMovies(movie_id: Int!, limit: Int = 6): [Movie!] @field(resolver: "App\\Movie@resolveRelatedMovies")
 
-    """
-    搜索电影
-    """
-    searchMovies(keyword: String!): [Movie] @paginate(defaultCount: 10, builder: "App\\Movie@resolveSearchMovies")
+  """
+  搜索电影
+  """
+  searchMovies(keyword: String!, page: Int = 1, limit: Int = 10): [Movie]
+    @field(resolver: "App\\Movie@resolveSearchMovies")
 
-    """
-    热门长视频
-    """
-    movies(user_id: Int, status: Int, keyword: String, orderBy: [OrderByClause!] @orderBy): [Movie!]
-        @paginate(builder: "App\\Movie@resolveMovies", defaultCount: 10)
+  """
+  热门长视频
+  """
+  movies(user_id: Int, status: Int, keyword: String, orderBy: [OrderByClause!] @orderBy): [Movie!]
+    @paginate(builder: "App\\Movie@resolveMovies", defaultCount: 10)
 
-    """
-    分享长视频
-    """
-    shareMovie(id: Int): MovieShareData @field(resolver: "App\\Movie@getSharePciture")
+  """
+  分享长视频
+  """
+  shareMovie(id: Int): MovieShareData @field(resolver: "App\\Movie@getSharePciture")
 
-    """
-    韩剧星球，高甜榜单接口
-    """
-    sweetyRankList: [Movie!] @paginate(builder: "App\\Movie@sweetyRankList", defaultCount: 10)
+  """
+  韩剧星球，高甜榜单接口
+  """
+  sweetyRankList: [Movie!] @paginate(builder: "App\\Movie@sweetyRankList", defaultCount: 10)
 
-    """
-    全部影视作品
-    """
-    movieList: [Movie!] @paginate(builder: "App\\Movie@movieList", defaultCount: 9)
+  """
+  全部影视作品
+  """
+  movieList: [Movie!] @paginate(builder: "App\\Movie@movieList", defaultCount: 9)
 
-    """
-    影视解说列表
-    """
-    explainMovieList: [Movie!] @paginate(builder: "App\\Movie@explainMovieList", defaultCount: 10)
+  """
+  影视解说列表
+  """
+  explainMovieList: [Movie!] @paginate(builder: "App\\Movie@explainMovieList", defaultCount: 10)
 
-    """
-    根据粘贴输入片名 查询电影列表
-    """
-    findMovies(name: String!): [Movie!] @field(resolver: "App\\Movie@resolveFindMovies")
+  """
+  根据粘贴输入片名 查询电影列表
+  """
+  findMovies(name: String!): [Movie!] @field(resolver: "App\\Movie@resolveFindMovies")
 
-    """
-    我的求片
-    """
-    myReportMovieFixs: [MovieUser] @paginate(builder: "App\\Movie@resolveMyReportMovieFixs", defaultCount: 10)
+  """
+  我的求片
+  """
+  myReportMovieFixs: [MovieUser] @paginate(builder: "App\\Movie@resolveMyReportMovieFixs", defaultCount: 10)
 
-    """
-    最近求片着
-    """
-    latestMovieFixReporters: [MovieUser]
-        @paginate(resolver: "App\\Movie@resolvelatestMovieFixReporters", defaultCount: 10)
+  """
+  最近求片着
+  """
+  latestMovieFixReporters: [MovieUser]
+    @paginate(resolver: "App\\Movie@resolvelatestMovieFixReporters", defaultCount: 10)
 }
 
 type MovieShareData {
-    title: String
-    covers: [String]
+  title: String
+  covers: [String]
 }
 
 """
 影片的线路播放地址
 """
 type PlayLine {
-    """
-    线路名
-    """
-    name: String
-    data: JsonType
+  """
+  线路名
+  """
+  name: String
+  data: JsonType
 }
 
 """
 剧集线路播放地址
 """
 type SeriePlayLine {
-    """
-    线路名
-    """
-    name: String
-    url: String
+  """
+  线路名
+  """
+  name: String
+  url: String
 }
 
 enum MovieCategory {
-    ALL @enum(value: "ALL")
-    HAN @enum(value: "韩剧")
-    MEI @enum(value: "美剧")
-    RI @enum(value: "日剧")
-    GANG @enum(value: "港剧")
-    JIESHUO @enum(value: "解说")
+  ALL @enum(value: "ALL")
+  HAN @enum(value: "韩剧")
+  MEI @enum(value: "美剧")
+  RI @enum(value: "日剧")
+  GANG @enum(value: "港剧")
+  JIESHUO @enum(value: "解说")
 }
 
 enum ScopesType {
-    ALL @enum(value: "ALL")
-    """
-    最新
-    """
-    NEW @enum(value: "year")
-    """
-    最热
-    """
-    HOT @enum(value: "hits")
-    """
-    评分
-    """
-    SCORE @enum(value: "score")
+  ALL @enum(value: "ALL")
+  """
+  最新
+  """
+  NEW @enum(value: "year")
+  """
+  最热
+  """
+  HOT @enum(value: "hits")
+  """
+  评分
+  """
+  SCORE @enum(value: "score")
 }
 
 type MovieFilterData {
-    """
-    搜索条件传递给搜索接口时，请务必使用对应的ID
-    """
-    id: String
+  """
+  搜索条件传递给搜索接口时，请务必使用对应的ID
+  """
+  id: String
 
-    """
-    筛选名称
-    """
-    filterName: String
+  """
+  筛选名称
+  """
+  filterName: String
 
-    """
-    筛选选项
-    """
-    filterOptions: [String]
-    filterValue: [String]
+  """
+  筛选选项
+  """
+  filterOptions: [String]
+  filterValue: [String]
 }
 
 type MovieData {
-    url: String
-    name: String
+  url: String
+  name: String
 }
 
 #求片记录
 type MovieUser {
-    """
-    求片者
-    """
-    user: User
-    """
-    求片电影
-    """
-    movie: Movie
-    """
-    求片时间
-    """
-    created_at: DateTime
-    """
-    求片状态
-    """
-    report_status: String
+  """
+  求片者
+  """
+  user: User
+  """
+  求片电影
+  """
+  movie: Movie
+  """
+  求片时间
+  """
+  created_at: DateTime
+  """
+  求片状态
+  """
+  report_status: String
 }
