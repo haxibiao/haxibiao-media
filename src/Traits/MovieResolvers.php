@@ -287,16 +287,21 @@ trait MovieResolvers
      */
     public function resolveHookMovie($root, array $args, $context, $resolveInfo)
     {
-        $post_id  = data_get($args, 'post_id');
-        $movie_id = data_get($args, 'movie_id');
-        $movie    = Movie::withoutGlobalScopes()->find($movie_id);
+        $post_id = data_get($args, 'post_id');
+        if ($movie_id = data_get($args, 'movie_id')) {
+            $movie = Movie::withoutGlobalScopes()->find($movie_id);
+        }
+        //关联支持movie_key参数
+        if ($movie_key = data_get($args, 'movie_key')) {
+            $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
+        }
+
         if ($movie) {
-            \info($post_id);
             if ($post = Post::find($post_id)) {
                 $post->update(['movie_id' => $movie_id]);
                 if ($video = $post->video) {
                     // 剪辑的视频和movie的关系才是稳定的， 粘贴先只记录movie_key
-                    $video->update(['movie_key' => $movie->source_key]);
+                    $video->update(['movie_key' => $movie->movie_key]);
                     //相同用户对同一个电影的关联动态，自动组合成一个动态合集
                     $video->autoHookMovieCollection($post, $movie, '解说');
                     // 动态投稿到电影名的专题
