@@ -40,7 +40,8 @@ class CreateMoviesTable extends Migration
             $table->string('tags', 255)->nullable()->comment('标签');
             $table->string('lang', 255)->nullable()->comment('语言');
             $table->string('source', 20)->nullable()->index()->comment('资源来源');
-            $table->string('source_key', 50)->nullable()->index()->comment('资源UID');
+            $table->string('source_key', 50)->nullable()->index()->comment('资源外部UID');
+            $table->string('movie_key', 50)->nullable()->index()->comment('资源内部UID');
             $table->string('miner', 20)->nullable()->index()->comment('资源矿工');
             $table->string('type_name', 50)->nullable()->comment('类型名');
 

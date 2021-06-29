@@ -246,6 +246,7 @@ class MovieSync extends Command
                 'status',
                 'source',
                 'source_key',
+                'movie_key',
                 'introduction',
                 'cover',
                 'producer',

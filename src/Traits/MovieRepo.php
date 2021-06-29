@@ -143,8 +143,7 @@ trait MovieRepo
             'end_time'    => $endTime,
             'start_time'  => $startTime,
             'series_name' => $series_index,
-            // 兼容内涵电影
-            'source_key'  => $movie->source_key ?? $movie->id,
+            'movie_key'   => $movie->movie_key ?? $movie->id,
             'callbackurl' => config('app.url') . '/api/movie/update_video_cover',
         ];
         $url    = $endPoint . http_build_query($requestArgs);
@@ -161,7 +160,7 @@ trait MovieRepo
             $video = new Video([
                 'user_id'   => $user->id,
                 'movie_id'  => $movie->id,
-                'movie_key' => $movie->source_key, //关联影片云端唯一标识
+                'movie_key' => $movie->movie_key, //关联影片云端唯一标识
                 'title'     => $title, //剪辑配问
                 'duration'  => $video['duration'] ?? 15,
                 'disk'      => 'othermovie',
