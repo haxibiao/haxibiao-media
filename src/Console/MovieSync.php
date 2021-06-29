@@ -279,7 +279,7 @@ class MovieSync extends Command
                 $addOrUpdate .= "(kkw)";
                 $nunu_count++;
             }
-            $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'id'));
+            $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
         } catch (\Throwable $th) {
             DB::rollback();
             $fail++;

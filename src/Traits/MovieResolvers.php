@@ -255,13 +255,13 @@ trait MovieResolvers
         //标记获取详情数据信息模式
         request()->request->add(['fetch_sns_detail' => true]);
 
-        //支持movie_key查询详情
-        if ($movie_key = data_get($args, 'movie_key')) {
-            $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
-        }
-
         if ($movie_id = data_get($args, 'movie_id')) {
             $movie = Movie::withoutGlobalScopes()->find($movie_id);
+        }
+
+        //支持movie_key查询详情
+        if (!isset($movie) && $movie_key = data_get($args, 'movie_key')) {
+            $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
         }
 
         if (isset($movie)) {
