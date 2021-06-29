@@ -183,7 +183,8 @@ extend type Query {
     """
     搜索电影
     """
-    searchMovies(keyword: String!, page: Int = 1): MoviePaginator @field(resolver: "App\\Movie@resolveSearchMovies")
+    searchMovies(keyword: String!, page: Int = 1): BreezeMoviePaginator
+        @field(resolver: "App\\Movie@resolveSearchMovies")
 
     """
     热门长视频
@@ -228,7 +229,7 @@ extend type Query {
         @paginate(resolver: "App\\Movie@resolvelatestMovieFixReporters", defaultCount: 10)
 }
 
-type MoviePaginator {
+type BreezeMoviePaginator {
     paginatorInfo: PaginatorInfo!
     data: [Movie!]
 }

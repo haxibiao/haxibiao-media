@@ -225,7 +225,7 @@ trait MovieResolvers
         //年份
         $year = data_get($args, 'year');
         //排序规则
-        $scopes = data_get($args, 'scopes');
+        $scopes = data_get($args, 'scopes', 'id');
 
         $query = Movie::when($region && $region != 'ALL', function ($qb) use ($region, $scopes) {
             if ($scopes && $scopes != 'ALL') {
@@ -349,6 +349,7 @@ trait MovieResolvers
 
         $pageResult->paginatorInfo = [
             'currentPage'  => $page,
+            'total'        => $total,
             'hasMorePages' => $total > $page * $perPage,
         ];
         return $pageResult;

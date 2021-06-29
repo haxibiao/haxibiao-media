@@ -254,7 +254,7 @@ trait MovieRepo
     {
         //去mediachain请求search电影
         $client   = new Client();
-        $response = $client->request('GET', 'http://mediachain.info/api/resource/search', [
+        $response = $client->request('GET', get_neihancloud_api() . '/api/resource/search', [
             'http_errors' => false,
             'query'       => [
                 'keyword' => $keyword,

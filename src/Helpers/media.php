@@ -4,7 +4,7 @@ use Illuminate\Support\Str;
 
 function get_neihancloud_api()
 {
-    return config('media.neihancloud_api', 'https://mediachain.info');
+    return config('media.api.neihancloud', 'https://mediachain.info');
 }
 
 function hash_vod_url($path)
