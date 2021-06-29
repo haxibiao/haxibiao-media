@@ -296,7 +296,7 @@ trait MovieResolvers
 
         if ($movie) {
             if ($post = Post::find($post_id)) {
-                $post->update(['movie_id' => $movie_id]);
+                $post->update(['movie_id' => $movie->id]);
                 if ($video = $post->video) {
                     // 剪辑的视频和movie的关系才是稳定的， 粘贴先只记录movie_key
                     $video->update(['movie_key' => $movie->movie_key]);

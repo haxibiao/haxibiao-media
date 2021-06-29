@@ -168,7 +168,7 @@ extend type Query {
     """
     电影详情
     """
-    movie(movie_id: Int, movie_key: Int): Movie @field(resolver: "App\\Movie@resolveMovie")
+    movie(movie_id: Int, movie_key: String): Movie @field(resolver: "App\\Movie@resolveMovie")
 
     """
     电影推荐(暂时仅电影图解用)
