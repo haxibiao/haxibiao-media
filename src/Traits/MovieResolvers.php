@@ -61,7 +61,7 @@ trait MovieResolvers
     public function resolveFindMovies($root, $args, $content, $info)
     {
         $name   = $args['name'] ?? '';
-        $result = Movie::resourceSearch($name);
+        $result = Movie::resourceSearch($name, 1, 20);
         $movies = data_get($result, 'data');
         return $movies;
     }
