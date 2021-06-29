@@ -310,7 +310,7 @@ trait MovieResolvers
     {
         $keyword = data_get($args, 'keyword');
         $page    = data_get($args, 'page', 1);
-        $perPage = data_get($args, 'limit', 10);
+        $perPage = data_get($args, 'first', 10);
         app_track_event('长视频', '搜索电影', $keyword);
 
         //标记获取详情数据信息模式
@@ -335,13 +335,15 @@ trait MovieResolvers
         $log->save();
 
         //去mediachain搜索电影
-        $result = Movie::resourceSearch($keyword, $page, $perPage);
+        $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
+        $total      = data_get($pageResult, 'total');
+        // $items = data_get($pageResult, 'data');
 
-        foreach ($result as $movie) {
-            $movies[] = (Object) $movie;
-        }
-        return $movies;
-
+        $pageResult->paginatorInfo = [
+            'currentPage'  => $page,
+            'hasMorePages' => $total > $page * $perPage,
+        ];
+        return $pageResult;
     }
 
     public function getFilters()

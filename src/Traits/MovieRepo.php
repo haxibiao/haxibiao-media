@@ -9,7 +9,6 @@ use Haxibiao\Media\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Yansongda\Supports\Arr;
 
 trait MovieRepo
 {
@@ -267,10 +266,9 @@ trait MovieRepo
         throw_if($response->getStatusCode() == 404, GQLException::class, '搜索开小差啦，请稍后再试吧!');
         $contents = $response->getBody()->getContents();
         if (!empty($contents)) {
-            $contents = json_decode($contents, true);
-            return Arr::get($contents, 'movie');
+            $contents = @json_decode($contents);
+            return $contents;
         }
-
         return null;
     }
 }
