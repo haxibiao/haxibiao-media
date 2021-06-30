@@ -216,7 +216,7 @@ trait MovieResolvers
         $region = data_get($args, 'region');
 
         $query = Movie::query()->publish()->join("sticks", function ($join) use ($region) {
-            return $join->on('sticks.stickable_id', 'movies.id')->where('sticks.place', "热门{$region}")->where('sticks.stickable_type', 'movies');
+            return $join->on('sticks.stickable_id', 'movies.id')->where('sticks.place', "精选{$region}")->where('sticks.stickable_type', 'movies');
         });
         if ($query->count() >= 3) {
             return $query;
