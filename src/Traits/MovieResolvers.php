@@ -254,11 +254,11 @@ trait MovieResolvers
             })->when($scopes && $scopes != 'ALL', function ($qb) use ($scopes) {
                 return $qb->orderbyDesc($scopes);
             });
-            $hasMorePages = $query->count() > $page * 9;
+            $hasMorePages = ($query->count() - ($page * 9)) > 0;
         }
 
         $result = [
-            'data'          => @json_decode($query->take($first)->get()),
+            'data'          => @json_decode($query->skip(($page - 1) * $first)->take(10)->get()),
             'paginatorInfo' => [
                 'currentPage'  => $page,
                 'hasMorePages' => $hasMorePages,
