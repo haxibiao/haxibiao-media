@@ -215,6 +215,7 @@ trait MovieResolvers
 
         $region = data_get($args, 'region');
         $page   = data_get($args, 'page', 1);
+        $first  = data_get($args, 'first', 9);
 
         $query = Movie::select("movies.*")->publish()->join("sticks", function ($join) use ($region) {
             $join->on('sticks.stickable_id', 'movies.id')->where('sticks.place', "精选{$region}")->where('sticks.stickable_type', 'movies');
@@ -257,7 +258,7 @@ trait MovieResolvers
         }
 
         $result = [
-            'data'          => @json_decode($query->take(9)->get()),
+            'data'          => @json_decode($query->take($first)->get()),
             'paginatorInfo' => [
                 'currentPage'  => $page,
                 'hasMorePages' => $hasMorePages,

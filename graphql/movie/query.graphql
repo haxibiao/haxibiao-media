@@ -159,6 +159,7 @@ extend type Query {
     year: String
     scopes: ScopesType
     page: Int = 1
+    first: Int = 9
   ): BreezeMoviePaginator @field(resolver: "App\\Movie@resolveCategoryMovie")
 
   """
