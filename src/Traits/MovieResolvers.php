@@ -214,11 +214,12 @@ trait MovieResolvers
         request()->request->add(['fetch_sns_detail' => true]);
 
         $region = data_get($args, 'region');
+        $page   = data_get($args, 'page');
 
         $query = Movie::select("movies.*")->publish()->join("sticks", function ($join) use ($region) {
             $join->on('sticks.stickable_id', 'movies.id')->where('sticks.place', "精选{$region}")->where('sticks.stickable_type', 'movies');
         });
-        if ($query->count() >= 3) {
+        if ($query->count() >= 3 && $page == 1) {
             return $query;
         }
 
