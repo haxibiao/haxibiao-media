@@ -3,7 +3,7 @@
         <div class="container-xl">
             <div class="app-footer_inner clearfix">
                 <dl class="app-footer_company">
-                    <dt class="app-footer_brand">{{ siteName() }}</dt>
+                    <dt class="app-footer_brand">{{ seo_site_name() }}</dt>
                     <dd class="app-footer_contact">
                         <div class="contact__item">
                             合作：<span>work@ {{ env('APP_DOMAIN') }}</span>
