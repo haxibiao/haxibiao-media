@@ -9,7 +9,7 @@
                             <template v-if="source">
                                 <div class="alert-wrap">
                                     <el-alert
-                                        title="谨防被骗！请不要相信视频中的广告和网站"
+                                        title="谨防被骗！请不要相信视频中的广告和网站,播放卡顿的下载APP看更流畅"
                                         type="warning"
                                         center
                                         show-icon
