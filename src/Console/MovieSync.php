@@ -240,6 +240,20 @@ class MovieSync extends Command
                 }
             }
 
+            $has_cokemv = false;
+            if (isset($movie['cokemv_source'])) {
+                $series = @json_decode($movie['cokemv_source'], true) ?? [];
+                if (count($series)) {
+                    //默认的没有或者不全，可以用看看屋的做默认
+                    if (count($series) > count($default_sereies)) {
+                        $movie['data']         = $series;
+                        $movie['count_series'] = count($series);
+                    }
+                    $other_source['cokemv'] = $series;
+                    $has_cokemv             = true;
+                }
+            }
+
             $movie['data_source'] = $other_source;
 
             $model->forceFill(array_only($movie, [
@@ -277,6 +291,10 @@ class MovieSync extends Command
             }
             if ($has_kkw) {
                 $addOrUpdate .= "(kkw)";
+                $nunu_count++;
+            }
+            if ($has_cokemv) {
+                $addOrUpdate .= "(cokemv)";
                 $nunu_count++;
             }
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
