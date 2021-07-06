@@ -31,6 +31,9 @@ class PostPublishSuccess
      */
     public function broadcastOn()
     {
+		if(in_array(config('app.name'),['haxibiao','yinxiangshipin'])){
+			return new PrivateChannel(config('app.name').'.channel-name');
+		}
         return new PrivateChannel('channel-name');
     }
 }
