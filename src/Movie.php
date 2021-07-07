@@ -136,6 +136,11 @@ class Movie extends Model
         return $this->hasOne(Post::class);
     }
 
+    public function editorChoices()
+    {
+        return $this->belongstoMany("App\EditorChoice", 'stick_place')->withTimestamps();
+    }
+
     public function collection()
     {
         return $this->hasOne(Collection::class);
