@@ -217,9 +217,11 @@ trait MovieResolvers
         $page   = data_get($args, 'page', 1);
         $first  = data_get($args, 'first', 9);
 
+        //FIXME::或许应该直接把推荐的全部取出来
         $query = Movie::select("movies.*")->publish()->join("sticks", function ($join) use ($region) {
             $join->on('sticks.stickable_id', 'movies.id')->where('sticks.place', "精选{$region}")->where('sticks.stickable_type', 'movies');
         });
+
         $hasMorePages = true;
 
         if ($query->count() <= 3 || $page > 1) {
