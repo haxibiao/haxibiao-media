@@ -86,6 +86,9 @@ trait SpiderRepo
         if (filter_var(data_get($pasteVideoInfo, 'play_url'), FILTER_VALIDATE_URL)) {
 
             $title = data_get($pasteVideoInfo, 'title') ?? $content;
+            if(!$title){
+                $title = "@".$user->name."发了一个短视频，你尽管点开，不好看算我输";
+            }
             //爬虫
             $spider = Spider::firstOrNew([
                 'source_url' => $dyUrl,
