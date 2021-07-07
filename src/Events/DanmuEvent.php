@@ -5,6 +5,7 @@ namespace Haxibiao\Media\Events;
 use Haxibiao\Media\Danmu;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 
@@ -35,6 +36,9 @@ class DanmuEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
+		if(in_array(config('app.name'),['haxibiao','yinxiangshipin'])){
+			return new Channel(config('app.name').'.danmu_' . $this->movie_id . '_' . $this->series_name);
+		}
         return new Channel('danmu_' . $this->movie_id . '_' . $this->series_name);
     }
 
