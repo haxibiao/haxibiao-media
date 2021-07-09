@@ -4,12 +4,14 @@ namespace Haxibiao\Media;
 
 use App\User;
 use Haxibiao\Breeze\Model;
+use Haxibiao\Content\Traits\Contentable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class Audio extends Model
 {
+    use Contentable;
 
     protected $fillable = [
         'user_id',
