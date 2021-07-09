@@ -46,11 +46,8 @@ class StickSync extends Command
         if (!Schema::hasTable('movies')) {
             return $this->error("当前数据库 没有movies表!");
         }
-        if ($this->option('db')) {
-            $this->database();
-        } else {
-            dd("api方式先不支持");
-        }
+        $this->database();
+
         return 0;
     }
 
