@@ -357,7 +357,7 @@ trait VideoRepo
         $video = $this;
 
         //处理 video 的 vod 信息和封面，并hook回来
-        $hookUrl = url('api/video/hook');
+        $hookUrl = env('APP_URL') . 'api/video/hook';
         $client  = new \GuzzleHttp\Client();
 
         //提交 哈希云处理vod信息来hook结果
