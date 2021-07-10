@@ -5,6 +5,7 @@ namespace Haxibiao\Media;
 use App\User;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Content\Traits\Contentable;
+use Haxibiao\Media\Traits\AudioResolvers;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 class Audio extends Model
 {
     use Contentable;
+    use AudioResolvers;
 
     protected $fillable = [
         'user_id',
@@ -74,5 +76,10 @@ class Audio extends Model
     public function getPlayTimeAttribute()
     {
         return Arr::get($this->json, 'play_time_string', '0:00');
+    }
+
+    public function getMorphClass()
+    {
+        return 'audios';
     }
 }
