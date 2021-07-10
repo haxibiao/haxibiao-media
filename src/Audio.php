@@ -80,6 +80,6 @@ class Audio extends Model
 
     public function getMorphClass()
     {
-        return 'audios';
+        return 'audio';
     }
 }
