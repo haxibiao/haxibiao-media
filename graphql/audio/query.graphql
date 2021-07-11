@@ -28,7 +28,12 @@ type Audio {
 
 extend type Query {
     """
-    音频查询
+    音频详情
     """
     audio(id: Int): Audio @find
+
+    """
+    分类的音频列表
+    """
+    audios(category_id: Int): [Audio] @paginate(defaultCount: 10, builder: "App\\Audio@resolveAudios")
 }
