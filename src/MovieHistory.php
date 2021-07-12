@@ -8,12 +8,14 @@ use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Media\Traits\MovieHistoryAttrs;
 use Haxibiao\Media\Traits\MovieHistoryResolvers;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MovieHistory extends Model
 {
     use HasFactory;
     use MovieHistoryAttrs;
     use MovieHistoryResolvers;
+    use SoftDeletes;
 
     protected $guarded = [];
 

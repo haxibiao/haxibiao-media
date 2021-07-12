@@ -1,4 +1,14 @@
 extend type Mutation {
     saveWatchProgress(movie_id: Int!, series_index: Int, progress: Int): Boolean
         @field(resolver: "App\\MovieHistory@saveWatchProgress")
+
+    """
+    删除历史记录
+    """
+    deleteMovieViewingHistory(movie_ids: [Int!],type: MovieHistoryDeleteType) :Int @guard @field(resolver:"App\\MovieHistory@resolveDeleteMovieViewingHistory")
 }
+
+enum MovieHistoryDeleteType {
+    All @enum(value: all)
+}
+

@@ -37,7 +37,7 @@ trait MovieHistoryResolvers
 
         //取每个电影的最新一条剧集记录
         if ($user = currentUser()) {
-            $visits = MovieHistory::whereIn(DB::raw('(movie_id,updated_at)'), function ($query) use ($user) {
+            $visits = MovieHistory::query()->whereNull("deleted_at")->whereIn(DB::raw('(movie_id,updated_at)'), function ($query) use ($user) {
                 $query->select('movie_id', DB::raw('max(updated_at)'))
                     ->from('movie_histories')
                     ->where('user_id', $user->id)
@@ -48,4 +48,25 @@ trait MovieHistoryResolvers
         }
         return [];
     }
+
+
+
+      // 删除用户的观影记录（隐藏）
+   public static function resolveDeleteMovieViewingHistory($root, array $args, $context, $resolveInfo)
+   {
+       $user = getUser();
+       $movie_ids = $args["movie_ids"] ?? null;
+       $type = $args["type"] ?? null;
+
+
+       if($type == "all"){  
+        return MovieHistory::query()->where("user_id",$user->id)->delete();
+       }
+
+
+        return  MovieHistory::query()->where("user_id",$user->id)->whereIn("movie_id",$movie_ids)->delete();
+     
+   }
+
+
 }

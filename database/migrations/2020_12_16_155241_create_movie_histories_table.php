@@ -24,6 +24,7 @@ class CreateMovieHistoriesTable extends Migration
             $table->string('progress')->nullable()->comment('观看进度,记录观看到视频的第几秒');
             $table->string('last_watch_time')->nullable()->comment('最后观看时间');
             $table->unsignedInteger('series_id')->nullable()->index()->comment('集数index,记录在数组中的偏移量');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
