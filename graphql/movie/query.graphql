@@ -160,7 +160,7 @@ extend type Query {
     scopes: ScopesType
     page: Int = 1
     first: Int = 9
-  ): BreezeMoviePaginator @field(resolver: "App\\Movie@resolveCategoryMovie")
+  ): [Movie] @paginate(defaultCount: 9, builder: "App\\Movie@resolveCategoryMovie")
 
   """
   获取过滤条件
