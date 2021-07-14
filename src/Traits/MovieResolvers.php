@@ -208,19 +208,21 @@ trait MovieResolvers
 
     }
 
+    //分类精选/分类筛选电影列表
     public function resolveCategoryMovie($root, $args, $content, $info)
     {
-
-        request()->request->add(['fetch_sns_detail' => true]);
-
         $region = data_get($args, 'region');
         $page   = data_get($args, 'page', 1);
         $first  = data_get($args, 'first', 9);
 
-        //FIXME::或许应该直接把推荐的全部取出来
-        $query = Movie::select("movies.*")->publish()->join("sticks", function ($join) use ($region) {
-            $join->on('sticks.stickable_id', 'movies.id')->where('sticks.place', "精选{$region}")->where('sticks.stickable_type', 'movies');
-        });
+        $query = Movie::select("movies.*")->publish();
+
+        //全局筛选时不混入置顶逻辑
+        if (!data_get($args, 'scopes')) {
+            $query->join("sticks", function ($join) use ($region) {
+                $join->on('sticks.stickable_id', 'movies.id')->where('sticks.place', "精选{$region}")->where('sticks.stickable_type', 'movies');
+            });
+        }
 
         $hasMorePages = true;
 
