@@ -226,40 +226,38 @@ trait MovieResolvers
 
         $hasMorePages = true;
 
-        if ($query->count() <= 3 || $page > 1) {
-            //类型
-            $type = data_get($args, 'type');
-            //风格
-            $style = data_get($args, 'style');
-            //国家
-            $country = data_get($args, 'country');
-            //语言
-            $lang = data_get($args, 'lang');
-            //年份
-            $year = data_get($args, 'year');
-            //排序规则
-            $scopes = data_get($args, 'scopes', 'id');
+        //类型
+        $type = data_get($args, 'type');
+        //风格
+        $style = data_get($args, 'style');
+        //国家
+        $country = data_get($args, 'country');
+        //语言
+        $lang = data_get($args, 'lang');
+        //年份
+        $year = data_get($args, 'year');
+        //排序规则
+        $scopes = data_get($args, 'scopes', 'id');
 
-            $query = Movie::when($region && $region != 'ALL', function ($qb) use ($region, $scopes) {
-                if ($scopes && $scopes != 'ALL') {
-                    return $qb->where('region', $region);
-                }
-                return $qb->where('region', $region)->orderbyDesc('year');;
-            })->when($type && $type != 'ALL', function ($qb) use ($type) {
-                return $qb->where('type', $type);
-            })->when($style && $style != 'ALL', function ($qb) use ($style) {
-                return $qb->where('style', $style);
-            })->when($country && $country != 'ALL', function ($qb) use ($country) {
-                return $qb->where('country', $country);
-            })->when($lang && $lang != 'ALL', function ($qb) use ($lang) {
-                return $qb->where('lang', $lang);
-            })->when($year && $year != 'ALL', function ($qb) use ($year) {
-                return $qb->where('year', $year);
-            })->when($scopes && $scopes != 'ALL', function ($qb) use ($scopes) {
-                return $qb->orderbyDesc($scopes);
-            });
-            $hasMorePages = ($query->count() - ($page * 9)) > 0;
-        }
+        $query = Movie::when($region && $region != 'ALL', function ($qb) use ($region, $scopes) {
+            if ($scopes && $scopes != 'ALL') {
+                return $qb->where('region', $region);
+            }
+            return $qb->where('region', $region)->orderbyDesc('year');;
+        })->when($type && $type != 'ALL', function ($qb) use ($type) {
+            return $qb->where('type', $type);
+        })->when($style && $style != 'ALL', function ($qb) use ($style) {
+            return $qb->where('style', $style);
+        })->when($country && $country != 'ALL', function ($qb) use ($country) {
+            return $qb->where('country', $country);
+        })->when($lang && $lang != 'ALL', function ($qb) use ($lang) {
+            return $qb->where('lang', $lang);
+        })->when($year && $year != 'ALL', function ($qb) use ($year) {
+            return $qb->where('year', $year);
+        })->when($scopes && $scopes != 'ALL', function ($qb) use ($scopes) {
+            return $qb->orderbyDesc($scopes);
+        });
+        $hasMorePages = ($query->count() - ($page * $first)) > 0;
 
         $result = [
             'data'          => @json_decode($query->skip(($page - 1) * $first)->take(10)->get()),
