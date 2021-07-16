@@ -1,0 +1,13 @@
+type MediaTrack{
+    id:ID
+}
+
+enum MediaTypeEnum{
+    MOVIE @enum(value: "movies")
+}
+
+
+extend type Mutation {
+    mediaTrackReport(media_type:MediaTypeEnum!,media_id:String!,start_time:DateTime!,endTime:DateTime!): MediaTrack
+        @field(resolver: "Haxibiao\\Media\\MediaTrack@resolveMediaTrackReport")
+}
