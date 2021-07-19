@@ -159,8 +159,9 @@ type VideoInfo {
 extend type Query {
     """
     工厂APP看视频赚钱部分详细文字描述用
+    废弃(旧工厂APP里用的)
     """
-    queryDetail: String! @field(resolver: "App\\Video@queryDetail") @deprecated(reason: "旧工厂APP里用的")
+    queryDetail: String! @field(resolver: "App\\Video@queryDetail")
 
     """
     单个视频的信息
