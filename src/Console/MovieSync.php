@@ -258,6 +258,7 @@ class MovieSync extends Command
             $model->forceFill(array_only($movie, [
                 'source',
                 'source_key',
+                'movie_key',
                 'introduction',
                 'cover',
                 'producer',
@@ -293,8 +294,7 @@ class MovieSync extends Command
                 $nunu_count++;
             }
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
-        } catch (\Throwable$th) {
-            dd($th);
+        } catch (\Throwable $th) {
             DB::rollback();
             $fail++;
             $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
