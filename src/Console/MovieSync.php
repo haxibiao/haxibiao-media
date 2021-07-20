@@ -79,6 +79,7 @@ class MovieSync extends Command
         $kkw_count   = 0;
 
         $args = array_except($this->options(), ['way']);
+        $args = array_filter($args);
         do {
             data_set($args, 'page', $page);
             $requestArgs = http_build_query($args);
@@ -86,6 +87,7 @@ class MovieSync extends Command
             $result      = json_decode(file_get_contents($url), true);
             $returnCount = count($result['data']);
             if ($result['status'] == 200) {
+
                 $resultMovies = $result['data'];
                 foreach ($resultMovies as $movie) {
                     $total++;
@@ -138,8 +140,6 @@ class MovieSync extends Command
                 $q->where('region', $region);})
             ->when($type = data_get($this->options(), 'type'), function ($q) use ($type) {
                 $q->where('type_name', $type);})
-            ->when($style = data_get($this->options(), 'style'), function ($q) use ($style) {
-                $q->where('style', $style);})
             ->when($year = data_get($this->options(), 'year'), function ($q) use ($year) {
                 $q->where('year', $year);})
             ->when($producer = data_get($this->options(), 'producer'), function ($q) use ($producer) {
@@ -177,7 +177,6 @@ class MovieSync extends Command
             $movie = @json_decode(json_encode($movie), true);
             $model = Movie::firstOrNew([
                 'name'     => $movie['name'],
-                'name'     => $movie['name'],
                 'producer' => $movie['producer'],
             ]);
 
@@ -210,14 +209,14 @@ class MovieSync extends Command
 
             //内涵云早期新增影片时源线路
             if (isset($movie['data_source'])) {
-                $series = @json_decode($movie['data_source'], true) ?? [];
+                $series = $movie['data_source'] ?? [];
                 if (count($series)) {
                     $other_source['麻花云'] = $series;
                 }
             }
             $has_nunu = false;
             if (isset($movie['nunu_source'])) {
-                $series = @json_decode($movie['nunu_source'], true) ?? [];
+                $series = $movie['nunu_source'] ?? [];
                 if (count($series)) {
                     //有nunu的可以优先尊重,覆盖默认
                     $movie['data']             = $series;
@@ -228,7 +227,7 @@ class MovieSync extends Command
             }
             $has_kkw = false;
             if (isset($movie['kkw_source'])) {
-                $series = @json_decode($movie['kkw_source'], true) ?? [];
+                $series = $movie['kkw_source'] ?? [];
                 if (count($series)) {
                     //默认的没有或者不全，可以用看看屋的做默认
                     if (count($series) > count($default_sereies)) {
@@ -257,10 +256,8 @@ class MovieSync extends Command
             $movie['data_source'] = $other_source;
 
             $model->forceFill(array_only($movie, [
-                'status',
                 'source',
                 'source_key',
-                'movie_key',
                 'introduction',
                 'cover',
                 'producer',
@@ -278,9 +275,7 @@ class MovieSync extends Command
                 'lang',
                 'type',
                 'data',
-                'data_source',
             ]));
-            $model->status = Movie::PUBLISH;
             $model->saveQuietly();
             DB::commit();
             $success++;
@@ -298,7 +293,8 @@ class MovieSync extends Command
                 $nunu_count++;
             }
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
+            dd($th);
             DB::rollback();
             $fail++;
             $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
