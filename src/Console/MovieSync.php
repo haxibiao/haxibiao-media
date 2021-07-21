@@ -182,6 +182,30 @@ class MovieSync extends Command
 
             $movieExists = $model->id > 0;
 
+            //修复国家
+            $country          = $movie['country'] ?? $movie['region'] ?? null;
+            $movie['country'] = $country;
+            //修复region
+            $region = '其他';
+            if ($country) {
+                if (str_contains($country, '美国')) {
+                    $region = '美剧';
+                }
+                if (str_contains($country, '韩国')) {
+                    $region = '韩剧';
+                }
+                if (str_contains($country, '日本')) {
+                    $region = '日剧';
+                }
+                if (str_contains($country, '香港') || str_contains($country, '台湾')) {
+                    $region = '港剧';
+                }
+                if (str_contains($country, '中国') || str_contains($country, '大陆') || str_contains($country, '国产')) {
+                    $region = '国产';
+                }
+            }
+            $movie['region'] = $region;
+
             $movie['producer'] = str_limit($movie['producer'], 97, '...');
             $movie['actors']   = str_limit($movie['actors'], 97, '...');
             //剔除简介html代码
@@ -195,6 +219,7 @@ class MovieSync extends Command
 
             //修复count_series
             $movie['count_series'] = count($default_sereies);
+            $movie['status']       = 1;
 
             //空的不覆盖已有的
             if (empty($movie['cover'])) {
@@ -276,6 +301,7 @@ class MovieSync extends Command
                 'lang',
                 'type',
                 'data',
+                'status',
             ]));
             $model->saveQuietly();
             DB::commit();
