@@ -13,6 +13,9 @@ class CreateMovieUserTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('movie_user')) {
+            return;
+        }
         Schema::create('movie_user', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('user_id')->index();

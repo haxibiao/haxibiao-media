@@ -13,6 +13,9 @@ class CreateMediaTracksTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('media_tracks')) {
+            return;
+        }
         Schema::create('media_tracks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->default(0)->index();
