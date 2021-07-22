@@ -28,4 +28,10 @@ class MovieHistory extends Model
     {
         return $this->belongsTo(Series::class);
     }
+
+    //repo
+    public static function userPlayedMovies($user_id, $take = 10)
+    {
+        return MovieHistory::where('user_id', $user_id)->orderByDesc('updated_at')->take($take)->get();
+    }
 }

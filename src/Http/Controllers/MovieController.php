@@ -170,6 +170,7 @@ class MovieController extends Controller
         //                ],
         //            ]);
         //        }
+
         return view('movie.index', [
             'hotMovies'      => $hotMovies,
             'categoryMovies' => $categoryMovies,

@@ -33,11 +33,8 @@
                             <div class="history-box clearfix">
                                 <div class="ht-movie_list">
                                     <div class="video_headline">播放记录</div>
-                                    @php
-                                    $historyMovies
-                                    =Auth::user()->movieHistory()->orderByDesc('updated_at')->take(10)->get();
-                                    @endphp
-                                    @foreach ($historyMovies as $historyItem)
+                                    
+                                    @foreach (userPlayedMovies() as $historyItem)
                                         @include('parts.movie.history_movie_item')
                                     @endforeach
                                 </div>
