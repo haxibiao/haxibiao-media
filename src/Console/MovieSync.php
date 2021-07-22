@@ -2,7 +2,15 @@
 
 namespace Haxibiao\Media\Console;
 
+use Haxibiao\Media\Actor;
+use Haxibiao\Media\Director;
 use Haxibiao\Media\Movie;
+use Haxibiao\Media\MovieActor;
+use Haxibiao\Media\MovieDirector;
+use Haxibiao\Media\MovieRegion;
+use Haxibiao\Media\MovieType;
+use Haxibiao\Media\Region;
+use Haxibiao\Media\Type;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -97,6 +105,7 @@ class MovieSync extends Command
             }
         } while ($returnCount >= 300);
         $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部' . ' nunu:' . $nunu_count . ' kkw:' . $kkw_count);
+
     }
 
     public function database()
@@ -301,9 +310,9 @@ class MovieSync extends Command
                 'lang',
                 'type',
                 'data',
-                'status',
             ]));
             $model->saveQuietly();
+            $this->createRelationModel($model);
             DB::commit();
             $success++;
             $addOrUpdate = $movieExists ? '更新' : '新增';
@@ -320,10 +329,63 @@ class MovieSync extends Command
                 $nunu_count++;
             }
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
-        } catch (\Throwable $th) {
+        } catch (\Throwable$th) {
             DB::rollback();
+            dd($th);
             $fail++;
             $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
         }
+    }
+
+    public function createRelationModel(Movie $movie)
+    {
+        $region = $movie->region;
+        if (!empty($region)) {
+            $regions = explode(',', $region);
+            foreach ($regions as $item) {
+                $regionModel = Region::firstOrCreate(['name' => $item]);
+                MovieRegion::firstOrCreate([
+                    'movie_id'  => $movie->id,
+                    'region_id' => $regionModel->id,
+                ]);
+            }
+        }
+
+        $actor = $movie->actors;
+        if (!empty($actor)) {
+            $actors = explode(',', $actor);
+            foreach ($actors as $item) {
+                $actorModel = Actor::firstOrCreate(['name' => $item]);
+                MovieActor::firstOrCreate([
+                    'movie_id' => $movie->id,
+                    'actor_id' => $actorModel->id,
+                ]);
+            }
+        }
+
+        $director = $movie->producer;
+        if (!empty($director)) {
+            $directors = explode(',', $director);
+            foreach ($directors as $item) {
+                $directorModel = Director::firstOrCreate(['name' => $item]);
+                MovieDirector::firstOrCreate([
+                    'movie_id'    => $movie->id,
+                    'director_id' => $directorModel->id,
+                ]);
+            }
+        }
+
+        $type = $movie->type;
+        if (!empty($type)) {
+            $types = explode(',', $type);
+            foreach ($types as $item) {
+                $typeModel = Type::firstOrCreate(['name' => $item]);
+                MovieType::firstOrCreate([
+                    'movie_id' => $movie->id,
+                    'type_id'  => $typeModel->id,
+                ]);
+            }
+        }
+
     }
 }
