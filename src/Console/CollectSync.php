@@ -2,21 +2,21 @@
 
 namespace Haxibiao\Media\Console;
 
-use Haxibiao\Content\Collection;
+use App\EditorChoice;
 use Haxibiao\Media\Movie;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
-class CollectionMovieSync extends Command
+class CollectSync extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'collection:movie:sync {--db : 数据库模式}';
+    protected $signature = 'collect:sync {--db : 数据库模式}';
 
     /**
      * The console command description.
@@ -75,11 +75,10 @@ class CollectionMovieSync extends Command
                 try {
                     $this->info("开始同步合集【{$collect->name}】数据");
 
-                    //创建合集
-                    $collection = Collection::firstOrCreate([
-                        'user_id' => 1,
-                        'type'    => 'movie',
-                        'name'    => $collect->name,
+                    //创建精选
+                    $editorChoice = EditorChoice::firstOrCreate([
+                        'editor_id' => 1,
+                        'title'     => $collect->name,
                     ]);
 
                     //中间表关联数据不多，一口气全拿出来吧
@@ -99,8 +98,8 @@ class CollectionMovieSync extends Command
 
                     $movie_ids = Movie::whereIn('movie_key', $movie_keys)->pluck('id')->toArray();
                     //保存关系
-                    $collection->recollect($movie_ids, 'movies', false);
-                    $this->info("电影合集关系保存成功！！！");
+                    $editorChoice->movies()->sync($movie_ids);
+                    $this->info("精选电影关系保存成功！！！");
                 } catch (\Exception $e) {
                     Log::error($e);
                 }

@@ -44,6 +44,7 @@ class MediaServiceProvider extends ServiceProvider
                 Console\CountVideoViewsCommand::class,
                 Console\FixVideoIDCommand::class,
                 Console\MovieSync::class,
+                Console\CollectSync::class,
                 Console\StickSync::class,
                 Console\MoviePush::class,
                 Console\VideoPush::class,
