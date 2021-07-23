@@ -19,7 +19,7 @@ class Activity extends Resource
         'title',
     ];
 
-    public static $group = '媒体中心';
+    public static $group = '小编精选';
 
     public static function label()
     {
