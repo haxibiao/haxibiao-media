@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Nova;
 
+use Haxibiao\Content\Nova\Actions\AddActivitiesToSticks;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
@@ -47,7 +48,7 @@ class Activity extends Resource
                 if (3 == $type) {
                     return "电影专题";
                 }
-            }),
+            })->withMeta(['value' => 1]),
             Select::make('状态', 'status')->options([
                 1 => '使用中',
                 2 => '已禁用',
@@ -57,7 +58,7 @@ class Activity extends Resource
                 } else {
                     return "已禁用";
                 }
-            }),
+            })->withMeta(['value' => 1]),
             Image::make('图片地址', 'image_url')->thumbnail(function () {
                 return $this->image_url;
             })->preview(function () {
@@ -110,6 +111,8 @@ class Activity extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new AddActivitiesToSticks,
+        ];
     }
 }
