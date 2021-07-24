@@ -200,13 +200,15 @@ trait MovieAttrs
                 $user_id = $cache->get($cacheKey);
                 return User::find($user_id);
             } else {
-                $user = User::where('role_id', User::VEST_STATUS)->inRandomOrder()->first();
+                // 不用马甲运营账户
+                $user = User::where('id', '<', 100)->inRandomOrder()->first();
                 if ($user) {
                     $cache->put($cacheKey, $user->id, today()->addDays(3));
                     return $user;
                 }
             }
         }
-        return $user;
+        //总有避风港用户(seed安装时已初始化3个测试用户)
+        return $user ?? User::find(3);
     }
 }
