@@ -1,5 +1,6 @@
 type MediaTrack{
     id:ID
+    track_seconds:String
 }
 
 enum MediaTypeEnum{
@@ -8,6 +9,6 @@ enum MediaTypeEnum{
 
 
 extend type Mutation {
-    mediaTrackReport(media_type:MediaTypeEnum!,media_id:String!,start_time:DateTime!,end_time:DateTime!): MediaTrack
+    mediaTrackReport(track_id:ID,media_type:MediaTypeEnum!,media_id:String!,start_time:DateTime!,end_time:DateTime!): MediaTrack
         @field(resolver: "Haxibiao\\Media\\MediaTrack@resolveMediaTrackReport")
 }
