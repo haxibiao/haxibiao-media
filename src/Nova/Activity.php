@@ -2,11 +2,13 @@
 
 namespace Haxibiao\Media\Nova;
 
+use App\Nova\Collection;
+use App\Nova\Movie;
 use Haxibiao\Content\Nova\Actions\AddActivitiesToSticks;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
+use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Resource;
@@ -32,7 +34,14 @@ class Activity extends Resource
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('标题', 'title'),
             Text::make('副标题', 'subtitle'),
-            BelongsTo::make('电影/电视剧', 'movie', Movie::class)->searchable(),
+            // BelongsTo::make('电影/电视剧', 'movie', Movie::class)->searchable(),
+            // BelongsTo::make('定制电影', 'movie', Movie::class)->nullable()->searchable(),
+            // BelongsTo::make('定制合集', 'collection', Collection::class)->nullable()->searchable(),
+
+            MorphTo::make('指定对象', 'activityable')->types([
+                Movie::class,
+                Collection::class,
+            ])->searchable(),
             Text::make('排序', 'sort'),
             Select::make('类型', 'type')->options([
                 1 => '首页',

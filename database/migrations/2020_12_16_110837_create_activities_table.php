@@ -18,7 +18,8 @@ class CreateActivitiesTable extends Migration
         }
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->smallInteger('movie_id')->comment('movies表主键');
+            //使用activityable来指定轮播对象
+            $table->morphs('activityable');
             $table->tinyInteger('sort')->nullable()->default(1)->comment('排序，值越大越靠前');
             $table->tinyInteger('type')->comment('1:首页，2：电视剧，3：电影专题');
             $table->tinyInteger('status')->default(1)->comment('true:展示中，false:已下架');

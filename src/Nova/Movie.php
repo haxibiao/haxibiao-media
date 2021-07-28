@@ -23,6 +23,7 @@ use Laravel\Nova\Resource;
 class Movie extends Resource
 {
     public static $group = "媒体中心";
+
     public static function label()
     {
         return '电影';
@@ -40,7 +41,7 @@ class Movie extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.

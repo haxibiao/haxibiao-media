@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media;
 
+use App\Collection;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Media\Traits\ActivityAttrs;
 use Haxibiao\Media\Traits\ActivityRepo;
@@ -35,12 +36,30 @@ class Activity extends Model
 
     public const TYPE_SEARCH = 4;
 
-    public function movie(): BelongsTo
+    public function collection()
     {
-        return $this->belongsTo(Movie::class);
+        return $this->belongsTo(Collection::class);
     }
+
+    public function activityable()
+    {
+        return $this->morphTo();
+    }
+
     public function scopeEnable($query)
     {
         return $query->where('status', 1);
+    }
+
+    public function getMovieAttribute()
+    {
+        $activityable = $this->activityable;
+        return $activityable instanceof \App\Movie ? $activityable : null;
+    }
+
+    public function getCollectionAttribute()
+    {
+        $activityable = $this->activityable;
+        return $activityable instanceof \App\Collection ? $activityable : null;
     }
 }

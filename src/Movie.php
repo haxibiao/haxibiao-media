@@ -101,9 +101,9 @@ class Movie extends Model
         return 'movies';
     }
 
-    public function activity(): HasOne
+    public function activity()
     {
-        return $this->hasOne(Activity::class);
+        return $this->morphOne(Activity::class, 'activityable');
     }
 
     public function series(): HasMany

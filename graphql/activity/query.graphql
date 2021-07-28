@@ -4,12 +4,13 @@ type Activity {
   """
   电影/电视剧
   """
-  movie: Movie @belongsTo(relation: "movie")
+  movie: Movie
 
   """
-  电影/电视剧ID(减少一个关联查询)
+  轮播信息
   """
-  movie_id: Int
+  activityable_id: Int
+  activityable_type: String
   """
   排序, 值越大越靠前
   """
