@@ -163,7 +163,7 @@ trait MovieResolvers
      */
     public function resolveRecommendMovies($root, $args, $content, $info)
     {
-        $limit = data_get($args, 'limit', 7);
+        $limit = data_get($args, 'count', data_get($args, 'limit', 7));
         if ($user = currentUser()) {
             //收藏过的电影类型
             $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
