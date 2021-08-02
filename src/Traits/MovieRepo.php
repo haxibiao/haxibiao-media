@@ -252,9 +252,9 @@ trait MovieRepo
 
     public static function resourceSearch($keyword, $page = 1, $perPage = 10)
     {
-        //去mediachain请求search电影
+        //去哈希云请求search电影
         $client   = new Client();
-        $response = $client->request('GET', get_neihancloud_api() . '/api/resource/search', [
+        $response = $client->request('GET',  'media.haxibiao.com/api/resource/search', [
             'http_errors' => false,
             'query'       => [
                 'keyword' => $keyword,

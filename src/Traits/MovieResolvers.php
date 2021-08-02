@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\User;
 use Haxibiao\Breeze\Dimension;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Content\Category;
@@ -160,17 +159,17 @@ trait MovieResolvers
     }
 
     /**
-     * 个性推荐？(ivan: 仅电影图解)
+     * 个性推荐?(影厅：今日推荐)
      */
     public function resolveRecommendMovies($root, $args, $content, $info)
     {
-        $limit = data_get($args, 'limit', 7);
+        $limit = data_get($args, 'count', data_get($args, 'limit', 7));
         if ($user = currentUser()) {
             //收藏过的电影类型
             $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
             $regions    = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
             //推算喜欢的区域
-            $movies = Movie::inRandomOrder()
+            $movies = Movie::latest('id')->skip(rand(10, 100))
                 ->whereIn('region', $regions)
                 ->take($limit)
                 ->get();
@@ -178,12 +177,12 @@ trait MovieResolvers
 
             //推算区域不够数，随机补充？
             if ($moviesCount < $limit) {
-                $random_movies = Movie::inRandomOrder()->take($limit - $moviesCount)->get();
+                $random_movies = Movie::latest('id')->skip(rand(10, 100))->take($limit - $moviesCount)->get();
                 $movies        = array_merge($movies->toArray(), $random_movies->toArray());
             }
             return $movies;
         } else {
-            return Movie::inRandomOrder()->take($limit)->get();
+            return Movie::latest('id')->skip(rand(10, 100))->take($limit)->get();
         }
     }
 
