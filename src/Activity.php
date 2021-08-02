@@ -54,12 +54,12 @@ class Activity extends Model
     public function getMovieAttribute()
     {
         $activityable = $this->activityable;
-        return $activityable instanceof \App\Movie ? $activityable : null;
+        return $activityable instanceof \App\Movie || $activityable instanceof \Haxibiao\Media\Movie ? $activityable : null;
     }
 
     public function getCollectionAttribute()
     {
         $activityable = $this->activityable;
-        return $activityable instanceof \App\Collection ? $activityable : null;
+        return $activityable instanceof \App\Collection || $activityable instanceof \Haxibiao\Content\Collection ? $activityable : null;
     }
 }
