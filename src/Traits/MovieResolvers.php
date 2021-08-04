@@ -341,15 +341,19 @@ trait MovieResolvers
 
         //去mediachain搜索电影
         $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
-        $total      = data_get($pageResult, 'total');
-        // $items = data_get($pageResult, 'data');
+        // $total      = data_get($pageResult, 'total');
+        $items      = data_get($pageResult, 'data');
+        $movie_keys = collect($items)->pluck('movie_key')->toArray();
+        // dd($movie_keys);
 
-        $pageResult->paginatorInfo = [
-            'currentPage'  => $page,
-            'total'        => $total,
-            'hasMorePages' => $total > $page * $perPage,
-        ];
-        return $pageResult;
+        return Movie::whereIn('movie_key', $movie_keys);
+
+        // $pageResult->paginatorInfo = [
+        //     'currentPage'  => $page,
+        //     'total'        => $total,
+        //     'hasMorePages' => $total > $page * $perPage,
+        // ];
+        // return $pageResult;
     }
 
     public function getFilters()

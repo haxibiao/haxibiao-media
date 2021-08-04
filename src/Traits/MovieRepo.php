@@ -254,7 +254,7 @@ trait MovieRepo
     {
         //去哈希云请求search电影
         $client   = new Client();
-        $response = $client->request('GET',  'media.haxibiao.com/api/resource/search', [
+        $response = $client->request('GET', 'mediachain.info/api/resource/search', [
             'http_errors' => false,
             'query'       => [
                 'keyword' => $keyword,
