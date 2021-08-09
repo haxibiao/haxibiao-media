@@ -40,7 +40,7 @@ class ArticleSync extends Command
     public function handle()
     {
 
-        $domain     = $this->option('domain') ?? "diudie.com";
+        $domain     = $this->option('domain') ?? "example.com";
         $type       = $this->option('type') ?? "diagrams";
         $start_page = $this->option('start_page') ?? 1;
         $count_page = $this->option('count_page') ?? 100;
@@ -71,7 +71,7 @@ class ArticleSync extends Command
                         $this->info($model->title . "   保存成功");
                         $count++;
                         \DB::commit();
-                    } catch (\Exception $e) {
+                    } catch (\Exception$e) {
                         \DB::rollback();
                         $this->info($model->title . "   保存失败！！！");
                     }
