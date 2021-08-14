@@ -33,9 +33,9 @@ class Movie extends Model
     use WithCms;
     use Stickable;
 
-    protected $guarded = [];
-
-    protected $table = 'movies';
+    protected $guarded    = [];
+    protected $connection = 'mediachain';
+    protected $table      = 'movies';
 
     /**
      * 日韩美港剧
@@ -84,6 +84,7 @@ class Movie extends Model
     public static function boot()
     {
         parent::boot();
+
         static::observe(\Haxibiao\Media\Observers\MovieObserver::class);
     }
 
