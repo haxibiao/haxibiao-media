@@ -6,7 +6,7 @@ return [
         'url'            => env('DATABASE_URL'),
         'host'           => env('DB_HOST_MEDIACHAIN', env('DB_HOST')),
         'port'           => env('DB_PORT_MEDIACHAIN', env('DB_PORT', 3306)),
-        'database'       => env('DB_DATABASE_MEDIACHAIN', 'mediachain'),
+        'database'       => env('DB_DATABASE_MEDIACHAIN', env('DB_DATABASE')),
         'username'       => 'root',
         'password'       => env('DB_PASSWORD_MEDIA', env('DB_PASSWORD')),
         'unix_socket'    => env('DB_SOCKET', ''),

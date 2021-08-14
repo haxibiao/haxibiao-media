@@ -61,9 +61,8 @@ class CreateMoviesTable extends Migration
 
         /**
          * 错位MOVIE ID
-         * https://pm.haxifang.com/browse/GC-174
          */
-        $movieStartId = config('media.movie_auto_increment__start_id');
+        $movieStartId = config('media.movie_start_id');
         if (is_numeric($movieStartId)) {
             DB::statement("ALTER TABLE movies AUTO_INCREMENT = {$movieStartId};");
         }
