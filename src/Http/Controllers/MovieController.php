@@ -256,12 +256,13 @@ class MovieController extends Controller
         // 推荐同导演（性能考虑）
         $qb          = Movie::publish()->latest('id');
         $qb_producer = $qb->where('producer', $movie->producer)->where('id', '<>', $movie->id);
-        $recommend   = $qb_producer->where('cover', 'like', 'https://image-cdn%')->latest('rank')->inRandomOrder()->take(6)->get();
+        $recommend   = $qb_producer->latest('rank')->inRandomOrder()->take(6)->get();
 
-        //更多同地区
+        //更多同地区 （太多，不能随机排序）
         $qb         = Movie::publish()->latest('id');
         $qb_country = $qb->where('country', $movie->country)->where('type', $movie->type)->where('id', '<>', $movie->id);
-        $more       = $qb_country->where('cover', 'like', 'https://image-cdn%')->latest('rank')->inRandomOrder()->take(6)->get();
+        //去掉order by rank, 数据太多mysql error: SQLSTATE[HY001]: Memory allocation error: 1038
+        $more = $qb_country->skip(rand(0, 500))->take(6)->get();
 
         if ($user = currentUser()) {
             // 保存观看历史

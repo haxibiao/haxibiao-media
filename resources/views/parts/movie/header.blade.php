@@ -3,7 +3,7 @@
         <div class="app-header clearfix">
             <h1 class="app-header__logo">
                 <a class="pic_logo" href="/">
-                    <img src="{{ small_logo() }}" alt="{{ siteName() }}">
+                    <img src="{{ small_logo() }}" alt="{{ seo_site_name() }}">
                 </a>
             </h1>
             <ul class="app-header__type">
@@ -33,7 +33,7 @@
                             <div class="history-box clearfix">
                                 <div class="ht-movie_list">
                                     <div class="video_headline">播放记录</div>
-                                    
+
                                     @foreach (userPlayedMovies() as $historyItem)
                                         @include('parts.movie.history_movie_item')
                                     @endforeach
