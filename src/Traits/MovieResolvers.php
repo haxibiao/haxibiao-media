@@ -259,10 +259,10 @@ trait MovieResolvers
             $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
         }
 
-        if (isset($movie)) {
-            $movie->hits = $movie->hits + 1;
-            $movie->saveQuietly();
-        }
+        // if (isset($movie)) {
+        //     $movie->hits = $movie->hits + 1;
+        //     $movie->saveQuietly();
+        // }
         //影片详情页真实返回影片信息和状态
         return $movie;
     }
