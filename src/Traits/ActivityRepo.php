@@ -31,6 +31,7 @@ trait ActivityRepo
         $file->storeAs($folder, $filename);
         $cloud_path = sprintf("%s/%s", $folder, $filename);
         $cdnurl     = cdnurl($cloud_path);
+        info('nova 上传图片。。' . $cdnurl);
         return $cdnurl;
     }
 }
