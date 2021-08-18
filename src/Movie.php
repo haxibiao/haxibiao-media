@@ -36,8 +36,8 @@ class Movie extends Model
     use Stickable;
 
     protected $guarded = [];
-    public $connection = 'mediachain';
-    protected $table   = 'movies';
+    // public $connection = 'mediachain';
+    protected $table = 'movies';
 
     /**
      * 日韩美港剧
