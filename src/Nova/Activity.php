@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Nova;
 
+use App\Activity as AppActivity;
 use App\Nova\Collection;
 use App\Nova\Movie;
 use Haxibiao\Content\Nova\Actions\AddActivitiesToSticks;
@@ -44,9 +45,10 @@ class Activity extends Resource
             ])->searchable(),
             Text::make('排序', 'sort'),
             Select::make('类型', 'type')->options([
-                1 => '首页',
-                2 => '电视剧',
-                3 => '电影专题',
+                AppActivity::TYPE_INDEX   => '首页',
+                AppActivity::TYPE_SERIE   => '电视剧',
+                AppActivity::TYPE_PROJECT => '电影专题',
+                AppActivity::TYPE_SEARCH  => '搜索'
             ])->resolveUsing(function ($type) {
                 if (1 == $type) {
                     return "首页";
@@ -56,6 +58,9 @@ class Activity extends Resource
                 }
                 if (3 == $type) {
                     return "电影专题";
+                }
+                if( 4 == $type){
+                    return '搜索词';
                 }
             })->withMeta(['value' => 1]),
             Select::make('状态', 'status')->options([
