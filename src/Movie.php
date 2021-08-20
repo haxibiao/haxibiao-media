@@ -20,8 +20,6 @@ use Haxibiao\Sns\Traits\WithSns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 
 class Movie extends Model
 {
@@ -36,8 +34,15 @@ class Movie extends Model
     use Stickable;
 
     protected $guarded = [];
-    // public $connection = 'mediachain';
-    protected $table = 'movies';
+
+    //兼容本地movies，和共享的medichain模式
+    public function getTable()
+    {
+        if (config('media.enable_mediachain')) {
+            return "mediachain.movies";
+        }
+        return 'movies';
+    }
 
     /**
      * 日韩美港剧
@@ -86,13 +91,6 @@ class Movie extends Model
     public static function boot()
     {
         parent::boot();
-
-        if (config('meidia.enable_mediachain')) {
-            DB::purge('mediachain');
-            //本地已开启mediachain共享库
-            Config::set('database.connections.mediachain.database', 'mediachain');
-            DB::reconnect('mediachain');
-        }
 
         static::observe(\Haxibiao\Media\Observers\MovieObserver::class);
     }
