@@ -219,7 +219,7 @@ trait VideoAttrs
         $count = 0;
         $type  = $this->type;
         if ('videos' == $type) {
-            $count = $this->likes()->count();
+            $count = $this->attributes['count_likes'] ?? $this->likes()->count();
         }
         return $count;
     }
@@ -232,7 +232,7 @@ trait VideoAttrs
         $count = 0;
         $type  = $this->type;
         if ('videos' == $type) {
-            $count = $this->comments()->count();
+            $count = $this->attributes['count_likes'] ?? $this->comments()->count();
         }
         return $count;
     }
