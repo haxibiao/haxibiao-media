@@ -26,6 +26,7 @@ class Movie extends Model
     use HasFactory;
     use MovieRepo;
     use Searchable;
+    // use ScoutSearchable;
     use MovieResolvers;
     use MovieAttrs;
     use WithSns;
@@ -34,6 +35,18 @@ class Movie extends Model
     use Stickable;
 
     protected $guarded = [];
+
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+        ];
+    }
+
+    public function searchableAs()
+    {
+        return config('app.name') . '_movies';
+    }
 
     //兼容本地movies，和共享的medichain模式
     public function getTable()
