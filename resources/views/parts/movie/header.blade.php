@@ -3,7 +3,7 @@
         <div class="app-header clearfix">
             <h1 class="app-header__logo">
                 <a class="pic_logo" href="/">
-                    <img src="{{ small_logo() }}" alt="{{ siteName() }}">
+                    <img src="{{ small_logo() }}" alt="{{ seo_site_name() }}">
                 </a>
             </h1>
             <ul class="app-header__type">
@@ -33,11 +33,8 @@
                             <div class="history-box clearfix">
                                 <div class="ht-movie_list">
                                     <div class="video_headline">播放记录</div>
-                                    @php
-                                    $historyMovies
-                                    =Auth::user()->movieHistory()->orderByDesc('updated_at')->take(10)->get();
-                                    @endphp
-                                    @foreach ($historyMovies as $historyItem)
+
+                                    @foreach (userPlayedMovies() as $historyItem)
                                         @include('parts.movie.history_movie_item')
                                     @endforeach
                                 </div>

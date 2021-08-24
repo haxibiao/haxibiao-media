@@ -22,7 +22,7 @@
                 <section class="sec_item friendly-links">
                     <div><span class="section_title">友情链接</span></div>
                     @foreach (friend_links() as $linkInfo)
-                        <p><a href="{{ $linkInfo['url'] }}" class="text-a">{{ $linkInfo['name'] }}</a></p>
+                        <p><a href="{{ $linkInfo['url']??'' }}" class="text-a">{{ $linkInfo['name']??'' }}</a></p>
                     @endforeach
                 </section>
             </div>

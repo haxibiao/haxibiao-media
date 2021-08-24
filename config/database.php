@@ -1,13 +1,14 @@
 <?php
 return [
+    //内涵云(长视频分布式节点，建议用本地容器/服务器最佳)
     'mediachain' => [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),
-        'host'           => env('DB_HOST_MEDIACHAIN'),
-        'port'           => env('DB_PORT', 3306),
+        'host'           => 'jp003.haxibiao.com',
+        'port'           => '3306',
         'database'       => 'mediachain',
         'username'       => 'root',
-        'password'       => env('DB_PASSWORD_MEDIA', env('DB_PASSWORD')),
+        'password'       => 'yp1qaz@WSX',
         'unix_socket'    => env('DB_SOCKET', ''),
         'charset'        => 'utf8mb4',
         'collation'      => 'utf8mb4_unicode_ci',
@@ -19,34 +20,15 @@ return [
             PDO::ATTR_PERSISTENT => true,
         ],
     ],
+    //哈希云(短视频分布式节点，建议用本地容器/服务器最佳)
     'media'      => [
         'driver'         => 'mysql',
         'url'            => env('DATABASE_URL'),
-        'host'           => env('DB_HOST_MEDIA'),
-        'port'           => env('DB_PORT_MEDIA', 3306),
-        'database'       => 'media',
+        'host'           => env('DB_HOST_MEDIA', env('DB_HOST')),
+        'port'           => env('DB_PORT_MEDIA', env('DB_PORT', 3306)),
+        'database'       => env('DB_DATABASE_MEDIA', 'media'),
         'username'       => 'root',
         'password'       => env('DB_PASSWORD_MEDIA', env('DB_PASSWORD')),
-        'unix_socket'    => env('DB_SOCKET', ''),
-        'charset'        => 'utf8mb4',
-        'collation'      => 'utf8mb4_unicode_ci',
-        'prefix'         => '',
-        'prefix_indexes' => true,
-        'strict'         => false,
-        'engine'         => null,
-        'options'        => [
-            PDO::ATTR_PERSISTENT => true,
-        ],
-    ],
-
-    'haxibiao'   => [
-        'driver'         => 'mysql',
-        'url'            => env('DATABASE_URL'),
-        'host'           => 'gz03',
-        'port'           => '3306',
-        'database'       => 'haxibiao',
-        'username'       => 'root',
-        'password'       => 'yp1qaz@WSX',
         'unix_socket'    => env('DB_SOCKET', ''),
         'charset'        => 'utf8mb4',
         'collation'      => 'utf8mb4_unicode_ci',

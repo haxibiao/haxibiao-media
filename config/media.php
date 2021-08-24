@@ -41,8 +41,12 @@ return [
     ],
 
     /**
-     * Movie表自增ID的起始位置
-     * https://pm.haxifang.com/browse/GC-174
+     * 是否开启本地mediachain共享movies
      */
-    'movie_auto_increment__start_id' => env('MOVIE_AUTO_INCREMENT_START_ID', null),
+    'enable_mediachain'              => env('ENABLE_MEDIACHAIN', false),
+
+    /**
+     * Movie表自增ID的起始位置
+     */
+    'movie_start_id'                 => env('MOVIE_START_ID', null),
 ];

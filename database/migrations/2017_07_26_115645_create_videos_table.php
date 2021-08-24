@@ -48,6 +48,8 @@ class CreateVideosTable extends Migration
             $table->unsignedInteger('push_url_cache_day')->default(0)->comment('预热URL日');
 
             $table->boolean('is_hd')->default(true)->comment("有无高清无水印");
+            $table->unsignedBigInteger('count_likes')->default(0);
+            $table->unsignedBigInteger('count_comments')->default(0);
 
             $table->timestamps();
             $table->softDeletes();

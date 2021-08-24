@@ -11,7 +11,6 @@ use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Breeze\User;
 use Haxibiao\Content\Traits\Stickable;
 use Haxibiao\Content\Traits\WithCms;
-use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
@@ -25,7 +24,8 @@ class Movie extends Model
 {
     use HasFactory;
     use MovieRepo;
-    use Searchable;
+    // use Searchable;
+    // use ScoutSearchable;
     use MovieResolvers;
     use MovieAttrs;
     use WithSns;
@@ -35,7 +35,26 @@ class Movie extends Model
 
     protected $guarded = [];
 
-    protected $table = 'movies';
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+        ];
+    }
+
+    public function searchableAs()
+    {
+        return config('app.name');
+    }
+
+    //兼容本地movies，和共享的medichain模式
+    public function getTable()
+    {
+        if (config('media.enable_mediachain')) {
+            return "mediachain.movies";
+        }
+        return 'movies';
+    }
 
     /**
      * 日韩美港剧
@@ -84,6 +103,7 @@ class Movie extends Model
     public static function boot()
     {
         parent::boot();
+
         static::observe(\Haxibiao\Media\Observers\MovieObserver::class);
     }
 

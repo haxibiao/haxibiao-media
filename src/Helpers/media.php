@@ -1,5 +1,6 @@
 <?php
 
+use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Str;
 
 function get_neihancloud_api()
@@ -31,4 +32,13 @@ if (!function_exists('media_path')) {
     {
         return __DIR__ . "/../../" . $path;
     }
+}
+
+//用户播放过的影片记录 movie.header 用
+function userPlayedMovies($take = 10)
+{
+    if ($user_id = getUserId()) {
+        return MovieHistory::userPlayedMovies($user_id, $take);
+    }
+    return [];
 }

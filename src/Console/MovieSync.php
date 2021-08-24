@@ -12,6 +12,7 @@ use Haxibiao\Media\MovieType;
 use Haxibiao\Media\Region;
 use Haxibiao\Media\Type;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -27,6 +28,7 @@ class MovieSync extends Command
      * @var string
      */
     protected $signature = 'movie:sync
+    {--onlynew= : 是否只同步新影片}
 	{--db : 数据库模式}
 	{--is_neihan=false}
 	{--source= : 资源来源,如:内函电影,nunu}
@@ -82,12 +84,19 @@ class MovieSync extends Command
         $total   = 0;
         $page    = 1;
 
-        $returnCount = 0;
-        $nunu_count  = 0;
-        $kkw_count   = 0;
-
-        $args = array_except($this->options(), ['way']);
-        $args = array_filter($args);
+        $returnCount    = 0;
+        $nunu_count     = 0;
+        $kkw_count      = 0;
+        $args           = array_except($this->options(), ['way']);
+        $args           = array_filter($args);
+        $lastMovieIDKey = 'movie_sync_last_movieid';
+        if (isset($args['onlynew']) && $args['onlynew'] === 'true') {
+            $lastMovieID = Cache::get($lastMovieIDKey, null);
+            if ($lastMovieID) {
+                $args['id'] = $lastMovieID;
+            }
+        }
+        $args = array_except($args, ['onlynew']);
         do {
             data_set($args, 'page', $page);
             $requestArgs = http_build_query($args);
@@ -104,6 +113,9 @@ class MovieSync extends Command
                 $page++;
             }
         } while ($returnCount >= 300);
+        // 记录当前影片最大ID
+        $lastMovie = last($result['data']);
+        Cache::set($lastMovieIDKey, $lastMovie['id']);
         $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部' . ' nunu:' . $nunu_count . ' kkw:' . $kkw_count);
 
     }
