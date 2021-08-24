@@ -14,7 +14,7 @@ class NullableStyleOnMovies extends Migration
     public function up()
     {
         Schema::table('movies', function (Blueprint $table) {
-            if (!Schema::hasColumn('movies', 'icon')) {
+            if (!Schema::hasColumn('movies', 'style')) {
                 $table->string('style')->nullable()->change();
             }
         });
