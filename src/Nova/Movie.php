@@ -8,6 +8,7 @@ use Haxibiao\Content\Nova\Filters\MoviesByStatus;
 use Haxibiao\Content\Nova\Filters\MoviesByStyle;
 use Haxibiao\Content\Nova\Filters\MoviesByType;
 use Haxibiao\Content\Nova\Post;
+use Haxibiao\Media\Nova\Action\AddMovieRank;
 use Haxibiao\Media\Nova\Action\FixMovie;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -70,6 +71,7 @@ class Movie extends Resource
             Text::make('演员', 'actors')->hideFromIndex(),
             Text::make('分类', 'type'),
             Text::make('风格', 'style'),
+            Text::make('权重','rank'),
             BelongsTo::make('求片者', 'user', User::class)->hideWhenCreating()->hideWhenUpdating(),
             Select::make('状态', 'status')->options(\Haxibiao\Media\Movie::getStatuses())->displayUsingLabels(),
             Image::make('封面', 'cover')->thumbnail(function () {
@@ -137,6 +139,7 @@ class Movie extends Resource
     {
         return [
             new FixMovie,
+            new AddMovieRank,
         ];
     }
 }
