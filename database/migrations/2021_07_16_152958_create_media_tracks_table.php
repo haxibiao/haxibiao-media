@@ -20,8 +20,8 @@ class CreateMediaTracksTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->default(0)->index();
             $table->morphs('media');
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->timestamp('start_time')->nullable();
+            $table->timestamp('end_time')->nullable();
             $table->unsignedInteger('track_seconds')->default(0)->comment('跟踪的秒数');
             $table->string('uuid', 32)->default('');
             $table->timestamps();
