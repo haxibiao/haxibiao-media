@@ -11,7 +11,6 @@ use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Breeze\User;
 use Haxibiao\Content\Traits\Stickable;
 use Haxibiao\Content\Traits\WithCms;
-use Haxibiao\Helpers\Traits\Searchable;
 use Haxibiao\Media\Traits\MovieAttrs;
 use Haxibiao\Media\Traits\MovieRepo;
 use Haxibiao\Media\Traits\MovieResolvers;
@@ -25,7 +24,7 @@ class Movie extends Model
 {
     use HasFactory;
     use MovieRepo;
-    use Searchable;
+    // use Searchable;
     // use ScoutSearchable;
     use MovieResolvers;
     use MovieAttrs;
