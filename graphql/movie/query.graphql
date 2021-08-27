@@ -229,6 +229,11 @@ extend type Query {
   """
   latestMovieFixReporters: [MovieUser]
     @paginate(resolver: "App\\Movie@resolvelatestMovieFixReporters", defaultCount: 10)
+
+  """
+  大家都在搜
+  """
+  searchLogs:[String] @field(resolver:"App\\SearchLog@resolveSearchLogs")
 }
 
 type BreezeMoviePaginator {
