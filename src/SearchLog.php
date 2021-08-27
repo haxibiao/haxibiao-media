@@ -43,7 +43,14 @@ class SearchLog extends Model
             if(!$movie){
                 continue;
             }
-            $logs[] = $movie->name;
+            $logs[] = [
+                'id'        => $movie->id,
+                'name'      => $movie->name,
+                'cover'     => $movie->cover,
+                'actors'    => $movie->actors,
+                'type'      => $movie->type,
+                'movie_key' => $movie->movie_key,
+            ];
         }
         if(count($logs) > 6){
             return array_slice($logs,0,6);

@@ -233,7 +233,7 @@ extend type Query {
   """
   大家都在搜
   """
-  searchLogs:[String] @field(resolver:"App\\SearchLog@resolveSearchLogs")
+  searchLogs:[JsonType] @field(resolver:"App\\SearchLog@resolveSearchLogs")
 }
 
 type BreezeMoviePaginator {
