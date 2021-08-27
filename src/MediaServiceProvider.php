@@ -57,6 +57,7 @@ class MediaServiceProvider extends ServiceProvider
                 Console\VideoSync::class,
                 Console\CrawlDouyinVideos::class,
                 Console\SearchableMovie::class,
+                Console\SearchableArticle::class,
                 Console\Audible\AudibleSync::class,
                 Console\Novel\NovelSync::class,
             ]);
