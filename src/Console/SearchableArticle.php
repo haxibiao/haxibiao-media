@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media\Console;
 
-use App\Article;
+use Haxibiao\Content\Article;
 use Illuminate\Console\Command;
 use MeiliSearch\Client;
 
