@@ -39,7 +39,6 @@ class SearchableArticle extends Command
      */
     public function handle()
     {
-        $qb        = Article::query()->whereNotNull('body');
         $masterKey = env('MEILISEARCH_KEY');
         $host      = env('MEILISEARCH_HOST');
         if (empty($masterKey)) {
@@ -50,22 +49,23 @@ class SearchableArticle extends Command
             $this->error("请先在 .env 中补充 'MEILISEARCH_HOST' ");
             return;
         }
-        $client    = new Client($host, $masterKey);
-        $indexName = config('app.name') . '_article';
-        $index     = $client->index($indexName);
-        $qb->chunkById(1000, function ($articles) use (&$index) {
+
+        $client = new Client($host, $masterKey);
+        $qb     = Article::query()->whereNotNull('body');
+        $qb->chunkById(1000, function ($articles) use ($client) {
             $documents = [];
-            foreach ($articles as $article) {
+            foreach ($articles as $i => $article) {
                 $documents[] = [
                     'title' => $article->title,
                     'body'  => $article->body,
                     'id'    => $article->id,
                 ];
+                $this->info("title : $article->title, id : $article->id");
             }
-            $result   = $index->addDocuments($documents);
-            $updateID = $result['updateId'];
+            $indexName = config('app.name') . '_article';
+            $result    = $client->index($indexName)->addDocuments($documents);
+            $updateID  = $result['updateId'];
             $this->info("update ID: $updateID");
         });
-        return 0;
     }
 }
