@@ -40,6 +40,13 @@ return [
         'auto_cut' => false,
     ],
 
+    'meilisearch'                    => [
+        'index'  => env('APP_NAME'),
+        'enable' => env('ENABLE_MEILISEARCH', false),
+        'host'   => env('MEILISEARCH_HOST'),
+        'key'    => env('MEILISEARCH_KEY'),
+    ],
+
     /**
      * 是否开启本地mediachain共享movies
      */

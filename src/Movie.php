@@ -44,7 +44,7 @@ class Movie extends Model
 
     public function searchableAs()
     {
-        return config('app.name');
+        return config('media.meilisearch.index');
     }
 
     //兼容本地movies，和共享的medichain模式

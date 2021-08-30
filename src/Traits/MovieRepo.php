@@ -9,9 +9,26 @@ use Haxibiao\Media\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use MeiliSearch\Client as MeiliSearchClient;
 
 trait MovieRepo
 {
+
+    public static function addMeiliSearch(Movie $movie)
+    {
+        if (config('media.meilisearch.enable')) {
+            $client      = new MeiliSearchClient(config('media.meilisearch.host'), config('media.meilisearch.key'));
+            $index       = $client->index(config('media.meilisearch.name'));
+            $documents[] = [
+                'name' => $movie->name,
+                'id'   => $movie->id,
+            ];
+            $result   = $index->addDocuments($documents);
+            $updateID = $result['updateId'];
+            return $updateID;
+        }
+    }
+
     /**
      * 保存影片封面
      */
@@ -161,8 +178,8 @@ trait MovieRepo
                 'user_id'   => $user->id,
                 'movie_id'  => $movie->id,
                 'movie_key' => $movie->movie_key, //关联影片云端唯一标识
-                'title'     => $title, //剪辑配问
-                'duration'  => $video['duration'] ?? 15,
+                'title' => $title, //剪辑配问
+                'duration' => $video['duration'] ?? 15,
                 'disk'      => 'othermovie',
                 'path'      => $video['url'],
             ]);

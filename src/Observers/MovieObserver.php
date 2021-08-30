@@ -16,7 +16,7 @@ class MovieObserver
      */
     public function created(Movie $movie)
     {
-        //
+        Movie::addMeiliSearch($movie);
     }
 
     public function updating(Movie $movie)
