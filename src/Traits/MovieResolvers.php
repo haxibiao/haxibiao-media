@@ -340,7 +340,7 @@ trait MovieResolvers
         }
         $log->save();
 
-        if (config('media.enable_meilisearch', false)) {
+        if (config('media.meilisearch.enable', false)) {
             return AppMovie::search($keyword);
         } else {
             //去mediachain搜索电影
