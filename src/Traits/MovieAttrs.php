@@ -2,10 +2,12 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Movie;
 use App\User;
+use App\Movie;
+use App\MovieSource;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 trait MovieAttrs
 {
@@ -29,28 +31,40 @@ trait MovieAttrs
      */
     public function getPlayLinesAttribute()
     {
-        $lines = [];
-
-        //其他线路
-        if ($data_source = $this->data_source) {
-            if (is_array($data_source) && count($data_source)) {
-                foreach ($data_source as $line => $source) {
-                    $lines[] = [
-                        'name' => $line,
-                        'data' => $source,
-                    ];
+        $play_lines = json_decode($this->getRawOriginal('play_lines'));
+        if(empty($play_lines)){
+            //其他线路 —— 这个写法可以慢慢淘汰
+            $lines = [];
+            if ($data_source = $this->data_source) {
+                if (is_array($data_source) && count($data_source)) {
+                    foreach ($data_source as $line => $source) {
+                        $lines[] = [
+                            'name' => $line,
+                            'data' => $source,
+                        ];
+                    }
                 }
             }
+            if (empty($lines)) {
+                //兼容没有路线表的项目
+                if(Schema::hasTable('movie_sources')) {
+                    $movieSources = MovieSource::where('movie_id',$this->id)->get();
+                    foreach($movieSources as $movieSource){
+                        $lines[] = [
+                            'name'      => $movieSource->name,
+                            'url'       => $movieSource->url,
+                            'play_url'  => $movieSource->play_urls,
+                        ];
+                    }
+                }
+                $line[] = [
+                    'name' => "默认",
+                    'data' => $this->series,
+                ];
+            }
+            return $lines;
         }
-
-        if (empty($lines)) {
-            $line[] = [
-                'name' => "默认",
-                'data' => $this->series,
-            ];
-        }
-
-        return $lines;
+        return $play_lines; 
     }
 
     public function getUrlAttribute()
