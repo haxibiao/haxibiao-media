@@ -2,7 +2,7 @@
 
 namespace Haxibiao\Media\Console;
 
-use App\Movie;
+use Haxibiao\Media\Movie;
 use Illuminate\Console\Command;
 use MeiliSearch\Client;
 
