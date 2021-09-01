@@ -2,9 +2,9 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\User;
 use App\Movie;
 use App\MovieSource;
+use App\User;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
@@ -22,7 +22,7 @@ trait MovieAttrs
     public function getIntroductionAttribute()
     {
         $attr = $this->attributes["introduction"] ?? '';
-        $str  = preg_replace("/<(\/?span.*?)>/si", "", $attr);
+        $str = preg_replace("/<(\/?span.*?)>/si", "", $attr);
         return $str;
     }
 
@@ -32,7 +32,7 @@ trait MovieAttrs
     public function getPlayLinesAttribute()
     {
         $play_lines = json_decode($this->getRawOriginal('play_lines'));
-        if(empty($play_lines)){
+        if (empty($play_lines)) {
             //其他线路 —— 这个写法可以慢慢淘汰
             $lines = [];
             if ($data_source = $this->data_source) {
@@ -47,13 +47,13 @@ trait MovieAttrs
             }
             if (empty($lines)) {
                 //兼容没有路线表的项目
-                if(Schema::hasTable('movie_sources')) {
-                    $movieSources = MovieSource::where('movie_id',$this->id)->get();
-                    foreach($movieSources as $movieSource){
+                if (Schema::hasTable('movie_sources')) {
+                    $movieSources = MovieSource::where('movie_id', $this->id)->get();
+                    foreach ($movieSources as $movieSource) {
                         $lines[] = [
-                            'name'      => $movieSource->name,
-                            'url'       => $movieSource->url,
-                            'play_url'  => $movieSource->play_urls,
+                            'name' => $movieSource->name,
+                            'url'  => $movieSource->url,
+                            'data' => $movieSource->play_urls,
                         ];
                     }
                 }
@@ -64,7 +64,7 @@ trait MovieAttrs
             }
             return $lines;
         }
-        return $play_lines; 
+        return $play_lines;
     }
 
     public function getUrlAttribute()
@@ -88,7 +88,7 @@ trait MovieAttrs
     {
         if ($user = currentUser()) {
             return MovieHistory::where([
-                'user_id'  => $user->id,
+                'user_id' => $user->id,
                 'movie_id' => $this->id,
             ])->exists();
         }
@@ -117,7 +117,7 @@ trait MovieAttrs
         // }
 
         //转换data的数组为serie对象数组
-        $series      = [];
+        $series = [];
         $data_series = is_array($this->data) ? $this->data : @json_decode($this->data, true) ?? [];
         foreach ($data_series as $data_serie) {
             $series[] = $data_serie;
@@ -160,7 +160,7 @@ trait MovieAttrs
         if (request('fetch_sns_detail')) {
             if ($user = currentUser()) {
                 $history = MovieHistory::where([
-                    'user_id'  => $user->id,
+                    'user_id' => $user->id,
                     'movie_id' => $this->id,
                 ])->latest()->first();
                 if (isset($history)) {
@@ -177,7 +177,7 @@ trait MovieAttrs
         if (request('fetch_sns_detail')) {
             if ($user = currentUser()) {
                 $history = MovieHistory::where([
-                    'user_id'  => $user->id,
+                    'user_id' => $user->id,
                     'movie_id' => $this->id,
                 ])->latest()->first();
                 if (isset($history)) {
@@ -208,7 +208,7 @@ trait MovieAttrs
         }
 
         if (!$user) {
-            $cache    = cache();
+            $cache = cache();
             $cacheKey = sprintf('movie:id:%s', $this->id);
             if ($cache->has($cacheKey)) {
                 $user_id = $cache->get($cacheKey);
