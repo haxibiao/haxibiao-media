@@ -17,7 +17,7 @@
     <link rel="apple-touch-icon" href="{{ touch_logo() }}" sizes="160*160">
 
     <!-- Icons -->
-    <link rel="stylesheet" href="https://at.alicdn.com/t/font_2196966_42rkthrsjjm.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_2196966_ttq0ufnu2c.css">
 
     <!-- Styles -->
     <link href="{{ breeze_mix('css/media.css') }}" rel="stylesheet">

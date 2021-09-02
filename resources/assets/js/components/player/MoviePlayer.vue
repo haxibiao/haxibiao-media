@@ -92,6 +92,12 @@
                         </a>
                     </li>
                 </el-popover>
+                <li class="fl operation">
+                        <a href="https://jq.qq.com/?_wv=1027&k=2LXnJdzX" target="_blank">
+                        <i class="iconfont icon-qunliao" style="color: #0db30b; font-size: 19px; margin-right: 5px;"></i>
+                        <span class="mobile">加入群聊</span>
+                    </a>
+                </li>
                 <!-- <el-popover placement="bottom" trigger="manual" v-model="playLinesVisible">
                     <play-lines
                         :lines="[]"
