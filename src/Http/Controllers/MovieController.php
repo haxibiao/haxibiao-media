@@ -59,6 +59,9 @@ class MovieController extends Controller
     public function search()
     {
         $query  = request()->get('q');
+        if (config('media.meilisearch.enable', false)) {
+            $result = Movie::search($query)->paginate(10);
+        } 
         $result = Movie::publish()->orderBy('id')->where('name', 'like', '%' . $query . '%')->paginate(10);
         $result->appends(['q' => $query]);
         $hot       = Movie::publish()->orderBy('id')->paginate(10);
