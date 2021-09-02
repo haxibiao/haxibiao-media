@@ -3,7 +3,7 @@
 return [
     //第三方API
     'api'                            => [
-        'neihancloud' => env('API_NEIHANCLOUD', 'https://mediachain.info'),
+        'neihancloud' => env('API_NEIHANCLOUD', 'https://neihancloud.com'),
     ],
     'spider'                         => [
         'enable'                              => env('MEDIA_SPIDER_ENABLE', true),
