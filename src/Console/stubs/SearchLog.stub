@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use Haxibiao\Media\SearchLog as BaseSearchLog;
+
+class SearchLog extends BaseSearchLog
+{
+
+}
