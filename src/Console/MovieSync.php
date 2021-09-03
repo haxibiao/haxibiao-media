@@ -222,7 +222,6 @@ class MovieSync extends Command
             //同步type
             $movie['type'] = $movie['type_name'];
 
-            //默认线路
             $default_sereies = @json_decode($movie['data'], true) ?? [];
             $movie['data']   = $default_sereies;
 
@@ -239,7 +238,7 @@ class MovieSync extends Command
             }
 
             //其他线路
-            $other_source = ['默认' => $default_sereies];
+            // $other_source = ['默认' => $default_sereies];
 
             //内涵云早期新增影片时源线路
             if (isset($movie['data_source'])) {
@@ -289,6 +288,21 @@ class MovieSync extends Command
 
             $movie['data_source'] = $other_source;
 
+            //获取影片线路 - movie_sources
+            $sources = $movie['sources'];
+            $play_lines = [];
+            foreach($sources as $source){
+                $play_lines[] = [
+                    'name'      => $source['name'],
+                    'url'       => $source['url'],
+                    'data'      => $source['play_urls'],
+                ];
+            }
+            $movie['play_lines']  = $play_lines;
+            $movie['custom_type'] = $movie['custom_type'];
+            $movie['has_playurl'] = $movie['has_playurl'];
+            $movie['finished']    = $movie['finished'];
+
             $model->forceFill(array_only($movie, [
                 'source',
                 'source_key',
@@ -310,6 +324,10 @@ class MovieSync extends Command
                 'lang',
                 'type',
                 'data',
+                'finished',
+                'has_playurl',
+                'custom_type',
+                'play_lines',
             ]));
             $model->saveQuietly();
             $this->createRelationModel($model);
