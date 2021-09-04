@@ -99,6 +99,9 @@ class Movie extends Model
         'data'        => 'array',
         //其他线路
         'data_source' => 'array',
+        'play_lines'  => 'array',
+        'finished'    => 'bool',
+        'has_playurl' => 'bool',
     ];
 
     public static function boot()
