@@ -148,7 +148,7 @@
                         </h3>
                     </div>
                     <div class="video_desc">
-                        <div class="circuitry">
+                        <div class="circuitry" v-if="movie.play_lines.length > 0">
                             <el-dropdown @command="switchLine">
                                 <span class="el-dropdown-link">
                                     换线路<i class="el-icon-arrow-down el-icon--right"></i>
@@ -389,7 +389,8 @@ export default {
         switchLine(index) {
             this.lineSelected = index;
             this.currentEpisode = 1; //切换后剧集数会不同，默认跳转到第一集
-            this.series = this.movieData.play_lines[index].data;
+            this.series = this.movieData.play_lines[index].play_url;
+            this.source = this.movieData.play_lines[index].play_url[0].url;
             console.log('切换线路后 this.series', this.series);
         },
 
