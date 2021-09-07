@@ -150,7 +150,7 @@
                     <div class="video_desc">
                         <div class="circuitry" v-if="movie.play_lines.length > 0">
                             <el-dropdown @command="switchLine">
-                                <span class="el-dropdown-link">
+                                <span class="el-dropdown-link" style="color: #ff0000">
                                     换线路<i class="el-icon-arrow-down el-icon--right"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
