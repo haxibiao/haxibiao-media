@@ -37,4 +37,4 @@
     </div>
 </footer>
 
-@include('parts.movie.footer_js')
+@include('parts.js_for_footer')
