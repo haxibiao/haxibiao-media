@@ -42,7 +42,7 @@ $tencent_id = neihan_tencent_app_id();
     _paq.push(['trackPageView']);
     _paq.push(['enableLinkTracking']);
     (function() {
-        var u = "//{{ env('MATOMO_URL') }}/";
+        var u = "{{ env('MATOMO_URL') }}";
         _paq.push(['setTrackerUrl', u + 'matomo.php']);
         _paq.push(['setSiteId', '{{ matomo_site_id() }}']);
         var d = document,
