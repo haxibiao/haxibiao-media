@@ -19,10 +19,23 @@ trait MovieAttrs
         return data_get(Movie::getStatuses(), $this->status);
     }
 
+    public function getDataAttribute($value)
+    {
+        if (is_string($value)) {
+            $value = json_decode($value);
+        }
+        if (empty($value) || count($value)) {
+            if ($source = $this->play_lines[0]) {
+                return $source->data ?? [];
+            }
+        }
+        return $value;
+    }
+
     public function getIntroductionAttribute()
     {
         $attr = $this->attributes["introduction"] ?? '';
-        $str = preg_replace("/<(\/?span.*?)>/si", "", $attr);
+        $str  = preg_replace("/<(\/?span.*?)>/si", "", $attr);
         return $str;
     }
 
@@ -88,7 +101,7 @@ trait MovieAttrs
     {
         if ($user = currentUser()) {
             return MovieHistory::where([
-                'user_id' => $user->id,
+                'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->exists();
         }
@@ -117,7 +130,7 @@ trait MovieAttrs
         // }
 
         //转换data的数组为serie对象数组
-        $series = [];
+        $series      = [];
         $data_series = is_array($this->data) ? $this->data : @json_decode($this->data, true) ?? [];
         foreach ($data_series as $data_serie) {
             $series[] = $data_serie;
@@ -160,7 +173,7 @@ trait MovieAttrs
         if (request('fetch_sns_detail')) {
             if ($user = currentUser()) {
                 $history = MovieHistory::where([
-                    'user_id' => $user->id,
+                    'user_id'  => $user->id,
                     'movie_id' => $this->id,
                 ])->latest()->first();
                 if (isset($history)) {
@@ -177,7 +190,7 @@ trait MovieAttrs
         if (request('fetch_sns_detail')) {
             if ($user = currentUser()) {
                 $history = MovieHistory::where([
-                    'user_id' => $user->id,
+                    'user_id'  => $user->id,
                     'movie_id' => $this->id,
                 ])->latest()->first();
                 if (isset($history)) {
@@ -208,7 +221,7 @@ trait MovieAttrs
         }
 
         if (!$user) {
-            $cache = cache();
+            $cache    = cache();
             $cacheKey = sprintf('movie:id:%s', $this->id);
             if ($cache->has($cacheKey)) {
                 $user_id = $cache->get($cacheKey);
