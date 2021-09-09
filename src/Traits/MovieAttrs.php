@@ -24,7 +24,8 @@ trait MovieAttrs
         if (is_string($value)) {
             $value = json_decode($value);
         }
-        if (empty($value) || count($value)) {
+
+        if (empty($value) || count($value) < 1) {
             if ($source = $this->play_lines[0]) {
                 return $source->data ?? [];
             }
