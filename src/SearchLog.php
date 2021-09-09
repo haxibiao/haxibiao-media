@@ -50,6 +50,7 @@ class SearchLog extends Model
                 'actors'    => $movie->actors,
                 'type'      => $movie->type,
                 'movie_key' => $movie->movie_key,
+                'series'    => $movie->play_lines[0]->data,
             ];
         }
         if(count($logs) > 6){
