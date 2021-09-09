@@ -29,6 +29,16 @@
                                     @playEnded="nextPicode"
                                 />
                             </template>
+                            <template v-if="!source">
+                                <div class="alert-wrap">
+                                    <el-alert
+                                        title="视频加载失败，请尝试切换线路进行播放"
+                                        type="error"
+                                        center
+                                        show-icon
+                                    />
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -94,7 +104,7 @@
                 </el-popover>
                 <li class="fl operation">
                         <a href="https://jq.qq.com/?_wv=1027&k=2LXnJdzX" target="_blank">
-                        <i class="iconfont icon-qunliao" style="color: #0db30b; font-size: 19px; margin-right: 5px;"></i>
+                        <i class="iconfont icon-qunliao" style="color: #0db30b; font-size: 1.1rem; margin-right: 0.2rem;"></i>
                         <span class="mobile">加入群聊</span>
                     </a>
                 </li>

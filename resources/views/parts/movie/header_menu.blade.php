@@ -26,3 +26,4 @@ $cateogries = [
     @endif
 @endforeach
 <li><a href='/app' class="download-app"><i class="iconfont icon-mobile"></i> 下载App</a></li>
+<li><a href='https://jx.juhaokantv.com' class="download-app" target="_blank"><i class="iconfont icon-play-fill"></i> 在线解析看剧</a></li>

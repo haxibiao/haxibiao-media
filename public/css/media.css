@@ -18152,6 +18152,13 @@ a.text-dark:focus {
   margin-right: -0.4rem;
 }
 
+.app-header__type > li .download-app .icon-play-fill {
+  font-size: 1.5rem;
+  vertical-align: middle;
+  margin-top: -0.2rem;
+  margin-right: -0.2rem;
+}
+
 @media (max-width: 767px) {
   .app-header__type > li {
     font-size: 14px;
@@ -20125,9 +20132,21 @@ a.text-dark:focus {
   padding: 10px 5px;
 }
 
-@media (max-width: 576px) {
+@media (max-width: 768px) {
   .movie-player .player__operate {
     zoom: 0.8;
+  }
+}
+
+@media (max-width: 576px) {
+  .movie-player .player__operate {
+    zoom: 0.7;
+  }
+}
+
+@media (max-width: 420px) {
+  .movie-player .player__operate {
+    zoom: 0.6;
   }
 }
 
