@@ -2,12 +2,13 @@
 
 namespace Haxibiao\Media\Traits;
 
-use Haxibiao\Breeze\Exceptions\GQLException;
+use GuzzleHttp\Client;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Haxibiao\Breeze\Exceptions\GQLException;
 use MeiliSearch\Client as MeiliSearchClient;
 
 trait MovieRepo
