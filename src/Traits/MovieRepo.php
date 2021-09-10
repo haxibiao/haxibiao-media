@@ -13,29 +13,29 @@ use MeiliSearch\Client as MeiliSearchClient;
 
 trait MovieRepo
 {
-    // public static function addMeiliSearchIndex(Movie $movie)
-    // {
-    //     // if(config('media.meilisearch.enable')){
-    //         $masterKey = env('MEILISEARCH_KEY');
-    //         $host = env('MEILISEARCH_HOST');
-    //         if (empty($masterKey)) {
-    //             info("请先在 .env 中补充 'MEILISEARCH_KEY'");
-    //         }
-    //         if (empty($host)) {
-    //             info("请先在 .env 中补充 'MEILISEARCH_HOST' ");
-    //         }
-    //         $client = new MeiliSearchClient($host, $masterKey);
-    //         $index = $client->index(config('app.name'));
-    //         $documents = [];
-    //         $documents[] = [
-    //             'name' => $movie->name,
-    //             'id'   => $movie->id,
-    //         ];
-    //         $result = $index->addDocuments($documents);
-    //         $updateID = $result['updateId'];
-    //         info("补充搜索词成功！！:$updateID");
-    //     // }
-    // }
+    public static function addMeiliSearchIndex(Movie $movie)
+    {
+        if(config('media.meilisearch.enable')){
+            $masterKey = env('MEILISEARCH_KEY') ?? "hxb123";
+            $host = env('MEILISEARCH_HOST') ?? "meilisearch:7700";
+            if (empty($masterKey)) {
+                info("请先在 .env 中补充 'MEILISEARCH_KEY'");
+            }
+            if (empty($host)) {
+                info("请先在 .env 中补充 'MEILISEARCH_HOST' ");
+            }
+            $client = new MeiliSearchClient($host, $masterKey);
+            $index = $client->index(config('app.name'));
+            $documents = [];
+            $documents[] = [
+                'name' => $movie->name,
+                'id'   => $movie->id,
+            ];
+            $result = $index->addDocuments($documents);
+            $updateID = $result['updateId'];
+            info("补充搜索词成功！！:$updateID");
+        }
+    }
 
     public static function addMeiliSearch(Movie $movie)
     {
