@@ -37,6 +37,7 @@
         @yield('content')
         @include('parts.movie.modal.login')
     </div>
+    @include('parts.movie.sidebar')
 
     {{-- 先注入的vue APP user --}}
     @if (Auth::user())
@@ -48,7 +49,6 @@
                 avatar: '{{ Auth::user()->avatar }}',
             };
             window.user = user
-
         </script>
     @endif
     @stack('css')

@@ -18612,6 +18612,123 @@ a.text-dark:focus {
   color: #999999;
 }
 
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+.sidebar {
+  position: fixed;
+  right: 34px;
+  top: 60%;
+  transform: translateY(-50%);
+  z-index: 200;
+}
+
+.sidebar .line {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: -47px;
+  left: 50%;
+  width: 143px;
+  height: 56px;
+  margin-left: -75px;
+  padding-bottom: 8px;
+  background: url(/images/line.png) no-repeat 50%/cover;
+  box-sizing: border-box;
+  color: #583230;
+  line-height: 12px;
+  font-size: 12px;
+}
+
+.sidebar .line i {
+  font-size: 30px;
+  line-height: 30px;
+}
+
+.sidebar .line p {
+  margin: 4px 0 0 0;
+}
+
+.sidebar .imgBtn {
+  display: block;
+  box-sizing: border-box;
+  width: 5.4rem;
+  height: 5.4rem;
+  background: url(/images/member.png) no-repeat 50%/cover;
+  cursor: pointer;
+}
+
+.sidebar .btnListBox {
+  border-radius: 6px;
+  box-shadow: 0 0 20px -12px rgba(0, 0, 0, 0.25);
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.sidebar .btnListBox .sidebarBtn {
+  display: block;
+  padding: 0.2rem 0.9rem;
+  margin: auto;
+  cursor: pointer;
+  box-sizing: border-box;
+  color: #583230;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: all 0.1s linear;
+  text-decoration: none;
+}
+
+.sidebar .btnListBox .sidebarBtn i {
+  font-size: 2.5rem;
+  line-height: 2.5rem;
+}
+
+.sidebar .btnListBox .sidebarBtn .group {
+  position: absolute;
+  display: none;
+  bottom: 1rem;
+  right: 110%;
+}
+
+.sidebar .btnListBox .sidebarBtn .group img {
+  width: 11rem;
+  height: 11rem;
+}
+
+.sidebar .btnListBox .sidebarBtn .group .triangle {
+  position: absolute;
+  display: flex;
+  top: 38%;
+  right: -17%;
+  width: 0px;
+  height: 0px;
+  border-width: 15px;
+  border-style: solid;
+  border-color: transparent transparent transparent #fff;
+}
+
+.sidebar .btnListBox .sidebarBtn:hover {
+  background-color: #f66d9b;
+  color: #fff;
+}
+
+.sidebar .btnListBox .me:hover {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.sidebar .btnListBox .me:hover .group {
+  display: flex;
+}
+
+.sidebar .btnListBox .top:hover {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
 .app-download {
   line-height: 1.5;
 }
