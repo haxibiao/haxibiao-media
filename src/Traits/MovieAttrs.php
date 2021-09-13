@@ -71,9 +71,9 @@ trait MovieAttrs
                         ];
                     }
                 }
-                $line[] = [
+                $lines[] = [
                     'name' => "默认",
-                    'data' => $this->series,
+                    'data' => [],
                 ];
             }
             return $lines;
