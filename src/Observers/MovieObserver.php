@@ -20,7 +20,7 @@ class MovieObserver
         Movie::addMeiliSearch($movie);
     }
 
-    public function saving(Movie $movie)
+    public function saved(Movie $movie)
     {
         Movie::addMeiliSearchIndex($movie);
     }
