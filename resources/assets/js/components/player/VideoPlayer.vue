@@ -92,6 +92,12 @@ export default {
                     this.seekTime = '';
                 }
             });
+            this.dp.on('error', function () {
+                console.log("error url : " + this.source);
+                if (this.source.indexOf("neihancloud") != -1) {
+                    this.source = this.source + ".m3u8";
+                }
+            });
             this.player.on('ended', () => {
                 this.$emit('playEnded');
             });
