@@ -15,6 +15,7 @@
         "league/flysystem-aws-s3-v3": "*",
         "haxibiao/helpers": "*",
         "meilisearch/meilisearch-php": "^0.18.3",
+        "tunezilla/dynamic-action-fields": "^0.0.3",
         "http-interop/http-factory-guzzle": "^1.2"
     },
     "repositories": {},

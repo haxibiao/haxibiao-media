@@ -239,4 +239,13 @@ trait MovieAttrs
         //总有避风港用户(seed安装时已初始化3个测试用户)
         return $user ?? User::find(3);
     }
+
+    public function getMovieSourceNamesAttribute()
+    {
+        $lines = [];
+        foreach ($this->play_lines as $play_lines) {
+            $lines[] = $play_lines->name;
+        }
+        return $lines;
+    }
 }
