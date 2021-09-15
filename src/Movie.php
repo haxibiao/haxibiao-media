@@ -39,7 +39,8 @@ class Movie extends Model
     public function toSearchableArray()
     {
         return [
-            'name' => $this->name,
+            'movie_key' => $this->id,
+            'name'      => $this->name,
         ];
     }
 

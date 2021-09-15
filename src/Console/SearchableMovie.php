@@ -56,8 +56,9 @@ class SearchableMovie extends Command
             $documents = [];
             foreach ($movies as $movie) {
                 $documents[] = [
-                    'name' => $movie->name,
-                    'id'   => $movie->id,
+                    'movie_key' => $movie->id,
+                    'name'      => $movie->name,
+                    'id'        => $movie->id,
                 ];
             }
             $result   = $index->addDocuments($documents);
