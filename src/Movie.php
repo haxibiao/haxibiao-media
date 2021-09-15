@@ -41,6 +41,7 @@ class Movie extends Model
         return [
             'movie_key' => $this->id,
             'name'      => $this->name,
+            'id'        => $this->id,
         ];
     }
 
