@@ -92,10 +92,11 @@ export default {
                     this.seekTime = '';
                 }
             });
+            let that = this;
             this.dp.on('error', function () {
-                console.log("error url : " + this.source);
-                if (this.source.indexOf("neihancloud") != -1) {
-                    this.source = this.source + ".m3u8";
+                console.log("error url : " + that.source);
+                if (that.source.indexOf("neihancloud") != -1 && that.source.indexOf(".m3u8") == -1) {
+                    that.source = that.source + ".m3u8";
                 }
             });
             this.player.on('ended', () => {
