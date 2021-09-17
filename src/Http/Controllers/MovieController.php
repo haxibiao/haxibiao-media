@@ -259,8 +259,7 @@ class MovieController extends Controller
         // 推荐同导演（性能考虑）
         $qb          = Movie::publish();
         $qb_producer = $qb->where('producer', $movie->producer)->where('id', '<>', $movie->id);
-        $recommend   = $qb_producer->latest('rank')->inRandomOrder()->take(6)->get();
-
+        $recommend   = $qb_producer->latest('rank')->take(6)->get()->shuffle();
         //更多同地区 （太多，不能随机排序）
         $qb         = Movie::publish()->latest('id');
         $qb_country = $qb->where('country', $movie->country)->where('type', $movie->type)->where('id', '<>', $movie->id);
