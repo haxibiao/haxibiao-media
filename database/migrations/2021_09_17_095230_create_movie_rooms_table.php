@@ -23,6 +23,7 @@ class CreateMovieRoomsTable extends Migration
 
             $table->string('progress')->nullable()->comment('观看进度,记录观看到视频的第几秒');
             $table->unsignedInteger('series_index')->nullable()->comment('集数index,记录在数组中的偏移量');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
