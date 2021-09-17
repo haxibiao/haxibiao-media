@@ -243,8 +243,8 @@ trait MovieAttrs
     public function getMovieSourceNamesAttribute()
     {
         $lines = [];
-        foreach ($this->play_lines as $play_lines) {
-            $lines[] = $play_lines->name;
+        foreach ($this->play_lines as $play_line) {
+            $lines[$play_line->name] = $play_line->name;
         }
         return $lines;
     }
