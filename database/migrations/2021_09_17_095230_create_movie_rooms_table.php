@@ -16,7 +16,7 @@ class CreateMovieRoomsTable extends Migration
         Schema::create('movie_rooms', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('放映室名称');
-            $table->string('icon')->comment('封面');
+            $table->string('icon')->nullable()->comment('封面');
             $table->unsignedInteger('user_id')->index()->comment('房主');
             $table->unsignedInteger('movie_id')->index()->comment('播放电影');
             $table->json('uids')->nullable()->comment('成员id');

@@ -14,7 +14,11 @@ trait MovieRoomResolvers
      */
     public function resolveMovieRoomUsers($root, $args, $content, $info)
     {
-        return User::whereIn('id', $root->uids);
+        $uids = $root->uids;
+        if (empty($uids) || !count($uids)) {
+            $uids = [-1];
+        }
+        return User::whereIn('id', $uids);
     }
 
     //成员进入放映室
@@ -33,11 +37,12 @@ trait MovieRoomResolvers
     //创建放映室
     public function resolveSaveMovieRoom($root, $args, $content, $info)
     {
-        $name         = $args['name'] ?? "一起看放映室";
-        $icon         = $args['icon'] ?? null;
-        $movie_id     = $args['movie_id'] ?? null;
-        $progress     = $args['progress'] ?? null;
-        $series_index = $args['series_index'] ?? null;
+        $input        = $args['input'];
+        $name         = $input['name'] ?? "一起看放映室";
+        $icon         = $input['icon'] ?? null;
+        $movie_id     = $input['movie_id'] ?? null;
+        $progress     = $input['progress'] ?? null;
+        $series_index = $input['series_index'] ?? null;
 
         $user = getUser();
 
@@ -51,9 +56,11 @@ trait MovieRoomResolvers
             'series_index' => $series_index,
             'progress'     => $progress,
         ]);
-        $image = Image::saveImage($icon);
-        if ($image) {
-            $movieRoom->icon = $image->path;
+        if ($icon) {
+            $image = Image::saveImage($icon);
+            if ($image) {
+                $movieRoom->icon = $image->path;
+            }
         }
         $movieRoom->save();
         return $movieRoom;
