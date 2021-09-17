@@ -6,7 +6,7 @@ body {
 .sidebar {
     position: fixed;
     right: 34px;
-    top: 60%;
+    top: 80%;
     transform: translateY(-50%);
     z-index: 200;
     .line {
@@ -14,8 +14,8 @@ body {
         display: flex;
         align-items: center;
         justify-content: center;
-        top: -47px;
-        left: 50%;
+        top: -50px;
+        left: 40%;
         width: 143px;
         height: 56px;
         margin-left: -75px;
@@ -36,8 +36,8 @@ body {
     .imgBtn {
         display: block;
         box-sizing: border-box;
-        width: 5.4rem;
-        height: 5.4rem;
+        width: 5rem;
+        height: 5rem;
         background: url(/images/member.png) no-repeat 50% / cover;
         cursor: pointer;
     }
@@ -48,7 +48,7 @@ body {
         overflow: hidden;
         .sidebarBtn {
             display: block;
-            padding: 0.2rem 0.9rem;
+            padding: 0.2rem 0.5rem;
             margin: auto;
             cursor: pointer;
             box-sizing: border-box;
