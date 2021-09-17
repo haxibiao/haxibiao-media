@@ -30,6 +30,6 @@ type MovieRoom {
   series_index: Int
 }
 
-extend type Query @guard {
-  movieRoom(id: Int @eq): MovieRoom @find
+extend type Query {
+  movieRoom(id: Int, user_id: Int): MovieRoom @field(resolver: "App\\MovieRoom@resolveMovieRoom")
 }

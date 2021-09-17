@@ -9,6 +9,21 @@ use Haxibiao\Media\Image;
 
 trait MovieRoomResolvers
 {
+
+    public function resolveMovieRoom($root, $args, $content, $info)
+    {
+        $id      = $args['id'] ?? null;
+        $user_id = $args['user_id'] ?? null;
+
+        if ($id || $user_id) {
+            return MovieRoom::query()->when($id, function ($qb) use ($id) {
+                return $qb->where('id', $id);
+            })->when($user_id, function ($qb) use ($user_id) {
+                return $qb->where('user_id', $user_id);
+            })->first();
+        }
+        return null;
+    }
     /**
      * 放映室成员
      */
