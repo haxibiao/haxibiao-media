@@ -58,10 +58,10 @@ class MovieController extends Controller
 
     public function search()
     {
-        $query  = request()->get('q');
+        $query = request()->get('q');
         if (config('media.meilisearch.enable', false)) {
             $result = Movie::search($query)->paginate(10);
-        } 
+        }
         $result = Movie::publish()->orderBy('id')->where('name', 'like', '%' . $query . '%')->paginate(10);
         $result->appends(['q' => $query]);
         $hot       = Movie::publish()->orderBy('id')->paginate(10);
@@ -257,7 +257,7 @@ class MovieController extends Controller
         $movie->favorited = false;
 
         // 推荐同导演（性能考虑）
-        $qb          = Movie::publish()->latest('id');
+        $qb          = Movie::publish();
         $qb_producer = $qb->where('producer', $movie->producer)->where('id', '<>', $movie->id);
         $recommend   = $qb_producer->latest('rank')->inRandomOrder()->take(6)->get();
 
