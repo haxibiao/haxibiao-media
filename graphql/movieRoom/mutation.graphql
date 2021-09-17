@@ -1,0 +1,13 @@
+extend type Mutation {
+    saveMovieRoom(input:MovieRoomInput!) : MovieRoom @field(resolver:"App\\MovieRoom@resolveSaveMovieRoom")
+    
+    usersInToMovieRoom(uids:[Int!]):MovieRoom @field(resolver:"App\\MovieRoom@resolveUsersInToMovieRoom")
+}
+
+input MovieRoomInput {
+    name:String,
+    icon:String,
+    movie_id: Int!
+    progress:Int
+    series_index: Int
+}

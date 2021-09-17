@@ -1,0 +1,35 @@
+type MovieRoom {
+    id: Int
+    """
+    放映室名称
+    """
+    name:String
+    """
+    放映室封面
+    """
+    icon:String
+    """
+    播放电影
+    """
+    movie: Movie
+    """
+    房主
+    """
+    user:User
+    """
+    成员
+    """
+    users:[User] @paginate(builder : "App\\MovieRoom@resolveUsers",defaultCount:10)
+    """
+    观看进度
+    """
+    progress: Int
+    """
+    剧集索引
+    """
+    series_index: Int
+}
+
+extend type Query @guard {
+    movieRoom: MovieRoom @find
+}

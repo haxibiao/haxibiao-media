@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use Haxibiao\Media\MovieRoom as BaseMovieRoom;
+
+class MovieRoom extends BaseMovieRoom
+{
+
+}
