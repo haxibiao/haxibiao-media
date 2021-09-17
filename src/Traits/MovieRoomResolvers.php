@@ -28,7 +28,7 @@ trait MovieRoomResolvers
         $id        = $args['id'];
         $movieRoom = MovieRoom::find($id);
         throw_if(empty($movieRoom), UserException::class, "该放映室不存在！");
-        $uids            = array_unique(array_merge($movieRoom->uids, $uids));
+        $uids            = array_unique(array_merge($movieRoom->uids ?? [], $uids));
         $movieRoom->uids = $uids;
         $movieRoom->save();
         return $movieRoom;
