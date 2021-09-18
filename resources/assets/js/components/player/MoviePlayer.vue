@@ -103,7 +103,7 @@
                     </li>
                 </el-popover>
                 <li class="fl operation">
-                        <a href="https://jq.qq.com/?_wv=1027&k=2LXnJdzX" target="_blank">
+                        <a href="https://jq.qq.com/?_wv=1027&k=w9450OnJ" target="_blank">
                         <i class="iconfont icon-qunliao" style="color: #0db30b; font-size: 1.1rem; margin-right: 0.2rem;"></i>
                         <span class="mobile">加入群聊</span>
                     </a>

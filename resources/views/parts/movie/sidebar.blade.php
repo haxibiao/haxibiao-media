@@ -8,7 +8,7 @@
             <p>一起加入群聊追剧</p>
         </span>
     </div>
-    <a href="https://jq.qq.com/?_wv=1027&k=2LXnJdzX" target="_blank" class="imgBtn"></a>
+    <a href="https://jq.qq.com/?_wv=1027&k=w9450OnJ" target="_blank" class="imgBtn"></a>
     <div class="btnListBox" href="#">
         <a class="sidebarBtn me">
             <i class="iconfont icon-atm"></i>
