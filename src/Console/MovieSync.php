@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Console;
 
+use App\MovieSource;
 use Haxibiao\Media\Actor;
 use Haxibiao\Media\Director;
 use Haxibiao\Media\Movie;
@@ -288,24 +289,32 @@ class MovieSync extends Command
 
             $movie['data_source'] = $other_source;
 
-            $play_lines = [];
-            //获取影片线路 - movie_sources
+            // $play_lines = [];
+            // //获取影片线路 - movie_sources
             $sources = $movie['sources'];
-            if(count($sources) < 0){
-                $play_lines = [];
-            }else{
-                foreach($sources as $source){
-                    $play_lines[] = [
-                        'name'      => $source['name'],
-                        'url'       => $source['url'],
-                        'data'      => $source['play_urls'],
-                    ];
-                }
-            }
-            $movie['play_lines']  = $play_lines;
+            // if(count($sources) < 0){
+            //     $play_lines = [];
+            // }else{
+            //     foreach($sources as $source){
+            //         $play_lines[] = [
+            //             'name'      => $source['name'],
+            //             'url'       => $source['url'],
+            //             'data'      => $source['play_urls'],
+            //         ];
+            //     }
+            // }
+            // $movie['play_lines']  = $play_lines;
             $movie['custom_type'] = $movie['custom_type'];
+
+            if($movie['custom_type'] == '电影'){
+                $movie['finished'] = 1;
+            }else{
+                $movie['finished'] = $movie['finished'];
+            }
+
             $movie['has_playurl'] = $movie['has_playurl'];
             $movie['finished']    = $movie['finished'];
+            $movie['source_names']= $movie['source_names'];
 
             $model->forceFill(array_only($movie, [
                 'source',
@@ -331,10 +340,15 @@ class MovieSync extends Command
                 'finished',
                 'has_playurl',
                 'custom_type',
-                'play_lines',
+                // 'play_lines',
+                'source_names'
             ]));
             $model->saveQuietly();
             $this->createRelationModel($model);
+            
+            //同步保存影片线路数据
+            $this->saveMovieSources($sources,$model);
+
             DB::commit();
             $success++;
             $addOrUpdate = $movieExists ? '更新' : '新增';
@@ -357,6 +371,23 @@ class MovieSync extends Command
             $fail++;
             $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
         }
+    }
+
+    public function saveMovieSources($sources,$model)
+    {
+        foreach($sources as $source){
+            $movieSource = MovieSource::firstOrNew([
+                'name'      => $source['name'],
+                'url'       => $source['url'],
+            ]);
+            $movieSource->movie_id      = $model->id;
+            $movieSource->rank          = $source['rank'];
+            $movieSource->play_urls     = $source['play_urls'];
+            $movieSource->remark        = $source['remark'];
+            $movieSource->created_at    = now();
+            $movieSource->updated_at    = now();
+            $movieSource->save();
+        } 
     }
 
     public function createRelationModel(Movie $movie)
@@ -408,6 +439,5 @@ class MovieSync extends Command
                 ]);
             }
         }
-
     }
 }
