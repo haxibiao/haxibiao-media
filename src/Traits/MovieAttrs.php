@@ -19,22 +19,16 @@ trait MovieAttrs
 
     public function getDataAttribute($value)
     {
-        // 如果没有可用线路，返回空数组
-        $count = $this->sources()->whereNotNull('play_urls')->count();
-        if ($count <= 0) {
-            return [];
+        if (is_string($value)) {
+            $value = json_decode($value);
         }
-        $sources = $this->sources()->latest('rank')->whereNotNull('play_urls')->get();
-        $result  = [];
-        foreach ($sources as $source) {
-            $item = [
-                'name' => $source->name,
-                'url'  => $source->url,
-                'data' => $source->play_urls,
-            ];
-            $result[] = $item;
+
+        if (empty($value) || count($value) < 1) {
+            if ($source = $this->play_lines[0]) {
+                return $source->data ?? [];
+            }
         }
-        return $result;
+        return $value;
     }
 
     public function getIntroductionAttribute()
