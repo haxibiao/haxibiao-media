@@ -1,23 +1,29 @@
 extend type Mutation {
-    """
-    关联电影
-    """
-    hookMovie(post_id: Int!, movie_id: Int, movie_key: String): Post @field(resolver: "App\\Movie@resolveHookMovie")
+  """
+  关联电影
+  """
+  hookMovie(post_id: Int!, movie_id: Int, movie_key: String): Post
+    @field(resolver: "App\\Movie@resolveHookMovie")
 
-    """
-    剪辑电影
-    """
-    clipMovie(
-        m3u8: String!
-        title: String!
-        movie_id: Int!
-        startSeconds: Int!
-        endSeconds: Int!
-        seriesIndex: Int!
-    ): Post @field(resolver: "App\\Movie@resolveClipMovie")
-
-    """
-    发起求片
-    """
-    reportMovieFix(movie_id: Int!): Movie @field(resolver: "App\\Movie@resolveReportMovieFix")
+  """
+  剪辑电影
+  """
+  clipMovie(
+    m3u8: String!
+    title: String!
+    movie_id: Int!
+    startSeconds: Int!
+    endSeconds: Int!
+    seriesIndex: Int!
+  ): Post @field(resolver: "App\\Movie@resolveClipMovie")
+  """
+  汇报影片异常
+  """
+  reportMovieException(movie_id: Int!): Boolean
+    @field(resolver: "App\\Movie@resolveReportMovieException")
+  """
+  发起求片
+  """
+  reportMovieFix(movie_id: Int!): Movie
+    @field(resolver: "App\\Movie@resolveReportMovieFix")
 }

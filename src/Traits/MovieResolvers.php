@@ -309,6 +309,18 @@ trait MovieResolvers
         }
     }
 
+    public function resolveReportMovieException($root, $args, $content, $info)
+    {
+        $movie = Movie::query()->find($args['movie_id']);
+        $url   = get_neihancloud_api() . '/api/movie/exception?movie_key=' . $movie->movie_key;
+        try {
+            file_get_contents($url);
+        } catch (\Throwable$th) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * 搜索的影片(仅公开片源)
      */
