@@ -3,11 +3,9 @@
 namespace Haxibiao\Media\Traits;
 
 use App\Movie;
-use App\MovieSource;
 use App\User;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Schema;
 
 trait MovieAttrs
 {
@@ -21,16 +19,22 @@ trait MovieAttrs
 
     public function getDataAttribute($value)
     {
-        if (is_string($value)) {
-            $value = json_decode($value);
+        // 如果没有可用线路，返回空数组
+        $count = $this->sources()->whereNotNull('play_urls')->count();
+        if ($count <= 0) {
+            return [];
         }
-
-        if (empty($value) || count($value) < 1) {
-            if ($source = $this->play_lines[0]) {
-                return $source->data ?? [];
-            }
+        $sources = $this->sources()->latest('rank')->whereNotNull('play_urls')->get();
+        $result  = [];
+        foreach ($sources as $source) {
+            $item = [
+                'name' => $source->name,
+                'url'  => $source->url,
+                'data' => $source->play_urls,
+            ];
+            $result[] = $item;
         }
-        return $value;
+        return $result;
     }
 
     public function getIntroductionAttribute()
@@ -45,40 +49,22 @@ trait MovieAttrs
      */
     public function getPlayLinesAttribute()
     {
-        $play_lines = json_decode($this->getRawOriginal('play_lines'));
-        if (empty($play_lines)) {
-            //其他线路 —— 这个写法可以慢慢淘汰
-            $lines = [];
-            if ($data_source = $this->data_source) {
-                if (is_array($data_source) && count($data_source)) {
-                    foreach ($data_source as $line => $source) {
-                        $lines[] = [
-                            'name' => $line,
-                            'data' => $source,
-                        ];
-                    }
-                }
-            }
-            if (empty($lines)) {
-                //兼容没有路线表的项目
-                if (Schema::hasTable('movie_sources')) {
-                    $movieSources = MovieSource::where('movie_id', $this->id)->get();
-                    foreach ($movieSources as $movieSource) {
-                        $lines[] = [
-                            'name' => $movieSource->name,
-                            'url'  => $movieSource->url,
-                            'data' => $movieSource->play_urls,
-                        ];
-                    }
-                }
-                $lines[] = [
-                    'name' => "默认",
-                    'data' => [],
-                ];
-            }
-            return $lines;
+        // 如果没有可用线路，返回空数组
+        $count = $this->sources()->whereNotNull('play_urls')->count();
+        if ($count <= 0) {
+            return [];
         }
-        return $play_lines;
+        $sources = $this->sources()->latest('rank')->whereNotNull('play_urls')->get();
+        $result  = [];
+        foreach ($sources as $source) {
+            $item = [
+                'name' => $source->name,
+                'url'  => $source->url,
+                'data' => $source->play_urls,
+            ];
+            $result[] = $item;
+        }
+        return $result;
     }
 
     public function getUrlAttribute()
