@@ -24,9 +24,14 @@ trait MovieAttrs
         }
 
         if (empty($value) || count($value) < 1) {
-            if ($source = $this->play_lines[0]) {
-                return $source->data ?? [];
+            $play_line = $this->play_lines;
+            if(empty($play_line)){
+                return [];
             }
+            return $play_line[0]['data'];
+            // if ($source = $this->play_lines[0]) {
+            //     return $source->data ?? [];
+            // }
         }
         return $value;
     }
