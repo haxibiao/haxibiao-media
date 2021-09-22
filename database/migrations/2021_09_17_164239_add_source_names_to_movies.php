@@ -14,7 +14,10 @@ class AddSourceNamesToMovies extends Migration
     public function up()
     {
         Schema::table('movies', function (Blueprint $table) {
-            $table->string('source_names')->nullable()->index();
+            if (!Schema::hasColumn('movies', 'source_names')) {
+                $table->string('source_names')->nullable()->index();
+            }
+
         });
     }
 
