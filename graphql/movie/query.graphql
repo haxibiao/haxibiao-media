@@ -317,9 +317,13 @@ type MovieData {
   url: String
   name: String
   """
-  线路信息
+  线路名
   """
   source_name:String
+  """
+  线路链接
+  """
+  source_url:String
 }
 
 #求片记录

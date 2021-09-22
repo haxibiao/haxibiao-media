@@ -77,6 +77,7 @@ trait MovieAttrs
             'name'          => $name,
             'url'           => $url,
             'source_name'   => $play_lines[0]['name'],
+            'source_url'    => $play_lines[0]['url'],
         ];
 
         // $data_series = is_array($this->data) ? $this->data : @json_decode($this->data, true) ?? [];
