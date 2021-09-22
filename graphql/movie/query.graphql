@@ -316,6 +316,10 @@ type MovieFilterData {
 type MovieData {
   url: String
   name: String
+  """
+  线路信息
+  """
+  source_name:String
 }
 
 #求片记录

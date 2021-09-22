@@ -17,25 +17,6 @@ trait MovieAttrs
         return data_get(Movie::getStatuses(), $this->status);
     }
 
-    public function getDataAttribute($value)
-    {
-        if (is_string($value)) {
-            $value = json_decode($value);
-        }
-
-        if (empty($value) || count($value) < 1) {
-            $play_line = $this->play_lines;
-            if(empty($play_line)){
-                return [];
-            }
-            return $play_line[0]['data'];
-            // if ($source = $this->play_lines[0]) {
-            //     return $source->data ?? [];
-            // }
-        }
-        return $value;
-    }
-
     public function getIntroductionAttribute()
     {
         $attr = $this->attributes["introduction"] ?? '';
@@ -44,7 +25,7 @@ trait MovieAttrs
     }
 
     /**
-     * 影片线路
+     * 影片线路(web使用的)
      */
     public function getPlayLinesAttribute()
     {
@@ -64,6 +45,62 @@ trait MovieAttrs
             $result[] = $item;
         }
         return $result;
+    }
+
+     /**
+     * 剧集信息(app使用的)
+     *
+     * @return array
+     */
+    public function getSeriesAttribute()
+    {
+        // // 兼容内涵电影代码用 series属性(serie对象的数组)写逻辑的部分
+        // if (isset($this->attributes['series']) && is_array($this->attributes['series']) && count($this->attributes['series'])) {
+        //     return $this->attributes['series'];
+        // }
+
+        //转换data的数组为serie对象数组
+        $play_lines = $this->play_lines;
+        if(empty($play_lines)){
+            return [];
+        }
+        $data = $play_lines[0]['data'];
+        if(empty($data)){
+            $name = null;
+            $url  = null;
+        }else{
+            $name = $data[0]['name'];
+            $url  = $data[0]['url'];
+        }
+
+        $series[]      = [
+            'name'          => $name,
+            'url'           => $url,
+            'source_name'   => $play_lines[0]['name'],
+        ];
+
+        // $data_series = is_array($this->data) ? $this->data : @json_decode($this->data, true) ?? [];
+        // foreach ($data_series as $data_serie) {
+        //     $series[] = $data_serie;
+        //     //暂时没线路修复逻辑...
+        // }
+
+        if ($user = currentUser()) {
+            //获取APP用户观看进度记录
+            $seriesHistories = \App\MovieHistory::where('user_id', $user->id)
+                ->where('movie_id', $this->id)
+                ->get();
+            foreach ($seriesHistories as $seriesHistory) {
+                $index = $seriesHistory->series_id;
+                //修复观看历史数据对不上的脏数据异常
+                $serie = $series[$index] ?? null;
+                if ($serie && isset($serie->progress)) {
+                    $serie->progress = $seriesHistory->progress;
+                }
+            }
+        }
+
+        return $series;
     }
 
     public function getUrlAttribute()
@@ -101,44 +138,6 @@ trait MovieAttrs
     {
         $fallback_url = "http://cdn-iqiyi-com.diudie.com/series/70177/index.m3u8";
         return $this->data[0]["url"] ?? $fallback_url;
-    }
-
-    /**
-     * 剧集信息
-     *
-     * @return array
-     */
-    public function getSeriesAttribute()
-    {
-        // // 兼容内涵电影代码用 series属性(serie对象的数组)写逻辑的部分
-        // if (isset($this->attributes['series']) && is_array($this->attributes['series']) && count($this->attributes['series'])) {
-        //     return $this->attributes['series'];
-        // }
-
-        //转换data的数组为serie对象数组
-        $series      = [];
-        $data_series = is_array($this->data) ? $this->data : @json_decode($this->data, true) ?? [];
-        foreach ($data_series as $data_serie) {
-            $series[] = $data_serie;
-            //暂时没线路修复逻辑...
-        }
-
-        if ($user = currentUser()) {
-            //获取APP用户观看进度记录
-            $seriesHistories = \App\MovieHistory::where('user_id', $user->id)
-                ->where('movie_id', $this->id)
-                ->get();
-            foreach ($seriesHistories as $seriesHistory) {
-                $index = $seriesHistory->series_id;
-                //修复观看历史数据对不上的脏数据异常
-                $serie = $series[$index] ?? null;
-                if ($serie && isset($serie->progress)) {
-                    $serie->progress = $seriesHistory->progress;
-                }
-            }
-        }
-
-        return $series;
     }
 
     public function getCreatedAtAttribute()
