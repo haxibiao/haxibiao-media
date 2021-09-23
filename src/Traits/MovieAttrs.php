@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 use App\Movie;
+use App\MovieSource;
 use App\User;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Facades\Cache;
@@ -30,7 +31,7 @@ trait MovieAttrs
     public function getPlayLinesAttribute()
     {
         // 如果没有可用线路，返回空数组
-        $count = $this->sources()->whereNotNull('play_urls')->count();
+        $count = MovieSource::where('movie_id',$this->id)->whereNull('play_urls')->count();
         if ($count <= 0) {
             return [];
         }
@@ -64,7 +65,7 @@ trait MovieAttrs
         if(count($play_lines) == 0){
             return [];
         }
-        
+
         $data = $play_lines[0]['data'];
         if(empty($data)){
             $name = null;
@@ -77,8 +78,8 @@ trait MovieAttrs
         $series[]      = [
             'name'          => $name,
             'url'           => $url,
-            'source_name'   => $play_lines[0]['name'],
-            'source_url'    => $play_lines[0]['url'],
+            'source_name'   => $play_lines[0]['name'] ?? null,
+            'source_url'    => $play_lines[0]['url'] ?? null,
         ];
 
         // $data_series = is_array($this->data) ? $this->data : @json_decode($this->data, true) ?? [];
