@@ -1,6 +1,7 @@
 <?php
 namespace Haxibiao\Media;
 
+use Haxibiao\Media\Http\Middleware\MovieGuard;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 
@@ -115,7 +116,8 @@ class MediaServiceProvider extends ServiceProvider
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));
         }
-    }
+		app('router')->aliasMiddleware('movie', MovieGuard::class);
+	}
 
     public function bindObservers()
     {

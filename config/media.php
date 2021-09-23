@@ -17,6 +17,7 @@ return [
         'enable'     => env('ENABLE_MOVIE', false),
         'middleware' => [
             'web',
+			'movie'
         ],
     ],
     /**
