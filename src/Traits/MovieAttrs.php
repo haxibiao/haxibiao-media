@@ -61,9 +61,10 @@ trait MovieAttrs
 
         //转换data的数组为serie对象数组
         $play_lines = $this->play_lines;
-        if(empty($play_lines)){
+        if(count($play_lines) == 0){
             return [];
         }
+        
         $data = $play_lines[0]['data'];
         if(empty($data)){
             $name = null;
