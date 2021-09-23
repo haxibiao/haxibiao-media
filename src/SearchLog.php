@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media;
 
+use App\MovieSource;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -40,6 +41,10 @@ class SearchLog extends Model
         $logs = [];
         foreach ($resulets as $resulet) {
             $movie = Movie::where('name',$resulet)->first();
+            if(empty($movie)){
+                continue;
+            }
+            $series = MovieSource::where('movie_id',$movie->id)->whereNotNull('play_urls')->orderBy('rank','desc')->pluck('play_urls')->first();
             if(!$movie){
                 continue;
             }
@@ -50,7 +55,7 @@ class SearchLog extends Model
                 'actors'    => $movie->actors,
                 'type'      => $movie->type,
                 'movie_key' => $movie->movie_key,
-                'series'    => $movie->play_lines[0]->data,
+                'series'    => $series,
             ];
         }
         if(count($logs) > 6){
