@@ -161,7 +161,7 @@
                         <div class="circuitry" v-if="movie && movie.play_lines && movie.play_lines.length > 0">
                             <el-dropdown @command="switchLine">
                                 <span class="el-dropdown-link" style="color: #ff0000">
-                                    换线路<i class="el-icon-arrow-down el-icon--right"></i>
+                                    {{ playLineName }}<i class="el-icon-arrow-down el-icon--right"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item
@@ -244,8 +244,9 @@ export default {
             this.movie = this.movieData;
             console.log('movie', this.movieData);
 
-            this.series = this.movie.series || [];
-
+            this.series = this.movie.play_lines[0].data || this.movie.series || [];
+            this.playLineName = this.movie.play_lines[0].name || this.movie.series.source_name || '默认';
+            
             //线路信息
             if (this.movie.play_lines) {
                 let lines = [];
@@ -401,6 +402,7 @@ export default {
             this.currentEpisode = 1; //切换后剧集数会不同，默认跳转到第一集
             this.series = this.movieData.play_lines[index].data;
             this.source = this.movieData.play_lines[index].data[0].url;
+            this.playLineName = this.movieData.play_lines[index].name;
             console.log('切换线路后 this.series', this.series);
         },
 
@@ -434,7 +436,8 @@ export default {
             videoDuration: '',
             currentTime: '',
             playLines: null,
-            lineSelected: null,
+            lineSelected: 0,
+            playLineName: '默认',
         };
     },
 };
