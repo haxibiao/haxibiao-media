@@ -31,11 +31,12 @@ trait MovieAttrs
     public function getPlayLinesAttribute()
     {
         // 如果没有可用线路，返回空数组
-        $count = MovieSource::where('movie_id',$this->id)->whereNull('play_urls')->count();
+        $count = MovieSource::where('movie_id',$this->id)->whereNotNull('play_urls')->count();
         if ($count <= 0) {
             return [];
         }
-        $sources = $this->sources()->latest('rank')->whereNotNull('play_urls')->get();
+        
+        $sources = MovieSource::where('movie_id',$this->id)->latest('rank')->whereNotNull('play_urls')->get();
         $result  = [];
         foreach ($sources as $source) {
             $item = [
