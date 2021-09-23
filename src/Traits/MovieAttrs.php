@@ -31,12 +31,12 @@ trait MovieAttrs
     public function getPlayLinesAttribute()
     {
         // 如果没有可用线路，返回空数组
-        $count = MovieSource::where('movie_id',$this->id)->whereNotNull('play_urls')->count();
+        $count = MovieSource::where('movie_id', $this->id)->whereNotNull('play_urls')->count();
         if ($count <= 0) {
             return [];
         }
-        
-        $sources = MovieSource::where('movie_id',$this->id)->latest('rank')->whereNotNull('play_urls')->get();
+
+        $sources = MovieSource::where('movie_id', $this->id)->latest('rank')->whereNotNull('play_urls')->get();
         $result  = [];
         foreach ($sources as $source) {
             $item = [
@@ -49,7 +49,7 @@ trait MovieAttrs
         return $result;
     }
 
-     /**
+    /**
      * 剧集信息(app使用的)
      *
      * @return array
@@ -63,25 +63,51 @@ trait MovieAttrs
 
         //转换data的数组为serie对象数组
         $play_lines = $this->play_lines;
-        if(count($play_lines) == 0){
+        if (empty($play_lines) || count($play_lines)) {
             return [];
         }
+        foreach ($play_lines as $play_line) {
+            $datas       = $play_line['data'];
+            $source_name = $play_line['name'];
+            $source_url  = $play_line['url'];
 
-        $data = $play_lines[0]['data'];
-        if(empty($data)){
-            $name = null;
-            $url  = null;
-        }else{
-            $name = $data[0]['name'];
-            $url  = $data[0]['url'];
+            foreach ($datas as $data) {
+                $series[] = [
+                    'name'        => $data['name'],
+                    'url'         => $data['url'],
+                    'source_name' => $source_name,
+                    'source_url'  => $source_url,
+                ];
+            }
+
+            //根据下面排序优先默认播放线路
+            if (in_array(array_keys($this->movieSourceNames), ['努努资源', '无尽资源', '红牛资源', '天空资源', '百度资源', '快播资源'])) {
+                if ($source_name == "努努资源") {
+                    break;
+                } else if ($source_name == "无尽资源") {
+                    break;
+                } else if ($source_name == "红牛资源") {
+                    break;
+                } else if ($source_name == "天空资源") {
+                    break;
+                } else if ($source_name == "百度资源") {
+                    break;
+                } else if ($source_name == "快播资源") {
+                    break;
+                }
+            } else {
+                break;
+            }
+
         }
 
-        $series[]      = [
-            'name'          => $name,
-            'url'           => $url,
-            'source_name'   => $play_lines[0]['name'] ?? null,
-            'source_url'    => $play_lines[0]['url'] ?? null,
-        ];
+        // if (empty($data)) {
+        //     $name = null;
+        //     $url  = null;
+        // } else {
+        //     $name = $data[0]['name'];
+        //     $url  = $data[0]['url'];
+        // }
 
         // $data_series = is_array($this->data) ? $this->data : @json_decode($this->data, true) ?? [];
         // foreach ($data_series as $data_serie) {
@@ -232,7 +258,7 @@ trait MovieAttrs
     {
         $lines = [];
         foreach ($this->play_lines as $play_line) {
-            $lines[$play_line->name] = $play_line->name;
+            $lines[$play_line['name']] = $play_line['name'];
         }
         return $lines;
     }
