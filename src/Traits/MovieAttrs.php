@@ -63,23 +63,28 @@ trait MovieAttrs
 
         //转换data的数组为serie对象数组
         $play_lines = $this->play_lines;
-        if (empty($play_lines) || count($play_lines)) {
+        if (empty($play_lines) || count($play_lines) == 0) {
             return [];
         }
         foreach ($play_lines as $play_line) {
-            $datas       = $play_line['data'];
-            $source_name = $play_line['name'];
-            $source_url  = $play_line['url'];
+            $data      = $play_line['data'];
+            if(empty($data)){
+                $name = null;
+                $url  = null;
+            }else{
+                $name = $data[0]['name'];
+                $url  = $data[0]['url'];
+            }
+            $source_name = $play_line['name'] ?? null;
+            $source_url  = $play_line['url'] ?? null;
 
-            foreach ($datas as $data) {
                 $series[] = [
-                    'name'        => $data['name'],
-                    'url'         => $data['url'],
+                    'name'        => $name,
+                    'url'         => $url,
                     'source_name' => $source_name,
                     'source_url'  => $source_url,
                 ];
-            }
-
+            
             //根据下面排序优先默认播放线路
             if (in_array(array_keys($this->movieSourceNames), ['努努资源', '无尽资源', '红牛资源', '天空资源', '百度资源', '快播资源'])) {
                 if ($source_name == "努努资源") {
@@ -129,7 +134,6 @@ trait MovieAttrs
                 }
             }
         }
-
         return $series;
     }
 
