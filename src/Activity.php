@@ -46,6 +46,11 @@ class Activity extends Model
         return $this->morphTo();
     }
 
+    public function editorChoices()
+    {
+        return $this->morphToMany('App\EditorChoice', 'choiceable');
+    }
+
     public function scopeEnable($query)
     {
         return $query->where('status', 1);

@@ -4,12 +4,14 @@ namespace Haxibiao\Media\Nova;
 
 use App\Activity as AppActivity;
 use App\Nova\Collection;
+use App\Nova\EditorChoice;
 use App\Nova\Movie;
 use Haxibiao\Content\Nova\Actions\AddActivitiesToSticks;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\MorphTo;
+use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Resource;
@@ -39,6 +41,7 @@ class Activity extends Resource
             // BelongsTo::make('定制电影', 'movie', Movie::class)->nullable()->searchable(),
             // BelongsTo::make('定制合集', 'collection', Collection::class)->nullable()->searchable(),
 
+            MorphToMany::make('精选对象', 'editorChoices', EditorChoice::class),
             MorphTo::make('指定对象', 'activityable')->types([
                 Movie::class,
                 Collection::class,
@@ -48,7 +51,7 @@ class Activity extends Resource
                 AppActivity::TYPE_INDEX   => '首页',
                 AppActivity::TYPE_SERIE   => '电视剧',
                 AppActivity::TYPE_PROJECT => '电影专题',
-                AppActivity::TYPE_SEARCH  => '搜索'
+                AppActivity::TYPE_SEARCH  => '搜索',
             ])->resolveUsing(function ($type) {
                 if (1 == $type) {
                     return "首页";
@@ -59,7 +62,7 @@ class Activity extends Resource
                 if (3 == $type) {
                     return "电影专题";
                 }
-                if( 4 == $type){
+                if (4 == $type) {
                     return '搜索词';
                 }
             })->withMeta(['value' => 1]),
@@ -77,7 +80,7 @@ class Activity extends Resource
                 return $this->image_url;
             })->preview(function () {
                 return $this->image_url;
-            })->store(function (Request $request, \Haxibiao\Media\Activity $model) {
+            })->store(function (Request $request, \Haxibiao\Media\Activity$model) {
                 $file = $request->file('image_url');
                 return $model->saveActivityImage($file);
             }),
