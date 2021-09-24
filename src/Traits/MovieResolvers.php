@@ -355,7 +355,7 @@ trait MovieResolvers
         //     return AppMovie::search($keyword);
         // } else {
         //去mediachain搜索电影
-        $pageResult = Movie::resourceSearch($keyword);
+        $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
         $items      = data_get($pageResult, 'data');
         $movie_keys = collect($items)->pluck('movie_key')->toArray();
         $movie_ids  = implode(',', $movie_keys);
