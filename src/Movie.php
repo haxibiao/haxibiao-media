@@ -26,7 +26,6 @@ class Movie extends Model
     use HasFactory;
     use MovieRepo;
     use Searchable;
-    // use ScoutSearchable;
     use MovieResolvers;
     use MovieAttrs;
     use WithSns;

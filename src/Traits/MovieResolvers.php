@@ -2,7 +2,6 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Movie as AppMovie;
 use Haxibiao\Breeze\Dimension;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Content\Category;
@@ -352,18 +351,16 @@ trait MovieResolvers
         }
         $log->save();
 
-        if (config('media.meilisearch.enable', false)) {
-            return AppMovie::search($keyword);
-        } else {
-            //去mediachain搜索电影
-            $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
-            // $total      = data_get($pageResult, 'total');
-            $items      = data_get($pageResult, 'data');
-            $movie_keys = collect($items)->pluck('movie_key')->toArray();
-            // dd($movie_keys);
-
-            return Movie::whereIn('movie_key', $movie_keys);
-        }
+        // if (config('media.meilisearch.enable', false)) {
+        //     return AppMovie::search($keyword);
+        // } else {
+        //去mediachain搜索电影
+        $pageResult = Movie::resourceSearch($keyword);
+        $items      = data_get($pageResult, 'data');
+        $movie_keys = collect($items)->pluck('movie_key')->toArray();
+        $movie_ids  = implode(',', $movie_keys);
+        return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
+        // }
 
         // $pageResult->paginatorInfo = [
         //     'currentPage'  => $page,
