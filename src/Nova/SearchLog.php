@@ -31,7 +31,7 @@ class SearchLog extends Resource
             ID::make()->sortable(),
             BelongsTo::make('用户', 'user', User::class)->exceptOnForms(),
             Text::make('搜索关键词', 'keyword'),
-            Text::make('搜索次数', 'count'),
+            Text::make('搜索次数', 'count')->sortable(),
             DateTime::make('创建时间', 'created_at'),
             DateTime::make('更新时间', 'updated_at'),
         ];
