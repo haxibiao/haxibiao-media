@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\MovieSource;
 use Haxibiao\Breeze\Dimension;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Content\Category;
@@ -313,6 +314,15 @@ trait MovieResolvers
         $movie       = Movie::query()->find($args['movie_id']);
         $source_name = $args['source_name'];
         if ($movie) {
+            //先降低权重
+            $movieSource = MovieSource::where('movie_id', $movie->id)
+                ->where('name', $args['source_name'])
+                ->first();
+            if ($movieSource && $movieSource >= 0) {
+                $movieSource->decrement('rank');
+            }
+
+            //再通知内涵云处理
             $url = get_neihancloud_api() . '/api/movie/exception?movie_key=' . $movie->movie_key . '&source_name=' . urlencode($source_name);
             try {
                 return file_get_contents($url);
