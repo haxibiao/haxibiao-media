@@ -6,7 +6,7 @@ body {
 .sidebar {
     position: fixed;
     right: 34px;
-    top: 80%;
+    top: 85%;
     transform: translateY(-50%);
     z-index: 200;
     .line {
@@ -97,6 +97,12 @@ body {
         .top:hover {
             border-bottom-left-radius: 6px;
             border-bottom-right-radius: 6px;
+        }
+    }
+    @media (max-width: $col-sm-width) {
+        top: 94%;
+        .btnListBox {
+            display: none;
         }
     }
 }

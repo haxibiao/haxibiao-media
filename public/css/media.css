@@ -18620,7 +18620,7 @@ body {
 .sidebar {
   position: fixed;
   right: 34px;
-  top: 80%;
+  top: 85%;
   transform: translateY(-50%);
   z-index: 200;
 }
@@ -18727,6 +18727,16 @@ body {
 .sidebar .btnListBox .top:hover {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    top: 94%;
+  }
+
+  .sidebar .btnListBox {
+    display: none;
+  }
 }
 
 .app-download {
@@ -20249,21 +20259,21 @@ body {
   padding: 10px 5px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 606px) {
   .movie-player .player__operate {
-    zoom: 0.8;
-  }
-}
-
-@media (max-width: 576px) {
-  .movie-player .player__operate {
-    zoom: 0.7;
+    zoom: 0.9;
   }
 }
 
 @media (max-width: 420px) {
   .movie-player .player__operate {
-    zoom: 0.6;
+    zoom: 0.8;
+  }
+}
+
+@media (max-width: 330px) {
+  .movie-player .player__operate {
+    zoom: 0.68;
   }
 }
 
