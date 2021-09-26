@@ -318,7 +318,7 @@ trait MovieResolvers
             $movieSource = MovieSource::where('movie_id', $movie->id)
                 ->where('name', $args['source_name'])
                 ->first();
-            if ($movieSource && $movieSource >= 0) {
+            if ($movieSource && $movieSource->rank >= 0) {
                 $movieSource->decrement('rank');
             }
 
