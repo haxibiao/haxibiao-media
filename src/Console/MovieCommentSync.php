@@ -65,7 +65,6 @@ class MovieCommentSync extends Command
             data_set($args, 'page', $page);
             $requestArgs = http_build_query($args);
             $url = get_neihancloud_api() . "/api/movie/comments/?$requestArgs";
-            dd($url);
             $this->info("开始处理第 $requestArgs 页的数据");
 
             $result = json_decode(file_get_contents($url), true);
