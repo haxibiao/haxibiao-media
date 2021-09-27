@@ -67,37 +67,38 @@ trait MovieAttrs
             return [];
         }
         foreach ($play_lines as $play_line) {
-            $data      = $play_line['data'];
-            if(empty($data)){
-                $name = null;
-                $url  = null;
-            }else{
-                $name = $data[0]['name'];
-                $url  = $data[0]['url'];
-            }
-            $source_name = $play_line['name'] ?? null;
+            $series      = [];
             $source_url  = $play_line['url'] ?? null;
+            $source_name = $play_line['name'] ?? null;
+            $datas       = $play_line['data'];
+            if (!empty($datas) && count($datas) > 0) {
+                foreach ($datas as $data) {
+                    $name     = $data['name'];
+                    $url      = $data['url'];
+                    $series[] = [
+                        'name'        => $name,
+                        'url'         => $url,
+                        'source_name' => $source_name,
+                        'source_url'  => $source_url,
+                    ];
+                }
+            }
 
-                $series[] = [
-                    'name'        => $name,
-                    'url'         => $url,
-                    'source_name' => $source_name,
-                    'source_url'  => $source_url,
-                ];
-            
+            $source_names = ['努努资源', '无尽资源', '红牛资源', '天空资源', '百度资源', '快播资源'];
+
             //根据下面排序优先默认播放线路
-            if (in_array(array_keys($this->movieSourceNames), ['努努资源', '无尽资源', '红牛资源', '天空资源', '百度资源', '快播资源'])) {
-                if ($source_name == "努努资源") {
+            if (array_intersect(array_keys($this->movieSourceNames), $source_names)) {
+                if ($source_name == "努努资源" && $series) {
                     break;
-                } else if ($source_name == "无尽资源") {
+                } else if ($source_name == "无尽资源" && $series) {
                     break;
-                } else if ($source_name == "红牛资源") {
+                } else if ($source_name == "红牛资源" && $series) {
                     break;
-                } else if ($source_name == "天空资源") {
+                } else if ($source_name == "天空资源" && $series) {
                     break;
-                } else if ($source_name == "百度资源") {
+                } else if ($source_name == "百度资源" && $series) {
                     break;
-                } else if ($source_name == "快播资源") {
+                } else if ($source_name == "快播资源" && $series) {
                     break;
                 }
             } else {
