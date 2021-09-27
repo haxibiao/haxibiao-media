@@ -84,14 +84,14 @@
     .player__operate {
         background: #0f0f1e;
         padding: 10px 5px;
-        @media (max-width: $col-md-width) {
-            zoom: 0.8;
-        }
-        @media (max-width: $col-sm-width) {
-            zoom: 0.7;
+        @media (max-width: $col-sm-width + 30) {
+            zoom: 0.9;
         }
         @media (max-width: $col-xs-width) {
-            zoom: 0.6;
+            zoom: 0.8;
+        }
+        @media (max-width: $col-xs-width - 90) {
+            zoom: 0.68;
         }
         .operation {
             padding: 0 5px;
