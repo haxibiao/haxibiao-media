@@ -22,7 +22,7 @@ class SearchLog extends Resource
     }
 
     public static $search = [
-        'name', 'id',
+        'id','keyword'
     ];
 
     public function fields(Request $request)
