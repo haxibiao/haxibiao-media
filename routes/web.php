@@ -16,6 +16,12 @@ Route::middleware(config('media.video.middleware', []))->group(function () {
 // 电影
 Route::middleware(config('media.movie.middleware', []))
     ->group(function () {
+        Route::get('/movie/dongman', 'MovieController@dongman');
+        Route::get('/movie/dianshiju', 'MovieController@dianshiju');
+        Route::get('/movie/zongyi', 'MovieController@zongyi');
+        Route::get('/movie/dianying', 'MovieController@dianying');
+
+
         Route::get('/movie/riju', 'MovieController@riju');
         Route::get('/movie/meiju', 'MovieController@meiju');
         Route::any('/movie/login', 'MovieController@login');
