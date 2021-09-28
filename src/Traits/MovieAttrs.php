@@ -39,6 +39,11 @@ trait MovieAttrs
         $sources = MovieSource::where('movie_id', $this->id)->latest('rank')->whereNotNull('play_urls')->get();
         $result  = [];
         foreach ($sources as $source) {
+            if(empty($source['play_urls']))
+            {
+                continue;
+            }
+            
             $item = [
                 'name' => $source->name,
                 'url'  => $source->url,
