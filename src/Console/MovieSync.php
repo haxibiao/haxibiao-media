@@ -291,7 +291,7 @@ class MovieSync extends Command
 
             // $play_lines = [];
             // //获取影片线路 - movie_sources
-            $sources = $movie['availableSources'];
+            $sources = $movie['available_sources'];
             // if(count($sources) < 0){
             //     $play_lines = [];
             // }else{
