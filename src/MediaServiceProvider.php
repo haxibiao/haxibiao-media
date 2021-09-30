@@ -58,6 +58,7 @@ class MediaServiceProvider extends ServiceProvider
                 Console\MovieCommentSync::class,
                 Console\VideoSync::class,
                 Console\CrawlDouyinVideos::class,
+                Console\NeihanMovieSync::class,
                 Console\SearchableMovie::class,
                 Console\SearchableArticle::class,
                 Console\Audible\AudibleSync::class,
@@ -116,8 +117,8 @@ class MediaServiceProvider extends ServiceProvider
             //注册 migrations paths
             $this->loadMigrationsFrom($this->app->make('path.haxibiao-media.migrations'));
         }
-		app('router')->aliasMiddleware('movie', MovieGuard::class);
-	}
+        app('router')->aliasMiddleware('movie', MovieGuard::class);
+    }
 
     public function bindObservers()
     {
