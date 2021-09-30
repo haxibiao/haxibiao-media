@@ -7,6 +7,7 @@ use App\User;
 use Haxibiao\Breeze\Events\MovieRoomRefresh;
 use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Media\Image;
+use Haxibiao\Sns\Chat;
 
 trait MovieRoomResolvers
 {
@@ -47,6 +48,12 @@ trait MovieRoomResolvers
         $uids            = array_unique(array_merge($movieRoom->uids ?? [], $uids));
         $movieRoom->uids = $uids;
         $movieRoom->save();
+        //放映室成员同步到放映室聊天群
+        $chat = $movieRoom->chat;
+        if ($chat) {
+            $chat->uids = $uids;
+            $chat->save();
+        }
         return $movieRoom;
     }
 
@@ -66,12 +73,28 @@ trait MovieRoomResolvers
         $movieRoom = MovieRoom::firstOrNew([
             'user_id' => $user->id,
         ]);
+
+        //切换或者创建播放资源
         $movieRoom->forceFill([
             'name'         => $name,
             'movie_id'     => $movie_id,
             'series_index' => $series_index,
             'progress'     => $progress,
         ]);
+
+        //第一次创建放映室，一起创建放映室聊天群
+        if (empty($movieRoom->id)) {
+            $chat = Chat::create([
+                'subject' => $name,
+                'status'  => Chat::PUBLIC_STATUS, //默认公开群聊
+                'uids' => [$user->id], //初始成员
+                'user_id' => $user->id, // 聊天发起人（群主）
+                'type' => Chat::GROUP_TYPE, //聊天类型为群聊
+            ]);
+            $movieRoom->chat_id = $chat->id;
+        }
+
+        //可能会更新logo
         if ($icon) {
             $image = Image::saveImage($icon);
             if ($image) {

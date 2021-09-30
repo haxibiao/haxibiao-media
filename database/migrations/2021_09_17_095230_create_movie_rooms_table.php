@@ -18,6 +18,7 @@ class CreateMovieRoomsTable extends Migration
             $table->string('name')->comment('放映室名称');
             $table->string('icon')->nullable()->comment('封面');
             $table->unsignedInteger('user_id')->index()->comment('房主');
+            $table->unsignedInteger('chat_id')->index()->comment('关联群聊');
             $table->unsignedInteger('movie_id')->index()->comment('播放电影');
             $table->json('uids')->nullable()->comment('成员id');
 

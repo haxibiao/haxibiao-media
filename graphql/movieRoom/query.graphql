@@ -17,6 +17,10 @@ type MovieRoom {
   """
   user: User
   """
+  群聊
+  """
+  chat: Chat
+  """
   成员
   """
   users: [User!] @paginate(builder: "App\\MovieRoom@resolveMovieRoomUsers", defaultCount: 10)

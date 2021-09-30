@@ -1,6 +1,7 @@
 <?php
 namespace Haxibiao\Media;
 
+use App\Chat;
 use App\Movie;
 use App\User;
 use Haxibiao\Breeze\Model;
@@ -31,5 +32,10 @@ class MovieRoom extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function chat(): BelongsTo
+    {
+        return $this->belongsTo(Chat::class);
     }
 }
