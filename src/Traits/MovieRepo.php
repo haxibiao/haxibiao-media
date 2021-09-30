@@ -3,35 +3,35 @@
 namespace Haxibiao\Media\Traits;
 
 use GuzzleHttp\Client;
+use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\Video;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Haxibiao\Breeze\Exceptions\GQLException;
 use MeiliSearch\Client as MeiliSearchClient;
 
 trait MovieRepo
 {
     public static function addMeiliSearchIndex(Movie $movie)
     {
-        if(config('media.meilisearch.enable')){
+        if (config('media.meilisearch.enable')) {
             $masterKey = env('MEILISEARCH_KEY') ?? "hxb123";
-            $host = env('MEILISEARCH_HOST') ?? "meilisearch:7700";
-            if (empty($masterKey)) {
-                info("请先在 .env 中补充 'MEILISEARCH_KEY'");
-            }
+            $host      = env('MEILISEARCH_HOST') ?? "meilisearch:7700";
+            // if (empty($masterKey)) {
+            //     info("请先在 .env 中补充 'MEILISEARCH_KEY'");
+            // }
             if (empty($host)) {
                 info("请先在 .env 中补充 'MEILISEARCH_HOST' ");
             }
-            $client = new MeiliSearchClient($host, $masterKey);
-            $index = $client->index(config('app.name'));
-            $documents = [];
+            $client      = new MeiliSearchClient($host, $masterKey);
+            $index       = $client->index(config('app.name'));
+            $documents   = [];
             $documents[] = [
                 'name' => $movie->name,
                 'id'   => $movie->id,
             ];
-            $result = $index->addDocuments($documents);
+            $result   = $index->addDocuments($documents);
             $updateID = $result['updateId'];
             info("补充搜索词成功！！:$updateID");
         }

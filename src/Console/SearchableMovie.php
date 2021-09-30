@@ -42,10 +42,10 @@ class SearchableMovie extends Command
         $qb        = Movie::query()->whereNotNull('name');
         $masterKey = env('MEILISEARCH_KEY');
         $host      = env('MEILISEARCH_HOST');
-        if (empty($masterKey)) {
-            $this->error("请先在 .env 中补充 'MEILISEARCH_KEY' ");
-            return;
-        }
+        // if (empty($masterKey)) {
+        //     $this->error("请先在 .env 中补充 'MEILISEARCH_KEY' ");
+        //     return;
+        // }
         if (empty($host)) {
             $this->error("请先在 .env 中补充 'MEILISEARCH_HOST' ");
             return;

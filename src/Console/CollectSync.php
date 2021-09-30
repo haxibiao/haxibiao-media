@@ -2,11 +2,10 @@
 
 namespace Haxibiao\Media\Console;
 
-use App\EditorChoice;
-use Haxibiao\Media\Movie;
+use GuzzleHttp\Client;
+use Haxibiao\Content\Traits\Choiceable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 class CollectSync extends Command
@@ -70,40 +69,45 @@ class CollectSync extends Command
         }
 
         //合集分类
-        $qb = DB::connection('mediachain')->table('collects')->chunkById(100, function ($collects) {
-            foreach ($collects as $collect) {
-                try {
-                    $this->info("开始同步合集【{$collect->name}】数据");
 
-                    //创建精选
-                    $editorChoice = EditorChoice::firstOrCreate([
-                        'editor_id' => 1,
-                        'title'     => $collect->name,
-                    ]);
+        $client   = new Client();
+        $response = $client->request("GET", "https://neihancloud.com/api/collects");
+        // if ($response->getStatusCode() == 200) {
+        //     \App\EditorChoice::truncate();
+        //     Choiceable::where('choiceable_type', 'movies')->delete();
+        // }
+        $collects = $response->getBody()->getContents();
+        $collects = json_decode($collects, true);
 
-                    //中间表关联数据不多，一口气全拿出来吧
-                    $movie_ids = DB::connection('mediachain')->table('movie_collects')
-                        ->where('collect_id', $collect->id)
-                        ->pluck('movie_id')
-                        ->toArray();
-                    $this->info("获取同步电影id成功...");
+        foreach ($collects['data'] as $collect) {
+            //创建精选
+            $editorChoice = \App\EditorChoice::firstOrCreate([
+                'title' => $collect['name'],
+                'rank'  => $collect['rank'],
+            ]);
 
-                    //拿到movie_key
-                    $movie_keys = DB::connection('mediachain')
-                        ->table('movies')
-                        ->whereIn('id', $movie_ids)
-                        ->pluck('movie_key')
-                        ->toArray();
-                    $this->info("获取同步电影movie_key成功...");
+            //中间表关联数据不多，一口气全拿出来吧
+            $movie_ids = DB::connection('mediachain')->table('movie_collects')
+                ->where('collect_id', $collect['id'])
+                ->pluck('movie_id')
+                ->toArray();
 
-                    $movie_ids = Movie::whereIn('movie_key', $movie_keys)->pluck('id')->toArray();
-                    //保存关系
-                    $editorChoice->movies()->sync($movie_ids);
-                    $this->info("精选电影关系保存成功！！！");
-                } catch (\Exception $e) {
-                    Log::error($e);
-                }
+            //拿到movie_key
+            $movie_keys = DB::connection('mediachain')
+                ->table('movies')
+                ->whereIn('id', $movie_ids)
+                ->pluck('movie_key')
+                ->toArray();
+
+            $movie_ids = \App\Movie::whereIn('movie_key', $movie_keys)->pluck('id')->toArray();
+            //保存关系
+            foreach ($movie_ids as $movie_id) {
+                Choiceable::firstOrCreate([
+                    'editor_choice_id' => $editorChoice->id,
+                    'choiceable_type'  => 'movies',
+                    'choiceable_id'    => $movie_id,
+                ]);
             }
-        });
+        }
     }
 }
