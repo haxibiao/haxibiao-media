@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 use App\MovieRoom;
 use App\User;
+use Haxibiao\Breeze\Events\MovieRoomRefresh;
 use Haxibiao\Breeze\Exceptions\UserException;
 use Haxibiao\Media\Image;
 
@@ -78,6 +79,7 @@ trait MovieRoomResolvers
             }
         }
         $movieRoom->save();
+        event(new MovieRoomRefresh($movieRoom));
         return $movieRoom;
     }
 }
