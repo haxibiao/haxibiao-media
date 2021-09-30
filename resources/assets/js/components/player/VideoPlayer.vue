@@ -93,7 +93,7 @@ export default {
                 }
             });
             let that = this;
-            this.dp.on('error', function () {
+            this.player.on('error', function () {
                 console.log("error url : " + that.source);
                 if (that.source.indexOf("neihancloud") != -1 && that.source.indexOf(".m3u8") == -1) {
                     that.source = that.source + ".m3u8";
