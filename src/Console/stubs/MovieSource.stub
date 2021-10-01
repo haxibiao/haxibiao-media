@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use Haxibiao\Media\MovieSource as BaseMovieSource;
+
+class MovieSource extends BaseMovieSource
+{
+
+}

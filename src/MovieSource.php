@@ -27,6 +27,6 @@ class MovieSource extends Model
         if (config('media.enable_mediachain')) {
             return "mediachain.movie_sources";
         }
-        return 'movies';
+        return 'movie_sources';
     }
 }
