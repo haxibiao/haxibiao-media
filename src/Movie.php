@@ -19,12 +19,13 @@ use Haxibiao\Sns\Traits\WithSns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Laravel\Scout\Searchable;
 
 class Movie extends Model
 {
     use HasFactory;
     use MovieRepo;
-    // use Searchable;
+    use Searchable;
     use MovieResolvers;
     use MovieAttrs;
     use WithSns;
