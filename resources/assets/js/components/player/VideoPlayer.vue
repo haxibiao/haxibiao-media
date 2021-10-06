@@ -89,9 +89,6 @@ export default {
         playerEventListener() {
             let that = this;
             setTimeout(function () {
-                console.log('this.movie_key', that.movie_key);
-                console.log('document.domain', document.domain);
-                console.log('this.loadStatus', that.loadStatus);
                 axios.get('https://neihancloud.com/api/movie/report', {
                     params: {
                         movie_key: that.movie_key,
@@ -100,8 +97,8 @@ export default {
                         channel: 'web',
                     },
                 });
-
-            }, 5000);
+            }, 7000);
+            // window.clearTimeout(timeout);
             this.player.on('loadeddata', () => {
                 console.log("loadStatus", this.loadStatus);
                 this.loadStatus = true;
