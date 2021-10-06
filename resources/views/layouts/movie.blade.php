@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-	@pwa
+    @pwa
 
     <title>@yield('title') 全网高清免费在线观看 - {{ seo_site_name() }}</title>
     <meta name="keywords" content="@yield('keywords')" />
@@ -39,7 +39,9 @@
         @yield('content')
         @include('parts.movie.modal.login')
     </div>
-    @include('parts.movie.sidebar')
+    @if (\Str::contains(\URL::current(), 'juhaokan'))
+        @include('parts.movie.sidebar')
+    @endif
 
     {{-- 先注入的vue APP user --}}
     @if (Auth::user())

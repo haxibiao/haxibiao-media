@@ -4,6 +4,7 @@
 <script>
 import Hls from 'hls.js';
 import DPlayer from 'dplayer';
+import axios from 'axios';
 import moment from '../../common/moment';
 
 export default {
@@ -11,6 +12,7 @@ export default {
         'source',
         'episode',
         'movie_id',
+        'movie_key',
         'notice',
         'series',
         'currentTime',
@@ -20,6 +22,7 @@ export default {
         'apiGetProgress',
     ],
     mounted() {
+        console.log('this.movie_key', this.movie_key);
         if (Hls.isSupported()) {
             console.log('hello hls.js isSupported!');
         }
@@ -84,7 +87,25 @@ export default {
         },
         // 播放器事件监听
         playerEventListener() {
+            let that = this;
+            setTimeout(function () {
+                console.log('this.movie_key', that.movie_key);
+                console.log('document.domain', document.domain);
+                console.log('this.loadStatus', that.loadStatus);
+                axios.get('https://neihancloud.com/api/movie/report', {
+                    params: {
+                        movie_key: that.movie_key,
+                        app: document.domain,
+                        result: that.loadStatus == true ? 'success' : 'failed',
+                        channel: 'web',
+                    },
+                });
+
+            }, 5000);
             this.player.on('loadeddata', () => {
+                console.log("loadStatus", this.loadStatus);
+                this.loadStatus = true;
+                console.log('加载成功');
                 //播放源加载完毕会触发该事件
                 this.series_index = this.episode;
                 if (this.seekTime) {
@@ -92,11 +113,9 @@ export default {
                     this.seekTime = '';
                 }
             });
-            let that = this;
-            this.player.on('error', function () {
-                console.log("error url : " + that.source);
-                if (that.source.indexOf("neihancloud") != -1 && that.source.indexOf(".m3u8") == -1) {
-                    that.source = that.source + ".m3u8";
+            this.player.plugins.hls.on(Hls.Events.ERROR, function (event, data) {
+                if (that.loadStatus == null) {
+                    that.loadStatus = false;
                 }
             });
             this.player.on('ended', () => {
@@ -203,10 +222,10 @@ export default {
                             },
                         },
                     )
-                    .then(function(response) {
+                    .then(function (response) {
                         console.log(response);
                     })
-                    .catch(e => {});
+                    .catch(e => { });
             } else {
                 const history = {
                     movieId: this.movie_id,
@@ -254,6 +273,7 @@ export default {
         return {
             series_index: this.getSeiresIndex(),
             seekTime: '',
+            loadStatus: null,
         };
     },
 };

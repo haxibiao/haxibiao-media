@@ -22,6 +22,7 @@
                                     :source.sync="source"
                                     :episode.sync="currentEpisode"
                                     :movie_id="movie.id"
+                                    :movie_key="movieData.movie_key"
                                     :series="series"
                                     :apiDanmu="apiDanmu"
                                     :apiSaveProgress="apiSaveProgress"
@@ -70,7 +71,11 @@
                         <span class="mobile">举报</span>
                     </a>
                 </li>
-                <li class="fl operation download-app" dropdown-target=".download-app_qrcode" dropdown-toggle="hover">
+                <li
+                    class="fl operation download-app"
+                    dropdown-target=".download-app_qrcode"
+                    dropdown-toggle="hover"
+                >
                     <a :href="downloadPageUrl" target="_blank">
                         <i class="iconfont icon-mobile"></i>
                         <span class="mobile">观看</span>
@@ -84,7 +89,12 @@
                         </div>
                     </div>
                 </li>
-                <el-popover placement="bottom" trigger="manual" v-model="editingVisible" v-if="videoDuration">
+                <el-popover
+                    placement="bottom"
+                    trigger="manual"
+                    v-model="editingVisible"
+                    v-if="videoDuration"
+                >
                     <movie-editing
                         :api-clip="apiClip"
                         :movieId="movie.id"
@@ -103,8 +113,11 @@
                     </li>
                 </el-popover>
                 <li class="fl operation">
-                        <a href="https://jq.qq.com/?_wv=1027&k=w9450OnJ" target="_blank">
-                        <i class="iconfont icon-qunliao" style="color: #0db30b; font-size: 1.1rem; margin-right: 0.2rem;"></i>
+                    <a href="https://jq.qq.com/?_wv=1027&k=w9450OnJ" target="_blank">
+                        <i
+                            class="iconfont icon-qunliao"
+                            style="color: #0db30b; font-size: 1.1rem; margin-right: 0.2rem;"
+                        ></i>
                         <span class="mobile">加入群聊</span>
                     </a>
                 </li>
@@ -120,7 +133,7 @@
                             <span class="mobile">线路</span>
                         </a>
                     </li>
-                </el-popover> -->
+                </el-popover>-->
                 <li class="fr operation" style="margin: 0">
                     <a
                         :class="{ disabled: series.length <= currentEpisode }"
@@ -154,14 +167,21 @@
                     <div class="video_desc">
                         <h3 class="title">
                             {{ movie.name }}&nbsp;
-                            <small class="text-ep" v-if="series.length > 1">第{{ currentEpisode }}集</small>
+                            <small
+                                class="text-ep"
+                                v-if="series.length > 1"
+                            >第{{ currentEpisode }}集</small>
                         </h3>
                     </div>
                     <div class="video_desc">
-                        <div class="circuitry" v-if="movie && movie.play_lines && movie.play_lines.length > 0">
+                        <div
+                            class="circuitry"
+                            v-if="movie && movie.play_lines && movie.play_lines.length > 0"
+                        >
                             <el-dropdown @command="switchLine">
                                 <span class="el-dropdown-link" style="color: #ff0000">
-                                    {{ playLineName }}<i class="el-icon-arrow-down el-icon--right"></i>
+                                    {{ playLineName }}
+                                    <i class="el-icon-arrow-down el-icon--right"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item
@@ -169,16 +189,15 @@
                                         :key="index"
                                         :command="index"
                                         :disabled="index == lineSelected"
-                                    >
-                                        {{ lineName }}
-                                    </el-dropdown-item>
+                                    >{{ lineName }}</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
                         </div>
                         <div class="type">
                             {{ movie.score || Math.round(Math.max(6, Math.random() * 10)) + '.' + 0 }}分&nbsp;/&nbsp;
-                            <a href="javascript:void(0);">{{ movie.region || '未知' }}</a
-                            >&nbsp;/&nbsp;
+                            <a
+                                href="javascript:void(0);"
+                            >{{ movie.region || '未知' }}</a>&nbsp;/&nbsp;
                             <a href="javascript:void(0);">{{ movie.type_name || '未知' }}</a>
                         </div>
                     </div>
@@ -203,9 +222,7 @@
                                     !(series.length > 1) && 'btn-md',
                                 ]"
                                 v-on:click="clickEpisode(index)"
-                            >
-                                {{ index + 1 }}
-                            </a>
+                            >{{ index + 1 }}</a>
                         </li>
                     </ul>
                 </div>
@@ -240,13 +257,14 @@ export default {
         }
     },
     mounted() {
+        console.log('this.movieData.movie_key', this.movieData.movie_key);
         if (this.movieData !== null && typeof this.movieData === 'object') {
             this.movie = this.movieData;
             console.log('movie', this.movieData);
 
             this.series = this.movie.play_lines[0].data || this.movie.series || [];
             this.playLineName = this.movie.play_lines[0].name || this.movie.series.source_name || '默认';
-            
+
             //线路信息
             if (this.movie.play_lines) {
                 let lines = [];
@@ -264,7 +282,7 @@ export default {
 
         const that = this;
         let apiReport = this.apiReport ? this.apiReport : '/api/movie/report';
-        this.$nextTick(function() {
+        this.$nextTick(function () {
             // 举报视频submit事件
             $('#report-modal .btn-submit').on('click', function reportSubmit(event) {
                 const params = $('#report-form').serialize();
@@ -275,12 +293,12 @@ export default {
                     processData: false,
                     contentType: false,
                 })
-                    .done(function(res) {
+                    .done(function (res) {
                         if (res.data) {
                         } else if (res.message) {
                         }
                     })
-                    .fail(function(err) {})
+                    .fail(function (err) { })
                     .always(() => {
                         $('#report-modal').modal('hide');
                     });
@@ -338,7 +356,7 @@ export default {
                         },
                     }
                 )
-                .then(function(response) {
+                .then(function (response) {
                     if (response && response.data) {
                         that.noticeInfo = that.movie.isliked ? '视频已收入我的喜欢' : '';
                     } else {
@@ -374,7 +392,7 @@ export default {
                         },
                     }
                 )
-                .then(function(response) {
+                .then(function (response) {
                     if (response && response.data) {
                         that.noticeInfo = that.movie.isFan ? '视频已放到收藏夹' : '';
                     } else {
