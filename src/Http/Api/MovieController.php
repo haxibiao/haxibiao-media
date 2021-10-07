@@ -22,7 +22,8 @@ class MovieController extends Controller
 
     public function update(Request $request)
     {
-        info($request->all());
+        $movie = $request->get('data');
+        info(json_decode($movie, true));
     }
 
     //影片列表
