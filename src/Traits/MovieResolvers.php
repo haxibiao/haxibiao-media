@@ -364,17 +364,17 @@ trait MovieResolvers
         }
         $log->save();
 
-        // if (config('media.meilisearch.enable', false)) {
-        //     return AppMovie::search($keyword);
-        // } else {
-        //去mediachain搜索电影
-        $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
-        $items      = data_get($pageResult, 'data');
-        $movie_keys = collect($items)->pluck('movie_key')->toArray();
-        $movie_ids  = implode(',', $movie_keys);
-        return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
-        // }
-
+        if (config('media.meilisearch.enable', false)) {
+            return Movie::search($keyword);
+        } else {
+            //去mediachain搜索电影
+            $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
+            $items      = data_get($pageResult, 'data');
+            $movie_keys = collect($items)->pluck('movie_key')->toArray();
+            $movie_ids  = implode(',', $movie_keys);
+            return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
+            // }
+        }
         // $pageResult->paginatorInfo = [
         //     'currentPage'  => $page,
         //     'total'        => $total,
