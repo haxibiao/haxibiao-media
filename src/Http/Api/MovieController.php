@@ -9,6 +9,7 @@ use App\Report;
 use App\User;
 use App\Video;
 use Haxibiao\Helpers\utils\BadWordUtils;
+use Haxibiao\Media\Console\MovieSync;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
 use Haxibiao\Media\Traits\MovieRepo;
@@ -23,7 +24,21 @@ class MovieController extends Controller
     public function update(Request $request)
     {
         $movie = $request->get('data');
-        info(json_decode($movie, true));
+        // 效验影片数据，如果数据正常
+        if (!isset($movie['id'])) {
+            return;
+        }
+        $model = Movie::firstOrNew([
+            'movie_key' => $movie['id'],
+        ]);
+        if (!$model) {
+            return;
+        }
+        $sources = $movie['available_sources'];
+        $model   = MovieSync::fillMovieModel($movie, $model);
+        MovieSync::createRelationModel($model);
+        //同步保存影片线路数据
+        MovieSync::saveMovieSources($sources, $model);
     }
 
     //影片列表

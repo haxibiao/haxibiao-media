@@ -304,50 +304,12 @@ class MovieSync extends Command
             //     }
             // }
             // $movie['play_lines']  = $play_lines;
-            $movie['custom_type'] = $movie['custom_type'];
 
-            if ($movie['custom_type'] == '电影') {
-                $movie['finished'] = 1;
-            } else {
-                $movie['finished'] = $movie['finished'];
-            }
-
-            $movie['has_playurl']  = $movie['has_playurl'];
-            $movie['finished']     = $movie['finished'];
-            $movie['source_names'] = $movie['source_names'];
-
-            $model->forceFill(array_only($movie, [
-                'source',
-                'source_key',
-                'movie_key',
-                'introduction',
-                'cover',
-                'producer',
-                'year',
-                'region',
-                'actors',
-                'miner',
-                'count_series',
-                'rank',
-                'country',
-                'subname',
-                'score',
-                'tags',
-                'hits',
-                'lang',
-                'type',
-                'data',
-                'finished',
-                'has_playurl',
-                'custom_type',
-                // 'play_lines',
-                'source_names',
-            ]));
-            $model->saveQuietly();
-            $this->createRelationModel($model);
+            self::fillMovieModel($movie, $model);
+            self::createRelationModel($model);
 
             //同步保存影片线路数据
-            $this->saveMovieSources($sources, $model);
+            self::saveMovieSources($sources, $model);
 
             DB::commit();
             $success++;
@@ -373,7 +335,44 @@ class MovieSync extends Command
         }
     }
 
-    public function saveMovieSources($sources, $model)
+    public static function fillMovieModel(array $movie, Movie $model)
+    {
+        if ($movie['custom_type'] == '电影') {
+            $movie['finished'] = 1;
+        }
+
+        $model->forceFill(array_only($movie, [
+            'source',
+            'source_key',
+            'movie_key',
+            'introduction',
+            'cover',
+            'producer',
+            'year',
+            'region',
+            'actors',
+            'miner',
+            'count_series',
+            'rank',
+            'country',
+            'subname',
+            'score',
+            'tags',
+            'hits',
+            'lang',
+            'type',
+            'data',
+            'finished',
+            'has_playurl',
+            'custom_type',
+            // 'play_lines',
+            'source_names',
+        ]));
+        $model->saveQuietly();
+        return $model;
+    }
+
+    public static function saveMovieSources($sources, $model)
     {
         foreach ($sources as $source) {
             $movieSource = MovieSource::firstOrNew([
@@ -390,7 +389,7 @@ class MovieSync extends Command
         }
     }
 
-    public function createRelationModel(Movie $movie)
+    public static function createRelationModel(Movie $movie)
     {
         $region = $movie->region;
         if (!empty($region)) {
