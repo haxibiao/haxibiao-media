@@ -19,6 +19,12 @@ use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
+
+    public function update(Request $request)
+    {
+        info($request->all());
+    }
+
     //影片列表
     public function index()
     {

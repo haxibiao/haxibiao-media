@@ -29,6 +29,7 @@ Route::post('resolve/video', 'VideoController@resolveMetadata');
 //电影api
 Route::group(['prefix' => 'movie'], function ($api) {
     Route::any('/clip', 'MovieController@clip');
+    Route::any('/update', 'MovieController@update');
     Route::any('/update_video_cover', 'MovieController@updateClipVideoCover');
     Route::post('/danmu/v3', 'MovieController@sendDanmu');
     Route::get('/danmu/v3', 'MovieController@danmu');
