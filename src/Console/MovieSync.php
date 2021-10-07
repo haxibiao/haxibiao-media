@@ -351,8 +351,6 @@ class MovieSync extends Command
             'year',
             'region',
             'actors',
-            'miner',
-            'count_series',
             'rank',
             'country',
             'subname',

@@ -24,6 +24,7 @@ class MovieController extends Controller
     public function update(Request $request)
     {
         $movie = $request->get('data');
+        $movie = json_decode($movie, true);
         // 效验影片数据，如果数据正常
         if (!isset($movie['id'])) {
             return;
