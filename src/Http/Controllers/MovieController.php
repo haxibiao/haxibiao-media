@@ -61,8 +61,9 @@ class MovieController extends Controller
         $query = request()->get('q');
         if (config('media.meilisearch.enable', false)) {
             $result = Movie::search($query)->paginate(10);
+        } else {
+            $result = Movie::publish()->orderBy('id')->where('name', 'like', '%' . $query . '%')->paginate(10);
         }
-        $result = Movie::publish()->orderBy('id')->where('name', 'like', '%' . $query . '%')->paginate(10);
         $result->appends(['q' => $query]);
         $hot       = Movie::publish()->orderBy('id')->paginate(10);
         $recommend = Movie::publish()->where('rank', 30)->take(4)->inRandomOrder()->get();
@@ -324,25 +325,25 @@ class MovieController extends Controller
 
     public function dongman()
     {
-        $movies = Movie::where('custom_type','动漫')->orderBy('rank','desc')->latest('updated_at')->paginate(24);
+        $movies = Movie::where('custom_type', '动漫')->orderBy('rank', 'desc')->latest('updated_at')->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("动漫")->with('cate_id', 1);
     }
 
     public function dianying()
     {
-        $movies = Movie::where('custom_type','电影')->orderBy('rank','desc')->latest('updated_at')->paginate(24);
+        $movies = Movie::where('custom_type', '电影')->orderBy('rank', 'desc')->latest('updated_at')->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("电影")->with('cate_id', 1);
     }
 
     public function dianshiju()
     {
-        $movies = Movie::where('custom_type','电视剧')->orderBy('rank','desc')->latest('updated_at')->paginate(24);
+        $movies = Movie::where('custom_type', '电视剧')->orderBy('rank', 'desc')->latest('updated_at')->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("电视剧")->with('cate_id', 1);
     }
 
     public function zongyi()
     {
-        $movies = Movie::whereIn('custom_type',['综艺','真人秀'])->orderBy('rank','desc')->latest('updated_at')->paginate(24);
+        $movies = Movie::whereIn('custom_type', ['综艺', '真人秀'])->orderBy('rank', 'desc')->latest('updated_at')->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("综艺")->with('cate_id', 1);
     }
 }
