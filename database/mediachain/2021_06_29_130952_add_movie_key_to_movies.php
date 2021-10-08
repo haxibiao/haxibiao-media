@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateRankToMoviesTable extends Migration
+class AddMovieKeyToMovies extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,11 @@ class UpdateRankToMoviesTable extends Migration
     public function up()
     {
         Schema::table('movies', function (Blueprint $table) {
-            if (Schema::hasColumn('movies', 'rank')) {
-                $table->integer('rank')->index()->default(0)->comment('权重')->change();
+
+            if (!Schema::hasColumn('movies', 'movie_key')) {
+                $table->string('movie_key', 50)->nullable()->index()->comment('资源内部UID');
             }
+
         });
     }
 
@@ -27,5 +29,8 @@ class UpdateRankToMoviesTable extends Migration
      */
     public function down()
     {
+        Schema::table('movies', function (Blueprint $table) {
+            //
+        });
     }
 }
