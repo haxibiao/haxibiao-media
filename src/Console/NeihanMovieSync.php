@@ -2,13 +2,13 @@
 
 namespace Haxibiao\Media\Console;
 
-use App\MovieSource;
 use Haxibiao\Media\Actor;
 use Haxibiao\Media\Director;
 use Haxibiao\Media\Movie;
 use Haxibiao\Media\MovieActor;
 use Haxibiao\Media\MovieDirector;
 use Haxibiao\Media\MovieRegion;
+use Haxibiao\Media\MovieSource;
 use Haxibiao\Media\MovieType;
 use Haxibiao\Media\Region;
 use Haxibiao\Media\Type;
@@ -149,11 +149,11 @@ class NeihanMovieSync extends Command
             ->when($region = data_get($this->options(), 'region'), function ($q) use ($region) {
                 $q->where('region', $region);})
             ->when($type = data_get($this->options(), 'type'), function ($q) use ($type) {
-                $q->where('type_name', $type);})
+                $q->where('types', $type);})
             ->when($year = data_get($this->options(), 'year'), function ($q) use ($year) {
                 $q->where('year', $year);})
-            ->when($producer = data_get($this->options(), 'producer'), function ($q) use ($producer) {
-                $q->where('producer', $producer);})
+            ->when($directors = data_get($this->options(), 'producer'), function ($q) use ($directors) {
+                $q->where('directors', $directors);})
             ->when($movie_name = data_get($this->options(), 'movie_name'), function ($q) use ($movie_name) {
                 $q->where('name', $movie_name);
             })
@@ -183,11 +183,11 @@ class NeihanMovieSync extends Command
     {
         DB::beginTransaction();
         try {
-            //未处理好source_key之前，先按 name 和 producer 排重导入
+            //未处理好source_key之前，先按 name 和 directors 排重导入
             $movie = @json_decode(json_encode($movie), true);
             $model = Movie::firstOrNew([
                 'name'     => $movie['name'],
-                'producer' => $movie['producer'],
+                'producer' => $movie['producer'] ?? $movie['directors'],
             ]);
 
             $movieExists = $model->id > 0;
@@ -216,12 +216,12 @@ class NeihanMovieSync extends Command
             }
             $movie['region'] = $region;
 
-            $movie['producer'] = str_limit($movie['producer'], 97, '...');
+            $movie['producer'] = str_limit($movie['producer'] ?? $movie['directors'], 97, '...');
             $movie['actors']   = str_limit($movie['actors'], 97, '...');
             //剔除简介html代码
             $movie['introduction'] = strip_tags($movie['introduction'] ?? '');
             //同步type
-            $movie['type'] = $movie['type_name'];
+            $movie['type'] = $movie['type_name'] ?? $movie['types'];
 
             $default_sereies = @json_decode($movie['data'], true) ?? [];
             $movie['data']   = $default_sereies;
@@ -291,7 +291,14 @@ class NeihanMovieSync extends Command
 
             // $play_lines = [];
             // //获取影片线路 - movie_sources
-            $sources = $movie['available_sources'];
+            $sources = $movie['available_sources'] ?? null;
+            if (empty($sources)) {
+                $sources = DB::connection('mediachain')->table('movie_sources')
+                    ->where('movie_id', $movie['id'])->get();
+                $sources = @json_decode(json_encode($sources), true);
+            }
+
+            // $sources = $movie['available_sources'];
             // if(count($sources) < 0){
             //     $play_lines = [];
             // }else{
