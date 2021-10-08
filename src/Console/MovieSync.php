@@ -380,13 +380,18 @@ class MovieSync extends Command
     public static function saveMovieSources($sources, $model)
     {
         foreach ($sources as $source) {
+
             $movieSource = MovieSource::firstOrNew([
                 'name' => $source['name'],
                 'url'  => $source['url'],
             ]);
-            $movieSource->movie_id   = $model->id;
-            $movieSource->rank       = $source['rank'];
-            $movieSource->play_urls  = $source['play_urls'];
+            $movieSource->movie_id = $model->id;
+            $movieSource->rank     = $source['rank'];
+            $play_lines            = $source['play_urls'];
+            if (is_string($play_lines)) {
+                $play_lines = json_decode($play_lines, true);
+            }
+            $movieSource->play_urls  = $play_lines;
             $movieSource->remark     = $source['remark'];
             $movieSource->created_at = now();
             $movieSource->updated_at = now();

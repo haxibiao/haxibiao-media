@@ -75,9 +75,6 @@ trait MovieAttrs
             $source_url  = $play_line['url'] ?? null;
             $source_name = $play_line['name'] ?? null;
             $datas       = $play_line['data'];
-            if (is_string($datas)) {
-                $datas = json_decode($datas, true);
-            }
             if (!empty($datas) && count($datas) > 0) {
                 foreach ($datas as $data) {
                     $name     = $data['name'];
