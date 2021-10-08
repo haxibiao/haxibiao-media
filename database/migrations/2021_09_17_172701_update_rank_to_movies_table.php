@@ -15,6 +15,12 @@ class UpdateRankToMoviesTable extends Migration
     {
         Schema::table('movies', function (Blueprint $table) {
             if (Schema::hasColumn('movies', 'rank')) {
+                //先确保index不重复创建失败
+                $sm            = Schema::getConnection()->getDoctrineSchemaManager();
+                $doctrineTable = $sm->listTableDetails('movies');
+                if ($doctrineTable->hasIndex('movies_rank_index')) {
+                    $table->dropIndex('movies_rank_index');
+                }
                 $table->integer('rank')->index()->default(0)->comment('权重')->change();
             }
         });
