@@ -387,8 +387,12 @@ class NeihanMovieSync extends Command
                 'name' => $source['name'],
                 'url'  => $source['url'],
             ]);
-            $movieSource->movie_id   = $model->id;
-            $movieSource->rank       = $source['rank'];
+            $movieSource->movie_id = $model->id;
+            $movieSource->rank     = $source['rank'];
+            if (is_string($play_lines)) {
+                $play_lines = json_decode($play_lines, true);
+            }
+
             $movieSource->play_urls  = $source['play_urls'];
             $movieSource->remark     = $source['remark'];
             $movieSource->created_at = now();
