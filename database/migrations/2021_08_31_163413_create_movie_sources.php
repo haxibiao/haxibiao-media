@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateMovieSources extends Migration
 {
+
     /**
      * Run the migrations.
      *
@@ -13,7 +14,15 @@ class CreateMovieSources extends Migration
      */
     public function up()
     {
-        Schema::create('movie_sources', function (Blueprint $table) {
+        //兼容本地容器多项目共享meiachain的movies模式
+        $table = 'movie_sources';
+        if (config('media.enable_mediachain')) {
+            $table = 'mediachain.movie_sources';
+        }
+        if (Schema::hasTable($table)) {
+            return;
+        }
+        Schema::create($table, function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('movie_id')->index();
             $table->string('name')->comment('线路名');
@@ -32,6 +41,11 @@ class CreateMovieSources extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('movie_sources');
+        //兼容本地容器多项目共享meiachain的movies模式
+        $table = 'movie_sources';
+        if (config('media.enable_mediachain')) {
+            $table = 'mediachain.movie_sources';
+        }
+        Schema::dropIfExists($table);
     }
 }

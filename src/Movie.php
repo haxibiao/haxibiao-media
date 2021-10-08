@@ -52,6 +52,11 @@ class Movie extends Model
     //兼容本地movies，和共享的medichain模式
     public function getTable()
     {
+        return static::getTableName();
+    }
+
+    public static function getTableName()
+    {
         if (config('media.enable_mediachain')) {
             return "mediachain.movies";
         }
