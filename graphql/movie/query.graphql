@@ -81,6 +81,10 @@ type Movie {
   默认剧集的线路
   """
   series: [MovieData]
+  """
+  影片权重
+  """
+  rank:Int
 
   """
   剧集的所有线路
@@ -110,15 +114,21 @@ type Movie {
   """
   count_favorites: Int
   """
+  点赞数
+  """
+  count_likes:Int
+  """
   关联的合集
   """
   collection: Collection
-
   """
   关联的动态
   """
   post: Post
-
+  """
+  点赞状态
+  """
+  liked:Boolean
   """
   用户UGC动态汇总的专题
   """
@@ -228,17 +238,28 @@ extend type Query {
   最近求片着
   """
   latestMovieFixReporters: [MovieUser]
-    @paginate(resolver: "App\\Movie@resolvelatestMovieFixReporters", defaultCount: 10)
+    @paginate(builder: "App\\Movie@resolvelatestMovieFixReporters", defaultCount: 10)
 
   """
   大家都在搜
   """
   searchLogs:[JsonType] @field(resolver:"App\\SearchLog@resolveSearchLogs")
+
+  """
+  用户粘贴的movie
+  """
+  sniffMovies: [Movie] @paginate(builder: "App\\Movie@resolveSniffMovies", defaultCount: 10)
 }
 
 type BreezeMoviePaginator {
   paginatorInfo: PaginatorInfo!
   data: [Movie!]
+}
+
+type Sniff {
+  id:Int
+  url:String
+  movie:Movie @belongsTo
 }
 
 type MovieShareData {
@@ -255,6 +276,7 @@ type PlayLine {
   """
   name: String
   data: JsonType
+  url:String
 }
 
 """
