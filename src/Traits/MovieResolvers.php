@@ -259,6 +259,9 @@ trait MovieResolvers
         if (!isset($movie) && $movie_key = data_get($args, 'movie_key')) {
             $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
         }
+        if (empty($movie)) {
+            return null;
+        }
 
         // if (isset($movie)) {
         //     $movie->hits = $movie->hits + 1;

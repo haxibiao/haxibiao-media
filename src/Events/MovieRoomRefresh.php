@@ -1,6 +1,6 @@
 <?php
 
-namespace Haxibiao\Breeze\Events;
+namespace Haxibiao\Media\Events;
 
 use App\MovieRoom;
 use Illuminate\Broadcasting\InteractsWithSockets;

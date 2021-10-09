@@ -4,8 +4,8 @@ namespace Haxibiao\Media\Traits;
 
 use App\MovieRoom;
 use App\User;
-use Haxibiao\Breeze\Events\MovieRoomRefresh;
 use Haxibiao\Breeze\Exceptions\UserException;
+use Haxibiao\Media\Events\MovieRoomRefresh;
 use Haxibiao\Media\Image;
 use Haxibiao\Sns\Chat;
 
@@ -53,6 +53,9 @@ trait MovieRoomResolvers
         if ($chat) {
             $chat->uids = $uids;
             $chat->save();
+            if (count($uids) > Chat::MAX_USERS_NUM) {
+                throw new \Exception('人数超过上限！');
+            }
         }
         return $movieRoom;
     }
