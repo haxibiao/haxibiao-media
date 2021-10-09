@@ -168,7 +168,7 @@ class StickSync extends Command
             }
             $movie['region'] = $region;
 
-            $movie['producer'] = str_limit($movie['producer'] ?? $movie['directors'], 97, '...');
+            $movie['producer'] = str_limit($movie['producer'] ?? null, 97, '...');
             $movie['actors']   = str_limit($movie['actors'], 97, '...');
             //剔除简介html代码
             $movie['introduction'] = strip_tags($movie['introduction'] ?? '');
