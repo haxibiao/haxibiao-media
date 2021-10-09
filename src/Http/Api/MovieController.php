@@ -39,7 +39,7 @@ class MovieController extends Controller
         $model   = MovieSync::fillMovieModel($movie, $model);
         MovieSync::createRelationModel($model);
         //同步保存影片线路数据
-        MovieSync::saveMovieSources($sources, $model);
+        MovieSync::saveMoviePlayLines($sources, $model);
     }
 
     //影片列表

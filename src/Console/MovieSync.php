@@ -316,23 +316,11 @@ class MovieSync extends Command
             self::createRelationModel($model);
 
             //同步保存影片线路数据
-            self::saveMovieSources($sources, $model);
+            self::saveMoviePlayLines($sources, $model);
 
             DB::commit();
             $success++;
             $addOrUpdate = $movieExists ? '更新' : '新增';
-            if ($has_nunu) {
-                $addOrUpdate .= "(nunu)";
-                $nunu_count++;
-            }
-            if ($has_kkw) {
-                $addOrUpdate .= "(kkw)";
-                $nunu_count++;
-            }
-            if ($has_cokemv) {
-                $addOrUpdate .= "(cokemv)";
-                $nunu_count++;
-            }
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
         } catch (\Throwable$th) {
             DB::rollback();
@@ -356,6 +344,7 @@ class MovieSync extends Command
             'cover',
             'producer',
             'year',
+            'play_lines',
             'region',
             'actors',
             'rank',
@@ -377,7 +366,7 @@ class MovieSync extends Command
         return $model;
     }
 
-    public static function saveMovieSources($sources, $model)
+    public static function saveMoviePlayLines($sources, $model)
     {
         foreach ($sources as $source) {
 
