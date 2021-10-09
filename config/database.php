@@ -20,6 +20,27 @@ return [
             PDO::ATTR_PERSISTENT => true,
         ],
     ],
+
+    'juhaokantv' => [
+        'driver'         => 'mysql',
+        'url'            => env('DATABASE_URL'),
+        'host'           => 'hk013.haxibiao.com',
+        'port'           => '3366',
+        'database'       => 'juhaokantv',
+        'username'       => 'root',
+        'password'       => 'root',
+        'unix_socket'    => env('DB_SOCKET', ''),
+        'charset'        => 'utf8mb4',
+        'collation'      => 'utf8mb4_unicode_ci',
+        'prefix'         => '',
+        'prefix_indexes' => true,
+        'strict'         => false,
+        'engine'         => null,
+        'options'        => [
+            PDO::ATTR_PERSISTENT => true,
+        ],
+    ],
+
     //哈希云(短视频分布式节点，建议用本地容器/服务器最佳)
     'media'      => [
         'driver'         => 'mysql',
