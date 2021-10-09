@@ -135,7 +135,7 @@ class StickSync extends Command
             $movie = @json_decode(json_encode($movie), true);
             $model = Movie::firstOrNew([
                 'name'     => $movie['name'],
-                'producer' => $movie['producer'] ?? $movie['directors'],
+                'producer' => $movie['producer'] ?? null,
             ]);
 
             if ($model->id) {
