@@ -87,12 +87,12 @@ class StickSync extends Command
                     $this->info("获取同步电影movie_key成功...");
 
                     //同步sticks movies数据
-                    foreach ($movie_ids as $movie_id) {
-                        $movie = DB::connection('juhaokantv')->table('movies')->find($movie_id);
-                        if ($movie) {
-                            $this->syncMovie($movie);
-                        }
-                    }
+                    // foreach ($movie_ids as $movie_id) {
+                    //     $movie = DB::connection('juhaokantv')->table('movies')->find($movie_id);
+                    //     if ($movie) {
+                    //         $this->syncMovie($movie);
+                    //     }
+                    // }
 
                     //获取movie_ids
                     $movie_ids = Movie::whereIn('movie_key', $movie_keys)->pluck('id')->toArray();
