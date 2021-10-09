@@ -2,18 +2,18 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\Sniff;
-use App\MovieSource;
-use Haxibiao\Media\Movie;
+use Haxibiao\Breeze\Dimension;
+use Haxibiao\Breeze\Exceptions\GQLException;
+use Haxibiao\Content\Category;
 use Haxibiao\Content\Post;
+use Haxibiao\Helpers\utils\FFMpegUtils;
+use Haxibiao\Media\Movie;
+use Haxibiao\Media\MovieSource;
 use Haxibiao\Media\MovieUser;
 use Haxibiao\Media\SearchLog;
-use Haxibiao\Breeze\Dimension;
-use Haxibiao\Content\Category;
+use Haxibiao\Media\Sniff;
 use Illuminate\Support\Facades\DB;
-use Haxibiao\Helpers\utils\FFMpegUtils;
 use Illuminate\Support\Facades\Storage;
-use Haxibiao\Breeze\Exceptions\GQLException;
 
 trait MovieResolvers
 {
