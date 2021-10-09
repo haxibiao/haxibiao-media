@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * 同步内涵云长视频内函数据
+ * 同步内涵云内函长视频数据
  * 文档地址： http: //neihancloud.com/movie/
  */
 class NeihanMovieSync extends Command
@@ -47,7 +47,7 @@ class NeihanMovieSync extends Command
      *
      * @var string
      */
-    protected $description = '同步最新mediachain电影';
+    protected $description = '同步最新mediachain内函电影';
 
     /**
      * Create a new command instance.
@@ -237,6 +237,7 @@ class NeihanMovieSync extends Command
             if (empty($movie['source_key'])) {
                 $movie['source_key'] = $model->source_key;
             }
+            $sources = $movie['play_lines'];
 
             //其他线路
             $other_source = ['默认' => $default_sereies];
@@ -354,23 +355,11 @@ class NeihanMovieSync extends Command
             $this->createRelationModel($model);
 
             //同步保存影片线路数据
-            $this->saveMovieSources($sources, $model);
+            self::saveMoviePlayLines($sources, $model);
 
             DB::commit();
             $success++;
             $addOrUpdate = $movieExists ? '更新' : '新增';
-            if ($has_nunu) {
-                $addOrUpdate .= "(nunu)";
-                $nunu_count++;
-            }
-            if ($has_kkw) {
-                $addOrUpdate .= "(kkw)";
-                $nunu_count++;
-            }
-            if ($has_cokemv) {
-                $addOrUpdate .= "(cokemv)";
-                $nunu_count++;
-            }
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
         } catch (\Throwable$th) {
             DB::rollback();
@@ -380,7 +369,7 @@ class NeihanMovieSync extends Command
         }
     }
 
-    public function saveMovieSources($sources, $model)
+    public static function fillMovieModel(array $movie, Movie $model)
     {
         foreach ($sources as $source) {
             $movieSource = MovieSource::firstOrNew([
@@ -399,9 +388,43 @@ class NeihanMovieSync extends Command
             $movieSource->updated_at = now();
             $movieSource->save();
         }
+
+        $model->forceFill(array_only($movie, [
+            'source',
+            'source_key',
+            'movie_key',
+            'introduction',
+            'cover',
+            'producer',
+            'year',
+            'play_lines',
+            'region',
+            'actors',
+            'rank',
+            'country',
+            'subname',
+            'score',
+            'tags',
+            'hits',
+            'lang',
+            'type',
+            'data',
+            'finished',
+            'has_playurl',
+            'custom_type',
+            // 'play_lines',
+            'source_names',
+        ]));
+        $model->saveQuietly();
+        return $model;
     }
 
-    public function createRelationModel(Movie $movie)
+    public static function saveMoviePlayLines($sources, $model)
+    {
+        $model->update(['play_lines' => $sources]);
+    }
+
+    public static function createRelationModel(Movie $movie)
     {
         $region = $movie->region;
         if (!empty($region)) {

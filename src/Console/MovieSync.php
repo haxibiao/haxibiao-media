@@ -8,7 +8,6 @@ use Haxibiao\Media\Movie;
 use Haxibiao\Media\MovieActor;
 use Haxibiao\Media\MovieDirector;
 use Haxibiao\Media\MovieRegion;
-use Haxibiao\Media\MovieSource;
 use Haxibiao\Media\MovieType;
 use Haxibiao\Media\Region;
 use Haxibiao\Media\Type;
@@ -238,79 +237,7 @@ class MovieSync extends Command
                 $movie['source_key'] = $model->source_key;
             }
 
-            //其他线路
-            $other_source = ['默认' => $default_sereies];
-
-            //内涵云早期新增影片时源线路
-            if (isset($movie['data_source'])) {
-                $series = $movie['data_source'] ?? [];
-                if (count($series)) {
-                    $other_source['麻花云'] = $series;
-                }
-            }
-            $has_nunu = false;
-            if (isset($movie['nunu_source'])) {
-                $series = $movie['nunu_source'] ?? [];
-                if (count($series)) {
-                    //有nunu的可以优先尊重,覆盖默认
-                    $movie['data']             = $series;
-                    $movie['count_series']     = count($series);
-                    $other_source['努努云'] = $series;
-                    $has_nunu                  = true;
-                }
-            }
-            $has_kkw = false;
-            if (isset($movie['kkw_source'])) {
-                $series = $movie['kkw_source'] ?? [];
-                if (count($series)) {
-                    //默认的没有或者不全，可以用看看屋的做默认
-                    if (count($series) > count($default_sereies)) {
-                        $movie['data']         = $series;
-                        $movie['count_series'] = count($series);
-                    }
-                    $other_source['看看屋'] = $series;
-                    $has_kkw                   = true;
-                }
-            }
-
-            $has_cokemv = false;
-            if (isset($movie['cokemv_source'])) {
-                $series = @json_decode($movie['cokemv_source'], true) ?? [];
-                if (count($series)) {
-                    //默认的没有或者不全，可以用看看屋的做默认
-                    if (count($series) > count($default_sereies)) {
-                        $movie['data']         = $series;
-                        $movie['count_series'] = count($series);
-                    }
-                    $other_source['cokemv'] = $series;
-                    $has_cokemv             = true;
-                }
-            }
-
-            $movie['data_source'] = $other_source;
-
-            // $play_lines = [];
-            // //获取影片线路 - movie_sources
-            $sources = $movie['available_sources'] ?? null;
-            if (empty($sources)) {
-                $sources = DB::connection('mediachain')->table('movie_sources')
-                    ->where('movie_id', $movie['id'])->get();
-                $sources = @json_decode(json_encode($sources), true);
-            }
-
-            // $sources = $movie['available_sources'];
-            // if(count($sources) < 0){
-            //     $play_lines = [];
-            // }else{
-            //     foreach($sources as $source){
-            //         $play_lines[] = [
-            //             'name'      => $source['name'],
-            //             'url'       => $source['url'],
-            //             'data'      => $source['play_urls'],
-            //         ];
-            //     }
-            // }
-            // $movie['play_lines']  = $play_lines;
+            $sources = $movie['play_lines'] ?? null;
 
             self::fillMovieModel($movie, $model);
             self::createRelationModel($model);
@@ -368,24 +295,8 @@ class MovieSync extends Command
 
     public static function saveMoviePlayLines($sources, $model)
     {
-        foreach ($sources as $source) {
-
-            $movieSource = MovieSource::firstOrNew([
-                'name' => $source['name'],
-                'url'  => $source['url'],
-            ]);
-            $movieSource->movie_id = $model->id;
-            $movieSource->rank     = $source['rank'];
-            $play_lines            = $source['play_urls'];
-            if (is_string($play_lines)) {
-                $play_lines = json_decode($play_lines, true);
-            }
-            $movieSource->play_urls  = $play_lines;
-            $movieSource->remark     = $source['remark'];
-            $movieSource->created_at = now();
-            $movieSource->updated_at = now();
-            $movieSource->save();
-        }
+        $model->update(['play_lines' => $sources]);
+        dd($model);
     }
 
     public static function createRelationModel(Movie $movie)
