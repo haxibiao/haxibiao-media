@@ -109,12 +109,13 @@ class StickSync extends Command
                         $this->info("开始同步置顶信息....");
                         $model = new Stick();
                         $model->forceFill(array_only((array) $stick, [
-                            'editor_choice_id',
                             'place',
                             'rank',
                             'cover',
-                            'editor_id',
-                        ]))->save();
+                        ]));
+                        $model->editor_choice_id = $localEditorChoice->id;
+                        $model->editor_id        = 1;
+                        $model->save();
                     }
 
                 } catch (\Exception$e) {
