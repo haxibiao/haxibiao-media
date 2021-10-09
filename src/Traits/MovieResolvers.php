@@ -2,15 +2,16 @@
 
 namespace Haxibiao\Media\Traits;
 
-use App\MovieSource;
 use Haxibiao\Breeze\Dimension;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Content\Category;
 use Haxibiao\Content\Post;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
+use Haxibiao\Media\MovieSource;
 use Haxibiao\Media\MovieUser;
 use Haxibiao\Media\SearchLog;
+use Haxibiao\Media\Sniff;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -532,6 +533,15 @@ trait MovieResolvers
             ->where('posts.movie_id', $root->id)->whereNull('videos.movie_id')
             ->latest('posts.id')->take($top)->pluck('posts.id')->toArray();
         return Post::whereIn('id', $ids)->get();
+    }
+
+    public function resolveSniffMovies($root, $args, $content, $info)
+    {
+        $user = getUser();
+
+        $ids = Sniff::query()->where("user_id", $user->id)->where("status", Sniff::PUBLISH)->pluck('movie_id');
+
+        return Movie::query()->whereIn("id", $ids);
     }
 
 }

@@ -131,6 +131,11 @@ class Movie extends Model
         return 'movies';
     }
 
+    public function sources(): HasMany
+    {
+        return $this->hasMany(MovieSource::class);
+    }
+
     public function activity()
     {
         return $this->morphOne(Activity::class, 'activityable');

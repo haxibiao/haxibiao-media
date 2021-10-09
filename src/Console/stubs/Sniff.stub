@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use Haxibiao\Media\Sniff as BaseSniff;
+
+class Sniff extends BaseSniff
+{
+
+}
