@@ -33,7 +33,7 @@ class StickSync extends Command
      *
      * @var string
      */
-    protected $description = '同步电影数据到合集';
+    protected $description = '初始化stick置顶数据';
 
     /**
      * Create a new command instance.
@@ -55,7 +55,6 @@ class StickSync extends Command
         if (!Schema::hasTable('movies')) {
             return $this->error("当前数据库 没有movies表!");
         }
-        $this->info("执行前请确保先movie:sync");
         $this->database();
 
         return 0;
@@ -69,7 +68,7 @@ class StickSync extends Command
                 try {
                     $this->info("开始同步精选【{$editorChoice->title}】数据");
                     //创建精选
-                    $editorChoice = EditorChoice::firstOrCreate([
+                    $localEditorChoice = EditorChoice::firstOrCreate([
                         'editor_id' => 1,
                         'title'     => $editorChoice->title,
                         'summary'   => $editorChoice->summary,
@@ -98,7 +97,7 @@ class StickSync extends Command
                     //获取movie_ids
                     $movie_ids = Movie::whereIn('movie_key', $movie_keys)->pluck('id')->toArray();
                     //保存关系
-                    $editorChoice->movies()->sync($movie_ids);
+                    $localEditorChoice->movies()->sync($movie_ids);
                     $this->info("精选电影关系保存成功！！！");
 
                     $stick = DB::connection('juhaokantv')
