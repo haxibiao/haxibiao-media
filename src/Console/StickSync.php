@@ -90,7 +90,9 @@ class StickSync extends Command
                     //同步sticks movies数据
                     foreach ($movie_ids as $movie_id) {
                         $movie = DB::connection('juhaokantv')->table('movies')->find($movie_id);
-                        $this->syncMovie($movie);
+                        if ($movie) {
+                            $this->syncMovie($movie);
+                        }
                     }
 
                     //获取movie_ids
