@@ -296,7 +296,6 @@ class MovieSync extends Command
     public static function saveMoviePlayLines($sources, $model)
     {
         $model->update(['play_lines' => $sources]);
-        dd($model);
     }
 
     public static function createRelationModel(Movie $movie)
