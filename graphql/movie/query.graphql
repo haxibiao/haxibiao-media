@@ -84,7 +84,7 @@ type Movie {
   """
   影片权重
   """
-  rank:Int
+  rank: Int
 
   """
   剧集的所有线路
@@ -116,7 +116,7 @@ type Movie {
   """
   点赞数
   """
-  count_likes:Int
+  count_likes: Int
   """
   关联的合集
   """
@@ -128,7 +128,7 @@ type Movie {
   """
   点赞状态
   """
-  liked:Boolean
+  liked: Boolean
   """
   用户UGC动态汇总的专题
   """
@@ -154,6 +154,18 @@ type Movie {
   是否已经观看过了/正在观看
   """
   is_viewed: Boolean
+  """
+  是否完结
+  """
+  finished: Boolean
+  """
+  是否能播放
+  """
+  has_playurl: Boolean
+  """
+  影片类型
+  """
+  custom_type: String
 }
 
 extend type Query {
@@ -170,7 +182,8 @@ extend type Query {
     scopes: ScopesType
     page: Int = 1
     first: Int = 9
-  ): [Movie] @paginate(defaultCount: 9, builder: "App\\Movie@resolveCategoryMovie")
+  ): [Movie]
+    @paginate(defaultCount: 9, builder: "App\\Movie@resolveCategoryMovie")
 
   """
   获取过滤条件
@@ -180,17 +193,20 @@ extend type Query {
   """
   电影详情
   """
-  movie(movie_id: Int, movie_key: String): Movie @field(resolver: "App\\Movie@resolveMovie")
+  movie(movie_id: Int, movie_key: String): Movie
+    @field(resolver: "App\\Movie@resolveMovie")
 
   """
   个性推荐?(影厅：今日推荐)
   """
-  recommendMovies(count: Int = 7): [Movie] @field(resolver: "App\\Movie@resolveRecommendMovies")
+  recommendMovies(count: Int = 7): [Movie]
+    @field(resolver: "App\\Movie@resolveRecommendMovies")
 
   """
   影片的相关推荐
   """
-  relatedMovies(movie_id: Int!, limit: Int = 6): [Movie!] @field(resolver: "App\\Movie@resolveRelatedMovies")
+  relatedMovies(movie_id: Int!, limit: Int = 6): [Movie!]
+    @field(resolver: "App\\Movie@resolveRelatedMovies")
 
   """
   搜索电影
@@ -201,54 +217,68 @@ extend type Query {
   """
   热门长视频
   """
-  movies(user_id: Int, status: Int, keyword: String, orderBy: [OrderByClause!] @orderBy): [Movie!]
-    @paginate(builder: "App\\Movie@resolveMovies", defaultCount: 10)
+  movies(
+    user_id: Int
+    status: Int
+    keyword: String
+    orderBy: [OrderByClause!] @orderBy
+  ): [Movie!] @paginate(builder: "App\\Movie@resolveMovies", defaultCount: 10)
 
   """
   分享长视频
   """
-  shareMovie(id: Int): MovieShareData @field(resolver: "App\\Movie@getSharePciture")
+  shareMovie(id: Int): MovieShareData
+    @field(resolver: "App\\Movie@getSharePciture")
 
   """
   韩剧星球，高甜榜单接口
   """
-  sweetyRankList: [Movie!] @paginate(builder: "App\\Movie@sweetyRankList", defaultCount: 10)
+  sweetyRankList: [Movie!]
+    @paginate(builder: "App\\Movie@sweetyRankList", defaultCount: 10)
 
   """
   全部影视作品
   """
-  movieList: [Movie!] @paginate(builder: "App\\Movie@movieList", defaultCount: 9)
+  movieList: [Movie!]
+    @paginate(builder: "App\\Movie@movieList", defaultCount: 9)
 
   """
   影视解说列表
   """
-  explainMovieList: [Movie!] @paginate(builder: "App\\Movie@explainMovieList", defaultCount: 10)
+  explainMovieList: [Movie!]
+    @paginate(builder: "App\\Movie@explainMovieList", defaultCount: 10)
 
   """
   根据粘贴输入片名 查询电影列表
   """
-  findMovies(name: String!): [Movie!] @field(resolver: "App\\Movie@resolveFindMovies")
+  findMovies(name: String!): [Movie!]
+    @field(resolver: "App\\Movie@resolveFindMovies")
 
   """
   我的求片
   """
-  myReportMovieFixs: [MovieUser] @paginate(builder: "App\\Movie@resolveMyReportMovieFixs", defaultCount: 10)
+  myReportMovieFixs: [MovieUser]
+    @paginate(builder: "App\\Movie@resolveMyReportMovieFixs", defaultCount: 10)
 
   """
   最近求片着
   """
   latestMovieFixReporters: [MovieUser]
-    @paginate(builder: "App\\Movie@resolvelatestMovieFixReporters", defaultCount: 10)
+    @paginate(
+      builder: "App\\Movie@resolvelatestMovieFixReporters"
+      defaultCount: 10
+    )
 
   """
   大家都在搜
   """
-  searchLogs:[JsonType] @field(resolver:"App\\SearchLog@resolveSearchLogs")
+  searchLogs: [JsonType] @field(resolver: "App\\SearchLog@resolveSearchLogs")
 
   """
   用户粘贴的movie
   """
-  sniffMovies: [Movie] @paginate(builder: "App\\Movie@resolveSniffMovies", defaultCount: 10)
+  sniffMovies: [Movie]
+    @paginate(builder: "App\\Movie@resolveSniffMovies", defaultCount: 10)
 }
 
 type BreezeMoviePaginator {
@@ -257,9 +287,9 @@ type BreezeMoviePaginator {
 }
 
 type Sniff {
-  id:Int
-  url:String
-  movie:Movie @belongsTo
+  id: Int
+  url: String
+  movie: Movie @belongsTo
 }
 
 type MovieShareData {
@@ -276,7 +306,7 @@ type PlayLine {
   """
   name: String
   data: JsonType
-  url:String
+  url: String
 }
 
 """
@@ -341,11 +371,11 @@ type MovieData {
   """
   线路名
   """
-  source_name:String
+  source_name: String
   """
   线路链接
   """
-  source_url:String
+  source_url: String
 }
 
 #求片记录
