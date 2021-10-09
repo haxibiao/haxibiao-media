@@ -17,7 +17,6 @@ class AddSourceNamesToMovies extends Migration
             if (!Schema::hasColumn('movies', 'source_names')) {
                 $table->string('source_names')->nullable()->index();
             }
-
         });
     }
 
@@ -28,8 +27,5 @@ class AddSourceNamesToMovies extends Migration
      */
     public function down()
     {
-        Schema::table('movies', function (Blueprint $table) {
-            //
-        });
     }
 }

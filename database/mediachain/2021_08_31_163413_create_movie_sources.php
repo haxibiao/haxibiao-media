@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateMovieSources extends Migration
 {
+
     /**
      * Run the migrations.
      *
@@ -13,6 +14,11 @@ class CreateMovieSources extends Migration
      */
     public function up()
     {
+
+        if (Schema::hasTable('movie_sources')) {
+            return;
+        }
+
         Schema::create('movie_sources', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('movie_id')->index();
