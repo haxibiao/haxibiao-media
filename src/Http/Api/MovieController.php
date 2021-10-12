@@ -8,7 +8,7 @@ use App\MovieHistory;
 use App\Report;
 use App\User;
 use App\Video;
-use Haxibiao\Helpers\utils\BadWordUtils;
+use Haxibiao\Helpers\Facades\SensitiveFacade;
 use Haxibiao\Media\Console\MovieSync;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
@@ -71,7 +71,7 @@ class MovieController extends Controller
 
     public function comment()
     {
-        if (BadWordUtils::check(request()->get('content'))) {
+        if (SensitiveFacade::islegal(request()->get('content'))) {
             return failed_response("发布的内容中含有包含非法内容,请删除后再试!", 500);
         }
         $user                      = getUser();
