@@ -27,30 +27,10 @@ trait MovieAttrs
     /**
      * 影片线路(web使用的)
      */
-    // public function getPlayLinesAttribute()
-    // {
-    //     // 如果没有可用线路，返回空数组
-    //     $count = MovieSource::where('movie_id', $this->id)->whereNotNull('play_urls')->count();
-    //     if ($count <= 0) {
-    //         return [];
-    //     }
-
-    //     $sources = MovieSource::where('movie_id', $this->id)->latest('rank')->whereNotNull('play_urls')->get();
-    //     $result  = [];
-    //     foreach ($sources as $source) {
-    //         if (empty($source['play_urls'])) {
-    //             continue;
-    //         }
-
-    //         $item = [
-    //             'name' => $source->name,
-    //             'url'  => $source->url,
-    //             'data' => $source->play_urls,
-    //         ];
-    //         $result[] = $item;
-    //     }
-    //     return $result;
-    // }
+    public function getPlayLinesAttribute()
+    {
+        return json_decode($this->attributes['play_lines'], true);
+    }
 
     /**
      * 剧集信息(app使用的)
