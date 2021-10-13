@@ -5,7 +5,6 @@ namespace Haxibiao\Media\Traits;
 use App\Movie;
 use App\User;
 use Haxibiao\Media\MovieHistory;
-use Haxibiao\Media\MovieSource;
 use Illuminate\Support\Facades\Cache;
 
 trait MovieAttrs
@@ -28,30 +27,30 @@ trait MovieAttrs
     /**
      * 影片线路(web使用的)
      */
-    public function getPlayLinesAttribute()
-    {
-        // 如果没有可用线路，返回空数组
-        $count = MovieSource::where('movie_id', $this->id)->whereNotNull('play_urls')->count();
-        if ($count <= 0) {
-            return [];
-        }
+    // public function getPlayLinesAttribute()
+    // {
+    //     // 如果没有可用线路，返回空数组
+    //     $count = MovieSource::where('movie_id', $this->id)->whereNotNull('play_urls')->count();
+    //     if ($count <= 0) {
+    //         return [];
+    //     }
 
-        $sources = MovieSource::where('movie_id', $this->id)->latest('rank')->whereNotNull('play_urls')->get();
-        $result  = [];
-        foreach ($sources as $source) {
-            if (empty($source['play_urls'])) {
-                continue;
-            }
+    //     $sources = MovieSource::where('movie_id', $this->id)->latest('rank')->whereNotNull('play_urls')->get();
+    //     $result  = [];
+    //     foreach ($sources as $source) {
+    //         if (empty($source['play_urls'])) {
+    //             continue;
+    //         }
 
-            $item = [
-                'name' => $source->name,
-                'url'  => $source->url,
-                'data' => $source->play_urls,
-            ];
-            $result[] = $item;
-        }
-        return $result;
-    }
+    //         $item = [
+    //             'name' => $source->name,
+    //             'url'  => $source->url,
+    //             'data' => $source->play_urls,
+    //         ];
+    //         $result[] = $item;
+    //     }
+    //     return $result;
+    // }
 
     /**
      * 剧集信息(app使用的)
