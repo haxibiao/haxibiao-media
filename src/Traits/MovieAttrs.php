@@ -53,7 +53,7 @@ trait MovieAttrs
             $series      = [];
             $source_url  = $play_line['url'] ?? null;
             $source_name = $play_line['name'] ?? null;
-            $datas       = data_get($play_line, 'data');
+            $datas       = $play_line['data'] ?? null;
             if (!empty($datas) && count($datas) > 0) {
                 foreach ($datas as $data) {
                     $name     = $data['name'];
