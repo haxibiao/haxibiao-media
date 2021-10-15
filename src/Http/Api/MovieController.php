@@ -32,6 +32,7 @@ class MovieController extends Controller
         $model = Movie::firstOrNew([
             'movie_key' => $movie['id'],
         ]);
+        $model->name = $movie['name'];
         if (!$model) {
             return;
         }
@@ -40,6 +41,13 @@ class MovieController extends Controller
         MovieSync::createRelationModel($model);
         //同步保存影片线路数据
         MovieSync::saveMoviePlayLines($sources, $model);
+    }
+
+    public function storeComments(Request $request)
+    {
+        $data     = $request->get('data');
+        $comments = json_decode($data, true);
+        info($comments);
     }
 
     //影片列表

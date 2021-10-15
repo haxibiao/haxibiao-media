@@ -81,7 +81,7 @@ class MovieSync extends Command
         $success = 0;
         $fail    = 0;
         $total   = 0;
-        $page    = 1;
+        $page    = 256;
 
         $returnCount = 0;
         $nunu_count  = 0;
@@ -264,6 +264,7 @@ class MovieSync extends Command
         }
 
         $model->forceFill(array_only($movie, [
+            'name',
             'source',
             'source_key',
             'movie_key',
