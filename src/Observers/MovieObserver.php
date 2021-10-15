@@ -20,10 +20,19 @@ class MovieObserver
         Movie::addMeiliSearch($movie);
     }
 
-    // public function saved(Movie $movie)
-    // {
-    //     Movie::addMeiliSearchIndex($movie);
-    // }
+    public function saving(Movie $movie)
+    {
+        $playLines = $movie->play_lines;        
+        if(count($playLines) > 0){
+            $has_playurl = 1;
+        }else{
+            $has_playurl = 0;
+        }
+
+        $movie->update([
+            'has_playurl' => $has_playurl,
+        ]);
+    }
 
     public function updating(Movie $movie)
     {
