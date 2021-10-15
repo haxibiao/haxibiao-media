@@ -4,7 +4,7 @@ namespace Haxibiao\Media\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Image as LaravelImage;
+use Laravel\Nova\Fields\Image as NovaImage;
 use Laravel\Nova\Resource;
 
 class Image extends Resource
@@ -27,11 +27,15 @@ class Image extends Resource
     {
         return [
             ID::make()->sortable(),
-            LaravelImage::make('图片', 'path')
+            NovaImage::make('图片', 'path')
+                ->store(function (Request $request, $model) {
+                    $file = $request->file('path');
+                    return $model->saveDownloadImage($file);
+                })
                 ->thumbnail(function () {
-                    return $this->url;
+                    return $this->path;
                 })->preview(function () {
-                return $this->url;
+                return $this->path;
             })->disableDownload(),
         ];
     }
