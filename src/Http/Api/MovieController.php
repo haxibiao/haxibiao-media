@@ -9,6 +9,7 @@ use App\Report;
 use App\User;
 use App\Video;
 use Haxibiao\Helpers\Facades\SensitiveFacade;
+use Haxibiao\Media\Console\MovieCommentSync;
 use Haxibiao\Media\Console\MovieSync;
 use Haxibiao\Media\Danmu;
 use Haxibiao\Media\Events\DanmuEvent;
@@ -47,7 +48,11 @@ class MovieController extends Controller
     {
         $data     = $request->get('data');
         $comments = json_decode($data, true);
-        info($comments);
+        if (count($comments) > 0) {
+            foreach ($comments as $comment) {
+                MovieCommentSync::SaveComment($comment);
+            }
+        }
     }
 
     //影片列表

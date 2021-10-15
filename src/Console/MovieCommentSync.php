@@ -56,51 +56,27 @@ class MovieCommentSync extends Command
     public function api()
     {
         $success = 0;
-        $fail = 0;
-        $total = 0;
-        $page = 0;
+        $fail    = 0;
+        $total   = 0;
+        $page    = 0;
 
         $returnCount = 0;
         do {
             data_set($args, 'page', $page);
             $requestArgs = http_build_query($args);
-            $url = get_neihancloud_api() . "/api/movie/comments/?$requestArgs";
+            $url         = get_neihancloud_api() . "/api/movie/comments/?$requestArgs";
             $this->info("开始处理第 $requestArgs 页的数据");
 
-            $result = json_decode(file_get_contents($url), true);
+            $result      = json_decode(file_get_contents($url), true);
             $returnCount = count($result['data']);
             if ($result['status'] == 200) {
                 $comments = $result['data'];
                 foreach ($comments as $comment) {
                     try {
-                        $movie = Movie::where('movie_key', $comment['movie_id'])->first();
-                        if (empty($movie)) {
-                            //影片为空，跳过即可
-                            continue;
-                        }
-
-                        $user = User::where([
-                            'name' => $comment['user_name'],
-                            'avatar' => $comment['user_avatar'],
-                        ])->first();
-                        if (!$user) {
-                            $user = User::createUser($comment['user_name'], null, null);
-                            $user->update(['avatar' => $comment['user_avatar']]);
-                        }
-
-                        $comment = Comment::firstOrCreate([
-                            'commentable_type'  => 'movies',
-                            'commentable_id'    => $movie->id,
-                            'body'              => $comment['content'],
-                        ],[
-                            'user_id'           => $user->id,
-                            'status'            => Comment::PUBLISH_STATUS,
-                            'created_at'        => now(),
-                            'updated_at'        => now(),
-                        ]);
+                        $comment = self::SaveComment($comment);
                         $this->info("保存成功，Comment ID: $comment->id , body: $comment->body");
-                    } catch (\Exception $exception) {
-                        $this->error("同步影评失败了。。". $comment['content']);
+                    } catch (\Exception$exception) {
+                        $this->error("同步影评失败了。。" . $comment['content']);
                         $fail++;
                         continue;
                     }
@@ -113,4 +89,32 @@ class MovieCommentSync extends Command
 
     }
 
+    public static function SaveComment($comment)
+    {
+        $movie = Movie::where('movie_key', $comment['movie_id'])->first();
+        if (empty($movie)) {
+            //影片为空，跳过即可
+            return;
+        }
+
+        $user = User::where([
+            'name'   => $comment['user_name'],
+            'avatar' => $comment['user_avatar'],
+        ])->first();
+        if (!$user) {
+            $user = User::createUser($comment['user_name'], null, null);
+            $user->update(['avatar' => $comment['user_avatar']]);
+        }
+
+        return Comment::firstOrCreate([
+            'commentable_type' => 'movies',
+            'commentable_id'   => $movie->id,
+            'body'             => $comment['content'],
+        ], [
+            'user_id'    => $user->id,
+            'status'     => Comment::PUBLISH_STATUS,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
 }
