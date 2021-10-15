@@ -35,6 +35,7 @@ Route::group(['prefix' => 'movie'], function ($api) {
     Route::get('/danmu/v3', 'MovieController@danmu');
     Route::get('/{id}/comment', 'MovieController@getComment');
     Route::post('/comment/store', 'MovieController@comment');
+    Route::post('/comments/store', 'MovieController@storeComments');
     Route::any('/toggle-like', 'MovieController@toggoleLike');
     Route::any('/toggle-fan', 'MovieController@toggoleFan');
     Route::any('/save-watch_progress', 'MovieController@saveWatchProgress');
