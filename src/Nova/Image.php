@@ -33,9 +33,9 @@ class Image extends Resource
                     return $model->saveDownloadImage($file);
                 })
                 ->thumbnail(function () {
-                    return $this->path;
+                    return $this->url;
                 })->preview(function () {
-                return $this->path;
+                return $this->url;
             })->disableDownload(),
         ];
     }
