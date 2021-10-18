@@ -1,6 +1,14 @@
-# 影视推荐
-query recommendMovieQuery($count: Int) {
-    recommendMovie(count: $count) {
+## 电影轮播图，热搜榜设置
+query activitiesQuery($type: ActivityType) {
+  activities(type: $type) {
+    paginatorInfo {
+      total
+      hasMorePages
+      currentPage
+    }
+    data {
+      id
+      movie {
         id
         name
         introduction
@@ -22,5 +30,9 @@ query recommendMovieQuery($count: Int) {
         last_watch_progress
         count_comments
         count_favorites
+      }
+      image_url
+      title
     }
+  }
 }

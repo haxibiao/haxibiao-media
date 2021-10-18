@@ -1,0 +1,48 @@
+#长剪短
+mutation clipMovieMutation(
+    $m3u8: String!
+    $title: String!
+    $movie_id: Int!
+    $startSeconds: Int!
+    $endSeconds: Int!
+    $seriesIndex: Int!
+) {
+    clipMovie(
+        m3u8: $m3u8
+        title: $title
+        movie_id: $movie_id
+        startSeconds: $startSeconds
+        endSeconds: $endSeconds
+        seriesIndex: $seriesIndex
+    ) {
+        id
+        description
+        status
+        review_id
+        review_day
+        is_ad
+        created_at
+        current_episode
+        user {
+            id
+            name
+            avatar
+        }
+        tag_names
+        video {
+            id
+            url
+            cover
+            dynamic_cover
+            duration
+            width
+            height
+            isHd
+            json
+        }
+        collection {
+            id
+            name
+        }
+    }
+}

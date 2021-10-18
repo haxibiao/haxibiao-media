@@ -1,6 +1,7 @@
-# 听书详情
-query audibleQuery($id:Int!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
-    audible(id:$id){
+#import "./audibleFragment.graphql"
+
+query audibleQuery($id: Int!, $page: Int = 1,  $sort: ChapterSortOrderForAudibles) {
+    audible(id: $id) {
         id
         name
         introduction
@@ -9,17 +10,17 @@ query audibleQuery($id:Int!,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
         type_names
         count_chapters
         is_over
-        chapters(sortOrderOfChapters:DESC,page:$pageOfChapters,first:$firstOfChapters){
-            paginatorInfo{
+        updated_at
+        chapters(page: $page, sortOrderOfChapters: $sort) {
+            paginatorInfo {
                 count
                 total
                 hasMorePages
             }
-            data{
+            data {
                 name
                 url
             }
         }
-        updated_at
     }
 }

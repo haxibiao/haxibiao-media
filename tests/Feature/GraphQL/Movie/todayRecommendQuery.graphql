@@ -1,0 +1,30 @@
+# 影视今日推荐
+query todayRecommendQuery {
+    todayRecommend {
+        id
+        editorChoice {
+          	movies{
+              data{
+                 	id
+                  name
+                  introduction
+                  cover
+                  producer
+                  year
+                  type
+                  style
+                  region
+                  actors
+                  count_series
+                  country
+                  lang
+                  hits
+                  score
+                  created_at
+                  count_comments
+                  count_favorites
+              }
+            }  
+        }
+    }
+}

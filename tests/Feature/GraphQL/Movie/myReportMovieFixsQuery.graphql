@@ -1,0 +1,23 @@
+#我的求片
+query myReportMovieFixsQuery($page: Int) {
+  myReportMovieFixs(page: $page) {
+    paginatorInfo {
+      hasMorePages
+      currentPage
+    }
+    data {
+      movie {
+        id
+        name
+        cover
+      }
+      user {
+        id
+        name
+        avatar
+      }
+      created_at
+      report_status
+    }
+  }
+}

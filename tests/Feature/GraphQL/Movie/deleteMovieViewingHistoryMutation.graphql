@@ -1,0 +1,5 @@
+# 删除观看历史记录
+# type：All 删除全部历史记录
+mutation deleteMovieViewingHistoryMutation ($movie_ids: [Int!], $type: MovieHistoryDeleteType) {
+	deleteMovieViewingHistory(movie_ids: $movie_ids, type: $type)
+}

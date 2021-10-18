@@ -29,7 +29,7 @@ trait MovieAttrs
      */
     public function getPlayLinesAttribute()
     {
-        return json_decode($this->attributes['play_lines'], true);
+        return json_decode($this->getRawOriginal('play_lines'),true);
     }
 
     /**

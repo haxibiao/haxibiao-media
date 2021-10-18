@@ -1,7 +1,15 @@
+#import "./audibleFragment.graphql"
+
 # 听书列表
-query audiblesQuery($announcer:String,$type_names:String, $page: Int,$pageOfChapters:Int=1,$firstOfChapters:Int=15){
-    filterAudibles(announcer:$announcer,type_names:$type_names,page: $page){
-        data{
+query audiblesQuery(
+    $announcer: String
+    $type_names: String
+    $page: Int
+    $pageOfChapters: Int = 1
+    $chaptersSort: ChapterSortOrderForAudibles
+) {
+    filterAudibles(announcer: $announcer, type_names: $type_names, page: $page) {
+        data {
             id
             name
             introduction
@@ -10,20 +18,20 @@ query audiblesQuery($announcer:String,$type_names:String, $page: Int,$pageOfChap
             type_names
             count_chapters
             is_over
-            chapters(sortOrderOfChapters:DESC,page:$pageOfChapters,first:$firstOfChapters){
-                paginatorInfo{
+            updated_at
+            chapters(page: $pageOfChapters, sortOrderOfChapters: $chaptersSort) {
+                paginatorInfo {
                     count
                     total
                     hasMorePages
                 }
-                data{
+                data {
                     name
                     url
                 }
             }
-            updated_at
         }
-        paginatorInfo{
+        paginatorInfo {
             hasMorePages
             count
             currentPage

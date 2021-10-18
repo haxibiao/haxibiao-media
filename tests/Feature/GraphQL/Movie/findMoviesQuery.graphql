@@ -1,0 +1,11 @@
+# 魔法粘贴——查询影片名
+query findMoviesQuery($name: String!) {
+    findMovies(name: $name) {
+        movie_key
+        name
+        cover
+        actors
+        region
+        year
+    }
+}

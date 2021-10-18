@@ -15,7 +15,9 @@ class AudibleTest extends GraphQLTestCase
     protected function setUp(): void
     {
         parent::setUp();
-		$this->audibles = factory(Audible::class, 3)->create();
+		$this->audibles = Audible::factory([
+			'name' => '测试音频'
+		])->create();
     }
 
 	/**
@@ -26,10 +28,9 @@ class AudibleTest extends GraphQLTestCase
 	 */
 	public function testAudibleQuery()
 	{
-		$audibleId = data_get($this->audibles,'0.id');
 		$query = file_get_contents(__DIR__ . '/Audible/audibleQuery.graphql');
 		$variables = [
-			'id' => $audibleId,
+			'id' => 1,
 		];
 		$this->startGraphQL($query, $variables);
 	}

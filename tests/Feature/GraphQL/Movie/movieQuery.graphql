@@ -1,7 +1,17 @@
-# 电影详情
-query movieQuery($movie_id: Int!) {
-    movie(movie_id: $movie_id) {
+#import "../content/post/postFragment.graphql"
+#import "../content/collection/collectionFragment.graphql"
+#电影详情
+query movieQuery($movie_id: Int, $movie_key: String) {
+    movie(movie_id: $movie_id, movie_key: $movie_key) {
         id
+        movie_key
+        user {
+            id
+            name
+            avatar
+            followed_status
+        }
+        state
         name
         introduction
         cover
@@ -16,12 +26,49 @@ query movieQuery($movie_id: Int!) {
         lang
         hits
         score
-        favorited
         created_at
+        favorited
         last_watch_series
         last_watch_progress
         count_comments
         count_favorites
-        data
+        series {
+            name
+            url
+        }
+        play_lines {
+            name
+            data
+            url
+        }
+        posts {
+            id
+            description
+            cover
+            created_at
+            status
+            count_visits
+            count_likes
+            count_comments
+            user {
+                id
+                name
+                avatar
+                followed_status
+                gender
+                age
+                introduction
+            }
+            video {
+                id
+                url
+                cover
+                dynamic_cover
+                duration
+                width
+                height
+                isHd
+            }
+        }
     }
 }

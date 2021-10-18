@@ -1,0 +1,39 @@
+# 用户发布的所有长视频
+query sniffMoviesQuery($page: Int) {
+	sniffMovies(page: $page) {
+		paginatorInfo {
+			currentPage
+			hasMorePages
+		}
+		data {
+			id
+			state
+			name
+			introduction
+			cover
+			producer
+			year
+			type
+			style
+			region
+			actors
+			count_series
+			country
+			lang
+			hits
+			score
+			created_at
+			favorited
+			last_watch_series
+			last_watch_progress
+			count_comments
+			count_favorites
+			finished
+			custom_type
+			series{
+				name
+				url
+			}
+		}
+	}
+}

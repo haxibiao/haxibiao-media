@@ -1,0 +1,9 @@
+# 发布求片(上报影片修复)
+mutation reportMovieFixMutation($movie_id: Int!) {
+    reportMovieFix(movie_id: $movie_id) {
+        id
+        name
+        cover
+        state
+    }
+}
