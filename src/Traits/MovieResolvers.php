@@ -351,22 +351,7 @@ trait MovieResolvers
         request()->request->add(['fetch_sns_detail' => true]);
 
         //记录搜索历史
-        // 保存搜索记录
-
-        if ($user = currentUser()) {
-            $log = SearchLog::firstOrNew([
-                'keyword' => $keyword,
-                'user_id' => $user->id,
-            ]);
-        } else {
-            $log = SearchLog::firstOrNew([
-                'keyword' => $keyword,
-            ]);
-        }
-        if (isset($log->id)) {
-            $log->increment('count');
-        }
-        $log->save();
+        save_searched_keyword($keyword);
 
         if (config('media.meilisearch.enable', false)) {
             return Movie::search($keyword);
