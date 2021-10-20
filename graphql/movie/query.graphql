@@ -279,6 +279,11 @@ extend type Query {
   """
   sniffMovies: [Movie]
     @paginate(builder: "App\\Movie@resolveSniffMovies", defaultCount: 10)
+
+  """
+  搜索推荐词
+  """
+  recommendSearch:[String] @field(resolver:"App\\Movie@resolveRecommendSearch")
 }
 
 type BreezeMoviePaginator {

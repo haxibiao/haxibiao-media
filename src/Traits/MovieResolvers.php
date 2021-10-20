@@ -529,4 +529,12 @@ trait MovieResolvers
         return Movie::query()->whereIn("id", $ids);
     }
 
+    /**
+     * 搜索推荐词
+     */
+    public function resolveRecommendSearch($root, $args, $content, $info)
+    {
+        return Movie::where('has_playurl','1')->orderBy('rank','desc')->pluck('name')->take(7);
+    }
+
 }
