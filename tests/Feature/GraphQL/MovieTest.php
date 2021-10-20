@@ -2,11 +2,12 @@
 
 namespace Haxibiao\Media\Tests\Feature\GraphQL;
 
-use App\Movie;
-use App\MovieHistory;
-use App\SeekMovie;
-use Haxibiao\Breeze\GraphQLTestCase;
+use App\Post;
 use App\User;
+use App\Movie;
+use App\SeekMovie;
+use App\MovieHistory;
+use Haxibiao\Breeze\GraphQLTestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MovieTest extends GraphQLTestCase
@@ -21,29 +22,29 @@ class MovieTest extends GraphQLTestCase
         parent::setUp();
         $this->user = User::factory()->create([
             'api_token' => str_random(60),
-            'ticket'    => 100,
-            'account'   => rand(10000000000, 99999999999),
+            'ticket' => 100,
+            'account' => rand(10000000000, 99999999999),
         ]);
 
         $this->movie = Movie::factory()->create([
             'region' => '日剧',
-            'year'   => '2011',
-            'name'   => '日剧',
+            'year' => '2011',
+            'name' => '日剧',
         ]);
         Movie::factory()->create([
             'region' => '韩剧',
-            'year'   => '2013',
-            'name'   => '韩剧',
+            'year' => '2013',
+            'name' => '韩剧',
         ]);
         Movie::factory()->create([
             'region' => '美剧',
-            'year'   => '2012',
-            'name'   => '美剧',
+            'year' => '2012',
+            'name' => '美剧',
         ]);
         Movie::factory()->create([
             'region' => '美剧',
-            'year'   => '2012',
-            'name'   => '美剧',
+            'year' => '2012',
+            'name' => '美剧',
         ]);
     }
     /**
@@ -64,14 +65,14 @@ class MovieTest extends GraphQLTestCase
         //查询2012年的美剧
         $variables = [
             'region' => 'MEI',
-            'year'   => '2012',
+            'year' => '2012',
         ];
         $this->startGraphQL($query, $variables);
 
         //按热度排序2020年韩剧
         $variables = [
             'region' => 'HAN',
-            'year'   => '2013',
+            'year' => '2013',
             'scopes' => 'HOT',
         ];
         $this->startGraphQL($query, $variables);
@@ -145,16 +146,15 @@ class MovieTest extends GraphQLTestCase
     public function testMySeekMovies()
     {
         SeekMovie::factory(5)->create([
-            'user_id'   => $this->user->id,
+            'user_id' => $this->user->id,
         ]);
-        $query          = file_get_contents(__DIR__ . '/Movie/mySeekMoviesQuery.graphql');
-        $headers        = $this->getRandomUserHeaders($this->user);
-        $variables      = [
-            'user_id'   => $this->user->id,
+        $query = file_get_contents(__DIR__ . '/Movie/mySeekMoviesQuery.graphql');
+        $headers = $this->getRandomUserHeaders($this->user);
+        $variables = [
+            'user_id' => $this->user->id,
         ];
         $this->startGraphQL($query, $variables, $headers);
     }
-
 
     /**
      * 观影进度
@@ -167,9 +167,9 @@ class MovieTest extends GraphQLTestCase
         $query = file_get_contents(__DIR__ . '/Movie/saveWatchProgressMutation.graphql');
         $headers = $this->getRandomUserHeaders($this->user);
         $variables = [
-            'movie_id'      => $this->movie->id,
-            'series_index'  => 1,
-            'progress'      => 100,
+            'movie_id' => $this->movie->id,
+            'series_index' => 1,
+            'progress' => 100,
         ];
         $this->startGraphQL($query, $variables, $headers);
     }
@@ -182,10 +182,10 @@ class MovieTest extends GraphQLTestCase
     public function testShowMovieHistoryQuery()
     {
         $movie = Movie::factory()->create();
-        $user  = User::factory()->create();
+        $user = User::factory()->create();
         MovieHistory::factory(5)->create([
             'movie_id' => $movie->id,
-            'user_id'  => $user->id
+            'user_id' => $user->id,
         ]);
         $query = file_get_contents(__DIR__ . '/Movie/showMovieHistoryQuery.graphql');
         $headers = $this->getRandomUserHeaders($this->user);
@@ -203,12 +203,12 @@ class MovieTest extends GraphQLTestCase
         $headers = $this->getRandomUserHeaders($this->user);
         //电影轮播图
         $variables = [
-            'type'=>'SERIES'
+            'type' => 'SERIES',
         ];
         //热搜电影榜
         $this->startGraphQL($query, $variables, $headers);
         $variables = [
-            'type'=>'SEARCH'
+            'type' => 'SEARCH',
         ];
         $this->startGraphQL($query, $variables, $headers);
     }
@@ -225,7 +225,7 @@ class MovieTest extends GraphQLTestCase
         $variables = [
             'movie_ids' => $this->movie->id,
         ];
-        $this->startGraphQL($query,$variables,$headers);
+        $this->startGraphQL($query, $variables, $headers);
     }
 
     /**
@@ -235,12 +235,12 @@ class MovieTest extends GraphQLTestCase
      */
     public function testFindMoviesQuery()
     {
-        $query = file_get_contents(__DIR__ .'/Movie/findMoviesQuery.graphql');
+        $query = file_get_contents(__DIR__ . '/Movie/findMoviesQuery.graphql');
         $headers = $this->getRandomUserHeaders($this->user);
         $variables = [
             'name' => $this->movie->name,
         ];
-        $this->startGraphQL($query,$variables,$headers);
+        $this->startGraphQL($query, $variables, $headers);
     }
 
     /**
@@ -250,12 +250,12 @@ class MovieTest extends GraphQLTestCase
      */
     public function testMyReportMovieFixsQuery()
     {
-        $query = file_get_contents(__DIR__ .'/Movie/myReportMovieFixsQuery.graphql');
+        $query = file_get_contents(__DIR__ . '/Movie/myReportMovieFixsQuery.graphql');
         $headers = $this->getRandomUserHeaders($this->user);
         $variables = [
             'page' => 1,
         ];
-        $this->startGraphQL($query,$variables,$headers);
+        $this->startGraphQL($query, $variables, $headers);
     }
 
     /**
@@ -265,12 +265,12 @@ class MovieTest extends GraphQLTestCase
      */
     public function testRelatedMoviesQuery()
     {
-        $query = file_get_contents(__DIR__ .'/Movie/relatedMoviesQuery.graphql');
+        $query = file_get_contents(__DIR__ . '/Movie/relatedMoviesQuery.graphql');
         $headers = $this->getRandomUserHeaders($this->user);
         $variables = [
             'movie_id' => $this->movie->id,
         ];
-        $this->startGraphQL($query,$variables,$headers);
+        $this->startGraphQL($query, $variables, $headers);
     }
 
     /**
@@ -280,12 +280,12 @@ class MovieTest extends GraphQLTestCase
      */
     public function testReportMovieFixMutation()
     {
-        $query = file_get_contents(__DIR__ .'/Movie/reportMovieFixMutation.graphql');
+        $query = file_get_contents(__DIR__ . '/Movie/reportMovieFixMutation.graphql');
         $headers = $this->getRandomUserHeaders($this->user);
         $variables = [
             'movie_id' => $this->movie->id,
         ];
-        $this->startGraphQL($query,$variables,$headers);
+        $this->startGraphQL($query, $variables, $headers);
     }
 
     /**
@@ -295,12 +295,12 @@ class MovieTest extends GraphQLTestCase
      */
     public function testSniffMoviesQuery()
     {
-        $query = file_get_contents(__DIR__ .'/Movie/sniffMoviesQuery.graphql');
+        $query = file_get_contents(__DIR__ . '/Movie/sniffMoviesQuery.graphql');
         $headers = $this->getRandomUserHeaders($this->user);
         $variables = [
             'page' => 1,
         ];
-        $this->startGraphQL($query,$variables,$headers);
+        $this->startGraphQL($query, $variables, $headers);
     }
 
     /**
@@ -313,6 +313,38 @@ class MovieTest extends GraphQLTestCase
         $query = file_get_contents(__DIR__ . '/Movie/todayRecommendQuery.graphql');
         $headers = $this->getRandomUserHeaders($this->user);
         $variables = [];
+        $this->startGraphQL($query, $variables, $headers);
+    }
+
+    /**
+     * 求资源
+     * @group  movie
+     * @group  createSeekMovieMutation
+     */
+    public function testCreateSeekMovieMutation()
+    {
+        $query = file_get_contents(__DIR__ . '/Movie/createSeekMovieMutation.graphql');
+        $headers = $this->getRandomUserHeaders($this->user);
+        $variables = [
+            'name' => '独孤九剑',
+            'description' => '求高清资源',
+        ];
+        $this->startGraphQL($query, $variables, $headers);
+    }
+
+    /**
+     * 魔法粘贴--关联电影
+     * @group movie
+     * @group testHookMovieMutation
+     */
+    public function testHookMovieMutation()
+    {
+        $query = file_get_contents(__DIR__ . '/Movie/hookMovieMutation.graphql');
+        $headers = $this->getRandomUserHeaders($this->user);
+        $variables = [
+            'post_id' => Post::pluck('id')->first(),
+            'movie_id'  => $this->movie->id,
+        ];
         $this->startGraphQL($query,$variables,$headers);
     }
 

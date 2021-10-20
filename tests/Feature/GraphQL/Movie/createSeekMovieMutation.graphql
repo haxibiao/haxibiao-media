@@ -1,0 +1,24 @@
+mutation createSeekMovieMutation($name: String!, $description: String, $images: [String]) {
+    createSeekMovie(name: $name, description: $description, images: $images) {
+        id
+        status
+        created_at
+        name
+        description
+        images {
+            id
+            url
+            width
+            height
+        }
+        user {
+            id
+            name
+            avatar
+        }
+        movies {
+            id
+            name
+        }
+    }
+}

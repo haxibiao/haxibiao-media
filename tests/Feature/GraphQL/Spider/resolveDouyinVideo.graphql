@@ -1,0 +1,9 @@
+# 采集粘贴板视频
+mutation resolveDouyinVideo($share_link: String!, $content: String) {
+    resolveDouyinVideo(share_link: $share_link, content: $content) {
+        id
+        post {
+            id
+        }
+    }
+}

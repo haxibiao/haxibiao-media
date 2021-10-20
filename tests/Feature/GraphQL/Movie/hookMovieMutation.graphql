@@ -1,0 +1,46 @@
+#魔法粘贴--关联电影
+mutation hookMovieMutation($post_id: Int!, $movie_id: Int, $movie_key: String) {
+    hookMovie(post_id: $post_id, movie_id: $movie_id, movie_key: $movie_key) {
+        id
+        description
+        cover
+        status
+        liked
+        count_likes
+        count_comments
+        is_ad
+        created_at
+        user {
+            id
+            name
+            avatar
+        }
+        tag_names
+        categories {
+            id
+            name
+            logo
+        }
+        collection {
+            id
+            name
+            logo
+        }
+        video {
+            id
+            url
+            cover
+            dynamic_cover
+            duration
+            width
+            height
+            isHd
+            json
+        }
+        movie {
+            id
+            name
+            cover
+        }
+    }
+}
