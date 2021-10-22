@@ -47,7 +47,7 @@ trait MovieResolvers
 
                 //一个电影只能求一次，重复不处理
                 MovieUser::firstOrCreate([
-                    'user_id'  => $user->id,
+                    'user_id' => $user->id,
                     'movie_id' => $movie->id,
                 ]);
                 $movie->update(['status' => Movie::ERROR]);
@@ -61,7 +61,7 @@ trait MovieResolvers
      */
     public function resolveFindMovies($root, $args, $content, $info)
     {
-        $name   = $args['name'] ?? '';
+        $name = $args['name'] ?? '';
         $result = Movie::resourceSearch($name, 1, 20);
         $movies = data_get($result, 'data');
         return $movies;
@@ -74,14 +74,14 @@ trait MovieResolvers
     {
         $first = $args['limit'] ?? 6;
         //不同类型的权重（名称,导演，演员）
-        $rankNmae  = 3;
+        $rankNmae = 3;
         $rankOther = 1;
 
         //查询依赖的movie对象
         $movie_id = $args['movie_id'] ?? 0;
-        $movie    = Movie::findOrFail($movie_id);
-        $movies   = collect([]);
-        $qb       = Movie::latest('updated_at');
+        $movie = Movie::findOrFail($movie_id);
+        $movies = collect([]);
+        $qb = Movie::latest('updated_at');
 
         //1.优先电影名匹配（xxx第一部 xxx第二部）
         $query = Movie::publish()
@@ -89,11 +89,11 @@ trait MovieResolvers
 
         $likeName = false;
         if (mb_strlen($movie->name) >= 6 || in_array(mb_substr($movie->name, -1), ['集', '季', '部'])) {
-            $query    = $query->where('name', 'like', mb_substr($movie->name, 0, -3) . "%");
+            $query = $query->where('name', 'like', mb_substr($movie->name, 0, -3) . "%");
             $likeName = true;
         } else {
             if (is_numeric(mb_substr($movie->name, -1))) {
-                $query    = $query->where('name', 'like', mb_substr($movie->name, 0, -1) . "%");
+                $query = $query->where('name', 'like', mb_substr($movie->name, 0, -1) . "%");
                 $likeName = true;
             }
         }
@@ -115,23 +115,23 @@ trait MovieResolvers
         // 2.优先同演员
         $actor = explode(",", $movie->actors)[0] ?? null;
         if (!blank($actor)) {
-            $qb       = Movie::latest('updated_at');
+            $qb = Movie::latest('updated_at');
             $qb_actor = $qb->where('actors', 'like', "%$actor%")
                 ->where('id', '!=', $movie->id)
                 ->whereNotIn('id', $movies->pluck('id')->toArray());
             if ($qb_actor->exists()) {
-                $items  = $qb_actor->take($rankOther)->get();
+                $items = $qb_actor->take($rankOther)->get();
                 $movies = $movies->merge($items);
             }
         }
         // 3.再同导演
         if (!blank($movie->producer)) {
-            $qb          = Movie::latest('updated_at');
+            $qb = Movie::latest('updated_at');
             $qb_producer = $qb->where('producer', $movie->producer)
                 ->where('id', '!=', $movie->id)
                 ->whereNotIn('id', $movies->pluck('id')->toArray());
             if ($qb_producer->exists()) {
-                $items  = $qb_producer->take($rankOther)->get();
+                $items = $qb_producer->take($rankOther)->get();
                 $movies = $movies->merge($items);
             }
         }
@@ -140,7 +140,7 @@ trait MovieResolvers
         if (count($movies) < $first) {
             // 4.同国家+同类型
             if (!empty($movie->country) || !empty($movie->type) || !empty($movie->region)) {
-                $qb              = Movie::latest('updated_at');
+                $qb = Movie::latest('updated_at');
                 $qb_country_type = $qb
                     ->where('id', '<', $movie->id)
                     ->whereNotIn('id', $movies->pluck('id')->toArray())
@@ -151,7 +151,7 @@ trait MovieResolvers
                     });
 
                 if ($qb_country_type->exists()) {
-                    $items  = $qb_country_type->take(($first - count($movies)))->get();
+                    $items = $qb_country_type->take(($first - count($movies)))->get();
                     $movies = $movies->merge($items);
                 }
             }
@@ -169,7 +169,7 @@ trait MovieResolvers
         if ($user = currentUser()) {
             //收藏过的电影类型
             $movies_ids = $user->favoritedMovie()->pluck('favorable_id')->toArray();
-            $regions    = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
+            $regions = Movie::whereIn('id', $movies_ids)->pluck('region')->toArray();
             //推算喜欢的区域
             $movies = Movie::latest('id')->skip(rand(10, 100))
                 ->whereIn('region', $regions)
@@ -180,7 +180,7 @@ trait MovieResolvers
             //推算区域不够数，随机补充？
             if ($moviesCount < $limit) {
                 $random_movies = Movie::latest('id')->skip(rand(10, 100))->take($limit - $moviesCount)->get();
-                $movies        = array_merge($movies->toArray(), $random_movies->toArray());
+                $movies = array_merge($movies->toArray(), $random_movies->toArray());
             }
             return $movies;
         } else {
@@ -190,17 +190,17 @@ trait MovieResolvers
 
     public function resolveClipMovie($root, $args, $content, $info)
     {
-        $user        = getUser();
-        $start       = $args['startSeconds'];
-        $end         = $args['endSeconds'];
-        $title       = $args['title'];
-        $movie_id    = $args['movie_id'];
-        $m3u8        = $args['m3u8'];
+        $user = getUser();
+        $start = $args['startSeconds'];
+        $end = $args['endSeconds'];
+        $title = $args['title'];
+        $movie_id = $args['movie_id'];
+        $m3u8 = $args['m3u8'];
         $seriesIndex = $args['seriesIndex'];
 
         $movie = Movie::find($movie_id);
         $video = MovieRepo::clipMovie($user, $movie, $m3u8, $start, $end, $title, $seriesIndex);
-        $post  = $video->post;
+        $post = $video->post;
 
         //movie计数剪辑数count_clip
         $movie->count_clips = $movie->videos()->count();
@@ -315,7 +315,7 @@ trait MovieResolvers
 
     public function resolveReportMovieException($root, $args, $content, $info)
     {
-        $movie       = Movie::query()->find($args['movie_id']);
+        $movie = Movie::query()->find($args['movie_id']);
         $source_name = $args['source_name'];
         if ($movie) {
             //先降低权重
@@ -330,7 +330,7 @@ trait MovieResolvers
             $url = get_neihancloud_api() . '/api/movie/exception?movie_key=' . $movie->movie_key . '&source_name=' . urlencode($source_name);
             try {
                 return file_get_contents($url);
-            } catch (\Throwable$th) {
+            } catch (\Throwable $th) {
                 return false;
             }
         }
@@ -343,7 +343,7 @@ trait MovieResolvers
     public function resolveSearchMovies($root, $args, $content, $info)
     {
         $keyword = data_get($args, 'keyword');
-        $page    = data_get($args, 'page', 1);
+        $page = data_get($args, 'page', 1);
         $perPage = data_get($args, 'first', 10);
         app_track_event('长视频', '搜索电影', $keyword);
 
@@ -354,13 +354,13 @@ trait MovieResolvers
         save_searched_keyword($keyword);
 
         if (config('media.meilisearch.enable', false)) {
-            return Movie::search($keyword);
+            return Movie::search($keyword)->orderBy('id','desc');
         } else {
             //去mediachain搜索电影
             $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
-            $items      = data_get($pageResult, 'data');
+            $items = data_get($pageResult, 'data');
             $movie_keys = collect($items)->pluck('movie_key')->toArray();
-            $movie_ids  = implode(',', $movie_keys);
+            $movie_ids = implode(',', $movie_keys);
             return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
             // }
         }
@@ -376,19 +376,19 @@ trait MovieResolvers
     {
         return [
             [
-                'id'            => 'scopes',
-                'filterName'    => '排序选项',
+                'id' => 'scopes',
+                'filterName' => '排序选项',
                 'filterOptions' =>
                 ['全部', '最新', '最热', '评分'],
-                'filterValue'   =>
+                'filterValue' =>
                 ['ALL', 'NEW', 'HOT', 'SCORE'],
             ],
             [
-                'id'            => 'region',
-                'filterName'    => '剧种',
+                'id' => 'region',
+                'filterName' => '剧种',
                 'filterOptions' =>
                 ['全部', '韩剧', '日剧', '美剧'],
-                'filterValue'   =>
+                'filterValue' =>
                 ['ALL', 'HAN', 'RI', 'MEI', 'GANG'],
             ],
             //此字段中数据为空,暂时不展示此过滤条件
@@ -401,11 +401,11 @@ trait MovieResolvers
             //     ['ALL', '美国', '香港', '韩国', '日本','印度', '欧美', '泰国'],
             // ],
             [
-                'id'            => 'year',
-                'filterName'    => '年份',
+                'id' => 'year',
+                'filterName' => '年份',
                 'filterOptions' =>
                 ['全部', '2020', '2019', '2018', '2017', '2016'],
-                'filterValue'   =>
+                'filterValue' =>
                 ['ALL', '2020', '2019', '2018', '2017', '2016'],
             ],
             // [
@@ -423,7 +423,7 @@ trait MovieResolvers
     public function resolveMovies($root, array $args, $context, $info)
     {
         $user_id = $args['user_id'] ?? null;
-        $status  = $args['status'] ?? null;
+        $status = $args['status'] ?? null;
         $keyword = $args['keyword'] ?? null;
 
         $qb = Movie::publish();
@@ -475,7 +475,7 @@ trait MovieResolvers
         for ($i = 1; $i <= 3; $i++) {
 
             //如果在cos桶里有这个剧的截图就不重新截图了，直接返回。
-            $file_name  = "movie_cover_{$movie->id}_{$i}";
+            $file_name = "movie_cover_{$movie->id}_{$i}";
             $cover_name = "storage/app/screenshot/" . $file_name . '.jpg';
             if (!is_prod_env()) {
                 $cover_name = 'temp/' . $cover_name;
@@ -534,7 +534,7 @@ trait MovieResolvers
      */
     public function resolveRecommendSearch($root, $args, $content, $info)
     {
-        return Movie::where('has_playurl','1')->orderBy('rank','desc')->pluck('name')->take(7);
+        return Movie::where('has_playurl', '1')->orderBy('rank', 'desc')->pluck('name')->take(7);
     }
 
 }
