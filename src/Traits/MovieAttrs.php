@@ -20,7 +20,7 @@ trait MovieAttrs
     public function getIntroductionAttribute()
     {
         $attr = $this->attributes["introduction"] ?? '';
-        $str = preg_replace("/<(\/?span.*?)>/si", "", $attr);
+        $str  = preg_replace("/<(\/?span.*?)>/si", "", $attr);
         return $str;
     }
 
@@ -29,7 +29,7 @@ trait MovieAttrs
      */
     public function getPlayLinesAttribute()
     {
-        return json_decode($this->getRawOriginal('play_lines'), true);
+        return json_decode($this->getRawOriginal('play_lines'), true) ?? [];
     }
 
     /**
@@ -50,19 +50,19 @@ trait MovieAttrs
             return [];
         }
         foreach ($play_lines as $play_line) {
-            $series = [];
-            $source_url = $play_line['url'] ?? null;
+            $series      = [];
+            $source_url  = $play_line['url'] ?? null;
             $source_name = $play_line['name'] ?? null;
-            $datas = $play_line['data'] ?? null;
+            $datas       = $play_line['data'] ?? null;
             if (!empty($datas) && count($datas) > 0) {
                 foreach ($datas as $data) {
-                    $name = $data['name'];
-                    $url = $data['url'];
+                    $name     = $data['name'];
+                    $url      = $data['url'];
                     $series[] = [
-                        'name' => $name,
-                        'url' => $url,
+                        'name'        => $name,
+                        'url'         => $url,
                         'source_name' => $source_name,
-                        'source_url' => $source_url,
+                        'source_url'  => $source_url,
                     ];
                 }
             }
@@ -142,7 +142,7 @@ trait MovieAttrs
     {
         if ($user = currentUser()) {
             return MovieHistory::where([
-                'user_id' => $user->id,
+                'user_id'  => $user->id,
                 'movie_id' => $this->id,
             ])->exists();
         }
@@ -176,7 +176,7 @@ trait MovieAttrs
         if (request('fetch_sns_detail')) {
             if ($user = currentUser()) {
                 $history = MovieHistory::where([
-                    'user_id' => $user->id,
+                    'user_id'  => $user->id,
                     'movie_id' => $this->id,
                 ])->latest()->first();
                 if (isset($history)) {
@@ -193,7 +193,7 @@ trait MovieAttrs
         if (request('fetch_sns_detail')) {
             if ($user = currentUser()) {
                 $history = MovieHistory::where([
-                    'user_id' => $user->id,
+                    'user_id'  => $user->id,
                     'movie_id' => $this->id,
                 ])->latest()->first();
                 if (isset($history)) {
@@ -224,7 +224,7 @@ trait MovieAttrs
         }
 
         if (!$user) {
-            $cache = cache();
+            $cache    = cache();
             $cacheKey = sprintf('movie:id:%s', $this->id);
             if ($cache->has($cacheKey)) {
                 $user_id = $cache->get($cacheKey);
