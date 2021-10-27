@@ -251,7 +251,8 @@ class MovieController extends Controller
     public function show(Movie $movie)
     {
         $movie->hits = $movie->hits + 1;
-        $movie->save();
+        $movie->saveQuietly();
+
         $qb   = Movie::publish()->latest('updated_at');
         $more = $qb->take(6)->get();
         //FIXME: 用sns 实现是否已收藏...
