@@ -2,15 +2,7 @@
 
 namespace Haxibiao\Media\Console;
 
-use Haxibiao\Media\Actor;
-use Haxibiao\Media\Director;
 use Haxibiao\Media\Movie;
-use Haxibiao\Media\MovieActor;
-use Haxibiao\Media\MovieDirector;
-use Haxibiao\Media\MovieRegion;
-use Haxibiao\Media\MovieType;
-use Haxibiao\Media\Region;
-use Haxibiao\Media\Type;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -180,13 +172,13 @@ class MovieSync extends Command
 
     public function syncMovie($movie, &$success, &$fail, &$nunu_count, &$kkw_count)
     {
-        DB::beginTransaction();
+
         try {
-            //未处理好source_key之前，先按 name 和 directors 排重导入
+
             $movie = @json_decode(json_encode($movie), true);
+
             $model = Movie::firstOrNew([
-                'name'     => $movie['name'],
-                'producer' => $movie['producer'] ?? $movie['directors'],
+                'movie_key' => $movie['movie_key'],
             ]);
 
             $movieExists = $model->id > 0;
@@ -237,20 +229,14 @@ class MovieSync extends Command
                 $movie['source_key'] = $model->source_key;
             }
 
-            $sources = $movie['play_lines'] ?? null;
+            // $sources = $movie['play_lines'] ?? null;
 
             self::fillMovieModel($movie, $model);
-            self::createRelationModel($model);
 
-            //同步保存影片线路数据
-            self::saveMoviePlayLines($sources, $model);
-
-            DB::commit();
             $success++;
             $addOrUpdate = $movieExists ? '更新' : '新增';
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
         } catch (\Throwable$th) {
-            DB::rollback();
             dd($th);
             $fail++;
             $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
@@ -287,66 +273,11 @@ class MovieSync extends Command
             'finished',
             'has_playurl',
             'custom_type',
-            // 'play_lines',
+            'play_lines',
             'source_names',
         ]));
         $model->saveQuietly();
         return $model;
     }
 
-    public static function saveMoviePlayLines($sources, $model)
-    {
-        $model->update(['play_lines' => $sources]);
-    }
-
-    public static function createRelationModel(Movie $movie)
-    {
-        $region = $movie->region;
-        if (!empty($region)) {
-            $regions = explode(',', $region);
-            foreach ($regions as $item) {
-                $regionModel = Region::firstOrCreate(['name' => $item]);
-                MovieRegion::firstOrCreate([
-                    'movie_id'  => $movie->id,
-                    'region_id' => $regionModel->id,
-                ]);
-            }
-        }
-
-        $actor = $movie->actors;
-        if (!empty($actor)) {
-            $actors = explode(',', $actor);
-            foreach ($actors as $item) {
-                $actorModel = Actor::firstOrCreate(['name' => $item]);
-                MovieActor::firstOrCreate([
-                    'movie_id' => $movie->id,
-                    'actor_id' => $actorModel->id,
-                ]);
-            }
-        }
-
-        $director = $movie->producer;
-        if (!empty($director)) {
-            $directors = explode(',', $director);
-            foreach ($directors as $item) {
-                $directorModel = Director::firstOrCreate(['name' => $item]);
-                MovieDirector::firstOrCreate([
-                    'movie_id'    => $movie->id,
-                    'director_id' => $directorModel->id,
-                ]);
-            }
-        }
-
-        $type = $movie->type;
-        if (!empty($type)) {
-            $types = explode(',', $type);
-            foreach ($types as $item) {
-                $typeModel = Type::firstOrCreate(['name' => $item]);
-                MovieType::firstOrCreate([
-                    'movie_id' => $movie->id,
-                    'type_id'  => $typeModel->id,
-                ]);
-            }
-        }
-    }
 }
