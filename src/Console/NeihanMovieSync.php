@@ -2,22 +2,12 @@
 
 namespace Haxibiao\Media\Console;
 
-use Haxibiao\Media\Actor;
-use Haxibiao\Media\Director;
 use Haxibiao\Media\Movie;
-use Haxibiao\Media\MovieActor;
-use Haxibiao\Media\MovieDirector;
-use Haxibiao\Media\MovieRegion;
-use Haxibiao\Media\MovieType;
-use Haxibiao\Media\Region;
-use Haxibiao\Media\Type;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 /**
  * 同步内涵云内涵长视频数据
- * 文档地址： http: //neihancloud.com/movie/
+ * 文档地址： http://neihancloud.com/movie/
  */
 class NeihanMovieSync extends Command
 {
@@ -28,8 +18,6 @@ class NeihanMovieSync extends Command
      */
     protected $signature = 'neihan:sync
     {--only_updated= : 是否只同步当天更新的影片}
-	{--db : 数据库模式}
-	{--is_neihan=false}
 	{--source= : 资源来源,如:内函电影,nunu}
 	{--region= : 按地区}
     {--type= : 按类型}
@@ -65,14 +53,7 @@ class NeihanMovieSync extends Command
      */
     public function handle()
     {
-        if (!Schema::hasTable('movies')) {
-            return $this->error("当前数据库 没有movies表!");
-        }
-        if ($this->option('db')) {
-            $this->database();
-        } else {
-            $this->api();
-        }
+        $this->api();
         return 0;
     }
 
@@ -108,85 +89,13 @@ class NeihanMovieSync extends Command
 
     }
 
-    public function database()
-    {
-        if (env('DB_HOST_MEDIACHAIN') == null) {
-            $db_password_media = $this->ask("请输入内涵云DB_HOST, 或者[enter]跳过");
-            if ($db_password_media) {
-                config(['database.connections.mediachain.host' => $db_password_media]);
-            }
-        }
-
-        if (env('DB_PASSWORD_MEDIA') == null) {
-            $db_password_media = $this->ask("请输入内涵云DB_PASSOWRD, 或者[enter]跳过");
-            if ($db_password_media) {
-                config(['database.connections.mediachain.password' => $db_password_media]);
-            }
-        }
-
-        $success    = 0;
-        $fail       = 0;
-        $total      = 0;
-        $nunu_count = 0;
-        $kkw_count  = 0;
-
-        $qb = DB::connection('mediachain')->table('movies')
-            ->where('status', '>=', 0) //只同步未删除的
-            ->when($line = $this->option('line'), function ($q) use ($line) {
-                //快速同步指定线路的更新
-                $q->whereNotNull($line . '_source');
-            })
-            ->when($source = $this->option('source'), function ($q) use ($source) {
-                //指定来源
-                $q->where('source', $source);
-            })
-            ->when($is_neihan = data_get($this->options(), 'is_neihan'), function ($q) use ($is_neihan) {
-                $q->where('is_neihan', $is_neihan !== 'false');
-            })
-            ->when($id = data_get($this->options(), 'id'), function ($q) use ($id) {
-                $q->where('id', '>=', $id);})
-            ->when($region = data_get($this->options(), 'region'), function ($q) use ($region) {
-                $q->where('region', $region);})
-            ->when($type = data_get($this->options(), 'type'), function ($q) use ($type) {
-                $q->where('types', $type);})
-            ->when($year = data_get($this->options(), 'year'), function ($q) use ($year) {
-                $q->where('year', $year);})
-            ->when($directors = data_get($this->options(), 'producer'), function ($q) use ($directors) {
-                $q->where('directors', $directors);})
-            ->when($movie_name = data_get($this->options(), 'movie_name'), function ($q) use ($movie_name) {
-                $q->where('name', $movie_name);
-            })
-            ->when($actors = data_get($this->options(), 'actors'), function ($q) use ($actors) {
-                $actors = explode(',', $actors);
-                $q->where(function ($q) use ($actors) {
-                    foreach ($actors as $actor) {
-                        if (!trim($actor)) {
-                            continue;
-                        }
-                        $q = $q->orWhere('actors', 'like', '%' . $actor . '%');
-                    }
-                });})
-            ->orderBy('id');
-
-        $this->info('总计电影数:' . $qb->count());
-        $qb->chunk(100, function ($movies) use (&$fail, &$success, &$total) {
-            foreach ($movies as $movie) {
-                $total++;
-                $this->syncMovie($movie, $success, $fail, $nunu_count, $kkw_count);
-            }
-        });
-        $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部' . ' nunu:' . $nunu_count . ' kkw:' . $kkw_count);
-    }
-
     public function syncMovie($movie, &$success, &$fail, &$nunu_count, &$kkw_count)
     {
-        DB::beginTransaction();
+
         try {
-            //未处理好source_key之前，先按 name 和 directors 排重导入
             $movie = @json_decode(json_encode($movie), true);
             $model = Movie::firstOrNew([
-                'name'     => $movie['name'],
-                'producer' => $movie['producer'] ?? $movie['directors'],
+                'movie_key' => $movie['movie_key'],
             ]);
 
             $movieExists = $model->id > 0;
@@ -237,20 +146,16 @@ class NeihanMovieSync extends Command
                 $movie['source_key'] = $model->source_key;
             }
 
-            $sources = $movie['play_lines'] ?? null;
+            //播放线路这个属性前端不支持null
+            $movie['play_lines'] = $movie['play_lines'] ?? [];
 
             self::fillMovieModel($movie, $model);
-            self::createRelationModel($model);
 
-            //同步保存影片线路数据
-            self::saveMoviePlayLines($sources, $model);
-
-            DB::commit();
             $success++;
             $addOrUpdate = $movieExists ? '更新' : '新增';
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
         } catch (\Throwable$th) {
-            DB::rollback();
+            dd($th);
             $fail++;
             $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
         }
@@ -286,66 +191,11 @@ class NeihanMovieSync extends Command
             'finished',
             'has_playurl',
             'custom_type',
-            // 'play_lines',
+            'play_lines',
             'source_names',
         ]));
         $model->saveQuietly();
         return $model;
     }
 
-    public static function saveMoviePlayLines($sources, $model)
-    {
-        $model->update(['play_lines' => $sources]);
-    }
-
-    public static function createRelationModel(Movie $movie)
-    {
-        $region = $movie->region;
-        if (!empty($region)) {
-            $regions = explode(',', $region);
-            foreach ($regions as $item) {
-                $regionModel = Region::firstOrCreate(['name' => $item]);
-                MovieRegion::firstOrCreate([
-                    'movie_id'  => $movie->id,
-                    'region_id' => $regionModel->id,
-                ]);
-            }
-        }
-
-        $actor = $movie->actors;
-        if (!empty($actor)) {
-            $actors = explode(',', $actor);
-            foreach ($actors as $item) {
-                $actorModel = Actor::firstOrCreate(['name' => $item]);
-                MovieActor::firstOrCreate([
-                    'movie_id' => $movie->id,
-                    'actor_id' => $actorModel->id,
-                ]);
-            }
-        }
-
-        $director = $movie->producer;
-        if (!empty($director)) {
-            $directors = explode(',', $director);
-            foreach ($directors as $item) {
-                $directorModel = Director::firstOrCreate(['name' => $item]);
-                MovieDirector::firstOrCreate([
-                    'movie_id'    => $movie->id,
-                    'director_id' => $directorModel->id,
-                ]);
-            }
-        }
-
-        $type = $movie->type;
-        if (!empty($type)) {
-            $types = explode(',', $type);
-            foreach ($types as $item) {
-                $typeModel = Type::firstOrCreate(['name' => $item]);
-                MovieType::firstOrCreate([
-                    'movie_id' => $movie->id,
-                    'type_id'  => $typeModel->id,
-                ]);
-            }
-        }
-    }
 }
