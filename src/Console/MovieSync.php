@@ -81,7 +81,7 @@ class MovieSync extends Command
         $success = 0;
         $fail    = 0;
         $total   = 0;
-        $page    = 256;
+        $page    = 1;
 
         $returnCount = 0;
         $nunu_count  = 0;

@@ -8,7 +8,6 @@ use Haxibiao\Media\Movie;
 use Haxibiao\Media\MovieActor;
 use Haxibiao\Media\MovieDirector;
 use Haxibiao\Media\MovieRegion;
-use Haxibiao\Media\MovieSource;
 use Haxibiao\Media\MovieType;
 use Haxibiao\Media\Region;
 use Haxibiao\Media\Type;
@@ -17,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * 同步内涵云内函长视频数据
+ * 同步内涵云内涵长视频数据
  * 文档地址： http: //neihancloud.com/movie/
  */
 class NeihanMovieSync extends Command
@@ -237,122 +236,11 @@ class NeihanMovieSync extends Command
             if (empty($movie['source_key'])) {
                 $movie['source_key'] = $model->source_key;
             }
-            $sources = $movie['play_lines'];
 
-            //其他线路
-            $other_source = ['默认' => $default_sereies];
+            $sources = $movie['play_lines'] ?? null;
 
-            //内涵云早期新增影片时源线路
-            if (isset($movie['data_source'])) {
-                $series = $movie['data_source'] ?? [];
-                if (count($series)) {
-                    $other_source['麻花云'] = $series;
-                }
-            }
-            $has_nunu = false;
-            if (isset($movie['nunu_source'])) {
-                $series = $movie['nunu_source'] ?? [];
-                if (count($series)) {
-                    //有nunu的可以优先尊重,覆盖默认
-                    $movie['data']             = $series;
-                    $movie['count_series']     = count($series);
-                    $other_source['努努云'] = $series;
-                    $has_nunu                  = true;
-                }
-            }
-            $has_kkw = false;
-            if (isset($movie['kkw_source'])) {
-                $series = $movie['kkw_source'] ?? [];
-                if (count($series)) {
-                    //默认的没有或者不全，可以用看看屋的做默认
-                    if (count($series) > count($default_sereies)) {
-                        $movie['data']         = $series;
-                        $movie['count_series'] = count($series);
-                    }
-                    $other_source['看看屋'] = $series;
-                    $has_kkw                   = true;
-                }
-            }
-
-            $has_cokemv = false;
-            if (isset($movie['cokemv_source'])) {
-                $series = @json_decode($movie['cokemv_source'], true) ?? [];
-                if (count($series)) {
-                    //默认的没有或者不全，可以用看看屋的做默认
-                    if (count($series) > count($default_sereies)) {
-                        $movie['data']         = $series;
-                        $movie['count_series'] = count($series);
-                    }
-                    $other_source['cokemv'] = $series;
-                    $has_cokemv             = true;
-                }
-            }
-
-            $movie['data_source'] = $other_source;
-
-            // $play_lines = [];
-            // //获取影片线路 - movie_sources
-            $sources = $movie['available_sources'] ?? null;
-            if (empty($sources)) {
-                $sources = DB::connection('mediachain')->table('movie_sources')
-                    ->where('movie_id', $movie['id'])->get();
-                $sources = @json_decode(json_encode($sources), true);
-            }
-
-            // $sources = $movie['available_sources'];
-            // if(count($sources) < 0){
-            //     $play_lines = [];
-            // }else{
-            //     foreach($sources as $source){
-            //         $play_lines[] = [
-            //             'name'      => $source['name'],
-            //             'url'       => $source['url'],
-            //             'data'      => $source['play_urls'],
-            //         ];
-            //     }
-            // }
-            // $movie['play_lines']  = $play_lines;
-            $movie['custom_type'] = $movie['custom_type'];
-
-            if ($movie['custom_type'] == '电影') {
-                $movie['finished'] = 1;
-            } else {
-                $movie['finished'] = $movie['finished'];
-            }
-
-            $movie['has_playurl']  = $movie['has_playurl'];
-            $movie['finished']     = $movie['finished'];
-            $movie['source_names'] = $movie['source_names'];
-
-            $model->forceFill(array_only($movie, [
-                'source',
-                'source_key',
-                'movie_key',
-                'introduction',
-                'cover',
-                'producer',
-                'year',
-                'region',
-                'actors',
-                'miner',
-                'count_series',
-                'rank',
-                'country',
-                'subname',
-                'score',
-                'tags',
-                'hits',
-                'lang',
-                'type',
-                'data',
-                'finished',
-                'has_playurl',
-                'custom_type',
-                // 'play_lines',
-                'source_names',
-            ]));
-            $model->saveQuietly();
-            $this->createRelationModel($model);
+            self::fillMovieModel($movie, $model);
+            self::createRelationModel($model);
 
             //同步保存影片线路数据
             self::saveMoviePlayLines($sources, $model);
@@ -363,7 +251,6 @@ class NeihanMovieSync extends Command
             $this->info('已成功：' . $success . '部, 当前' . $addOrUpdate . ':' . data_get($movie, 'region') . '-' . data_get($movie, 'name') . " - (" . $model->count_series . ")集" . $model->id . ' - ' . data_get($movie, 'movie_key'));
         } catch (\Throwable$th) {
             DB::rollback();
-            dd($th);
             $fail++;
             $this->error('导入失败：' . $fail . '部, 电影名:' . data_get($movie, 'name'));
         }
@@ -371,25 +258,12 @@ class NeihanMovieSync extends Command
 
     public static function fillMovieModel(array $movie, Movie $model)
     {
-        foreach ($sources as $source) {
-            $movieSource = MovieSource::firstOrNew([
-                'name' => $source['name'],
-                'url'  => $source['url'],
-            ]);
-            $movieSource->movie_id = $model->id;
-            $movieSource->rank     = $source['rank'];
-            if (is_string($play_lines)) {
-                $play_lines = json_decode($play_lines, true);
-            }
-
-            $movieSource->play_urls  = $source['play_urls'];
-            $movieSource->remark     = $source['remark'];
-            $movieSource->created_at = now();
-            $movieSource->updated_at = now();
-            $movieSource->save();
+        if ($movie['custom_type'] == '电影') {
+            $movie['finished'] = 1;
         }
 
         $model->forceFill(array_only($movie, [
+            'name',
             'source',
             'source_key',
             'movie_key',
