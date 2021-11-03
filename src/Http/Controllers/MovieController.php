@@ -250,8 +250,10 @@ class MovieController extends Controller
 
     public function show(Movie $movie)
     {
-        $movie->hits = $movie->hits + 1;
-        $movie->saveQuietly();
+        if(in_array('hits',$movie->getTableColumns())){
+            $movie->hits = $movie->hits + 1;
+            $movie->saveQuietly();
+        }
 
         $qb   = Movie::publish()->latest('updated_at');
         $more = $qb->take(6)->get();
