@@ -7,6 +7,12 @@ $videoList = array_fill(0, 4, 'video_list');
 
 @extends('layouts.movie')
 
+@section('title') - {{ cms_seo_title() }} @stop
+
+@section('keywords') {{ cms_seo_keywords() }} @stop
+
+@section('description') {{ cms_seo_description() }} @stop
+
 @section('top')
     <div class="header-top-bg"></div>
 @endsection

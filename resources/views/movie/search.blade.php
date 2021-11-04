@@ -1,5 +1,10 @@
 @extends('layouts.movie')
 
+@section('title') - {{ cms_seo_title() }} @stop
+
+@section('keywords') {{ cms_seo_keywords() }} @stop
+
+@section('description') {{ cms_seo_description() }} @stop
 
 @section('content')
     <div class="row justify-content-center search_container">
