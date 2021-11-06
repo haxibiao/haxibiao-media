@@ -252,6 +252,8 @@ class MovieController extends Controller
 
     public function show(Movie $movie)
     {
+        return view('pwa.index');
+
         if (in_array('hits', $movie->getTableColumns())) {
             $movie->hits = $movie->hits + 1;
             $movie->saveQuietly();
