@@ -23,7 +23,6 @@ class VideoController extends Controller
      */
     public function index(Request $request)
     {
-        return view('pwa.index');
         $data = [];
         $site = cms_get_site();
 
@@ -166,7 +165,6 @@ class VideoController extends Controller
      */
     public function show($id)
     {
-        return view('pwa.index');
 
         $video = Video::findOrFail($id);
         if (empty($video->post)) {

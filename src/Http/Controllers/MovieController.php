@@ -122,7 +122,6 @@ class MovieController extends Controller
      */
     public function index()
     {
-        return view('pwa.index');
 
         $qb             = Movie::publish();
         $hotMovies      = (clone $qb)->take(15)->get();
@@ -252,7 +251,6 @@ class MovieController extends Controller
 
     public function show(Movie $movie)
     {
-        return view('pwa.index');
 
         if (in_array('hits', $movie->getTableColumns())) {
             $movie->hits = $movie->hits + 1;
