@@ -57,7 +57,7 @@ class MovieSync extends Command
      */
     public function handle()
     {
-        if (!Schema::hasTable('movies')) {
+        if (!Schema::hasTable(Movie::getTableName())) {
             return $this->error("当前数据库 没有movies表!");
         }
         if ($this->option('db')) {
