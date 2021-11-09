@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Console;
 
 use Haxibiao\Media\Movie;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -57,8 +58,16 @@ class MovieSync extends Command
      */
     public function handle()
     {
-        if (!Schema::hasTable(Movie::getTableName())) {
-            return $this->error("当前数据库 没有movies表!");
+        // 兼容本地movies，和共享的medichain模式
+        if (config('media.enable_mediachain')) {
+            DB::purge('mysql');
+            //修改为当前项目的数据库名
+            Config::set('database.connections.mysql.database', 'mediachain');
+            DB::reconnect();
+        } else {
+            if (!Schema::hasTable(Movie::getTableName())) {
+                return $this->error("当前数据库 没有movies表!");
+            }
         }
         if ($this->option('db')) {
             $this->database();
@@ -258,7 +267,6 @@ class MovieSync extends Command
             'cover',
             'producer',
             'year',
-            'play_lines',
             'region',
             'actors',
             'rank',
