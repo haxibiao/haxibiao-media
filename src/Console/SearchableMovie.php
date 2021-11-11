@@ -58,6 +58,7 @@ class SearchableMovie extends Command
                 $documents[] = [
                     'movie_key' => $movie->id,
                     'name'      => $movie->name,
+                    'subname'   => $movie->subname,
                     'id'        => $movie->id,
                 ];
             }

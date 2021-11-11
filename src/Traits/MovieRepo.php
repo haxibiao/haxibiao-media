@@ -28,8 +28,9 @@ trait MovieRepo
             $index       = $client->index(config('app.name'));
             $documents   = [];
             $documents[] = [
-                'name' => $movie->name,
-                'id'   => $movie->id,
+                'name'    => $movie->name,
+                'subname' => $movie->subname,
+                'id'      => $movie->id,
             ];
             $result   = $index->addDocuments($documents);
             $updateID = $result['updateId'];
