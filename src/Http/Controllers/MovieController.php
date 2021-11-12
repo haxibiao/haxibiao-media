@@ -58,9 +58,7 @@ class MovieController extends Controller
 
     public function search()
     {
-        $query   = request()->get('q');
-        $symbols = [' ', '-', '·', '~', '/', '！', '!', '，', '。'];
-        $query   = str_replace($symbols, '', $query);
+        $query = request()->get('q');
         if (config('media.meilisearch.enable', false)) {
             $result = Movie::search($query)->paginate(10);
         } else {

@@ -13,6 +13,22 @@ use MeiliSearch\Client as MeiliSearchClient;
 
 trait MovieRepo
 {
+
+    /**
+     * 移除影片名中的标点符号
+     */
+    public function removeNameSymbol(): string
+    {
+        // 过滤英文符号
+        $name = preg_replace("/[[:punct:]]/i", " ", $this->name);
+        // 过滤中文标点符号
+        $char = "。、！？：；﹑•＂…‘’“”〝〞∕¦‖—　〈〉﹞﹝「」‹›〖〗】【»«』『〕〔》《﹐¸﹕︰﹔！¡？¿﹖﹌﹏﹋＇´ˊˋ―﹫︳︴¯＿￣﹢﹦﹤‐­˜﹟﹩﹠﹪﹡﹨﹍﹉﹎﹊ˇ︵︶︷︸︹︿﹀︺︽︾ˉ﹁﹂﹃﹄︻︼（）";
+        $name = mb_ereg_replace("[" . $char . "]", " ", $name);
+        // 过滤连续空格
+        $name = preg_replace("/\s+/", " ", $name);
+        return $name;
+    }
+
     public static function addMeiliSearchIndex(Movie $movie)
     {
         if (config('media.meilisearch.enable')) {

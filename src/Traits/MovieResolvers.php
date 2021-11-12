@@ -350,7 +350,7 @@ trait MovieResolvers
         // save_searched_keyword($keyword);
 
         if (config('media.meilisearch.enable', false)) {
-            return Movie::search($keyword)->orderBy('id', 'desc');
+            return Movie::search($keyword);
         } else {
             //去mediachain搜索电影
             $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
