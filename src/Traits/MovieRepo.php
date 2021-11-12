@@ -26,6 +26,7 @@ trait MovieRepo
         $name = mb_ereg_replace("[" . $char . "]", " ", $name);
         // 过滤连续空格
         $name = preg_replace("/\s+/", " ", $name);
+        $name = str_replace(' ', '', $name);
         return $name;
     }
 
