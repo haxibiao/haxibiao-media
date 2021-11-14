@@ -256,9 +256,6 @@ class MovieController extends Controller
             $movie->hits = $movie->hits + 1;
             $movie->saveQuietly();
         }
-
-        $qb   = Movie::publish()->latest('updated_at');
-        $more = $qb->take(6)->get();
         //FIXME: 用sns 实现是否已收藏...
         $movie->favorited = false;
 
