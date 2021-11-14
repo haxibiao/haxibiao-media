@@ -57,7 +57,7 @@ class SearchableMovie extends Command
             foreach ($movies as $movie) {
                 $documents[] = [
                     'movie_key' => $movie->id,
-                    'name'      => $movie->removeNameSymbol(),
+                    'name'      => $movie->name,
                     'subname'   => $movie->subname,
                     'id'        => $movie->id,
                 ];
