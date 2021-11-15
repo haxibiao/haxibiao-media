@@ -63,6 +63,7 @@ class MediaServiceProvider extends ServiceProvider
                 Console\SearchableArticle::class,
                 Console\Audible\AudibleSync::class,
                 Console\Novel\NovelSync::class,
+                Console\SyncMovieCollect::class,
             ]);
         }
 
