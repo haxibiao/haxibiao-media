@@ -53,9 +53,9 @@ $isSeries = $movie->count_series > 1
                     <a class="video-btn play" href="/movie/{{ $movie->id }}">
                         <i class="iconfont icon-play-fill"></i>&nbsp;立即播放
                     </a>
-                    <a class="video-btn detail" href="/detail/{{ $movie->id }}">
-                        查看详情&nbsp;<i class="iconfont icon-arrow-right"></i>
-                    </a>
+{{--                    <a class="video-btn detail" href="/detail/{{ $movie->id }}">--}}
+{{--                        查看详情&nbsp;<i class="iconfont icon-arrow-right"></i>--}}
+{{--                    </a>--}}
                 </div>
             </div>
         </div>

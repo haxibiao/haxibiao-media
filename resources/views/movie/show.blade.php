@@ -23,13 +23,11 @@
             <div class="main-left col-lg-9">
                 <div class="video-info">
                     <div id="media_module" class="clearfix report-wrap-module">
-                        <a href="/detail/{{ $movie->id }}" target="_blank" class="video-cover">
+                        <div class="video-cover">
                             <img src="{{ $movie->cover_url }}" alt="">
-                        </a>
+                        </div>
                         <div class="video-right">
-                            <a href="/detail/{{ $movie->id }}" target="_blank" title="{{ $movie->name }}"
-                                class="video-title">{{ $movie->name }}
-                            </a>
+                            <div class="video-title">{{ $movie->name }}</div>
                             <div class="video-count text-ellipsis">
                                 {{ mt_rand(30, 120) }}.5万播放&nbsp;&nbsp;·&nbsp;&nbsp;{{ mt_rand(1000, 10000) }}人收藏&nbsp;&nbsp;·&nbsp;&nbsp;{{ $movie->comment_count }}评论
                             </div>
