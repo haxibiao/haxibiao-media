@@ -252,7 +252,8 @@ class MovieController extends Controller
     public function show(Movie $movie)
     {
 
-        if (in_array('hits', $movie->getTableColumns())) {
+        $movieColumns = $movie->getTableColumns();
+        if (in_array('hits', $movieColumns)) {
             $movie->hits = $movie->hits + 1;
             $movie->saveQuietly();
         }
@@ -262,18 +263,18 @@ class MovieController extends Controller
         // 推荐同导演（性能考虑）
         $qb          = Movie::publish();
         $qb_producer = $qb->where('id', '<>', $movie->id);
-        if (in_array('producer', $movie->getTableColumns())) {
+        if (in_array('producer', $movieColumns)) {
             $qb_producer = $qb_producer->where('producer', $movie->producer);
         }
-        $recommend = $qb_producer->latest('rank')->take(6)->get()->shuffle();
+        $recommend = $qb_producer->take(6)->get()->shuffle();
         //更多同地区 （太多，不能随机排序）
         $qb         = Movie::publish()->latest('id');
         $qb_country = $qb->where('id', '<>', $movie->id);
 
-        if (in_array('country', $movie->getTableColumns())) {
+        if (in_array('country', $movieColumns)) {
             $qb_country = $qb_country->where('country', $movie->country);
         }
-        if (in_array('type', $movie->getTableColumns())) {
+        if (in_array('type', $movieColumns)) {
             $qb_country = $qb_country->where('type', $movie->type);
         }
 
