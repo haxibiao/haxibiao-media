@@ -83,8 +83,7 @@ class Movie extends Resource
                 return $model->saveCover($file);
             }),
 
-            Code::make('剧集', 'data')->json(JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE)->rules('required', 'max:4000'),
-
+            Code::make('播放剧集', 'play_lines')->json(JSON_PRETTY_PRINT + JSON_UNESCAPED_UNICODE)->rules('required', 'max:4000'),
             HasMany::make('关联动态', 'posts', Post::class),
         ];
     }
