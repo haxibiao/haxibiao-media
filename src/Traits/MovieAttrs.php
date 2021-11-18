@@ -209,10 +209,10 @@ trait MovieAttrs
         return $this->getRawOriginal('count_favorites');
     }
 
-    public function getCountCommentsAttribute()
-    {
-        return $this->comments()->count();
-    }
+//    public function getCountCommentsAttribute()
+//    {
+//        return $this->comments()->count();
+//    }
 
     //伪装用户发布该电影，缓存三天为该用户发布
     public function getUserAttribute()
