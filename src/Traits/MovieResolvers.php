@@ -264,14 +264,14 @@ trait MovieResolvers
         if (!isset($movie) && $movie_key = data_get($args, 'movie_key')) {
             $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
         }
+        
+        if (empty($movie)) {
+            return null;
+        }
 
         //添加操作到用户活跃中
         if(currentUser()){
             Visit::saveVisit(getUser(),$movie,'movies');
-        }
-
-        if (empty($movie)) {
-            return null;
         }
 
         //影片详情页真实返回影片信息和状态
