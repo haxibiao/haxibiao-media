@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\Visit;
 use Haxibiao\Breeze\Dimension;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Content\Category;
@@ -249,10 +250,13 @@ trait MovieResolvers
 
     public function resolveMovie($root, $args, $content, $info)
     {
+        $movie_id = data_get($args, 'movie_id');
+        app_track_event('长视频', '观看长视频', $movie_id);
+
         //标记获取详情数据信息模式
         request()->request->add(['fetch_sns_detail' => true]);
 
-        if ($movie_id = data_get($args, 'movie_id')) {
+        if ($movie_id) {
             $movie = Movie::withoutGlobalScopes()->find($movie_id);
         }
 
@@ -260,6 +264,12 @@ trait MovieResolvers
         if (!isset($movie) && $movie_key = data_get($args, 'movie_key')) {
             $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
         }
+
+        //添加操作到用户活跃中
+        if(currentUser()){
+            Visit::saveVisit(getUser(),$movie,'movies');
+        }
+
         if (empty($movie)) {
             return null;
         }
@@ -358,8 +368,8 @@ trait MovieResolvers
             $movie_keys = collect($items)->pluck('movie_key')->toArray();
             $movie_ids  = implode(',', $movie_keys);
             return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
-            // }
-        }
+        // }
+    }
         // $pageResult->paginatorInfo = [
         //     'currentPage'  => $page,
         //     'total'        => $total,
