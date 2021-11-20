@@ -46,12 +46,7 @@ class MovieController extends Controller
         })->when($language, function ($q) use ($language) {
             return $q->where('lang', $language);
         });
-        // TODO tracker
-        //        if($order === 'latest'){
-        $query = $query->orderBy('id', 'desc');
-//        } elseif ($order === 'hot'){
-        //            $query = $query->orderBy('rank', 'desc');
-        //        }
+        $query  = $query->orderBy('id', 'desc');
         $movies = $query->paginate(40);
         return view('movie.region')->with('movies', $movies);
     }
@@ -100,20 +95,6 @@ class MovieController extends Controller
         } else {
             return redirect()->action('\Haxibiao\Media\Http\Controllers\MovieController@' . $method);
         }
-
-        // $qb      = Movie::enable()->where('category_id', $id)->latest('rank');
-        // $orderBy = 'like_count';
-        // if ($order = request()->get('order')) {
-        //     $qb->latest($order);
-        //     $orderBy = $order;
-        // }
-        // $data = [
-        //     'cate'        => Movie::getCategories()[$id],
-        //     'movies'      => $qb->paginate(30),
-        //     'category_id' => $id,
-        //     'orderBy'     => $orderBy,
-        // ];
-        // return view('movie.category', $data);
     }
 
     /**
@@ -122,6 +103,10 @@ class MovieController extends Controller
      */
     public function index()
     {
+
+        if (is_enable_pwa()) {
+            return view('pwa.index');
+        }
 
         $qb             = Movie::publish();
         $hotMovies      = (clone $qb)->take(15)->get();
@@ -142,16 +127,7 @@ class MovieController extends Controller
                 'hanju',
             ],
         ];
-//        注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
-        //        if(is_null(data_get(app('cms_site'),'company',null))){
-        //            $categoryMovies = array_merge($categoryMovies,[
-        //                '怀旧老港剧' => [
-        //                    (clone $qb)->where('region', '港剧')->latest('id')->take(6)->get(),
-        //                    (clone $qb)->where('region', '港剧')->latest('id')->take(12)->get(),
-        //                    'gangju',
-        //                ]
-        //            ]);
-        //        }
+
         $cate_ranks = [
             '美剧' => [
                 'cate'   => 'meiju',
@@ -166,15 +142,6 @@ class MovieController extends Controller
                 'movies' => (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
             ],
         ];
-//        注释的原因：凡是我们自己的域名先隐藏中国境内的影片，目前在诉讼期间，对方正在搜集我们的证据。
-        //        if(is_null(data_get(app('cms_site'),'company',null))){
-        //            $cate_ranks = array_merge($cate_ranks,[
-        //                '港剧' => [
-        //                    'cate'   => 'gangju',
-        //                    'movies' => (clone $qb)->where('region', '港剧')->offset(18)->take(8)->get(),
-        //                ],
-        //            ]);
-        //        }
 
         return view('movie.index', [
             'hotMovies'      => $hotMovies,
