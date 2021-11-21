@@ -218,6 +218,9 @@ class MovieController extends Controller
 
     public function show(Movie $movie)
     {
+        if (is_enable_pwa()) {
+            return view('pwa.index');
+        }
 
         $movieColumns = $movie->getTableColumns();
         if (in_array('hits', $movieColumns)) {
