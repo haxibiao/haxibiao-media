@@ -21,6 +21,7 @@ class MovieSync extends Command
      */
     protected $signature = 'movie:sync
     {--only_updated= : 是否只同步当天更新的影片}
+    {--has_playurl=true}
 	{--db : 数据库模式}
 	{--is_neihan=false}
 	{--source= : 资源来源,如:内函电影,nunu}
