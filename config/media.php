@@ -19,6 +19,7 @@ return [
             'web',
 			'movie'
         ],
+        'enable_slug'      => env('ENABLE_MOVIE_SLUG', false),
     ],
     /**
      * 视频模块配置
