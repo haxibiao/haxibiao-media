@@ -105,7 +105,7 @@ class MovieController extends Controller
     {
 
         if (is_enable_pwa()) {
-            return view('pwa.index');
+            return pwa_view();
         }
 
         $qb             = Movie::publish();
@@ -219,7 +219,7 @@ class MovieController extends Controller
     public function show(Movie $movie)
     {
         if (is_enable_pwa()) {
-            return view('pwa.index');
+            return pwa_view();
         }
 
         $movieColumns = $movie->getTableColumns();
