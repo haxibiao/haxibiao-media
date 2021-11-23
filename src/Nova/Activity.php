@@ -7,6 +7,7 @@ use App\Nova\Collection;
 use App\Nova\EditorChoice;
 use App\Nova\Movie;
 use Haxibiao\Content\Nova\Actions\AddActivitiesToSticks;
+use Haxibiao\Media\Activity as MediaActivity;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
@@ -80,7 +81,7 @@ class Activity extends Resource
                 return $this->image_url;
             })->preview(function () {
                 return $this->image_url;
-            })->store(function (Request $request, \Haxibiao\Media\Activity$model) {
+            })->store(function (Request $request, MediaActivity $model) {
                 $file = $request->file('image_url');
                 return $model->saveActivityImage($file);
             }),
