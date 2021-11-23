@@ -53,30 +53,11 @@ class Activity extends Resource
                 AppActivity::TYPE_SERIE   => '电视剧',
                 AppActivity::TYPE_PROJECT => '电影专题',
                 AppActivity::TYPE_SEARCH  => '搜索',
-            ])->resolveUsing(function ($type) {
-                if (1 == $type) {
-                    return "首页";
-                }
-                if (2 == $type) {
-                    return "电视剧";
-                }
-                if (3 == $type) {
-                    return "电影专题";
-                }
-                if (4 == $type) {
-                    return '搜索词';
-                }
-            })->withMeta(['value' => 1]),
+            ])->default(1),
             Select::make('状态', 'status')->options([
                 1 => '使用中',
                 2 => '已禁用',
-            ])->resolveUsing(function ($status) {
-                if (1 == $status) {
-                    return "使用中";
-                } else {
-                    return "已禁用";
-                }
-            })->withMeta(['value' => 1]),
+            ])->default(1),
             Image::make('图片地址', 'image_url')->thumbnail(function () {
                 return $this->image_url;
             })->preview(function () {
