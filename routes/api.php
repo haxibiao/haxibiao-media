@@ -44,6 +44,8 @@ Route::group(['prefix' => 'movie'], function ($api) {
     Route::any('/history', 'MovieController@movieHistory');
     //电影剧集播放器
     Route::get('/{movie}/series', 'MovieController@getSeries');
+    //pwa需要的默认播放路径
+    Route::get('/{movie}/pwaPlayUrl', 'MovieController@getPwaPlayUrl');
     //rest api
     Route::any('/list', 'MovieController@index');
     Route::any('/json/{movie}', 'MovieController@show');

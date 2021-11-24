@@ -365,4 +365,20 @@ class MovieController extends Controller
         }
     }
 
+    /**
+     * 返回pwa指令需要的指定电影默认播放数据
+     * @deprecated
+     * @param int $id
+     * @return array
+     */
+    public function getPwaPlayUrl($id)
+    {
+        $movie  = Movie::findOrFail($id);
+        $series = $movie->series;
+        if ($series) {
+            return $series[0]['url'];
+        }
+        return null;
+    }
+
 }
