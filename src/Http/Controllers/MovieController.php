@@ -223,7 +223,7 @@ class MovieController extends Controller
         }
 
         $movieColumns = $movie->getTableColumns();
-        if (in_array('hits', $movieColumns)) {
+        if (!isRobot() && in_array('hits', $movieColumns)) {
             $movie->hits = $movie->hits + 1;
             $movie->saveQuietly();
         }
