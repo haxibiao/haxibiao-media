@@ -229,7 +229,7 @@ class MovieController extends Controller
                 abort(404);
             }
 			if(config('media.movie.enable_slug')){
-                redirect('/movie/'.$movie->slug, 301);
+                return redirect('/movie/'.$movie->slug, 301);
             }
 		} else {
 			if(!class_exists(\Hashids\Hashids::class)){
