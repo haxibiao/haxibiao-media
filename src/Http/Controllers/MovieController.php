@@ -216,10 +216,24 @@ class MovieController extends Controller
         return view('movie.region')->with('movies', $movies)->withCate("港剧")->with('cate_id', 4);
     }
 
-    public function show(Movie $movie)
+    public function show($movieId)
     {
         if (is_enable_pwa()) {
             return pwa_view();
+        }
+
+        // 兼容站群随机ID
+        $movie = Movie::find($movieId);
+        if(is_numeric($movieId)){
+            $movie = \App\Movie::where('id', $movie)->first() ?? abort(404);
+        } else {
+            if(!class_exists(\Hashids\Hashids::class)){
+                abort(404);
+            }
+            $domain =  request()->getHost();
+            $hashids = new \Hashids\Hashids($domain);
+            $value = data_get($hashids->decode($movieId),'0');
+            $movie = \App\Movie::where('movie_key', strval($value))->first() ?? abort(404);
         }
 
         $movieColumns = $movie->getTableColumns();
