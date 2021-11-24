@@ -224,7 +224,13 @@ class MovieController extends Controller
 
         // 兼容站群随机ID
 		if(is_numeric($movieId)){
-			$movie = \App\Movie::find($movieId) ?? abort(404);
+			$movie = \App\Movie::find($movieId);
+			if(blank($movie)){
+                abort(404);
+            }
+			if(config('media.movie.enable_slug')){
+                redirect('/movie/'.$movie->slug, 301);
+            }
 		} else {
 			if(!class_exists(\Hashids\Hashids::class)){
 				abort(404);
