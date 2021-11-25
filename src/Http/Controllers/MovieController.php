@@ -109,6 +109,12 @@ class MovieController extends Controller
         }
 
         $qb             = Movie::publish();
+
+        // 首页不展示伦理片
+        $qb->when(in_array('is_neihan',(new Movie())->getTableColumns()), function ($q) {
+            $q->where('is_neihan', false);
+        });
+
         $hotMovies      = (clone $qb)->take(15)->get();
         $categoryMovies = [
             '热门美剧' => [
