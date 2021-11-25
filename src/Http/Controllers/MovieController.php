@@ -132,6 +132,11 @@ class MovieController extends Controller
                 (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->take(12)->get(),
                 'hanju',
             ],
+            '热门港剧' => [
+                (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->take(6)->get(),
+                (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->take(12)->get(),
+                'gangju',
+            ],
         ];
 
         $cate_ranks = [
@@ -146,6 +151,10 @@ class MovieController extends Controller
             '韩剧' => [
                 'cate'   => 'hanju',
                 'movies' => (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
+            ],
+            '港剧' => [
+                'cate'   => 'gangju',
+                'movies' => (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
             ],
         ];
 
