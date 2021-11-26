@@ -33,8 +33,12 @@ class SearchLog extends Model
 
     public function resolveSearchLogs($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        // 对搜索词排序 + 只允许在7日内
+        // 对搜索词排序 + 只允许在7日内 
         $query = SearchLog::orderBy('count','desc')->whereDate('updated_at','>',today()->subDay(7))->pluck('keyword')->toArray();
+        if(!$query){
+            $query = SearchLog::orderBy('count','desc')->orderBy('updated_at','desc')->pluck('keyword')->toArray();
+        }
+
         $resulets = array_unique($query);
 
         // 判断该搜索词是否能对应影片
