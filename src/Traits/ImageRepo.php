@@ -4,6 +4,7 @@ namespace Haxibiao\Media\Traits;
 
 use Haxibiao\Media\Image;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image as ImageMaker;
 use Throwable;
@@ -41,7 +42,9 @@ trait ImageRepo
         $filename = $imageName . '.' . $extension;
 
         // 原图临时文件
-        $tmp_path = '/tmp/' . $filename;
+        // $tmp_path = '/tmp/' . $filename;
+        $tmp_path = public_path() . '/' . $filename;
+
         $imageMaker->save($tmp_path);
 
         // 计算原图hash
@@ -104,6 +107,9 @@ trait ImageRepo
         $image->path      = $cloud_path;
         $image->disk      = config('filesystems.cloud');
         $image->save();
+
+        //删除临时文件
+        File::delete($tmp_path);
 
         return $image;
     }
