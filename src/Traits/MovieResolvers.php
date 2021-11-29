@@ -351,6 +351,9 @@ trait MovieResolvers
         $keyword = data_get($args, 'keyword');
         $page    = data_get($args, 'page', 1);
         $perPage = data_get($args, 'first', 10);
+
+        SearchLog::saveSearchLog($keyword, getUserId());
+
         app_track_event('长视频', '搜索电影', $keyword);
 
         //标记获取详情数据信息模式
@@ -358,7 +361,6 @@ trait MovieResolvers
 
         //记录搜索历史
         // save_searched_keyword($keyword);
-
         if (config('media.meilisearch.enable', false)) {
             return Movie::search($keyword);
         } else {
@@ -369,7 +371,7 @@ trait MovieResolvers
             $movie_ids  = implode(',', $movie_keys);
             return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
         // }
-    }
+        }
         // $pageResult->paginatorInfo = [
         //     'currentPage'  => $page,
         //     'total'        => $total,
