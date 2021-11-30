@@ -18,6 +18,7 @@ use Haxibiao\Sns\Comment;
 use Haxibiao\Sns\Favorite;
 use Haxibiao\Sns\Like;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class MovieController extends Controller
 {
@@ -26,6 +27,9 @@ class MovieController extends Controller
     {
         $movie = $request->get('data');
         $movie = json_decode($movie, true);
+        if (Str::contains($movie['type'], '伦理')) {
+            return;
+        }
         // 效验影片数据，如果数据正常
         if (!isset($movie['id'])) {
             return;
