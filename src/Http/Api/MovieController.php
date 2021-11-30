@@ -44,8 +44,12 @@ class MovieController extends Controller
         $sources = $movie['play_lines'];
         $model   = MovieSync::fillMovieModel($movie, $model);
         MovieSync::createRelationModel($model);
+
         //同步保存影片线路数据
         MovieSync::saveMoviePlayLines($sources, $model);
+
+        //添加 movie meilisearch index
+        Movie::addMeiliSearchIndex($model);
     }
 
     public function storeComments(Request $request)
