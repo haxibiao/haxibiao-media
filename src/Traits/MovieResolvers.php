@@ -6,6 +6,7 @@ use App\Visit;
 use Haxibiao\Breeze\Dimension;
 use Haxibiao\Breeze\Exceptions\GQLException;
 use Haxibiao\Content\Category;
+use Haxibiao\Content\EditorChoice;
 use Haxibiao\Content\Post;
 use Haxibiao\Helpers\utils\FFMpegUtils;
 use Haxibiao\Media\Movie;
@@ -73,6 +74,12 @@ trait MovieResolvers
      */
     public function resolveRelatedMovies($root, $args, $content, $info)
     {
+        $collect = EditorChoice::where('title', '片单影片汇总')->first();
+        if (!empty($collect)) {
+            // 如果有精选的话，优先使用精选影片
+            // https://pm.haxifang.com/browse/JUHAOKAN-210
+            return $collect->movies()->inRandomOrder()->take(6)->get();
+        }
         $first = $args['limit'] ?? 6;
         //不同类型的权重（名称,导演，演员）
         $rankNmae  = 3;
@@ -264,14 +271,14 @@ trait MovieResolvers
         if (!isset($movie) && $movie_key = data_get($args, 'movie_key')) {
             $movie = Movie::withoutGlobalScopes()->where('movie_key', $movie_key)->first();
         }
-        
+
         if (empty($movie)) {
             return null;
         }
 
         //添加操作到用户活跃中
-        if(currentUser()){
-            Visit::saveVisit(getUser(),$movie,'movies');
+        if (currentUser()) {
+            Visit::saveVisit(getUser(), $movie, 'movies');
         }
 
         //影片详情页真实返回影片信息和状态
@@ -370,7 +377,7 @@ trait MovieResolvers
             $movie_keys = collect($items)->pluck('movie_key')->toArray();
             $movie_ids  = implode(',', $movie_keys);
             return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
-        // }
+            // }
         }
         // $pageResult->paginatorInfo = [
         //     'currentPage'  => $page,
