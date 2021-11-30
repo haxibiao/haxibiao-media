@@ -106,8 +106,10 @@ class MovieSync extends Command
                 $page++;
             }
         } while ($returnCount >= 300);
-        $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部' . ' nunu:' . $nunu_count . ' kkw:' . $kkw_count);
-
+        $this->info('共检索出' . $total . '部电影,成功导入：' . $success . '部,失败：' . $fail . '部');
+        $this->info("将所有影片计入到搜索库中....");
+        $this->call('searchable:movie');
+        $this->info("影片已成功加入搜索库中！");
     }
 
     public function database()
