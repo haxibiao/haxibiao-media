@@ -45,10 +45,11 @@ class MovieController extends Controller
         }
         $sources = $movie['play_lines'];
         $model   = MovieSync::fillMovieModel($movie, $model);
-        MovieSync::createRelationModel($model);
-
-        //同步保存影片线路数据
-        MovieSync::saveMoviePlayLines($sources, $model);
+        
+        //TODO:这2个方法没有了，不知道作用是什么，为了保持能继续执行，先将这里取消
+        // MovieSync::createRelationModel($model);
+        // //同步保存影片线路数据
+        // MovieSync::saveMoviePlayLines($sources, $model);
 
         //添加 movie meilisearch index
         Movie::addMeiliSearchIndex($model);
