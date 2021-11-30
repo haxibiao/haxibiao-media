@@ -27,9 +27,11 @@ class MovieController extends Controller
     {
         $movie = $request->get('data');
         $movie = json_decode($movie, true);
-        if (Str::contains($movie['type'], '伦理')) {
+
+        if (Str::contains(data_get($movie,'type'), '伦理')) {
             return;
         }
+
         // 效验影片数据，如果数据正常
         if (!isset($movie['id'])) {
             return;
