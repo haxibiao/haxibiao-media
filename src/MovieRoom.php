@@ -24,6 +24,10 @@ class MovieRoom extends Model
         'uids' => 'array',
     ];
 
+    public function getMorphClass()
+    {
+        return "movie_rooms";
+    }
     public function movie(): BelongsTo
     {
         return $this->belongsTo(Movie::class);
