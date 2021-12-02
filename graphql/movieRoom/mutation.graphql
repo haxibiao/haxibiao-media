@@ -1,7 +1,15 @@
 extend type Mutation {
   saveMovieRoom(input: MovieRoomInput!): MovieRoom @field(resolver: "App\\MovieRoom@resolveSaveMovieRoom")
 
+  """
+  加入放映室
+  """
   usersInToMovieRoom(uids: [Int!], id: Int): MovieRoom @field(resolver: "App\\MovieRoom@resolveUsersInToMovieRoom")
+  """
+  离开放映室
+  """
+  usersLeaveToMovieRoom(uids: [Int!], id: Int): MovieRoom
+    @field(resolver: "App\\MovieRoom@resolveUsersLeaveToMovieRoom")
 }
 
 input MovieRoomInput {
