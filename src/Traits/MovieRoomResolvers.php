@@ -138,6 +138,7 @@ trait MovieRoomResolvers
                 'type'    => Chat::GROUP_TYPE, //聊天类型为群聊
             ]);
             $movieRoom->chat_id = $chat->id;
+            $movieRoom->uids    = [$user->id];
         }
 
         //可能会更新logo
