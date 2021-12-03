@@ -23,12 +23,27 @@ use Illuminate\Support\Str;
 class MovieController extends Controller
 {
 
+    public function QQSearch(Request $request)
+    {
+        $name   = $request->get('name');
+        $movies = Movie::search($name)->take(6)->get();
+        $res    = [];
+        $domain = config('app.url');
+        foreach ($movies as $movie) {
+            $temp["name"] = $movie->name;
+            $temp["url"]  = $domain . "?movie/{$movie->id}";
+            $res[]        = $temp;
+        }
+
+        return $res;
+    }
+
     public function update(Request $request)
     {
         $movie = $request->get('data');
         $movie = json_decode($movie, true);
 
-        if (Str::contains(data_get($movie,'type'), '伦理')) {
+        if (Str::contains(data_get($movie, 'type'), '伦理')) {
             return;
         }
 
@@ -45,7 +60,7 @@ class MovieController extends Controller
         }
         $sources = $movie['play_lines'];
         $model   = MovieSync::fillMovieModel($movie, $model);
-        
+
         //TODO:这2个方法没有了，不知道作用是什么，为了保持能继续执行，先将这里取消
         // MovieSync::createRelationModel($model);
         // //同步保存影片线路数据
