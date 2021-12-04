@@ -118,8 +118,10 @@ class MovieController extends Controller
         $cacheTTL = 10 * 60; // 缓存10分钟
 
         $hotMovies = Cache::remember('movie-index-hot-movies', $cacheTTL, function () use($qb) {
-            return  (clone $qb)->take(15)->get();
+            return  (clone $qb)->exclude(['data','data_source','play_lines','source_names'])->take(15)->get();
         });
+
+        $qb = $qb->exclude(['introduction', 'data','data_source','play_lines','source_names']);
 
         $categoryMovies = Cache::remember('movie-index-category-movies', $cacheTTL, function () use($qb) {
             return [
