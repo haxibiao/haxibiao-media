@@ -10,6 +10,7 @@ use App\User;
 use Haxibiao\Media\Http\Controller;
 use Haxibiao\Media\SearchLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class MovieController extends Controller
 {
@@ -109,54 +110,62 @@ class MovieController extends Controller
         }
 
         $qb             = Movie::publish();
-
         // 首页不展示伦理片
         $qb->when(in_array('is_neihan',(new Movie())->getTableColumns()), function ($q) {
             $q->where('is_neihan', false);
         });
 
-        $hotMovies      = (clone $qb)->take(15)->get();
-        $categoryMovies = [
-            '热门美剧' => [
-                (clone $qb)->where('region', '美剧')->orderByDesc('updated_at')->take(6)->get(),
-                (clone $qb)->where('region', '美剧')->orderByDesc('updated_at')->take(12)->get(),
-                'meiju',
-            ],
-            '热门日剧' => [
-                (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->take(6)->get(),
-                (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->take(12)->get(),
-                'riju',
-            ],
-            '热门韩剧' => [
-                (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->take(6)->get(),
-                (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->take(12)->get(),
-                'hanju',
-            ],
-            '热门港剧' => [
-                (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->take(6)->get(),
-                (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->take(12)->get(),
-                'gangju',
-            ],
-        ];
+        $cacheTTL = 10 * 60; // 缓存10分钟
 
-        $cate_ranks = [
-            '美剧' => [
-                'cate'   => 'meiju',
-                'movies' => (clone $qb)->where('region', '美剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
-            ],
-            '日剧' => [
-                'cate'   => 'riju',
-                'movies' => (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->offset(36)->take(8)->get(),
-            ],
-            '韩剧' => [
-                'cate'   => 'hanju',
-                'movies' => (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
-            ],
-            '港剧' => [
-                'cate'   => 'gangju',
-                'movies' => (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
-            ],
-        ];
+        $hotMovies = Cache::remember('movie-index-hot-movies', $cacheTTL, function () use($qb) {
+            return  (clone $qb)->take(15)->get();
+        });
+
+        $categoryMovies = Cache::remember('movie-index-category-movies', $cacheTTL, function () use($qb) {
+            return [
+                '热门美剧' => [
+                    (clone $qb)->where('region', '美剧')->orderByDesc('updated_at')->take(6)->get(),
+                    (clone $qb)->where('region', '美剧')->orderByDesc('updated_at')->offset(6)->take(12)->get(),
+                    'meiju',
+                ],
+                '热门日剧' => [
+                    (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->take(6)->get(),
+                    (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->offset(6)->take(12)->get(),
+                    'riju',
+                ],
+                '热门韩剧' => [
+                    (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->take(6)->get(),
+                    (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->offset(6)->take(12)->get(),
+                    'hanju',
+                ],
+                '热门港剧' => [
+                    (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->take(6)->get(),
+                    (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->offset(6)->take(12)->get(),
+                    'gangju',
+                ],
+            ];
+        });
+
+        $cate_ranks = Cache::remember('movie-index-category-ranks', $cacheTTL, function () use($qb) {
+            return [
+                '美剧' => [
+                    'cate'   => 'meiju',
+                    'movies' => (clone $qb)->where('region', '美剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
+                ],
+                '日剧' => [
+                    'cate'   => 'riju',
+                    'movies' => (clone $qb)->where('region', '日剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
+                ],
+                '韩剧' => [
+                    'cate'   => 'hanju',
+                    'movies' => (clone $qb)->where('region', '韩剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
+                ],
+                '港剧' => [
+                    'cate'   => 'gangju',
+                    'movies' => (clone $qb)->where('region', '港剧')->orderByDesc('updated_at')->offset(18)->take(8)->get(),
+                ],
+            ];
+        });
 
         return view('movie.index', [
             'hotMovies'      => $hotMovies,
