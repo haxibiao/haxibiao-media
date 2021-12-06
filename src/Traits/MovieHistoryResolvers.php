@@ -13,7 +13,6 @@ trait MovieHistoryResolvers
         $movie_id     = data_get($args, 'movie_id');
         $series_index = data_get($args, 'series_index');
         $progress     = data_get($args, 'progress');
-        app_track_event('长视频', '保存观看记录', '电影id:' . $movie_id);
         if ($user = currentUser()) {
             // 保存观看历史,存储每集的进度
             //$series_id,非series表主键，存储的值为series数组索引index
@@ -31,7 +30,6 @@ trait MovieHistoryResolvers
 
     public static function resolveShowMovieHistory($root, $args, $content, $info)
     {
-        app_track_event('长视频', '查看长视频历史记录');
         //标记获取详情数据信息模式
         request()->request->add(['fetch_sns_detail' => true]);
 
@@ -59,13 +57,13 @@ trait MovieHistoryResolvers
        $type = $args["type"] ?? null;
 
 
-       if($type == "all"){  
+       if($type == "all"){
         return MovieHistory::query()->where("user_id",$user->id)->delete();
        }
 
 
         return  MovieHistory::query()->where("user_id",$user->id)->whereIn("movie_id",$movie_ids)->delete();
-     
+
    }
 
 

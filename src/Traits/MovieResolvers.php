@@ -258,7 +258,6 @@ trait MovieResolvers
     public function resolveMovie($root, $args, $content, $info)
     {
         $movie_id = data_get($args, 'movie_id');
-        app_track_event('长视频', '观看长视频', $movie_id);
 
         //标记获取详情数据信息模式
         request()->request->add(['fetch_sns_detail' => true]);
@@ -361,8 +360,6 @@ trait MovieResolvers
 
         SearchLog::saveSearchLog($keyword, getUserId());
 
-        app_track_event('长视频', '搜索电影', $keyword);
-
         //标记获取详情数据信息模式
         request()->request->add(['fetch_sns_detail' => true]);
 
@@ -453,7 +450,6 @@ trait MovieResolvers
         }
 
         if ($keyword) {
-            app_track_event('长视频', '搜索长视频', $keyword);
             Dimension::track("长视频搜索数", 1, "长视频");
             $qb = $qb->where('name', 'like', '%' . $keyword . '%');
             if (currentUser()) {
