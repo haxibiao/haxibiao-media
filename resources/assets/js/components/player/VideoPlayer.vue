@@ -2,9 +2,7 @@
   <div id="dplayer"></div>
 </template>
 <script>
-import Hls from 'hls.js';
 import DPlayer from 'dplayer';
-import axios from 'axios';
 import moment from '../../common/moment';
 
 export default {
@@ -85,45 +83,42 @@ export default {
     playerEventListener() {
       let that = this;
       setTimeout(function () {
-        axios.get('https://neihancloud.com/api/movie/report', {
-          params: {
-            movie_key: that.movie_key,
-            app: document.domain,
-            result: that.loadStatus == true ? 'success' : 'failed',
-            channel: 'web'
-          }
-        });
-      }, 7000);
+        //30还在播放状态上报完播事件
+        this.loadStatus && window.playerEvent('完播');
+      }, 30000);
       // window.clearTimeout(timeout);
+
       this.player.on('loadeddata', () => {
-        console.log('loadStatus', this.loadStatus);
         this.loadStatus = true;
         console.log('加载成功');
-        //播放源加载完毕会触发该事件
         this.series_index = this.episode;
         if (this.seekTime) {
           this.player.seek(this.seekTime);
           this.seekTime = '';
         }
+
+        const duration = moment.format(this.player.video.duration);
+        this.$emit('update:videoDuration', duration);
+        window.playerEvent('开始播放', '片长', Math.floor(this.player.video.duration));
       });
 
       this.player.on('ended', () => {
         this.$emit('playEnded');
+        window.playerEvent('播完');
       });
       this.player.on('webfullscreen', () => {
         window.postMessage('fullscreen');
+        window.playerEvent('全屏');
       });
       this.player.on('webfullscreen_cancel', () => {
         window.postMessage('fullscreen_cancel');
-      });
-      this.player.on('loadeddata', () => {
-        const duration = moment.format(this.player.video.duration);
-        this.$emit('update:videoDuration', duration);
+        window.playerEvent('退出全屏');
       });
       this.player.on('seeking', () => {
         const currentTime = moment.format(this.player.video.currentTime);
         console.log('seeking currentTime', currentTime);
         this.$emit('update:currentTime', currentTime);
+        window.playerEvent('开始播放', '快进', Math.floor(this.player.video.currentTime));
       });
       this.player.on('danmaku_send', (danmu) => {
         //调用一下评论接口，如果没有登录则打回来叫用户登录

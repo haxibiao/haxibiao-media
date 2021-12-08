@@ -44,4 +44,7 @@ app.config.globalProperties.$user = (window as any).user || {};
 // import "element-ui/lib/theme-chalk/index.css";
 // app.use(ElementUI);
 
+import ElementPlus from 'element-plus';
+app.use(ElementPlus);
+
 app.mount('#app');
