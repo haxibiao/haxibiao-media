@@ -1,23 +1,28 @@
-const mix = require('laravel-mix');
+const mix = require("laravel-mix");
 
-/*
- |--------------------------------------------------------------------------
- | Mix Asset Management
- |--------------------------------------------------------------------------
- |
- | Mix provides a clean, fluent API for defining some Webpack build steps
- | for your Laravel application. By default, we are compiling the Sass
- | file for the application as well as bundling up all the JS files.
- |
- */
+//修复 https://github.com/element-plus/element-plus/issues/4132
+mix.webpackConfig({
+    module: {
+        rules: [
+            {
+                test: /\.mjs$/,
+                resolve: { fullySpecified: false },
+                include: /node_modules/,
+                type: "javascript/auto",
+            },
+        ],
+    },
+});
 
-mix.setPublicPath('public');
+mix.setPublicPath("public");
 
-mix.js('resources/assets/js/app.js', 'public/js/_media.js')
-    .sass('resources/assets/sass/app.scss', 'css/media.css')
-    .version();
+// media.css
+mix.sass("resources/assets/sass/media.scss", "css/media.css");
 
 // media.js
-mix.scripts(['public/js/_media.js', 'node_modules/hls.js/dist/hls.js'], 'public/js/media.js').version();
+mix.ts("resources/assets/js/media.ts", "public/js/_media.js").vue({ version: 3 });
+mix.scripts(["public/js/_media.js", "node_modules/hls.js/dist/hls.js"], "public/js/media.js");
 
-mix.browserSync('l.neihandianying.com');
+mix.version();
+
+mix.browserSync("localhost:8000");

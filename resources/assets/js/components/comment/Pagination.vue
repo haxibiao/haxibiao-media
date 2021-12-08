@@ -1,17 +1,12 @@
 <template>
     <div class="app-pagination" v-if="totalPage > 1">
         <span class="prev" v-show="current > 1" v-on:click="clickPage(current - 1)">上一页</span>
-        <template v-for="(page, index) in pageNumbers">
-            <span v-if="page == current" :key="index" class="tcd-number active">{{ page }}</span>
-            <a
-                v-else-if="Number(page)"
-                :key="index"
-                href="javascript:;"
-                class="tcd-number"
-                v-on:click="clickPage(page)"
-                >{{ page }}</a
-            >
-            <span v-else class="dian" :key="index">...</span>
+        <template v-for="(page, index) in pageNumbers" :key="index">
+            <span v-if="page == current" class="tcd-number active">{{ page }}</span>
+            <a v-else-if="Number(page)" href="javascript:;" class="tcd-number" v-on:click="clickPage(page)">{{
+                page
+            }}</a>
+            <span v-else class="dian">...</span>
         </template>
         <span class="next" v-show="current < totalPage" v-on:click="clickPage(current + 1)">下一页</span>
         <div class="page-jump" v-show="totalPage > tcdNumbers">
@@ -29,13 +24,13 @@ export default {
         },
         offset: {
             type: Number,
-            default: function() {
+            default: function () {
                 return 10;
             },
         },
         current: {
             type: Number,
-            default: function() {
+            default: function () {
                 return 1;
             },
         },
@@ -54,7 +49,7 @@ export default {
                         //  设置第一第二个按钮的固定值
                         if (index == 0 || index == 1) {
                             arr[0] = 1;
-                            arr[1] = '...';
+                            arr[1] = "...";
                             continue;
                         }
                         // 剩余页码已经少于中点数
@@ -79,7 +74,7 @@ export default {
                 // 设置倒数第一第二个按钮的固定值
                 if (this.current <= this.totalPage - this.midpoint) {
                     arr[arr.length - 1] = this.totalPage;
-                    arr[arr.length - 2] = '...';
+                    arr[arr.length - 2] = "...";
                 }
             } else {
                 for (let index = 0; index < this.totalPage; index++) {
@@ -91,7 +86,7 @@ export default {
     },
     methods: {
         clickPage(page) {
-            this.$emit('update:current', page);
+            this.$emit("update:current", page);
         },
         skipPage(event) {
             var page = Number(event.target.value) || 1;
@@ -100,7 +95,7 @@ export default {
             } else if (page < 1) {
                 page = 1;
             }
-            this.$emit('update:current', page);
+            this.$emit("update:current", page);
         },
     },
     data() {

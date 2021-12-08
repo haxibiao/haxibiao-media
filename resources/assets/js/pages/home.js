@@ -1,14 +1,14 @@
 // 顶部组件
-require('./_header');
+require("../plugins/movieHeader");
 
 // 顶部滚动轮播图
-var CarouselMovies = require('./_hotMovies');
+var CarouselMovies = require("../plugins/hotMovies");
 
-$(document).ready(function() {
+$(document).ready(function () {
     // $('#hot-movies').on('transitionend MSTransitionEnd webkitTransitionEnd oTransitionEnd');
     new CarouselMovies({
-        container: '#hot-movies',
-        items: $('#hot-movies .movie-pic'),
-        itemsInfo: $('.hot-movies-intro .movie-info'),
+        container: "#hot-movies",
+        items: $("#hot-movies .movie-pic"),
+        itemsInfo: $(".hot-movies-intro .movie-info"),
     });
 });
