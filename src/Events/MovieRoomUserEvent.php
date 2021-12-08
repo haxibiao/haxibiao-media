@@ -40,12 +40,17 @@ class MovieRoomUserEvent implements ShouldBroadcast
         $user = User::find($this->user_id);
         if ($user) {
             if ($this->status) {
-                $message = $user->name . '进入了房间';
+                $message = '进入了房间';
             } else {
-                $message = $user->name . '退出了房间';
+                $message = '退出了房间';
             }
             $data = [
-                'message' => $message,
+                'title'       => '房间刷新提醒',
+                'user_id'     => $user->id,
+                'user_avatar' => $user->avatarUrl,
+                'user_name'   => $user->name,
+                'message'     => $user->name . $message,
+                'status'      => $this->status,
             ];
             return $data;
         }
