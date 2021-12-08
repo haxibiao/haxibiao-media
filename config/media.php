@@ -14,12 +14,12 @@ return [
      * 电影模块配置
      */
     'movie'                          => [
-        'enable'     => env('ENABLE_MOVIE', false),
-        'middleware' => [
+        'enable'      => env('ENABLE_MOVIE', false),
+        'middleware'  => [
             'web',
-			'movie'
+            'movie',
         ],
-        'enable_slug'      => env('ENABLE_MOVIE_SLUG', false),
+        'enable_slug' => env('ENABLE_MOVIE_SLUG', false),
     ],
     /**
      * 视频模块配置
@@ -41,6 +41,8 @@ return [
     'image'                          => [
         'auto_cut' => false,
     ],
+
+    'chrome_port'                    => 'http://localhost:4444',
 
     'meilisearch'                    => [
         'index'  => env('APP_NAME'),

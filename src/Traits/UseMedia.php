@@ -3,6 +3,7 @@
 namespace Haxibiao\Media\Traits;
 
 use App\SeekMovie;
+use Haxibiao\Media\ShareLink;
 use Haxibiao\Media\Spider;
 use Haxibiao\Media\Video;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,6 +16,11 @@ trait UseMedia
     public function spiders(): HasMany
     {
         return $this->hasMany(Spider::class);
+    }
+
+    public function shareLinks(): HasMany
+    {
+        return $this->hasMany(ShareLink::class);
     }
 
     public function videos(): HasMany
