@@ -98,6 +98,7 @@ trait MovieRoomResolvers
     public function resolveSaveMovieRoom($root, $args, $content, $info)
     {
         $input        = $args['input'];
+        $id           = $input['id'] ?? null;
         $name         = $input['name'] ?? null;
         $icon         = $input['icon'] ?? null;
         $movie_id     = $input['movie_id'] ?? null;
@@ -107,9 +108,11 @@ trait MovieRoomResolvers
         $user = getUser();
 
         //存在则更新
-        $movieRoom = MovieRoom::firstOrNew([
-            'user_id' => $user->id,
-        ]);
+        if ($id) {
+            $movieRoom = MovieRoom::find($id);
+        } else {
+            $movieRoom = new MovieRoom();
+        }
 
         //切换或者创建播放资源
         if ($name) {

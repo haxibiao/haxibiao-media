@@ -13,6 +13,7 @@ extend type Mutation {
 }
 
 input MovieRoomInput {
+  id:Int
   name: String
   icon: String
   movie_id: Int!
