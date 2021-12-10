@@ -297,6 +297,17 @@ $header-height: 62px;
             }
         }
     }
+    .search-sm {
+        display: none;
+    }
+    @media (max-width: $col-md-width + 110px) {
+        .search-xl {
+            display: none;
+        }
+        .search-sm {
+            display: block;
+        }
+    }
 }
 
 .category_nav {

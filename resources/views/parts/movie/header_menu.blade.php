@@ -29,6 +29,6 @@ $cateogries = [
 <li>
     <a href='https://jx.juhaokantv.com' class="parsing-movie" target="_blank">
         <i class="iconfont icon-play-fill"></i>
-        在线解析看剧
+        解析看剧
     </a>
 </li>
