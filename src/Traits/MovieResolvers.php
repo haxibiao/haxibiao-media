@@ -475,6 +475,14 @@ trait MovieResolvers
         return Movie::latest('rank')->latest('hits');
     }
 
+    // 获取影片分享地址
+    public function getShareLink($root, array $args, $context, $resolveInfo)
+    {
+        throw_if(!isset($args['id']), GQLException::class, '影片不存在！');
+        $domain = array_random(config('cms.qrcode_traffic.redirect_urls'));
+        return $domain . "?movie/{$args['id']}";
+    }
+
     public function getSharePciture($root, array $args, $context, $resolveInfo)
     {
         $movie = Movie::find($args['id']);
