@@ -45,13 +45,13 @@
         </div>
       </div>
       <ul class="player__operate clearfix">
-        <li class="fl operation hide-xs">
+        <li class="fl operation hide-xs" v-if="this.$user.token">
           <a :class="['favorite', movie.isFan && 'highlight']" href="javascript:void(0);" v-on:click="favoriteHandler">
             <i class="iconfont icon-collection-fill"></i>
             <span>{{ movie.isFan ? '已收藏' : '收藏' }}</span>
           </a>
         </li>
-        <li class="fl operation">
+        <li class="fl operation" v-if="this.$user.token">
           <a :class="['like', movie.isliked && 'highlight']" href="javascript:void(0);" v-on:click="likeHandler">
             <i class="iconfont icon-good-fill"></i>
             <span class="num">{{ movie.count_likes || 0 }}</span>
