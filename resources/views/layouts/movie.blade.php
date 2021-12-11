@@ -39,9 +39,6 @@
         @yield('content')
         @include('parts.movie.modal.login')
     </div>
-    @if (\Str::contains(\URL::current(), 'juhaokan'))
-        @include('parts.movie.sidebar')
-    @endif
 
     {{-- 先注入的vue APP user --}}
     @if (Auth::user())

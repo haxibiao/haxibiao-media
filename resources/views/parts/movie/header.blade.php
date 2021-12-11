@@ -7,14 +7,9 @@
             <ul class="app-header__type">@include('parts.movie.header_menu')</ul>
             <ul class="app-header__menu">
                 <li class="search">
-                    <form class="search-form search-xl" name="search" method="get" action="/movie/search">
+                    <form class="search-form" name="search" method="get" action="/movie/search">
                         <input name="q" type="search" class="search-input" autocomplete="off"
                             placeholder="{{ isset($queryKeyword) ? $queryKeyword : '搜索想看的' }}">
-                        <button class="search-submit" id="searchbutton" type="submit">
-                            <i class="iconfont icon-search"></i>
-                        </button>
-                    </form>
-                    <form class="search-form search-sm" name="search" method="get" action="/movie/search">
                         <button class="search-submit" id="searchbutton" type="submit">
                             <i class="iconfont icon-search"></i>
                         </button>
