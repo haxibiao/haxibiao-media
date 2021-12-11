@@ -15,7 +15,7 @@
                         </button>
                     </form>
                 </li>
-                @if (!config('breeze.disable_login_page'))
+                @if (config('breeze.enable.login'))
                     @if (Auth::check())
                         <li class="hide-xs" title="播放记录" dropdown-target=".play-history" dropdown-toggle="hover">
                             <a href="javascript:;">
