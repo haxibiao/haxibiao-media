@@ -140,7 +140,7 @@ class MovieController extends Controller
         $result = [];
 
         //同步电影模块的站 用 data json读取剧集播放
-        if (config('media.movie.enable')) {
+        if (config('media.enable.movie')) {
             return $movie->series_urls;
         }
 

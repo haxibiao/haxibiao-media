@@ -14,7 +14,7 @@ class CreateSeriesTable extends Migration
     public function up()
     {
         //电影模块，先清理旧的脏表结构series
-        if (config('media.movie.enable')) {
+        if (config('media.enable.movie')) {
             Schema::dropIfExists('series');
         }
         if (Schema::hasTable('series')) {

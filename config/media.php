@@ -1,59 +1,50 @@
 <?php
 
 return [
-    //第三方API
-    'api'                            => [
+    //API
+    'api'         => [
         'neihancloud' => env('API_NEIHANCLOUD', 'https://neihancloud.com'),
     ],
-    'spider'                         => [
-        'enable'                              => env('MEDIA_SPIDER_ENABLE', true),
-        'user_daily_spider_parse_limit_count' => env('USER_DAILY_SPIDER_PARSE_LIMIT_COUNT', -1), // 用户每日可抓取最大次数 -1:无限制
+
+    //所有开关配置
+    'enable'      => [
+        //抖音爬虫
+        'spider'     => env('MEDIA_SPIDER_ENABLE', true),
+        //自动裁剪图片
+        'auto_cut'   => false,
+        //mediachain共享模式
+        'mediachain' => env('ENABLE_MEDIACHAIN', false),
+        //统计VOD视频的播放量?
+        'vod'        => false,
+        //电影模块开关
+        'movie'      => env('ENABLE_MOVIE', false),
+        //长视频slug
+        'slug'       => env('ENABLE_MOVIE_SLUG', false),
     ],
 
-    /**
-     * 电影模块配置
-     */
-    'movie'                          => [
-        'enable'      => env('ENABLE_MOVIE', false),
-        'middleware'  => [
+    //长视频模块配置
+    'movie'       => [
+        'middleware' => [
             'web',
             'movie',
         ],
-        'enable_slug' => env('ENABLE_MOVIE_SLUG', false),
     ],
-    /**
-     * 视频模块配置
-     */
-    'video'                          => [
+
+    //视频模块配置
+    'video'       => [
         'middleware' => [
             'web',
         ],
     ],
 
-    /**
-     * 是否统计视频的播放量
-     */
-    'enabled_statistics_video_views' => false,
+    //分享任务检查外链？
+    'chrome_port' => 'http://localhost:4444',
 
-    /**
-     * 是否自动裁剪图片（需要imagick）
-     */
-    'image'                          => [
-        'auto_cut' => false,
-    ],
-
-    'chrome_port'                    => 'http://localhost:4444',
-
-    'meilisearch'                    => [
+    //搜索
+    'meilisearch' => [
         'index'  => env('APP_NAME'),
         'enable' => env('ENABLE_MEILISEARCH', false),
         'host'   => env('MEILISEARCH_HOST'),
         'key'    => env('MEILISEARCH_KEY'),
     ],
-
-    /**
-     * 是否开启本地mediachain共享movies
-     */
-    'enable_mediachain'              => env('ENABLE_MEDIACHAIN', false),
-
 ];

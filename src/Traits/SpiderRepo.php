@@ -16,7 +16,7 @@ trait SpiderRepo
     public static function resolveDouyinVideo($user, $shareLink, $content = null, $tagNames = [])
     {
         // 通过config来控制接口开关 && 动态配置控制每用户日最大解析数
-        throw_if(config('media.spider.enable') === false, UserException::class, '解析失败,功能维护中,请稍后再试!');
+        throw_if(config('media.enable.spider') === false, UserException::class, '解析失败,功能维护中,请稍后再试!');
 
         // 解释限制次数问题，统一到哈希云
 

@@ -26,7 +26,7 @@ class CountVideoViewsCommand extends Command
 
     public function handle()
     {
-        $enabled = config('media.enabled_statistics_video_views', false);
+        $enabled = config('media.enable.vod', false);
         if (!$enabled) {
             $this->info('不能完成该操作,没有开启日播放量统计开关～');
         }

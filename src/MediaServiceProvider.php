@@ -78,7 +78,7 @@ class MediaServiceProvider extends ServiceProvider
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             // 更新视频的每日播放量
-            $enabled = config('media.enabled_statistics_video_views', false);
+            $enabled = config('media.enable.vod', false);
             if ($enabled) {
                 $schedule->command('haxibiao:video:CountVideoViewers')->dailyAt('1:30');
             }

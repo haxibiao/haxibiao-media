@@ -16,9 +16,9 @@ class MovieGuard
      */
     public function handle(Request $request, Closure $next)
     {
-		if (!config('media.movie.enable',false)) {
-			return abort(404);
-		}
+        if (!config('media.enable.movie', false)) {
+            return abort(404);
+        }
         return $next($request);
     }
 }

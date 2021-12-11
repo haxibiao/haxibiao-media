@@ -7,7 +7,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image as ImageMaker;
-use Throwable;
 
 trait ImageRepo
 {
@@ -53,7 +52,7 @@ trait ImageRepo
         $cloud_path = storage_folder('images') . $filename;
 
         // 部分项目环境支持自动裁剪,有些简单原始图片保存,故此通过开关控制
-        $auto_cut = config('media.image.auto_cut');
+        $auto_cut = config('media.enable.auto_cut');
 
         // 保留原始图片(尺寸最大保留900)
         if ($auto_cut) {
@@ -140,7 +139,7 @@ trait ImageRepo
                 }
             }
             $image->save();
-        } catch (\Throwable $ex) {
+        } catch (\Throwable$ex) {
 
         }
         return null;

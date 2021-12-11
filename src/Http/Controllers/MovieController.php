@@ -109,21 +109,21 @@ class MovieController extends Controller
             return pwa_view();
         }
 
-        $qb             = Movie::publish();
+        $qb = Movie::publish();
         // 首页不展示伦理片
-        $qb->when(in_array('is_neihan',(new Movie())->getTableColumns()), function ($q) {
+        $qb->when(in_array('is_neihan', (new Movie())->getTableColumns()), function ($q) {
             $q->where('is_neihan', false);
         });
 
         $cacheTTL = 10 * 60; // 缓存10分钟
 
-        $hotMovies = Cache::remember('movie-index-hot-movies', $cacheTTL, function () use($qb) {
-            return  (clone $qb)->exclude(['data','data_source','play_lines','source_names'])->take(15)->get();
+        $hotMovies = Cache::remember('movie-index-hot-movies', $cacheTTL, function () use ($qb) {
+            return (clone $qb)->exclude(['data', 'data_source', 'play_lines', 'source_names'])->take(15)->get();
         });
 
-        $qb = $qb->exclude(['introduction', 'data','data_source','play_lines','source_names']);
+        $qb = $qb->exclude(['introduction', 'data', 'data_source', 'play_lines', 'source_names']);
 
-        $categoryMovies = Cache::remember('movie-index-category-movies', $cacheTTL, function () use($qb) {
+        $categoryMovies = Cache::remember('movie-index-category-movies', $cacheTTL, function () use ($qb) {
             return [
                 '热门美剧' => [
                     (clone $qb)->where('region', '美剧')->orderByDesc('updated_at')->take(6)->get(),
@@ -148,7 +148,7 @@ class MovieController extends Controller
             ];
         });
 
-        $cate_ranks = Cache::remember('movie-index-category-ranks', $cacheTTL, function () use($qb) {
+        $cate_ranks = Cache::remember('movie-index-category-ranks', $cacheTTL, function () use ($qb) {
             return [
                 '美剧' => [
                     'cate'   => 'meiju',
@@ -249,23 +249,23 @@ class MovieController extends Controller
         }
 
         // 兼容站群随机ID
-		if(is_numeric($movieId)){
-			$movie = \App\Movie::find($movieId);
-			if(blank($movie)){
+        if (is_numeric($movieId)) {
+            $movie = \App\Movie::find($movieId);
+            if (blank($movie)) {
                 abort(404);
             }
-			if(config('media.movie.enable_slug')){
-                return redirect('/movie/'.$movie->slug, 301);
+            if (config('media.enable.slug')) {
+                return redirect('/movie/' . $movie->slug, 301);
             }
-		} else {
-			if(!class_exists(\Hashids\Hashids::class)){
-				abort(404);
-			}
-			$domain =  request()->getHost();
-			$hashids = new \Hashids\Hashids($domain);
-			$value = data_get($hashids->decode($movieId),'0');
-			$movie = \App\Movie::where('movie_key', strval($value))->first() ?? abort(404);
-		}
+        } else {
+            if (!class_exists(\Hashids\Hashids::class)) {
+                abort(404);
+            }
+            $domain  = request()->getHost();
+            $hashids = new \Hashids\Hashids($domain);
+            $value   = data_get($hashids->decode($movieId), '0');
+            $movie   = \App\Movie::where('movie_key', strval($value))->first() ?? abort(404);
+        }
 
         $movieColumns = $movie->getTableColumns();
         if (!isRobot() && in_array('hits', $movieColumns)) {

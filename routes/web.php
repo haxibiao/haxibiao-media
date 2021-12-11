@@ -21,16 +21,17 @@ Route::middleware(config('media.movie.middleware', []))
         Route::get('/movie/zongyi', 'MovieController@zongyi');
         Route::get('/movie/dianying', 'MovieController@dianying');
 
-
         Route::get('/movie/riju', 'MovieController@riju');
         Route::get('/movie/meiju', 'MovieController@meiju');
         Route::any('/movie/login', 'MovieController@login');
         Route::get('/movie/hanju', 'MovieController@hanju');
         Route::get('/movie/gangju', 'MovieController@gangju');
         Route::get('/movie/qita', 'MovieController@qita');
+
         Route::get('/movie/search', 'MovieController@search');
         Route::get('/movie/category/{id}', 'MovieController@category');
         Route::get('/movie/favorites', 'MovieController@favorites');
-        Route::resource('/movie', 'MovieController');
         Route::get('/movie/list/{pattern}', 'MovieController@movies');
+
+        Route::resource('/movie', 'MovieController');
     });
