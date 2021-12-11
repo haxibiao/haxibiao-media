@@ -16,8 +16,11 @@
             <movie-player :movie-data='{{ $movie }}' qrcode={{ app_qrcode_url() }} init-episode={{ 0 }}
                 api-save-progress="/api/movie/save-watch_progress" apk_url="{{ getApkUrl() }}" />
             <span class="movie_loading"></span>
-            @push('footer')
-                <invite-modal :movie="{{ $movie }}" />
+
+            @push('bottom')
+                <div style="position:absolute; top:0; right:20px; background-color:#333">
+                    <invite-modal :movie="{{ $movie }}" />
+                </div>
             @endpush
         </div>
     </div>

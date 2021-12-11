@@ -38,6 +38,7 @@
     <div id="app">
         @yield('content')
         @include('parts.movie.modal.login')
+        @stack('bottom')
     </div>
 
     {{-- 先注入的vue APP user --}}
