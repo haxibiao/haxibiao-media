@@ -91,6 +91,7 @@ export default {
       this.player.on('loadeddata', () => {
         this.loadStatus = true;
         console.log('加载成功');
+
         this.series_index = this.episode;
         if (this.seekTime) {
           this.player.seek(this.seekTime);
@@ -118,7 +119,17 @@ export default {
         const currentTime = moment.format(this.player.video.currentTime);
         console.log('seeking currentTime', currentTime);
         this.$emit('update:currentTime', currentTime);
-        window.playerEvent('开始播放', '快进', Math.floor(this.player.video.currentTime));
+        let currentSeconds = Math.floor(this.player.video.currentTime);
+        window.playerEvent('开始播放', '快进', currentSeconds);
+
+        //拖到10分钟以上弹海报
+        if (currentSeconds > 600) {
+          this.$bus.emit('SHOW_INVITE_MODAL');
+        }
+      });
+      this.player.on('error', () => {
+        //出错的时候弹邀请海报
+        this.$bus.emit('SHOW_INVITE_MODAL');
       });
       this.player.on('danmaku_send', (danmu) => {
         //调用一下评论接口，如果没有登录则打回来叫用户登录

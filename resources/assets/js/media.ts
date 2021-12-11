@@ -16,6 +16,9 @@ import MoviePlayer from './components/player/MoviePlayer.vue';
 // import MovieEditing from './components/player/MovieEditing.vue';
 import PlayLines from './components/player/PlayLines.vue';
 
+//邀请海报弹层
+import InviteModal from './components/InviteModal.vue';
+
 // 基本页面
 require('./pages/home');
 require('./pages/show');
@@ -29,7 +32,8 @@ const app = createApp({
     CommentModule,
     MoviePlayer,
     // MovieEditing,
-    PlayLines
+    PlayLines,
+    InviteModal
   }
 });
 // prototype

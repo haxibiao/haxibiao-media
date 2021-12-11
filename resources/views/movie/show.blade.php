@@ -13,9 +13,12 @@
 @section('content')
     <div class="app-player">
         <div class="container-xl">
-            <movie-player :movie-data='{{ $movie }}' qrcode={{ app_qrcode_url() }} init-episode={{ 0 }} api-save-progress="/api/movie/save-watch_progress"
-                apk_url="{{ getApkUrl() }}" />
+            <movie-player :movie-data='{{ $movie }}' qrcode={{ app_qrcode_url() }} init-episode={{ 0 }}
+                api-save-progress="/api/movie/save-watch_progress" apk_url="{{ getApkUrl() }}" />
             <span class="movie_loading"></span>
+            @push('footer')
+                <invite-modal :movie="{{ $movie }}" />
+            @endpush
         </div>
     </div>
     <div class="container-xl">
@@ -54,7 +57,8 @@
                                 <i style="">展开</i>
                             </a>
                             <div class="video-rating">
-                                <h4 class="score">{{ $movie->score ?? mt_rand(7, 9) . '.' . mt_rand(1, 9) }}</h4>
+                                <h4 class="score">{{ $movie->score ?? mt_rand(7, 9) . '.' . mt_rand(1, 9) }}
+                                </h4>
                                 <p>{{ mt_rand(99000, 990000) }}人评分</p>
                             </div>
                             {{-- @include('parts.movie.video_toolbar') --}}

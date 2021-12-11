@@ -255,6 +255,8 @@ export default {
     this.$nextTick(function () {
       // 举报视频submit事件
       $('#report-modal .btn-submit').on('click', function reportSubmit(event) {
+        this.$bus.emit('SHOW_INVITE_MODAL');
+
         const params = $('#report-form').serialize();
         if (!params) return;
         $.ajax({
