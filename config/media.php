@@ -56,8 +56,4 @@ return [
      */
     'enable_mediachain'              => env('ENABLE_MEDIACHAIN', false),
 
-    /**
-     * Movie表自增ID的起始位置
-     */
-    'movie_start_id'                 => env('MOVIE_START_ID', null),
 ];

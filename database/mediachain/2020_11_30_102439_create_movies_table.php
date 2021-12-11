@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateMoviesTable extends Migration
@@ -58,14 +57,6 @@ class CreateMoviesTable extends Migration
             $table->index('updated_at');
 
         });
-
-        /**
-         * 错位MOVIE ID
-         */
-        $movieStartId = config('media.movie_start_id');
-        if (is_numeric($movieStartId)) {
-            DB::statement("ALTER TABLE movies AUTO_INCREMENT = {$movieStartId};");
-        }
     }
     /**
      * Reverse the migrations.
