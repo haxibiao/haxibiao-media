@@ -3,7 +3,7 @@
 </template>
 <script>
 import DPlayer from 'dplayer';
-import { moment, secondToDate } from '../../utils';
+import { moment } from '../../utils';
 
 export default {
   props: [
@@ -186,7 +186,7 @@ export default {
               this.$emit('update:source', history.source);
               this.$emit('update:episode', history.episode);
               this.seekTime = history.time;
-              this.player.notice('上次观看到:' + secondToDate(history.time), '5000');
+              this.player.notice('上次观看到:' + moment.secondToDate(history.time), '5000');
             }
           });
       } else {
@@ -200,7 +200,7 @@ export default {
         this.$emit('update:source', history.source);
         this.$emit('update:episode', history.episode);
         this.seekTime = history.time;
-        this.player.notice('上次观看到:' + secondToDate(history.time), '5000');
+        this.player.notice('上次观看到:' + moment.secondToDate(history.time), '5000');
       }
     },
     //保存观看时长
