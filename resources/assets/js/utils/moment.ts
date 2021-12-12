@@ -8,7 +8,7 @@ function format(second) {
     s = parseInt(String(second % 60), 10);
   }
   // 补零
-  const zero = function(v) {
+  const zero = function (v) {
     return v >> 0 < 10 ? '0' + v : v;
   };
   const arr = [zero(h), zero(m), zero(s)];
@@ -47,9 +47,21 @@ function transNumber(number) {
   }
 }
 
+function secondToDate(seconds) {
+  var result = '';
+  var h = Math.floor(seconds / 3600);
+  var m = Math.floor((seconds / 60) % 60);
+  var s = Math.floor(seconds % 60);
+  if (h > 0) {
+    result += h + ':';
+  }
+  return (result += m + ':' + s);
+}
+
 export default {
   format,
   toSecond,
   transNumber,
-  messageDateStr
+  messageDateStr,
+  secondToDate
 };

@@ -13,7 +13,7 @@
       <div class="header">
         <i class="el-icon-circle-close" @click="this.visible = false"></i>
         <p>
-          {{ isIos ? '长按图片,添加到“照片”,分享至微信群继续看' : '长按图片转发至微信群继续看' }}
+          {{ isIos ? '长按图片,添加到“照片”,分享至群,继续看' : '保存图片,转发至群,继续看' }}
         </p>
       </div>
       <invite-card :movie="movie" />

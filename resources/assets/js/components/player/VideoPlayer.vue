@@ -1,16 +1,15 @@
 <template>
-  <div id="dplayer"></div>
+  <div id="dplayer" v-show="visible"></div>
 </template>
 <script>
 import DPlayer from 'dplayer';
-import { moment } from '../../utils';
+import { moment, secondToDate } from '../../utils';
 
 export default {
   props: [
     'source',
     'episode',
     'movie_id',
-    'movie_key',
     'notice',
     'series',
     'currentTime',
@@ -122,8 +121,8 @@ export default {
         let currentSeconds = Math.floor(this.player.video.currentTime);
         window.playerEvent('快进', '秒', currentSeconds);
 
-        //拖到10分钟以上弹海报
-        if (currentSeconds > 600) {
+        //拖到30分钟以上弹海报
+        if (currentSeconds > 1800) {
           this.$bus.emit('SHOW_INVITE_MODAL');
         }
       });
@@ -139,6 +138,10 @@ export default {
           this.player.danmaku.hide();
           return false;
         }
+      });
+      this.$bus.on('SHOW_INVITE_MODAL', () => {
+        console.log('显示海报的时候隐藏video');
+        this.visible = false;
       });
     },
     // 弹幕监听
@@ -183,7 +186,7 @@ export default {
               this.$emit('update:source', history.source);
               this.$emit('update:episode', history.episode);
               this.seekTime = history.time;
-              this.player.notice('上次观看到:' + this.secondToDate(history.time), '5000');
+              this.player.notice('上次观看到:' + secondToDate(history.time), '5000');
             }
           });
       } else {
@@ -197,7 +200,7 @@ export default {
         this.$emit('update:source', history.source);
         this.$emit('update:episode', history.episode);
         this.seekTime = history.time;
-        this.player.notice('上次观看到:' + this.secondToDate(history.time), '5000');
+        this.player.notice('上次观看到:' + secondToDate(history.time), '5000');
       }
     },
     //保存观看时长
@@ -239,21 +242,13 @@ export default {
         this.player.fullScreen.cancel('web');
       }
     },
+
     // 获取cookie中指定key的数据
     getCookieValue(name) {
       let result = document.cookie.match('(^|[^;]+)\\s*' + name + '\\s*=\\s*([^;]+)');
       return result ? result.pop() : '';
     },
-    secondToDate(seconds) {
-      var result = '';
-      var h = Math.floor(seconds / 3600);
-      var m = Math.floor((seconds / 60) % 60);
-      var s = Math.floor(seconds % 60);
-      if (h > 0) {
-        result += h + ':';
-      }
-      return (result += m + ':' + s);
-    },
+
     //TODO:这里有一个历史问题就是之前没有传入参数series_id 所以使用第几集从后端算出来series_id 有空重构
     getSeiresIndex() {
       var history = this.getCookieValue(this.movie_id);
@@ -268,7 +263,8 @@ export default {
     return {
       series_index: this.getSeiresIndex(),
       seekTime: '',
-      loadStatus: null
+      loadStatus: null,
+      visible: true
     };
   }
 };

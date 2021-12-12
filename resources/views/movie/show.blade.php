@@ -18,7 +18,7 @@
             <span class="movie_loading"></span>
 
             @push('bottom')
-                <div style="position:absolute; top:0; right:20px; background-color:#333">
+                <div style="position:absolute; z-index:2000; top:0; right:20px; background-color:#333">
                     <invite-modal :movie="{{ $movie }}" />
                 </div>
             @endpush

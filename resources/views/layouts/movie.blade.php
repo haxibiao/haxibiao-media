@@ -58,8 +58,8 @@
     @stack('js')
 
     @include('parts.movie.footer')
-    @yield('bottom')
     {!! cms_seo_js() !!}
+    @yield('bottom')
 </body>
 
 </html>

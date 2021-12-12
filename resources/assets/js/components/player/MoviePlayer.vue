@@ -22,7 +22,6 @@
                   :source.sync="source"
                   :episode.sync="currentEpisode"
                   :movie_id="movie.id"
-                  :movie_key="movieData.movie_key"
                   :series="series"
                   :apiDanmu="apiDanmu"
                   :apiSaveProgress="apiSaveProgress"
@@ -227,7 +226,6 @@ export default {
     }
   },
   mounted() {
-    console.log('this.movieData.movie_key', this.movieData.movie_key);
     if (this.movieData !== null && typeof this.movieData === 'object') {
       this.movie = this.movieData;
       console.log('movie', this.movieData);
@@ -275,7 +273,8 @@ export default {
             $('#report-modal').modal('hide');
           });
       });
-      //   下载App
+
+      // 下载App
       $('.download-app').on('click touchstart', function downloadApk(event) {
         if ('ontouchstart' in document.documentElement) {
           // 移动端直接下载
