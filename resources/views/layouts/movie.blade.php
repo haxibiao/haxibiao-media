@@ -26,6 +26,7 @@
     @stack('styles')
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
     <script type="text/javascript" src="{{ breeze_mix('js/media.js') }}" defer></script>
     @stack('scripts')
 

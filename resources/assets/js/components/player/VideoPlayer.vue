@@ -120,7 +120,7 @@ export default {
         console.log('seeking currentTime', currentTime);
         this.$emit('update:currentTime', currentTime);
         let currentSeconds = Math.floor(this.player.video.currentTime);
-        window.playerEvent('开始播放', '快进', currentSeconds);
+        window.playerEvent('快进', '秒', currentSeconds);
 
         //拖到10分钟以上弹海报
         if (currentSeconds > 600) {
