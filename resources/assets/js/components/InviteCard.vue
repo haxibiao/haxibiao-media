@@ -36,35 +36,8 @@
 import { defineComponent } from 'vue';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcodejs2';
-import { getBase64Image } from '../utils/getBase64Image';
-import Canvas2Image from '../utils/Canvas2Image';
+import { getBase64Image, Canvas2Image, LongPress } from '../utils';
 import { HOST_NAME, APP_LOGO_URL, APP_NAME_CN, APP_SLOGAN } from '../config';
-
-// 函数名longpress，参数为: 需长按元素的id、长按之后的逻辑函数func
-function longpress(id, func) {
-  var timeOutEvent;
-
-  document.querySelector('#' + id).addEventListener('touchstart', function (e) {
-    // 开启定时器前先清除定时器，防止重复触发
-    clearTimeout(timeOutEvent);
-    // 开启延时定时器
-    timeOutEvent = setTimeout(function () {
-      // 调用长按之后的逻辑函数func
-      func();
-    }, 100); // 长按时间为300ms，可以自己设置
-  });
-
-  document.querySelector('#' + id).addEventListener('touchmove', function (e) {
-    // 长按过程中，手指是不能移动的，若移动则清除定时器，中断长按逻辑
-    clearTimeout(timeOutEvent);
-    /* e.preventDefault() --> 若阻止默认事件，则在长按元素上滑动时，页面是不滚动的，按需求设置吧 */
-  });
-
-  document.querySelector('#' + id).addEventListener('touchend', function (e) {
-    // 若手指离开屏幕时，时间小于我们设置的长按时间，则为点击事件，清除定时器，结束长按逻辑
-    clearTimeout(timeOutEvent);
-  });
-}
 
 export default defineComponent({
   setup() {
@@ -180,7 +153,7 @@ export default defineComponent({
         canvasNode.appendChild(img); //填充新的海报
 
         let movie = _this.movie;
-        longpress('posterIMG', function () {
+        LongPress('posterIMG', function () {
           (window as any).playerEvent('长按分享', movie.name, movie.id);
         });
 
