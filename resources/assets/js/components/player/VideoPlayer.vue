@@ -143,6 +143,10 @@ export default {
         console.log('显示海报的时候隐藏video');
         this.visible = false;
       });
+      this.$bus.on('CLOSE_INVITE_MODAL', () => {
+        console.log('关闭海报的时候显示video');
+        this.visible = true;
+      });
     },
     // 弹幕监听
     danmakuListener() {

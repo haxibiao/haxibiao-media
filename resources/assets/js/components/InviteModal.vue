@@ -9,9 +9,9 @@
     @open="$emit('onChange', true)"
     @close="$emit('onChange', false)"
   >
-    <div class="content" @click="this.visible = false">
+    <div class="content" @click="closeInvite">
       <div class="header">
-        <i class="el-icon-circle-close" @click="this.visible = false"></i>
+        <i class="el-icon-circle-close"></i>
         <p>
           {{ isIos ? '长按图片,添加到“照片”,分享至群,继续看' : '保存图片,转发至群,继续看' }}
         </p>
@@ -36,6 +36,12 @@ export default defineComponent({
     }
   },
   emits: ['onChange'],
+  methods: {
+    closeInvite() {
+      this.visible = false;
+      this.$bus.emit('CLOSE_INVITE_MODAL');
+    }
+  },
   mounted() {
     this.$bus.on('SHOW_INVITE_MODAL', () => {
       console.log('显示海报');
