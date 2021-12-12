@@ -3,7 +3,7 @@
 </template>
 <script>
 import DPlayer from 'dplayer';
-import moment from '../../common/moment';
+import { moment } from '../../utils';
 
 export default {
   props: [

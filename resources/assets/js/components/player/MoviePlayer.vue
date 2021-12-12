@@ -198,7 +198,7 @@
 </template>
 
 <script>
-import moment from '../../common/moment';
+import { moment } from '../../utils';
 import VideoPlayer from './VideoPlayer.vue';
 
 export default {

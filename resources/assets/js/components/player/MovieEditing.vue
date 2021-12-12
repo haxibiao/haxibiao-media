@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import moment from '../../common/moment';
+import { moment } from '../../utils';
 
 export default {
   props: ['apiClip', 'movieId', 'source', 'currentEpisode', 'movieTitle', 'currentTime', 'videoDuration'],
