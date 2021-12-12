@@ -116,13 +116,13 @@ export default {
       });
       this.player.on('seeking', () => {
         const currentTime = moment.format(this.player.video.currentTime);
-        console.log('seeking currentTime', currentTime);
+        console.log('快进到', currentTime);
+        window.playerEvent('快进', currentTime);
         this.$emit('update:currentTime', currentTime);
         let currentSeconds = Math.floor(this.player.video.currentTime);
-        window.playerEvent('快进', '秒', currentSeconds);
 
         //拖到30分钟以上弹海报
-        if (currentSeconds > 1800) {
+        if (currentSeconds >= 1800) {
           this.$bus.emit('SHOW_INVITE_MODAL');
         }
       });
@@ -133,7 +133,7 @@ export default {
       this.player.on('danmaku_send', (danmu) => {
         //调用一下评论接口，如果没有登录则打回来叫用户登录
         if (this.$user.id) {
-          this.player.notice('您还没有登录，请登录后愉快的发送吧~', '5000');
+          this.player.notice('您还没有登录，请登录后愉快的发送吧~', 5000);
           //隐藏弹幕的发送：因为Dplayer无论失败或成功 都会绘制一次弹幕直接隐藏这次操作
           this.player.danmaku.hide();
           return false;
@@ -142,6 +142,8 @@ export default {
       this.$bus.on('SHOW_INVITE_MODAL', () => {
         console.log('显示海报的时候隐藏video');
         this.visible = false;
+        this.player.pause();
+        this.player.notice('分享到群,或下载APP看完整高清版...', 5000);
       });
       this.$bus.on('CLOSE_INVITE_MODAL', () => {
         console.log('关闭海报的时候显示video');
