@@ -17,6 +17,15 @@ trait MovieAttrs
         return data_get(Movie::getStatuses(), $this->status);
     }
 
+    public function getCountSeriesAttribute()
+    {
+        if (count($this->play_lines) > 0) {
+            $series = $this->play_lines[0];
+            return count(data_get($series, 'data', []));
+        }
+        return 0;
+    }
+
     public function getIntroductionAttribute()
     {
         $attr = $this->attributes["introduction"] ?? '';
