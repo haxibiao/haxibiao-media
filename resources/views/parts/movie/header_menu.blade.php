@@ -4,7 +4,6 @@ $cateogries = [
     '/movie/meiju' => '美剧',
     '/movie/hanju' => '韩剧',
     '/movie/gangju' => '港剧',
-    // '/movie/category/8' => '解说',
 ];
 @endphp
 <li class="hide-xs" title="展开更多" dropdown-target=".category-menu" dropdown-toggle="hover">
@@ -25,4 +24,4 @@ $cateogries = [
         <li class="hide-xs"><a href={{ $key }}>{{ $category }}</a></li>
     @endif
 @endforeach
-<li><a href='/app' class="download-app"><i class="iconfont icon-mobile"></i> 下载App</a></li>
+<li><a href='{{config('cms.app_download_page_url','/app')}}' class="download-app"><i class="iconfont icon-mobile"></i> 下载App</a></li>
