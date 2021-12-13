@@ -1,22 +1,10 @@
-@php
-$movieSection = array_fill(0, 4, '最新电视剧');
-$movieList = array_fill(0, 6, 'movieObject');
-$movieTitle = array_fill(0, 12, '我和我的家乡');
-$videoList = array_fill(0, 4, 'video_list');
-@endphp
-
 @extends('layouts.movie')
-
 @section('title') {{ seo_site_name() }} - {{ cms_seo_title() }} @stop
-
 @section('keywords') {{ cms_seo_keywords() }} @stop
-
 @section('description') {{ cms_seo_description() }} @stop
-
 @section('top')
 <div class="header-top-bg"></div>
 @endsection
-
 @section('content')
 <div class="hot-video-box">
     <div class="container-xl">
