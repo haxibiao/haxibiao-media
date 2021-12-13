@@ -14,7 +14,7 @@
     <div class="app-player">
         <div class="container-xl">
             <movie-player :movie-data='{{ $movie }}' qrcode={{ app_qrcode_url() }} init-episode={{ 0 }}
-                api-save-progress="/api/movie/save-watch_progress" apk_url="{{ getApkUrl() }}" app_download="{{config('cms.app_download_url')}}" />
+                api-save-progress="/api/movie/save-watch_progress" apk_url="{{config('cms.app_download_apk_url')}}" app_download="{{config('cms.app_download_apk_url')}}" />
             <span class="movie_loading"></span>
 
             @push('bottom')
