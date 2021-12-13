@@ -36,7 +36,7 @@
                 <ul class="movie-list_title col-row clearfix">
                     @foreach ($movies[1] as $index => $movie)
                     <li class="col-lg-2 col-md-3 col-xs-6 padding-0">
-                        <a class="movie-title text-ellipsis" href="/movie/{{ $movie->id }}" title={{ $movie->name }}>
+                        <a class="movie-title text-ellipsis" href="/movie/{{ $movie->id }}" title="{{ $movie->name }}">
                             <span class="badge">{{ $index + 1 }}</span>{{ $movie->name }}
                         </a>
                     </li>
