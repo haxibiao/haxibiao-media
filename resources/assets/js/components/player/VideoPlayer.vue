@@ -86,6 +86,11 @@ export default {
         this.loadStatus = true;
         console.log('加载成功');
 
+        //加载成功切10分钟还在页面算完播
+        window.setTimeout(() => {
+          window.playerEvent('完播率统计');
+        }, 600000);
+
         this.series_index = this.episode;
         if (this.seekTime) {
           this.player.seek(this.seekTime);
@@ -98,11 +103,8 @@ export default {
       });
 
       this.player.on('timeupdate', () => {
-        //看到30分钟还在播放状态上报完播事件
-        const currentSeconds = Math.floor(this.player.video.currentTime);
-        if (currentSeconds > 30 * 60) {
-          this.loadStatus && window.playerEvent('完播');
-        }
+        const currentTime = moment.format(this.player.video.currentTime);
+        this.$emit('update:currentTime', currentTime);
       });
 
       this.player.on('ended', () => {
@@ -124,7 +126,7 @@ export default {
         this.$emit('update:currentTime', currentTime);
         let currentSeconds = Math.floor(this.player.video.currentTime);
 
-        //拖到30分钟以上弹海报
+        //30分钟以后 快进弹海报
         if (currentSeconds >= 1800) {
           this.$bus.emit('SHOW_INVITE_MODAL');
         }
