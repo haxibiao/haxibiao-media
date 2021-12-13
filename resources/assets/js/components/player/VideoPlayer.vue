@@ -81,11 +81,6 @@ export default {
     // 播放器事件监听
     playerEventListener() {
       let that = this;
-      setTimeout(function () {
-        //30还在播放状态上报完播事件
-        this.loadStatus && window.playerEvent('完播');
-      }, 30000);
-      // window.clearTimeout(timeout);
 
       this.player.on('loadeddata', () => {
         this.loadStatus = true;
@@ -99,7 +94,15 @@ export default {
 
         const duration = moment.format(this.player.video.duration);
         this.$emit('update:videoDuration', duration);
-        window.playerEvent('开始播放', '片长', Math.floor(this.player.video.duration));
+        window.playerEvent('开始播放', '片长', duration);
+      });
+
+      this.player.on('timeupdate', () => {
+        //看到30分钟还在播放状态上报完播事件
+        const currentSeconds = Math.floor(this.player.video.currentTime);
+        if (currentSeconds > 30 * 60) {
+          this.loadStatus && window.playerEvent('完播');
+        }
       });
 
       this.player.on('ended', () => {
@@ -127,8 +130,11 @@ export default {
         }
       });
       this.player.on('error', () => {
-        //出错的时候弹邀请海报
-        this.$bus.emit('SHOW_INVITE_MODAL');
+        window.playerEvent('播放错误', this.movie_id);
+        window.setTimeout(() => {
+          //播放错误的时候,延迟5s弹邀请海报
+          this.$bus.emit('SHOW_INVITE_MODAL');
+        }, 5000);
       });
       this.player.on('danmaku_send', (danmu) => {
         //调用一下评论接口，如果没有登录则打回来叫用户登录
