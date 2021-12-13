@@ -4,11 +4,30 @@ namespace Haxibiao\Media\Traits;
 
 use App\Movie;
 use App\User;
+use Hashids\Hashids;
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Facades\Cache;
 
 trait MovieAttrs
 {
+    public function getSlugAttribute()
+    {
+        $domain  = request()->getHost();
+        $hashids = new Hashids($domain);
+        return $hashids->encode($this->getRawOriginal('movie_key'));
+    }
+
+    public function getIdAttribute()
+    {
+        $id = $this->getRawOriginal('id');
+        if (is_numeric($id)) {
+            return $id;
+        }
+        $domain  = request()->getHost();
+        $hashids = new Hashids($domain);
+        return data_get($hashids->decode($this->getRawOriginal('movie_key')), '0');
+    }
+
     /**
      * 状态文本
      */

@@ -1,44 +1,45 @@
 {
-    "name": "haxibiao/media",
-    "description": "哈希表 media",
-    "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "ivan",
-            "email": "ivan@haxibiao.com"
-        }
-    ],
-    "require": {
-        "php": ">=7.3",
-        "laravel/framework": "^8.0",
-        "league/flysystem-aws-s3-v3": "*",
-        "haxibiao/helpers": "*",
-        "meilisearch/meilisearch-php": "^0.18.3",
-        "tunezilla/dynamic-action-fields": "^0.0.3",
-        "http-interop/http-factory-guzzle": "^1.2"
-    },
-    "repositories": {},
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "Haxibiao\\Media\\": "src/"
-        },
-        "classmap": [
-            "database/seeders/"
-        ]
-    },
-    "autoload-dev": {
-        "classmap": [
-            "database/factories/",
-            "tests/"
-        ]
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Haxibiao\\Media\\MediaServiceProvider"
-            ]
-        }
+  "name": "haxibiao/media",
+  "description": "哈希表 media",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ivan",
+      "email": "ivan@haxibiao.com"
     }
+  ],
+  "require": {
+    "php": ">=7.3",
+    "laravel/framework": "^8.0",
+    "league/flysystem-aws-s3-v3": "*",
+    "haxibiao/helpers": "*",
+    "hashids/hashids": "^4.1",
+    "meilisearch/meilisearch-php": "^0.18.3",
+    "tunezilla/dynamic-action-fields": "^0.0.3",
+    "http-interop/http-factory-guzzle": "^1.2"
+  },
+  "repositories": {},
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "Haxibiao\\Media\\": "src/"
+    },
+    "classmap": [
+      "database/seeders/"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "database/factories/",
+      "tests/"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Haxibiao\\Media\\MediaServiceProvider"
+      ]
+    }
+  }
 }
