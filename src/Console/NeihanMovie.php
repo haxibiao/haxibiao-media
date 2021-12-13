@@ -7,16 +7,16 @@ use Illuminate\Console\Command;
 
 /**
  * 同步内涵云内涵长视频数据
- * 文档地址： http://neihancloud.com/movie/
+ * 文档地址： https://docs.neihancloud.com
  */
-class NeihanMovieSync extends Command
+class NeihanMovie extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'neihan:sync
+    protected $signature = 'neihan:movie
     {--only_updated= : 是否只同步当天更新的影片}
 	{--source= : 资源来源,如:内函电影,nunu}
 	{--region= : 按地区}
@@ -34,7 +34,7 @@ class NeihanMovieSync extends Command
      *
      * @var string
      */
-    protected $description = '同步最新mediachain内函电影';
+    protected $description = '只同步最新内涵云内函电影';
 
     /**
      * Create a new command instance.
