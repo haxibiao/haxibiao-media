@@ -60,7 +60,7 @@ class MovieSync extends Command
     public function handle()
     {
         // 兼容本地movies，和共享的medichain模式
-        if (config('media.enable_mediachain')) {
+        if (is_enable_mediachain()) {
             DB::purge('mysql');
             //修改为当前项目的数据库名
             Config::set('database.connections.mysql.database', 'mediachain');

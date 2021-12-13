@@ -57,7 +57,7 @@ class Movie extends Model
 
     public static function getTableName()
     {
-        if (config('media.enable_mediachain')) {
+        if (is_enable_mediachain()) {
             return "mediachain.movies";
         }
         return 'movies';

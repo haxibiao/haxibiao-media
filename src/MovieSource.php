@@ -24,7 +24,7 @@ class MovieSource extends Model
     //兼容本地movies，和共享的medichain模式
     public function getTable()
     {
-        if (config('media.enable_mediachain')) {
+        if (is_enable_mediachain()) {
             return "mediachain.movie_sources";
         }
         return 'movie_sources';
