@@ -6,10 +6,10 @@
                     <dt class="app-footer_brand">{{ seo_site_name() }}</dt>
                     <dd class="app-footer_contact">
                         <div class="contact__item">
-                            合作：<span>work@ {{ env('APP_DOMAIN') }}</span>
+                            合作：<span> {{ 'work@' . get_domain() }}</span>
                         </div>
                         <div class="contact__item">
-                            邮箱：<span>services@ {{ env('APP_DOMAIN') }}</span>
+                            邮箱：<span> {{ 'services@' . get_domain() }}</span>
                         </div>
                     </dd>
                 </dl>
@@ -22,7 +22,8 @@
                 <section class="sec_item friendly-links">
                     <div><span class="section_title">友情链接</span></div>
                     @foreach (friend_links() as $linkInfo)
-                        <p><a href="{{ $linkInfo['url']??'' }}" class="text-a">{{ $linkInfo['name']??'' }}</a></p>
+                        <p><a href="{{ $linkInfo['url'] ?? '' }}"
+                                class="text-a">{{ $linkInfo['name'] ?? '' }}</a></p>
                     @endforeach
                 </section>
             </div>
