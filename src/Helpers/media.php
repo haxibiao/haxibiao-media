@@ -3,6 +3,11 @@
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Str;
 
+function is_enable_mediachain()
+{
+    return config('media.enable.mediachain', false);
+}
+
 function get_neihancloud_api()
 {
     return config('media.api.neihancloud', 'https://neihancloud.com');
