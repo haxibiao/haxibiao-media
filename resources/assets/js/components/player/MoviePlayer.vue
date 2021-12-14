@@ -144,29 +144,31 @@
               <small class="text-ep" v-if="series.length > 1">第{{ currentEpisode }}集</small>
             </h3>
           </div>
-          <div class="video_desc">
-            <div class="circuitry" v-if="movie && movie.play_lines && movie.play_lines.length > 0">
-              <!-- <el-dropdown @command="switchLine">
-                <span class="el-dropdown-link" style="color: #ff0000">
-                  {{ playLineName }}
-                  <i class="el-icon-arrow-down el-icon--right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item
-                    v-for="(lineName, index) in playLines"
-                    :key="index"
-                    :command="index"
-                    :disabled="index == lineSelected"
-                    >{{ lineName }}</el-dropdown-item
-                  >
-                </el-dropdown-menu>
-              </el-dropdown> -->
-            </div>
+          <div class="video_desc" >
             <div class="type">
               {{ movie.score || Math.round(Math.max(6, Math.random() * 10)) + '.' + 0 }}分&nbsp;/&nbsp;
               <a href="javascript:void(0);">{{ movie.region || '未知' }}</a
               >&nbsp;/&nbsp;
               <a href="javascript:void(0);">{{ movie.type_name || '未知' }}</a>
+            </div>
+            <div v-if="movie && movie.play_lines && movie.play_lines.length > 0">
+              <el-dropdown @command="switchLine">
+                <el-button>
+                  {{ playLineName }}
+                  <i class="iconfont icon-arrow-right hide-xxs"></i>
+                </el-button>
+                <template #dropdown>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      v-for="(lineName, index) in playLines"
+                      :key="index"
+                      :command="index"
+                      :disabled="index == lineSelected"
+                      >{{ lineName }}</el-dropdown-item
+                    >
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </div>
         </div>
@@ -442,5 +444,11 @@ export default {
   width: 100%;
   z-index: 100;
   padding: 10px;
+}
+.video_desc {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items:center;
 }
 </style>
