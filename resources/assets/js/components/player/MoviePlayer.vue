@@ -62,6 +62,12 @@
             <span class="mobile">举报</span>
           </a>
         </li>
+        <li class="fl operation" data-toggle="modal" @click="shareMovie">
+          <a href="javascript:void(0);">
+            <i class="iconfont icon-resonserate-fill"></i>
+            <span class="mobile">分享</span>
+          </a>
+        </li>
         <li class="fl operation download-app" dropdown-target=".download-app_qrcode" dropdown-toggle="hover">
           <a :href="downloadPageUrl" target="_blank">
             <i class="iconfont icon-mobile"></i>
@@ -399,6 +405,11 @@ export default {
 
     togglePlayLines() {
       this.playLinesVisible = !this.playLinesVisible;
+    },
+
+    shareMovie(){
+      this.$bus.emit('SHOW_INVITE_MODAL');
+      window.playerEvent('分享影片');
     }
   },
   computed: {
