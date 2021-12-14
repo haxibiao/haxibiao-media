@@ -138,9 +138,12 @@ export default {
         this.$emit('update:currentTime', currentTime);
         let currentSeconds = Math.floor(this.player.video.currentTime);
 
-        //30分钟以后 快进弹海报
+        //30分钟以后 快进只弹海报一次
         if (currentSeconds >= 1800) {
-          this.$bus.emit('SHOW_INVITE_MODAL');
+          if (!this.inviteShown) {
+            this.$bus.emit('SHOW_INVITE_MODAL');
+            this.inviteShown = true;
+          }
         }
       });
 
@@ -200,10 +203,6 @@ export default {
         });
         this.player.play();
       }
-      // window.setTimeout(() => {
-      //   //播放错误的时候,延迟5s弹邀请海报
-      //   this.$bus.emit('SHOW_INVITE_MODAL');
-      // }, 5000);
     },
 
     // 恢复播放记录
@@ -312,6 +311,7 @@ export default {
       series_index: this.getSeiresIndex(),
       seekTime: '',
       loadStatus: null,
+      inviteShown: false,
       visible: true
     };
   }
