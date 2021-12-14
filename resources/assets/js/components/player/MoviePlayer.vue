@@ -150,7 +150,7 @@
               <small class="text-ep" v-if="series.length > 1">第{{ currentEpisode }}集</small>
             </h3>
           </div>
-          <div class="video_desc" >
+          <div class="video_desc">
             <div class="type">
               {{ movie.score || Math.round(Math.max(6, Math.random() * 10)) + '.' + 0 }}分&nbsp;/&nbsp;
               <a href="javascript:void(0);">{{ movie.region || '未知' }}</a
@@ -205,7 +205,6 @@
 </template>
 
 <script>
-import { moment } from '../../utils';
 import VideoPlayer from './VideoPlayer.vue';
 
 export default {
@@ -236,7 +235,8 @@ export default {
   mounted() {
     if (this.movieData !== null && typeof this.movieData === 'object') {
       this.movie = this.movieData;
-      console.log('movie', this.movieData);
+      console.log('movieData', this.movieData);
+      console.log('线路', this.movieData.play_lines);
 
       this.series = this.movie.play_lines[0].data || this.movie.series || [];
       this.playLineName = this.movie.play_lines[0].name || this.movie.series.source_name || '默认';
@@ -249,10 +249,13 @@ export default {
           lines.push(line.name);
         }
         this.playLines = lines;
-        console.log('this.playLines', this.playLines);
       }
 
       this.source = this.series[this.currentEpisode - 1]?.url;
+      if (!this.source) {
+        window.playerEvent('空线路');
+        this.source = window.fallback_movie;
+      }
       console.log('mounted source', this.currentEpisode, this.source);
     }
 
@@ -261,7 +264,6 @@ export default {
     this.$nextTick(function () {
       // 举报视频submit事件
       $('#report-modal .btn-submit').on('click', function reportSubmit(event) {
-
         const params = $('#report-form').serialize();
         if (!params) return;
         $.ajax({
@@ -298,14 +300,14 @@ export default {
     clickEpisode(index) {
       this.currentEpisode = index + 1;
       this.source = this.series[index].url;
-      console.log('clickEpisode.source', this.source);
+      window.playerEvent('手动选集');
     },
     // 播放下一集
     nextPicode() {
       if (this.series.length > this.currentEpisode) {
         this.currentEpisode++;
         this.source = this.series[this.currentEpisode - 1].url;
-        console.log('nextPicode.source', this.source);
+        window.playerEvent('自动下集');
       }
     },
     toggleLike() {
@@ -314,6 +316,7 @@ export default {
     },
     // 点赞处理
     likeHandler() {
+      window.playerEvent('点赞电影');
       if (!this.$user.token) {
         $('#login-modal').modal('toggle');
         return;
@@ -350,6 +353,7 @@ export default {
     },
     // 收藏处理
     favoriteHandler() {
+      window.playerEvent('收藏电影');
       if (!this.$user.token) {
         $('#login-modal').modal('toggle');
         return;
@@ -386,6 +390,7 @@ export default {
       this.wideSwitch = !this.wideSwitch;
     },
     toggleEditing() {
+      window.playerEvent('展开剪辑');
       if (this.$user.token) {
         this.editingVisible = !this.editingVisible;
       } else {
@@ -399,14 +404,16 @@ export default {
       this.series = this.movieData.play_lines[index].data;
       this.source = this.movieData.play_lines[index].data[0].url;
       this.playLineName = this.movieData.play_lines[index].name;
-      console.log('切换线路后 this.series', this.series);
+      console.log('切换线路 series', this.series);
+      window.playerEvent('切换线路');
     },
 
     togglePlayLines() {
       this.playLinesVisible = !this.playLinesVisible;
+      window.playerEvent('展开线路');
     },
 
-    shareMovie(){
+    shareMovie() {
       this.$bus.emit('SHOW_INVITE_MODAL');
       window.playerEvent('分享影片');
     }
@@ -459,6 +466,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items:center;
+  align-items: center;
 }
 </style>

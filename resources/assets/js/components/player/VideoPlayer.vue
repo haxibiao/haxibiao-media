@@ -133,10 +133,20 @@ export default {
       });
       this.player.on('error', () => {
         window.playerEvent('播放错误', this.movie_id);
-        window.setTimeout(() => {
-          //播放错误的时候,延迟5s弹邀请海报
-          this.$bus.emit('SHOW_INVITE_MODAL');
-        }, 5000);
+
+        //线路出错的用容错影片播放
+        if (window.fallback_movie) {
+          this.player.switchVideo({
+            url: window.fallback_movie,
+            type: 'auto'
+          });
+          this.player.play();
+        }
+
+        // window.setTimeout(() => {
+        //   //播放错误的时候,延迟5s弹邀请海报
+        //   this.$bus.emit('SHOW_INVITE_MODAL');
+        // }, 5000);
       });
       this.player.on('danmaku_send', (danmu) => {
         //调用一下评论接口，如果没有登录则打回来叫用户登录

@@ -1,13 +1,14 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    @pwa
     <title>@yield('title')</title>
     <meta name="keywords" content="@yield('keywords')" />
     <meta name="description" content="@yield('description')" />
+    @pwa
     <link rel="icon" type="image/png" href="{{ small_logo() }}" sizes="60*60">
     <link rel="icon" type="image/png" href="{{ web_logo() }}" sizes="120*120">
     <link rel="apple-touch-icon" href="{{ touch_logo() }}" sizes="160*160">
@@ -18,6 +19,7 @@
     <script type="text/javascript" src="{{ breeze_mix('js/media.js') }}" defer></script>
     @stack('scripts')
 </head>
+
 <body>
     @yield('top')
     @include('parts.movie.header')
@@ -26,22 +28,23 @@
         @include('parts.movie.modal.login')
         @stack('bottom')
     </div>
-    {{-- 先注入的vue APP user --}}
-    @if (Auth::user())
-        <script type="text/javascript">
-            const user = {
-                id: '{{ Auth::user()->id }}',
-                token: '{{ Auth::user()->token }}',
-                name: '{{ Auth::user()->name }}',
-                avatar: '{{ Auth::user()->avatar }}',
+    {{-- 注入的vue全局对象 --}}
+    <script type="text/javascript">
+        @if (Auth::user())
+            window.user = {
+            id: '{{ Auth::user()->id }}',
+            token: '{{ Auth::user()->token }}',
+            name: '{{ Auth::user()->name }}',
+            avatar: '{{ Auth::user()->avatar }}',
             };
-            window.user = user
-        </script>
-    @endif
+        @endif
+        window.fallback_movie = '{{ env('FALLBACK_MOVIE') }}';
+    </script>
     @stack('css')
     @stack('js')
     @include('parts.movie.footer')
     {!! cms_seo_js() !!}
     @yield('bottom')
 </body>
+
 </html>
