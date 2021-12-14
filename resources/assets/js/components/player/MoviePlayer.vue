@@ -238,8 +238,8 @@ export default {
       console.log('movieData', this.movieData);
       console.log('线路', this.movieData.play_lines);
 
-      this.series = this.movie.play_lines[0].data || this.movie.series || [];
-      this.playLineName = this.movie.play_lines[0].name || this.movie.series.source_name || '默认';
+      this.series = this.movie.play_lines[0]?.data || this.movie.series || [];
+      this.playLineName = this.movie.play_lines[0]?.name || this.movie.series.source_name || '默认';
 
       //线路信息
       if (this.movie.play_lines) {
