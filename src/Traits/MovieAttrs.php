@@ -40,7 +40,10 @@ trait MovieAttrs
     {
         if (count($this->play_lines) > 0) {
             $series = $this->play_lines[0];
-            return count(data_get($series, 'data', []));
+            $data   = data_get($series, 'data', []);
+            if (is_array($data)) {
+                return count($data);
+            }
         }
         return 0;
     }
@@ -238,9 +241,9 @@ trait MovieAttrs
     }
 
 //    public function getCountCommentsAttribute()
-//    {
-//        return $this->comments()->count();
-//    }
+    //    {
+    //        return $this->comments()->count();
+    //    }
 
     //伪装用户发布该电影，缓存三天为该用户发布
     public function getUserAttribute()
