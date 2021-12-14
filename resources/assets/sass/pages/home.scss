@@ -95,6 +95,9 @@
     @media (max-width: $col-sm-width - 1) {
         margin-top: -350px;
     }
+    @media (max-width: $col-sm-width) {
+        margin-top: 0;
+    }
 }
 .movies-panel {
     width: 100%;

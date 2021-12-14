@@ -8,6 +8,9 @@ $header-height: 62px;
     width: 100%;
     background-image: linear-gradient(135deg, #583230 10%, #360940 100%);
     background-image: linear-gradient(180deg, #583230, #333333);
+    @media (max-width: $col-sm-width) {
+        background-image: none;
+    }
 }
 
 .header-top-bg + .head-box {

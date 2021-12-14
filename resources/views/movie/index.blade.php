@@ -6,7 +6,7 @@
 <div class="header-top-bg"></div>
 @endsection
 @section('content')
-<div class="hot-video-box">
+<div class="hot-video-box hide-xs">
     <div class="container-xl">
         <div class="row">
             @include('parts.movie.hot_movies')
@@ -33,7 +33,7 @@
                     </div>
                     @endforeach
                 </div>
-                <ul class="movie-list_title col-row clearfix">
+                <ul class="movie-list_title col-row clearfix hide-xs">
                     @foreach ($movies[1] as $index => $movie)
                     <li class="col-lg-2 col-md-3 col-xs-6 padding-0">
                         <a class="movie-title text-ellipsis" href="/movie/{{ $movie->id }}" title="{{ $movie->name }}">
@@ -47,7 +47,7 @@
         </div>
     </div>
 </div>
-<div class="video-list-container">
+<div class="video-list-container hide-xs">
     <div class="container-xl">
         <div class="row">
             @foreach ($cate_ranks as $title => $data)
