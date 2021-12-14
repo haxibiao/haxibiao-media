@@ -159,10 +159,10 @@
             </div>
             <div v-if="movie && movie.play_lines && movie.play_lines.length > 0">
               <el-dropdown @command="switchLine">
-                <el-button>
-                  {{ playLineName }}
-                  <i class="iconfont icon-arrow-right hide-xxs"></i>
-                </el-button>
+                <span style="color: #aaa">
+                  线路
+                  <i class="iconfont icon-arrow-down"></i>
+                </span>
                 <template #dropdown>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
