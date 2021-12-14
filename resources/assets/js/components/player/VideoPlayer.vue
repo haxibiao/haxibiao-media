@@ -77,7 +77,16 @@ export default {
         };
       }
       this.player = new DPlayer(options);
+
+      //5秒不能开始播放，算加载失败
+      window.setTimeout(() => {
+        if (!this.loadStatus) {
+          window.playerEvent('加载失败');
+          this.handlePlayError();
+        }
+      }, 5000);
     },
+
     // 播放器事件监听
     playerEventListener() {
       let that = this;
@@ -111,14 +120,17 @@ export default {
         this.$emit('playEnded');
         window.playerEvent('播完');
       });
+
       this.player.on('webfullscreen', () => {
         window.postMessage('fullscreen');
         window.playerEvent('全屏');
       });
+
       this.player.on('webfullscreen_cancel', () => {
         window.postMessage('fullscreen_cancel');
         window.playerEvent('退出全屏');
       });
+
       this.player.on('seeking', () => {
         const currentTime = moment.format(this.player.video.currentTime);
         console.log('快进到', currentTime);
@@ -131,23 +143,13 @@ export default {
           this.$bus.emit('SHOW_INVITE_MODAL');
         }
       });
+
       this.player.on('error', () => {
         window.playerEvent('播放错误', this.movie_id);
 
-        //线路出错的用容错影片播放
-        if (window.fallback_movie) {
-          this.player.switchVideo({
-            url: window.fallback_movie,
-            type: 'auto'
-          });
-          this.player.play();
-        }
-
-        // window.setTimeout(() => {
-        //   //播放错误的时候,延迟5s弹邀请海报
-        //   this.$bus.emit('SHOW_INVITE_MODAL');
-        // }, 5000);
+        this.handlePlayError();
       });
+
       this.player.on('danmaku_send', (danmu) => {
         //调用一下评论接口，如果没有登录则打回来叫用户登录
         if (this.$user.id) {
@@ -157,17 +159,20 @@ export default {
           return false;
         }
       });
+
       this.$bus.on('SHOW_INVITE_MODAL', () => {
         console.log('显示海报的时候隐藏video');
         this.visible = false;
         this.player.pause();
         this.player.notice('分享到群,或下载APP看完整高清版...', 5000);
       });
+
       this.$bus.on('CLOSE_INVITE_MODAL', () => {
         console.log('关闭海报的时候显示video');
         this.visible = true;
       });
     },
+
     // 弹幕监听
     danmakuListener() {
       const danmuPrefix = this.apiDanmu ? this.apiDanmu : 'danmu_';
@@ -185,6 +190,22 @@ export default {
         this.player.danmaku.draw(danmu);
       });
     },
+
+    handlePlayError() {
+      //线路出错的用容错影片播放
+      if (window.fallback_movie) {
+        this.player.switchVideo({
+          url: window.fallback_movie,
+          type: 'auto'
+        });
+        this.player.play();
+      }
+      // window.setTimeout(() => {
+      //   //播放错误的时候,延迟5s弹邀请海报
+      //   this.$bus.emit('SHOW_INVITE_MODAL');
+      // }, 5000);
+    },
+
     // 恢复播放记录
     restoreProgress() {
       //登录用户优先从获取数据库获取观看时长
@@ -227,6 +248,7 @@ export default {
         this.player.notice('上次观看到:' + moment.secondToDate(history.time), '5000');
       }
     },
+
     //保存观看时长
     savePlayProgress() {
       if (this.$user.id && this.apiSaveProgress) {
@@ -258,9 +280,11 @@ export default {
         document.cookie = this.movie_id + '=' + JSON.stringify(history);
       }
     },
+
     beforeunloadListener(e) {
       this.savePlayProgress();
     },
+
     onWebViewMessage(event) {
       if (event.data == 'fullscreen_cancel') {
         this.player.fullScreen.cancel('web');

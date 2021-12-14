@@ -16818,6 +16818,11 @@ a.text-dark:hover, a.text-dark:focus {
   background-image: linear-gradient(135deg, #583230 10%, #360940 100%);
   background-image: linear-gradient(180deg, #583230, #333333);
 }
+@media (max-width: 576px) {
+  .header-top-bg {
+    background-image: none;
+  }
+}
 
 @media (min-width: 576px) {
   .header-top-bg + .head-box {
@@ -18319,6 +18324,11 @@ body {
 @media (max-width: 575px) {
   .movies-panel-container {
     margin-top: -350px;
+  }
+}
+@media (max-width: 576px) {
+  .movies-panel-container {
+    margin-top: 0;
   }
 }
 
