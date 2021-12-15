@@ -202,7 +202,7 @@ trait MovieAttrs
         if ($user) {
             return Favorite::where('favorable_type', 'movies')
                 ->where('favorable_id', $this->id)
-                ->whereNull('tag')
+            // ->whereNull('tag')
                 ->where('user_id', $user->id)->exists();
         }
         return false;

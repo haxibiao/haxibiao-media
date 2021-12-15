@@ -44,7 +44,7 @@
         </div>
       </div>
       <ul class="player__operate clearfix">
-        <li class="fl operation hide-xs" v-if="this.$user.token">
+        <li class="fl operation" v-if="false">
           <a :class="['favorite', movie.isFan && 'highlight']" href="javascript:void(0);" v-on:click="favoriteHandler">
             <i class="iconfont icon-collection-fill"></i>
             <span>{{ movie.isFan ? '已收藏' : '收藏' }}</span>
@@ -56,7 +56,7 @@
             <span class="num">{{ movie.count_likes || 0 }}</span>
           </a>
         </li>
-        <li class="fl operation" data-toggle="modal" data-target="#report-modal">
+        <li class="fl operation hide-xs" v-if="this.$user.token" data-toggle="modal" data-target="#report-modal">
           <a href="javascript:void(0);">
             <i class="iconfont icon-warning-fill"></i>
             <span class="mobile">举报</span>
@@ -94,7 +94,7 @@
             @onClose="editingVisible = !editingVisible"
           />
           <template #reference>
-            <li class="fl operation" slot="reference" @click="toggleEditing">
+            <li class="fl operation hide-xs" slot="reference" @click="toggleEditing">
               <a href="javascript:void(0);">
                 <i class="iconfont icon-scenes-fill"></i>
                 <span class="mobile">剪辑</span>
@@ -443,7 +443,7 @@ export default {
       series: [],
       noticeInfo: '',
       wideSwitch: false,
-      editingVisible: false,
+      editingVisible: true,
       playLinesVisible: false,
       videoDuration: '',
       currentTime: '',
