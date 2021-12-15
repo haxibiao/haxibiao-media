@@ -94,7 +94,13 @@ type Movie {
   剧集的所有线路
   """
   play_lines: [PlayLine!]
-
+  """
+  被追剧
+  """
+  chased: Boolean
+  """
+  被收藏
+  """
   favorited: Boolean
   created_at: DateTime
   """

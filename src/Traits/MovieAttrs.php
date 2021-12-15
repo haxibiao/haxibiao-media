@@ -2,6 +2,7 @@
 
 namespace Haxibiao\Media\Traits;
 
+use App\Favorite;
 use App\Movie;
 use App\User;
 use Hashids\Hashids;
@@ -197,8 +198,28 @@ trait MovieAttrs
 
     public function getFavoritedAttribute()
     {
-        //复用favorable的特性属性
-        return $this->is_favorited;
+        $user = currentUser();
+        if ($user) {
+            return Favorite::where('favorable_type', 'movies')
+                ->where('favorable_id', $this->id)
+                ->whereNull('tag')
+                ->where('user_id', $user->id)->exists();
+        }
+        return false;
+
+    }
+
+    //被追剧
+    public function getChasedAttribute()
+    {
+        $user = currentUser();
+        if ($user) {
+            return Favorite::where('favorable_type', 'movies')
+                ->where('favorable_id', $this->id)
+                ->where('tag', 'favorite')
+                ->where('user_id', $user->id)->exists();
+        }
+        return false;
     }
 
     public function getLastWatchSeriesAttribute()
