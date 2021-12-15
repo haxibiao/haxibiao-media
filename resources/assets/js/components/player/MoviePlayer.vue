@@ -82,25 +82,26 @@
             </div>
           </div>
         </li>
-        <!-- <el-popover placement="bottom" trigger="manual" v-model="editingVisible" v-if="videoDuration">
-          <movie-editing
-                        :api-clip="apiClip"
-                        :movieId="movie.id"
-                        :source="source"
-                        :current-episode="currentEpisode"
-                        :movie-title="movieTitle"
-                        :current-time="currentTime"
-                        :video-duration="videoDuration"
-                        @onClose="editingVisible = !editingVisible"
-                    />
-          <li class="fl operation" slot="reference" @click="toggleEditing">
-            <a href="javascript:void(0);">
-              <i class="iconfont icon-scenes-fill"></i>
-              <span class="mobile">剪辑</span>
-            </a>
-          </li>
-        </el-popover> -->
-
+        <el-popover placement="bottom" trigger="manual" v-model:visible="editingVisible">
+          <MovieEditing
+            :api-clip="apiClip"
+            :movieId="movie.id"
+            :source="source"
+            :current-episode="currentEpisode"
+            :movie-title="movieTitle"
+            :current-time="currentTime"
+            :video-duration="videoDuration"
+            @onClose="editingVisible = !editingVisible"
+          />
+          <template #reference>
+            <li class="fl operation" slot="reference" @click="toggleEditing">
+              <a href="javascript:void(0);">
+                <i class="iconfont icon-scenes-fill"></i>
+                <span class="mobile">剪辑</span>
+              </a>
+            </li>
+          </template>
+        </el-popover>
         <!-- <el-popover placement="bottom" trigger="manual" v-model="playLinesVisible">
                     <play-lines
                         :lines="[]"
@@ -206,10 +207,12 @@
 
 <script>
 import VideoPlayer from './VideoPlayer.vue';
+import MovieEditing from './MovieEditing.vue';
 
 export default {
   components: {
-    VideoPlayer
+    VideoPlayer,
+    MovieEditing
   },
   props: [
     'movieData',
@@ -391,11 +394,12 @@ export default {
     },
     toggleEditing() {
       window.playerEvent('展开剪辑');
-      if (this.$user.token) {
-        this.editingVisible = !this.editingVisible;
-      } else {
-        $('#login-modal').modal('toggle');
-      }
+      this.editingVisible = !this.editingVisible;
+      // if (this.$user.token) {
+      //   this.editingVisible = !this.editingVisible;
+      // } else {
+      //   $('#login-modal').modal('toggle');
+      // }
     },
 
     switchLine(index) {

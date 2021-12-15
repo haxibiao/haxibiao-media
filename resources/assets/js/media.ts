@@ -13,7 +13,7 @@ import CommentItem from './components/comment/CommentItem.vue';
 import CommentModule from './components/comment/CommentModule.vue';
 // 电影播放器
 import MoviePlayer from './components/player/MoviePlayer.vue';
-// import MovieEditing from './components/player/MovieEditing.vue';
+import MovieEditing from './components/player/MovieEditing.vue';
 import PlayLines from './components/player/PlayLines.vue';
 
 //邀请海报弹层
@@ -31,7 +31,7 @@ const app = createApp({
     CommentItem,
     CommentModule,
     MoviePlayer,
-    // MovieEditing,
+    MovieEditing,
     PlayLines,
     InviteModal
   }
@@ -42,11 +42,6 @@ import { EVENT_BUS } from './config';
 app.config.globalProperties.$bus = EVENT_BUS;
 app.config.globalProperties.$http = axios;
 app.config.globalProperties.$user = (window as any).user || {};
-
-// 剪辑部分好像用了这个
-// import ElementUI from "element-ui";
-// import "element-ui/lib/theme-chalk/index.css";
-// app.use(ElementUI);
 
 import ElementPlus from 'element-plus';
 app.use(ElementPlus);
