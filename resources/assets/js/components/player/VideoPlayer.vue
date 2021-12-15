@@ -128,13 +128,13 @@ export default {
 
       this.player.on('webfullscreen_cancel', () => {
         window.postMessage('fullscreen_cancel');
-        window.playerEvent('退出全屏');
+        // window.playerEvent('退出全屏');
       });
 
       this.player.on('seeking', () => {
         const currentTime = moment.format(this.player.video.currentTime);
         console.log('快进到', currentTime);
-        window.playerEvent('快进', currentTime);
+        // window.playerEvent('快进', currentTime);
         this.$emit('update:currentTime', currentTime);
         let currentSeconds = Math.floor(this.player.video.currentTime);
 
@@ -149,7 +149,6 @@ export default {
 
       this.player.on('error', () => {
         window.playerEvent('播放错误', this.movie_id);
-
         this.handlePlayError();
       });
 
