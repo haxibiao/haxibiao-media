@@ -49,6 +49,7 @@ class CreateMoviesTable extends Migration
             $table->unsignedInteger('count_comments')->default(0)->comment('评论数');
             $table->unsignedInteger('count_favorites')->default(0)->comment('收藏数');
             $table->unsignedInteger('count_clips')->default(0)->comment('剪辑数');
+            $table->unsignedInteger('count_shares')->default(0)->comment('分享数');
 
             $table->integer('user_id')->nullable()->comment('创建影片的用户');
             $table->integer('fixer_id')->nullable()->comment('修复影片的用户');
