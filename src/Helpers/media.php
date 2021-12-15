@@ -15,7 +15,7 @@ function media_mix($path)
         $asset_path = ends_with('.min.css', $path) ? $path : str_replace('.css', '.min.css', $path);
 
         $tag = "0.0.3";
-        return "https://cdn.jsdelivr.net/gh/haxibiao/haxibiao-media@" . $tag . "/public" . $asset_path;
+        return "https://cdn.jsdelivr.net/gh/haxibiao/haxibiao-media@" . $tag . "/public/" . $asset_path;
     }
     return breeze_mix($path);
 }
