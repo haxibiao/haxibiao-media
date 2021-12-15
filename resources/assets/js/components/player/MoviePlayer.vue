@@ -443,7 +443,7 @@ export default {
       series: [],
       noticeInfo: '',
       wideSwitch: false,
-      editingVisible: true,
+      editingVisible: false,
       playLinesVisible: false,
       videoDuration: '',
       currentTime: '',

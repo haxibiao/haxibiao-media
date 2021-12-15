@@ -13,10 +13,10 @@
     <link rel="icon" type="image/png" href="{{ web_logo() }}" sizes="120*120">
     <link rel="apple-touch-icon" href="{{ touch_logo() }}" sizes="160*160">
     <link rel="stylesheet" href="https://at.alicdn.com/t/font_2196966_ttq0ufnu2c.css">
-    <link href="{{ breeze_mix('css/media.css') }}" rel="stylesheet">
+    <link href="{{ media_mix('css/media.css') }}" rel="stylesheet">
     @stack('styles')
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest" defer></script>
-    <script type="text/javascript" src="{{ breeze_mix('js/media.js') }}" defer></script>
+    <script type="text/javascript" src="{{ media_mix('js/media.js') }}" defer></script>
     @stack('scripts')
 </head>
 

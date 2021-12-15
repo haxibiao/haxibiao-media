@@ -16,7 +16,7 @@
             </span>
           </div>
           <div class="editing-type">
-            <el-input v-model="title" placeholder="视频标题" :prefix-icon="el-icon-edit"></el-input>
+            <el-input v-model="title" placeholder="视频标题"></el-input>
           </div>
           <div class="editing-type">
             <el-time-select
@@ -30,7 +30,7 @@
             </el-time-select>
           </div>
           <div class="editing-type">
-            <el-select v-model="duration" placeholder="剪辑时长" :prefix-icon="el-icon-timer">
+            <el-select v-model="duration" placeholder="剪辑时长">
               <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"> </el-option>
             </el-select>
           </div>
