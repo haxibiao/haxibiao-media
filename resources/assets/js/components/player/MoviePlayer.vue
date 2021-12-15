@@ -71,9 +71,9 @@
         <li class="fl operation download-app" dropdown-target=".download-app_qrcode" dropdown-toggle="hover">
           <a :href="downloadPageUrl" target="_blank">
             <i class="iconfont icon-mobile"></i>
-            <span class="mobile">观看</span>
+            <span class="mobile">下载APP</span>
           </a>
-          <div class="dropdown-box download-app_qrcode">
+          <div class="dropdown-box download-app_qrcode hide-xs">
             <div class="qrcode_section">
               <div class="qr_pic" id="qrcode">
                 <img style="display: block" :src="qrcode" />
