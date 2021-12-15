@@ -61,6 +61,10 @@ type Movie {
   """
   count_series: Int
   """
+  分享数
+  """
+  count_shares: Int
+  """
   国家
   """
   country: String
@@ -183,7 +187,7 @@ extend type Query {
     page: Int = 1
     first: Int = 9
   ): [Movie] @paginate(defaultCount: 9, builder: "App\\Movie@resolveCategoryMovie")
-  """
+    """
   获取影片分享地址
   """
   getMovieShareLink(id: Int!): Movie @field(resolver: "App\\Movie@getShareLink")
@@ -258,7 +262,6 @@ extend type Query {
   大家都在搜
   """
   searchLogs: [JsonType] @field(resolver: "App\\SearchLog@resolveSearchLogs")
-
   """
   用户粘贴的movie
   """
