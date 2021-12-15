@@ -21,11 +21,11 @@ class MovieSource extends Model
         return $this->belongsTo(Movie::class);
     }
 
-    //兼容本地movies，和共享的medichain模式
+    //兼容本地共享的medichain
     public function getTable()
     {
         if (is_enable_mediachain()) {
-            return "mediachain.movie_sources";
+            return config('database.connections.mediachain.database') . ".movie_sources";
         }
         return 'movie_sources';
     }
