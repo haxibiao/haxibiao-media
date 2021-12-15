@@ -89,12 +89,9 @@ export default {
 
     // 播放器事件监听
     playerEventListener() {
-      let that = this;
-
       this.player.on('loadeddata', () => {
         this.loadStatus = true;
-        console.log('加载成功');
-
+        console.log('片长加载成功');
         //加载成功切10分钟还在页面算完播
         window.setTimeout(() => {
           window.playerEvent('完播率统计');
@@ -105,10 +102,8 @@ export default {
           this.player.seek(this.seekTime);
           this.seekTime = '';
         }
-
         const duration = moment.format(this.player.video.duration);
         this.$emit('update:videoDuration', duration);
-        window.playerEvent('开始播放', '片长', duration);
       });
 
       this.player.on('timeupdate', () => {
@@ -123,18 +118,14 @@ export default {
 
       this.player.on('webfullscreen', () => {
         window.postMessage('fullscreen');
-        window.playerEvent('全屏');
       });
 
       this.player.on('webfullscreen_cancel', () => {
         window.postMessage('fullscreen_cancel');
-        // window.playerEvent('退出全屏');
       });
 
       this.player.on('seeking', () => {
         const currentTime = moment.format(this.player.video.currentTime);
-        console.log('快进到', currentTime);
-        // window.playerEvent('快进', currentTime);
         this.$emit('update:currentTime', currentTime);
         let currentSeconds = Math.floor(this.player.video.currentTime);
 
@@ -148,7 +139,6 @@ export default {
       });
 
       this.player.on('error', () => {
-        window.playerEvent('播放错误', this.movie_id);
         this.handlePlayError();
       });
 
