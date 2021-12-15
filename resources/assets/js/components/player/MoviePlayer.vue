@@ -82,7 +82,7 @@
             </div>
           </div>
         </li>
-        <el-popover placement="bottom" trigger="manual" v-model:visible="editingVisible">
+        <el-popover placement="top" trigger="manual" v-model:visible="editingVisible" width="260px">
           <MovieEditing
             :api-clip="apiClip"
             :movieId="movie.id"
@@ -459,6 +459,11 @@ export default {
 .el-popover {
   padding: 0 !important;
   border: none !important;
+}
+.el-popper__arrow{
+  @media (max-width: 606px) {
+    display: none;
+  }
 }
 .alert-wrap {
   position: absolute;

@@ -293,9 +293,19 @@ $header-height: 62px;
                 line-height: 40px;
             }
         }
-        @media (max-width: $col-md-width - 1px) {
+        @media (max-width: $col-md-width + 1px) {
             .search-input {
                 margin-right: 0;
+                width: 150px;
+            }
+        }
+        @media (max-width: $col-sm-width + 35px) {
+            .search-input {
+                width: 110px;
+            }
+        }
+        @media (max-width: $col-sm-width - 2px) {
+            .search-input {
                 width: 150px;
             }
         }
