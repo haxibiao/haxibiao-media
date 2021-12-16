@@ -3,6 +3,23 @@
 use Haxibiao\Media\MovieHistory;
 use Illuminate\Support\Str;
 
+/**
+ * media的mix
+ */
+function media_mix($path)
+{
+    //启用jsdelivr的cdn加速
+    if (is_enable_jsdelivr()) {
+        //用压缩版本的
+        $asset_path = ends_with('.min.js', $path) ? $path : str_replace('.js', '.min.js', $path);
+        $asset_path = ends_with('.min.css', $path) ? $path : str_replace('.css', '.min.css', $path);
+
+        $tag = "0.0.3";
+        return "https://cdn.jsdelivr.net/gh/haxibiao/haxibiao-media@" . $tag . "/public/" . $asset_path;
+    }
+    return breeze_mix($path);
+}
+
 function is_enable_mediachain()
 {
     return config('media.enable.mediachain', false);

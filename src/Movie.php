@@ -49,7 +49,7 @@ class Movie extends Model
         return config('media.meilisearch.index');
     }
 
-    //兼容本地movies，和共享的medichain模式
+    //兼容本地共享的medichain
     public function getTable()
     {
         return static::getTableName();
@@ -58,7 +58,7 @@ class Movie extends Model
     public static function getTableName()
     {
         if (is_enable_mediachain()) {
-            return "mediachain.movies";
+            return config('database.connections.mediachain.database') . ".movies";
         }
         return 'movies';
     }
