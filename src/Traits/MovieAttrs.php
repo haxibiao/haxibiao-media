@@ -40,7 +40,7 @@ trait MovieAttrs
     public function getCountSeriesAttribute()
     {
         if (count($this->play_lines) > 0) {
-            $series = $this->play_lines[0];
+            $series = array_shift($this->play_lines);
             $data   = data_get($series, 'data', []);
             if (is_array($data)) {
                 return count($data);
