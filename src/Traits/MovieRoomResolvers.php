@@ -17,6 +17,7 @@ trait MovieRoomResolvers
     {
         $id      = $args['id'] ?? null;
         $user_id = $args['user_id'] ?? null;
+        request()->request->add(['fetch_sns_detail' => true]);
 
         if ($id || $user_id) {
             return MovieRoom::query()->when($id, function ($qb) use ($id) {
@@ -42,8 +43,10 @@ trait MovieRoomResolvers
     //成员进入放映室
     public function resolveUsersInToMovieRoom($root, $args, $content, $info)
     {
-        $uids      = $args['uids'];
-        $id        = $args['id'];
+        $uids = $args['uids'];
+        $id   = $args['id'];
+        request()->request->add(['fetch_sns_detail' => true]);
+
         $movieRoom = MovieRoom::find($id);
         throw_if(empty($movieRoom), UserException::class, "该放映室不存在！");
         foreach ($uids as $uid) {
