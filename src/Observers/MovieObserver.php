@@ -8,25 +8,15 @@ use Haxibiao\Media\MovieUser;
 
 class MovieObserver
 {
-    /**
-     * Handle the Movie "created" event.
-     *
-     * @param  \App\Movie  $movie
-     * @return void
-     */
     public function created(Movie $movie)
     {
-        Movie::addMeiliSearch($movie);
+
     }
 
-    public function saving(Movie $movie)
+    public function saving (Movie $movie)
     {
         $playLines = $movie->play_lines ?? [];
-        if (count($playLines) == 0) {
-            $has_playurl = 0;
-        }
-        $has_playurl        = 1;
-        $movie->has_playurl = $has_playurl;
+		$movie->has_playurl = (count($playLines) == 0) ? 0 : 1;// 0代表有播放线路
     }
 
     public function updating(Movie $movie)
@@ -46,39 +36,23 @@ class MovieObserver
 
     public function updated(Movie $movie)
     {
-
+    	// 清理GQL缓存
+		cache()->delete(sprintf('query:movie:movie_id:%d',data_get($movie,'id')));
     }
 
-    /**
-     * Handle the Movie "deleted" event.
-     *
-     * @param  \App\Movie  $movie
-     * @return void
-     */
     public function deleted(Movie $movie)
     {
-        //
+		// 清理GQL缓存
+		cache()->delete(sprintf('query:movie:movie_id:%d',data_get($movie,'id')));
     }
 
-    /**
-     * Handle the Movie "restored" event.
-     *
-     * @param  \App\Movie  $movie
-     * @return void
-     */
     public function restored(Movie $movie)
     {
-        //
+
     }
 
-    /**
-     * Handle the Movie "force deleted" event.
-     *
-     * @param  \App\Movie  $movie
-     * @return void
-     */
     public function forceDeleted(Movie $movie)
     {
-        //
+
     }
 }
