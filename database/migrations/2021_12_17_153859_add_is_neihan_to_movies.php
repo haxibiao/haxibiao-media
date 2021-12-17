@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSourceNamesToMovies extends Migration
+class AddIsNeihanToMovies extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,11 @@ class AddSourceNamesToMovies extends Migration
     public function up()
     {
         Schema::table('movies', function (Blueprint $table) {
-            if (!Schema::hasColumn('movies', 'source_names')) {
-                $table->string('source_names')->nullable()->index();
+
+            if (!Schema::hasColumn('movies', 'is_neihan')) {
+                $table->boolean('is_neihan')->default(0)->comment('是否内涵片');
             }
+
         });
     }
 
@@ -27,5 +29,8 @@ class AddSourceNamesToMovies extends Migration
      */
     public function down()
     {
+        Schema::table('movies', function (Blueprint $table) {
+            //
+        });
     }
 }

@@ -13,9 +13,6 @@ class CreateMoviesTable extends Migration
      */
     public function up()
     {
-        if (Schema::hasTable('movies')) {
-            return;
-        }
         Schema::create('movies', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100)->index()->comment("电影名");
@@ -52,6 +49,7 @@ class CreateMoviesTable extends Migration
 
             $table->integer('user_id')->nullable()->comment('创建影片的用户');
             $table->integer('fixer_id')->nullable()->comment('修复影片的用户');
+            $table->boolean('is_neihan')->default(0)->comment('是否内涵片');
 
             $table->timestamps();
             $table->index('updated_at');

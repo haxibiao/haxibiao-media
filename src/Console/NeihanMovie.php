@@ -76,7 +76,6 @@ class NeihanMovie extends Command
             $result      = json_decode(file_get_contents($url), true);
             $returnCount = count($result['data']);
             if ($result['status'] == 200) {
-
                 $resultMovies = $result['data'];
                 foreach ($resultMovies as $movie) {
                     $total++;
@@ -91,7 +90,6 @@ class NeihanMovie extends Command
 
     public function syncMovie($movie, &$success, &$fail, &$nunu_count, &$kkw_count)
     {
-
         try {
             $movie = @json_decode(json_encode($movie), true);
             $model = Movie::firstOrNew([
@@ -149,7 +147,7 @@ class NeihanMovie extends Command
             //播放线路这个属性前端不支持null
             $movie['play_lines'] = $movie['play_lines'] ?? [];
 
-            self::fillMovieModel($movie, $model);
+            self::fillNeihanMovie($movie, $model);
 
             $success++;
             $addOrUpdate = $movieExists ? '更新' : '新增';
@@ -161,7 +159,7 @@ class NeihanMovie extends Command
         }
     }
 
-    public static function fillMovieModel(array $movie, Movie $model)
+    public static function fillNeihanMovie(array $movie, Movie $model)
     {
         if ($movie['custom_type'] == '电影') {
             $movie['finished'] = 1;
@@ -194,6 +192,7 @@ class NeihanMovie extends Command
             'play_lines',
             'source_names',
         ]));
+        $model->is_neihan = 1;
         $model->saveQuietly();
         return $model;
     }
