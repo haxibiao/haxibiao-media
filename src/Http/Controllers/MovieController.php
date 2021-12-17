@@ -110,20 +110,15 @@ class MovieController extends Controller
         }
 
         $qb = Movie::publish();
-        // 首页不展示伦理片
-        $qb->when(in_array('is_neihan', (new Movie())->getTableColumns()), function ($q) {
-            $q->where('is_neihan', false);
-        });
+        // 首页不展示内涵片
+        $qb->where('is_neihan', false);
 
         $cacheTTL = 10 * 60; // 缓存10分钟
 
-        //修复兼容mediachain跨库查询语法，反正缓存了都一样
+        //热门电影
         $hotMovies = (clone $qb)->take(15)->get();
-        // $hotMovies = Cache::remember('movie-index-hot-movies', $cacheTTL, function () use ($qb) {
-        //     return (clone $qb)->exclude(['data', 'data_source', 'play_lines', 'source_names'])->take(15)->get();
-        // });
-        // $qb = $qb->exclude(['introduction', 'data', 'data_source', 'play_lines', 'source_names']);
 
+        //热门分类
         $categoryMovies = Cache::remember('movie-index-category-movies', $cacheTTL, function () use ($qb) {
             return [
                 '热门美剧' => [
@@ -149,6 +144,7 @@ class MovieController extends Controller
             ];
         });
 
+        //排行榜
         $cate_ranks = Cache::remember('movie-index-category-ranks', $cacheTTL, function () use ($qb) {
             return [
                 '美剧' => [
