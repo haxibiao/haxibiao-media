@@ -1,15 +1,15 @@
 @php
 $cateogries = [
-    '/movie' => '影厅',
-    '/movie/meiju' => '美剧',
-    '/movie/hanju' => '韩剧',
-    '/movie/gangju' => '港剧',
-    '/movie/riju' => '日剧',
+    '/movie/dianshiju' => '电视剧',
+    '/movie/dianying' => '电影',
+    '/movie/dongman' => '动漫',
+    '/movie/zongyi' => '综艺',
+    '/movie/lunli' => '伦理',
 ];
 @endphp
 <li class="hide-xs" title="展开更多" dropdown-target=".category-menu" dropdown-toggle="hover">
     <a href="/">
-        主站
+        影厅
         <i class="iconfont icon-arrow-down"></i>
     </a>
     <div class="dropdown-box category-menu">

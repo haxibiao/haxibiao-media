@@ -1,12 +1,19 @@
 @php
 $cateogriesMenu = [
     '/movie' => '影厅',
+    '/movie/dianshiju' => '电视剧',
+    '/movie/dianying' => '电影',
+
+    '/movie/dongman' => '动漫',
+    '/movie/zongyi' => '综艺',
+    '/movie/lunli' => '伦理',
+
     '/movie/meiju' => '美剧',
     '/movie/hanju' => '韩剧',
     '/movie/gangju' => '港剧',
     '/movie/riju' => '日剧',
-    // '/movie/category/8' => '解说',
-    // '/collection' => '合集',
+
+    '/movie/qita' => '其他',
 ];
 @endphp
 

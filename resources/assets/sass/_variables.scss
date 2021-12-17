@@ -2,7 +2,7 @@
 $body-bg: #f8fafc;
 
 // Typography
-$font-family-sans-serif: "Nunito", sans-serif;
+$font-family-sans-serif: 'Nunito', sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
@@ -46,3 +46,55 @@ $neutral-color_border: #dcdee2;
 $neutral-color_divider: #e8eaec;
 $neutral-color_background: #f8f8f9;
 $neutral-color_disabled: #c5c8ce;
+
+// 从breeze复制过来的一些自定义变量
+// color
+$mainColor: #d96a5f;
+$wxGreen: #42c02e;
+$theme-light: #fe7705;
+$neutral-color_subTitle: #808695;
+$wbRed: #e54438;
+$qqBlue: #407fcf;
+$mainFontColor: #333;
+$mainFontColor2: #717171;
+$minorFontColor: #969696;
+$borderColorLight: #f0f0f0;
+$borderColorDark: #c8c8c8;
+$linkColor: #2b89ca;
+$neutral-color_border: #dcdee2;
+$manColor: #285da0;
+$womanColor: #ea7767;
+
+$weixin-color: #42c02e;
+$weibo-color: #e54438;
+$qq-color: #407fcf;
+$link-color: #2b89ca;
+$sky-blue: #00ccff;
+$tint-blue: #869dff;
+$blue-violet: #9966ff;
+$thin-violet: #bbb6ce;
+$soft-pink: #ff9999;
+$hot-pink: #ff6666;
+$dark-color1: #252525;
+$dark-color2: #515151;
+$dark-color3: #303036;
+$dark-color4: #333;
+$gray-color1: #717171;
+$gray-color2: #969696;
+$gray-color23: #a6a6a6;
+$gray-color3: #c4c4c4;
+$light-color1: #ececec;
+$light-color2: #f0f0f0;
+$light-color3: #f7f7f7;
+$light-color4: #3c3c3c;
+$light-color5: #777;
+$theme-skin: #ffffff;
+
+// size
+$font-size-slogan: 20px;
+$font-size-title: 18px;
+$font-size-article: 16px;
+$font-size-tip: 15px;
+$font-size-info: 14px;
+$font-size-abstract: 13px;
+$font-size-detail: 12px;

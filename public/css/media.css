@@ -155,12 +155,12 @@ sup {
 }
 
 a {
-  color: #32a6f9;
+  color: #2b89ca;
   text-decoration: none;
   background-color: transparent;
 }
 a:hover {
-  color: #0681d8;
+  color: #1e5e8b;
   text-decoration: underline;
 }
 
@@ -2888,11 +2888,11 @@ fieldset:disabled a.btn {
 
 .btn-link {
   font-weight: 400;
-  color: #32a6f9;
+  color: #2b89ca;
   text-decoration: none;
 }
 .btn-link:hover {
-  color: #0681d8;
+  color: #1e5e8b;
   text-decoration: underline;
 }
 .btn-link:focus, .btn-link.focus {
@@ -4613,13 +4613,13 @@ input[type=button].btn-block {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #32a6f9;
+  color: #2b89ca;
   background-color: #fff;
   border: 1px solid #dee2e6;
 }
 .page-link:hover {
   z-index: 2;
-  color: #0681d8;
+  color: #1e5e8b;
   text-decoration: none;
   background-color: #e9ecef;
   border-color: #dee2e6;
@@ -11724,13 +11724,13 @@ textarea {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #32a6f9;
+  color: #2b89ca;
   background-color: #fff;
   border: 1px solid #dee2e6;
 }
 .page-link:hover {
   z-index: 2;
-  color: #0681d8;
+  color: #1e5e8b;
   text-decoration: none;
   background-color: #e9ecef;
   border-color: #dee2e6;
@@ -17108,9 +17108,19 @@ a.text-dark:hover, a.text-dark:focus {
   font-size: 24px;
   line-height: 40px;
 }
-@media (max-width: 767px) {
+@media (max-width: 769px) {
   .search .search-form .search-input {
     margin-right: 0;
+    width: 150px;
+  }
+}
+@media (max-width: 611px) {
+  .search .search-form .search-input {
+    width: 110px;
+  }
+}
+@media (max-width: 574px) {
+  .search .search-form .search-input {
     width: 150px;
   }
 }
@@ -17434,6 +17444,54 @@ body {
   .sidebar .btnListBox {
     display: none;
   }
+}
+
+.paging,
+.pagination {
+  margin: 20px 0;
+  text-align: center;
+  display: block;
+  clear: both;
+}
+.paging .page-item,
+.pagination .page-item {
+  margin: 0 4px;
+  display: inline-block;
+}
+.paging .page-item a,
+.paging .page-item span,
+.pagination .page-item a,
+.pagination .page-item span {
+  float: left;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #969696 !important;
+  border: 1px solid #dcdcdc;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.paging .page-item a:hover,
+.paging .page-item span:hover,
+.pagination .page-item a:hover,
+.pagination .page-item span:hover {
+  background-color: rgba(150, 150, 150, 0.1);
+}
+.paging .active,
+.pagination .active {
+  font-weight: 700;
+  border: none;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.pagination .page-item:first-child, .pagination .page-item:last-child {
+  border-radius: 20px;
+}
+.pagination .page-item.active {
+  font-weight: 700;
+  border: none;
+  pointer-events: none;
+  background-color: transparent;
 }
 
 .app-download {

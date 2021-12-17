@@ -377,4 +377,10 @@ class MovieController extends Controller
         $movies = Movie::where('is_neihan', true)->orderBy('rank', 'desc')->latest('updated_at')->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("伦理")->with('cate_id', 1);
     }
+
+    public function qita()
+    {
+        $movies = Movie::whereNull('custom_type')->orderBy('rank', 'desc')->latest('updated_at')->paginate(24);
+        return view('movie.region')->with('movies', $movies)->withCate("其他")->with('cate_id', 1);
+    }
 }
