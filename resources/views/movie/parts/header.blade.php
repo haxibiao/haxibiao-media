@@ -4,7 +4,7 @@
             <h1 class="app-header__logo">
                 <a class="pic_logo" href="/"><img src="{{ small_logo() }}" alt="{{ seo_site_name() }}"></a>
             </h1>
-            <ul class="app-header__type">@include('parts.movie.header_menu')</ul>
+            <ul class="app-header__type">@include('movie.parts.header_menu')</ul>
             <ul class="app-header__menu">
                 <li class="search">
                     <form class="search-form" name="search" method="get" action="/movie/search">
@@ -27,7 +27,7 @@
                                         <div class="video_headline">播放记录</div>
 
                                         @foreach (userPlayedMovies() as $historyItem)
-                                            @include('parts.movie.history_movie_item')
+                                            @include('movie.parts.history_movie_item')
                                         @endforeach
                                     </div>
                                 </div>
@@ -60,10 +60,10 @@
     </div>
     <div class="category_nav">
         <ul class="swipe_nav">
-            @include('parts.movie.header_menu_drop',['item_class'=>'tab-item'])
+            @include('movie.parts.header_menu_drop',['item_class'=>'tab-item'])
         </ul>
         <div class="nav-arrow"><i class="iconfont icon-arrow-down"></i></div>
     </div>
     {{-- 下拉顶部菜单 --}}
-    @include('parts.movie.modal.nav_drawer')
+    @include('movie.modal.nav_drawer')
 </header>

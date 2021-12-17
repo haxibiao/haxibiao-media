@@ -22,10 +22,10 @@
 
 <body>
     @yield('top')
-    @include('parts.movie.header')
+    @include('movie.parts.header')
     <div id="app">
         @yield('content')
-        @include('parts.movie.modal.login')
+        @include('movie.modal.login')
         @stack('bottom')
     </div>
     {{-- 注入的vue全局对象 --}}
@@ -42,7 +42,7 @@
     </script>
     @stack('css')
     @stack('js')
-    @include('parts.movie.footer')
+    @include('movie.parts.footer')
     {!! cms_seo_js() !!}
     @yield('bottom')
 </body>

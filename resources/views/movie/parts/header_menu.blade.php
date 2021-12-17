@@ -14,7 +14,7 @@ $cateogries = [
     </a>
     <div class="dropdown-box category-menu">
         <ul class="menu-list">
-            @include('parts.movie.header_menu_drop',['item_class'=>'menu-item'])
+            @include('movie.parts.header_menu_drop',['item_class'=>'menu-item'])
         </ul>
     </div>
 </li>

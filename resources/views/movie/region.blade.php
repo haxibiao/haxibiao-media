@@ -21,22 +21,24 @@
                             <ul class="nav_list clearfix">
                                 <li><a class="btn-order btn-muted">排序</a></li>
                                 @php
-                                $orders = [
-                                'year' => '时间',
-                                'hits' => '人气',
-                                'score' => '评分',
-                                ];
+                                    $orders = [
+                                        'year' => '时间',
+                                        'hits' => '人气',
+                                        'score' => '评分',
+                                    ];
                                 @endphp
 
                                 {{-- FIXME：绑定真实的排序 --}}
                                 @foreach ($orders as $order => $word)
                                     @if ((request('order') ?? 'time') == $order)
                                         <li>
-                                            <a class="btn-order active" href="?order={{ $order }}">{{ $word }}</a>
+                                            <a class="btn-order active"
+                                                href="?order={{ $order }}">{{ $word }}</a>
                                         </li>
                                     @else
                                         <li>
-                                            <a class="btn-order" href="?order={{ $order }}">{{ $word }}</a>
+                                            <a class="btn-order"
+                                                href="?order={{ $order }}">{{ $word }}</a>
                                         </li>
                                     @endif
                                 @endforeach
@@ -51,7 +53,7 @@
                     <ul class="row">
                         @foreach ($movies as $movie)
                             <li class="col-lg-2 col-md-3 col-sm-3 col-xs-4 padding-10">
-                                @include('parts.movie.movie_item')
+                                @include('movie.parts.movie_item')
                             </li>
                         @endforeach
                     </ul>

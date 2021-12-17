@@ -14,7 +14,8 @@
     <div class="app-player">
         <div class="container-xl">
             <movie-player :movie-data='{{ $movie }}' qrcode={{ app_qrcode_url() }} init-episode={{ 0 }}
-                api-save-progress="/api/movie/save-watch_progress" apk-url="{{config('cms.app_download_apk_url')}}" app-download="{{config('cms.app_download_apk_url')}}" />
+                api-save-progress="/api/movie/save-watch_progress" apk-url="{{ config('cms.app_download_apk_url') }}"
+                app-download="{{ config('cms.app_download_apk_url') }}" />
             <span class="movie_loading"></span>
 
             @push('bottom')
@@ -64,7 +65,7 @@
                                 </h4>
                                 <p>{{ mt_rand(99000, 990000) }}人评分</p>
                             </div>
-                            {{-- @include('parts.movie.video_toolbar') --}}
+                            {{-- @include('movie.parts.video_toolbar') --}}
                         </div>
                     </div>
                 </div>
@@ -76,7 +77,7 @@
                     <div class="rc-list row">
                         @foreach ($recommend ?? [] as $relateMovie)
                             <div class="col-xs-6 col-sm-6">
-                                @include('parts.movie.recommend_movie_item')
+                                @include('movie.parts.recommend_movie_item')
                             </div>
                         @endforeach
                     </div>
@@ -94,7 +95,7 @@
                     <div class="rc-list row margin-0">
                         @foreach ($more ?? [] as $relateMovie)
                             <div class="col-lg-12 col-sm-6 padding-0">
-                                @include('parts.movie.recommend_movie_item')
+                                @include('movie.parts.recommend_movie_item')
                             </div>
                         @endforeach
                     </div>
@@ -102,5 +103,5 @@
             </div>
         </div>
     </div>
-    @include('parts.movie.modal.report')
+    @include('movie.modal.report')
 @endsection

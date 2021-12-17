@@ -16,8 +16,7 @@ class MovieController extends Controller
 {
     // movie/list/{分类}-{年代}-{类型}-{地区}-{语言}-{排序}----
     // 预留三个参数
-    public function movies($pattern)
-    {
+    function list($pattern) {
         $parameters = explode('-', $pattern);
 
         $categoryId = data_get($parameters, '0'); // region
@@ -371,5 +370,11 @@ class MovieController extends Controller
     {
         $movies = Movie::whereIn('custom_type', ['综艺', '真人秀'])->orderBy('rank', 'desc')->latest('updated_at')->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("综艺")->with('cate_id', 1);
+    }
+
+    public function lunli()
+    {
+        $movies = Movie::where('is_neihan', true)->orderBy('rank', 'desc')->latest('updated_at')->paginate(24);
+        return view('movie.region')->with('movies', $movies)->withCate("伦理")->with('cate_id', 1);
     }
 }

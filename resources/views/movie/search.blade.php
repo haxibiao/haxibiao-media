@@ -21,7 +21,7 @@
             <div class="main col-xl-9 col-lg-9">
                 <div class="search_result">
                     @foreach ($result as $movie)
-                        @include('parts.movie.result_item')
+                        @include('movie.parts.result_item')
                     @endforeach
                     <div>
                         {{ $result->links() }}
