@@ -190,7 +190,8 @@ class MovieSync extends Command
             $movie = @json_decode(json_encode($movie), true);
 
             $model = Movie::firstOrNew([
-                'movie_key' => $movie['movie_key'],
+                'name' => $movie['name'],
+                'year' => $movie['year'],
             ]);
 
             $movieExists = $model->id > 0;
