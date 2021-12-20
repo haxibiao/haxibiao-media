@@ -10,13 +10,13 @@ class MovieObserver
 {
     public function created(Movie $movie)
     {
-
+        Movie::addMeiliSearch($movie);
     }
 
-    public function saving (Movie $movie)
+    public function saving(Movie $movie)
     {
-        $playLines = $movie->play_lines ?? [];
-		$movie->has_playurl = (count($playLines) == 0) ? 0 : 1;// 0代表有播放线路
+        $playLines          = $movie->play_lines ?? [];
+        $movie->has_playurl = (count($playLines) == 0) ? 0 : 1; // 0代表有播放线路
     }
 
     public function updating(Movie $movie)
@@ -36,14 +36,14 @@ class MovieObserver
 
     public function updated(Movie $movie)
     {
-    	// 清理GQL缓存
-		cache()->delete(sprintf('query:movie:movie_id:%d',data_get($movie,'id')));
+        // 清理GQL缓存
+        cache()->delete(sprintf('query:movie:movie_id:%d', data_get($movie, 'id')));
     }
 
     public function deleted(Movie $movie)
     {
-		// 清理GQL缓存
-		cache()->delete(sprintf('query:movie:movie_id:%d',data_get($movie,'id')));
+        // 清理GQL缓存
+        cache()->delete(sprintf('query:movie:movie_id:%d', data_get($movie, 'id')));
     }
 
     public function restored(Movie $movie)
