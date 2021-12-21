@@ -13,6 +13,23 @@ use MeiliSearch\Client as MeiliSearchClient;
 
 trait MovieRepo
 {
+    /**
+     * 电影搜索queryBuilder
+     */
+    public static function searchQuery($keyword, $page = 1, $perPage = 10)
+    {
+        if (config('media.meilisearch.enable', false)) {
+            //本地搜索
+            return Movie::search($keyword);
+        } else {
+            //内涵云搜索电影
+            $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
+            $items      = data_get($pageResult, 'data');
+            $movie_keys = collect($items)->pluck('movie_key')->toArray();
+            $movie_ids  = implode(',', $movie_keys);
+            return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
+        }
+    }
 
     /**
      * 移除影片名中的标点符号

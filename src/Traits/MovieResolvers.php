@@ -358,30 +358,13 @@ trait MovieResolvers
         $page    = data_get($args, 'page', 1);
         $perPage = data_get($args, 'first', 10);
 
-        SearchLog::saveSearchLog($keyword, getUserId());
+        // SearchLog::saveSearchLog($keyword, getUserId());
+        //记录搜索历史
+        save_kw($keyword);
 
         //标记获取详情数据信息模式
         request()->request->add(['fetch_sns_detail' => true]);
-
-        //记录搜索历史
-        // save_searched_keyword($keyword);
-        if (config('media.meilisearch.enable', false)) {
-            return Movie::search($keyword);
-        } else {
-            //去mediachain搜索电影
-            $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
-            $items      = data_get($pageResult, 'data');
-            $movie_keys = collect($items)->pluck('movie_key')->toArray();
-            $movie_ids  = implode(',', $movie_keys);
-            return Movie::whereIn('movie_key', $movie_keys)->orderByRaw("FIELD(movie_key,$movie_ids)");
-            // }
-        }
-        // $pageResult->paginatorInfo = [
-        //     'currentPage'  => $page,
-        //     'total'        => $total,
-        //     'hasMorePages' => $total > $page * $perPage,
-        // ];
-        // return $pageResult;
+        return Movie::searchQuery($keyword, $page, $perPage);
     }
 
     public function getFilters()
