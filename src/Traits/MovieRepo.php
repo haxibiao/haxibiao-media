@@ -20,7 +20,9 @@ trait MovieRepo
     {
         if (config('media.meilisearch.enable', false)) {
             //本地搜索
-            return Movie::search($keyword);
+            return Movie::search($keyword)->query(function ($query) {
+                $query->publish();
+            });
         } else {
             //内涵云搜索电影
             $pageResult = Movie::resourceSearch($keyword, $page, $perPage);
@@ -236,8 +238,8 @@ trait MovieRepo
                 'user_id'   => $user->id,
                 'movie_id'  => $movie->id,
                 'movie_key' => $movie->movie_key, //关联影片云端唯一标识
-                'title' => $title, //剪辑配问
-                'duration' => $video['duration'] ?? 15,
+                'title'     => $title, //剪辑配问
+                'duration'  => $video['duration'] ?? 15,
                 'disk'      => 'othermovie',
                 'path'      => $video['url'],
             ]);
