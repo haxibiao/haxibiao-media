@@ -9,6 +9,7 @@ use App\Series;
 use Haxibiao\Breeze\Model;
 use Haxibiao\Breeze\Traits\HasFactory;
 use Haxibiao\Breeze\User;
+use Haxibiao\Content\Traits\ContentType;
 use Haxibiao\Content\Traits\Stickable;
 use Haxibiao\Content\Traits\WithCms;
 use Haxibiao\Media\Traits\MovieAttrs;
@@ -32,6 +33,7 @@ class Movie extends Model
 
     use WithCms;
     use Stickable;
+    use ContentType;
 
     protected $guarded = [];
 
@@ -200,20 +202,5 @@ class Movie extends Model
     {
         return $this->belongsToMany("App\User", "movie_user")->withTimestamps()
             ->withPivot(['report_status']);
-    }
-
-    public function resoureTypeCN()
-    {
-        $type = get_class($this);
-        if (str_contains($type, 'Post')) {
-            return "动态";
-        }
-        if (str_contains($type, 'Issue')) {
-            return "提问";
-        }
-        if (str_contains($type, 'Movie')) {
-            return "电影";
-        }
-        return '文章';
     }
 }
