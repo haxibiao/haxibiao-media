@@ -6,6 +6,7 @@ use App\Favorite;
 use App\Like;
 use App\Movie;
 use App\MovieHistory;
+use App\Task;
 use App\User;
 use Haxibiao\Media\Http\Controller;
 use Haxibiao\Media\SearchLog;
@@ -212,6 +213,36 @@ class MovieController extends Controller
         }
         $movies = (clone $qb)->where('region', "美剧")->paginate(24);
         return view('movie.region')->with('movies', $movies)->withCate("美剧")->with('cate_id', 2);
+    }
+
+    public function task()
+    {
+        //避开任务列表refetch重复matomo事件
+        $type  = $args['type'] ?? 'All';
+        $tasks = [];
+
+        $user = getUser(false);
+        if ($user) {
+            //单次查询一个分类的
+            $assignments = Task::getAssignments($user, $type);
+            foreach ($assignments as $assignment) {
+                $task = $assignment->task;
+                //指派的 属性alias 过去给gql用
+                $task->assignment = $assignment;
+                $task->user       = $assignment->user;
+                $tasks[]          = $task;
+            }
+
+        } else {
+            Task::enabled()->when($type != 'All', function ($query) use ($type) {
+                return $query->where('type', $type);
+            })->get()->each(function ($noStatusTask) use (&$tasks) {
+                $tasks[] = $noStatusTask;
+            });
+        }
+
+        $tasks = collect($tasks)->sortByDesc('rank')->all();
+        return view('movie.task')->with('tasks', $tasks)->withCate("任务");
     }
 
     public function hanju()

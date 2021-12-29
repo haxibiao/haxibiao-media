@@ -30,6 +30,7 @@ Route::middleware(config('media.movie.middleware', []))
         Route::get('/movie/gangju', 'MovieController@gangju');
 
         Route::get('/movie/qita', 'MovieController@qita');
+        Route::get('/movie/task', 'MovieController@task');
 
         Route::get('/movie/search', 'MovieController@search');
         Route::get('/movie/category/{id}', 'MovieController@category');
